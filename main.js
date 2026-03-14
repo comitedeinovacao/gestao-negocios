@@ -61,6 +61,16 @@ function switchCadastroTab(btn) {
 
 // Abre uma visualização de consulta
 function openConsultaView(viewId) {
+  // Fecha todos os painéis primeiro
+  var paineis = ['docentes-list', 'pctd-list', 'pitd-list', 'representantes-filter'];
+  paineis.forEach(function(id) {
+    var painel = document.getElementById(id);
+    if (painel) {
+      painel.classList.add('hidden');
+    }
+  });
+
+  // Abre apenas o selecionado
   var view = document.getElementById(viewId);
   if (view) {
     view.classList.remove('hidden');
