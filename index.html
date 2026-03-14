@@ -1,0 +1,1273 @@
+<!doctype html>
+<html lang="pt-BR" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hub Gestão e Negócios | Senac Araçatuba</title>
+  <meta name="description" content="Central de recursos pedagógicos e diretrizes estratégicas da área de Gestão e Negócios - Senac Araçatuba.">
+  <meta name="keywords" content="Gestão, Negócios, Senac, Araçatuba, Educação, Plataforma, Eventos, Docentes, Turmas">
+  <meta name="author" content="Senac Araçatuba">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.17/dist/tailwind.min.css" />
+  <script src="/_sdk/element_sdk.js" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Montserrat', sans-serif; }
+    
+    .cyber-pattern {
+      background-image: 
+        radial-gradient(circle at 20% 50%, rgba(247, 148, 29, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(0, 69, 135, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 60% 80%, rgba(247, 148, 29, 0.05) 0%, transparent 40%);
+    }
+    
+    .eco-card {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .eco-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(247, 148, 29, 0.1), transparent);
+      transition: left 0.5s ease;
+    }
+    
+    .eco-card:hover::before {
+      left: 100%;
+    }
+    
+    .eco-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 69, 135, 0.15);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #004587 0%, #003366 100%);
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #F7941D 0%, #E8850D 100%);
+      transform: scale(1.02);
+    }
+    
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #F2F2F2; }
+    ::-webkit-scrollbar-thumb { background: #004587; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #F7941D; }
+
+    .page-container {
+      min-height: 100%;
+      display: none;
+    }
+
+    .page-container.active {
+      display: block;
+    }
+
+    .tab-content {
+      transition: all 0.3s ease;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript" defer></script>
+  <script src="main.js" defer></script>
+ </head>
+ <body class="h-full bg-gradient-to-b from-[#0a1628] via-[#0f2847] to-[#1a1a2e] overflow-auto">
+  <div class="w-full h-full"><!-- PÁGINA HOME -->
+   <div id="home-page" class="page-container active bg-gradient-to-b from-[#0a1628] via-[#0f2847] to-[#1a1a2e]"><!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 py-4 bg-gradient-to-b from-[#0a1628]/40 via-[#0f2847]/20 to-transparent backdrop-blur-sm">
+     <div class="max-w-7xl mx-auto">
+      <div class="relative flex justify-between items-center">
+      <div class="flex items-center gap-3 group cursor-pointer" aria-label="Logo Gestão e Negócios">
+       <svg viewbox="0 0 200 50" class="h-10 w-auto transition-transform duration-300 group-hover:scale-110" role="img" aria-label="Logo Senac Gestão e Negócios">
+        <rect x="0" y="8" width="24" height="24" fill="#F7941D" /> <rect x="4" y="12" width="8" height="8" fill="white" /> <rect x="12" y="20" width="8" height="8" fill="white" /> <text x="32" y="26" font-family="Montserrat" font-weight="700" font-size="16" fill="white">
+         GESTÃO E
+        </text> <text x="32" y="40" font-family="Montserrat" font-weight="700" font-size="16" fill="#F7941D">
+         NEGÓCIOS
+        </text>
+       </svg>
+      </div>
+       <nav class="hidden md:flex items-center gap-6" aria-label="Menu principal">
+         <a href="#gestao" class="relative px-1 py-2 text-white font-semibold text-sm group transition-all duration-300 hover:text-[#F7941D] bg-none border-none cursor-pointer" aria-label="Ir para Gestão"><span class="relative z-10">Gestão</span>
+         <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-[#F7941D] to-transparent group-hover:w-full transition-all duration-300"></div></a>
+         <button onclick="navigateToPage('eventos')" class="relative px-1 py-2 text-white font-semibold text-sm group transition-all duration-300 hover:text-[#F7941D] bg-none border-none cursor-pointer" aria-label="Ir para Eventos"><span class="relative z-10">Eventos</span>
+         <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-[#F7941D] to-transparent group-hover:w-full transition-all duration-300"></div></button>
+         <button onclick="scrollToFooter()" class="relative px-1 py-2 text-white font-semibold text-sm group transition-all duration-300 hover:text-[#F7941D] bg-none border-none cursor-pointer" aria-label="Ir para Contato"><span class="relative z-10">Contato</span>
+         <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-[#F7941D] to-transparent group-hover:w-full transition-all duration-300"></div></button>
+       </nav>
+      </div>
+     </div>
+    </header>
+    <div class="h-24"></div><!-- Hero Section -->
+    <section class="relative bg-gradient-to-br from-[#0a1628] via-[#0f2847] to-[#1a1a2e] text-white py-24 lg:py-32 overflow-hidden">
+     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+       <div class="space-y-8">
+        <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-gradient-to-r from-[#F7941D]/20 to-[#F7941D]/5 border border-[#F7941D]/30 backdrop-blur-sm w-fit"><span class="text-sm font-semibold text-[#F7941D] tracking-wider">HUB GESTÃO E NEGÓCIOS</span>
+        </div>
+        <div>
+         <h1 id="hero-title" class="text-5xl sm:text-6xl lg:text-7xl font-black leading-tight mb-4 relative"><span class="bg-gradient-to-r from-white via-blue-200 to-[#F7941D] bg-clip-text text-transparent">GESTÃO E NEGÓCIOS</span></h1>
+        </div>
+        <p id="hero-subtitle" class="text-lg sm:text-xl text-gray-300 leading-relaxed max-w-xl">Central de recursos pedagógicos e diretrizes estratégicas da área de Gestão e Negócios - Unidade Araçatuba.</p>
+        <div class="flex flex-wrap gap-4 pt-4"><button onclick="navigateToPage('cadastro')" class="group relative px-8 py-4 rounded-xl font-semibold text-white overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-r from-[#004587] to-[#F7941D] rounded-xl"></div>
+          <div class="relative flex items-center gap-2">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+           </svg> Explorar Plataforma
+          </div></button> <button onclick="navigateToPage('eventos')" class="group relative px-8 py-4 rounded-xl font-semibold text-white border-2 border-[#F7941D]/50 hover:border-[#F7941D] transition-all duration-300 overflow-hidden">
+          <div class="absolute inset-0 bg-[#F7941D] opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-xl"></div>
+          <div class="relative flex items-center gap-2">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+           </svg> Agenda de Eventos
+          </div></button>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white via-white/50 to-transparent"></div>
+    </section><!-- Seção Gestão -->
+    <section id="banco-ideias" class="w-full py-16 bg-[#004587]/5 mt-20">
+      <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl p-8 border border-[#004587]/20">
+        <h2 class="text-3xl font-bold text-[#004587] mb-6 flex items-center gap-2">
+          <svg class="w-8 h-8 text-[#F7941D]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+          Banco de Ideias
+        </h2>
+        <form id="ideiaForm" class="space-y-6" action="https://formspree.io/f/xeerznrl" method="POST">
+          <div>
+            <label for="nome" class="block text-sm font-medium text-[#004587]">Nome</label>
+            <input type="text" id="nome" name="nome" required class="mt-1 block w-full rounded-lg border border-[#004587]/30 bg-[#004587]/5 px-4 py-2 text-[#004587]" placeholder="Seu nome" />
+          </div>
+          <div>
+            <label for="email" class="block text-sm font-medium text-[#004587]">E-mail</label>
+            <input type="email" id="email" name="email" required class="mt-1 block w-full rounded-lg border border-[#004587]/30 bg-[#004587]/5 px-4 py-2 text-[#004587]" placeholder="seu@email.com" />
+          </div>
+          <div>
+            <label for="ideia" class="block text-sm font-medium text-[#004587]">Sua Ideia</label>
+            <textarea id="ideia" name="ideia" required rows="5" class="mt-1 block w-full rounded-lg border border-[#004587]/30 bg-[#004587]/5 px-4 py-2 text-[#004587] resize-none" placeholder="Descreva sua ideia..."></textarea>
+          </div>
+          <button type="submit" class="w-full bg-[#F7941D] hover:bg-[#004587] text-white font-bold py-3 rounded-lg shadow-lg transition-all duration-300">
+            Enviar Ideia 🚀
+          </button>
+        </form>
+      </div>
+    </section>
+    <section id="gestao" class="py-20 bg-white">
+     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16"><span class="text-[#F7941D] font-semibold tracking-wider uppercase text-sm">Área de Gestão</span>
+       <h2 class="text-3xl sm:text-4xl font-bold text-[#004587] mt-3 mb-4">Gestão Integrada</h2>
+       <p class="text-gray-600 max-w-2xl mx-auto">Plataforma para cadastro, consulta e gerenciamento de documentos pedagógicos.</p>
+       <div class="w-24 h-1 bg-[#F7941D] mx-auto mt-6 rounded-full"></div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-8">
+       <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-8 shadow-lg border-2 border-[#004587]/20 cursor-pointer" onclick="navigateToPage('cadastro')">
+        <div class="w-16 h-16 bg-gradient-to-br from-[#004587] to-[#003366] rounded-2xl flex items-center justify-center mb-6 mx-auto">
+         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+         </svg>
+        </div>
+        <h3 class="text-2xl font-bold text-[#004587] mb-3 text-center">Cadastrar</h3><button class="w-full btn-primary py-3 rounded-xl text-white font-semibold flex items-center justify-center gap-2 hover:scale-105 transition-transform" onclick="navigateToPage('cadastro')">
+         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+         </svg> Acessar Cadastro </button>
+       </div>
+       <div class="eco-card bg-gradient-to-br from-[#F7941D]/5 to-[#004587]/5 rounded-2xl p-8 shadow-lg border-2 border-[#F7941D]/20 cursor-pointer" onclick="navigateToPage('consulta')">
+        <div class="w-16 h-16 bg-gradient-to-br from-[#F7941D] to-[#E8850D] rounded-2xl flex items-center justify-center mb-6 mx-auto">
+         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+         </svg>
+        </div>
+        <h3 class="text-2xl font-bold text-[#004587] mb-3 text-center">Consultar</h3><button class="w-full btn-primary py-3 rounded-xl text-white font-semibold flex items-center justify-center gap-2 hover:scale-105 transition-transform" onclick="navigateToPage('consulta')">
+         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+         </svg> Acessar Consulta </button>
+       </div>
+      </div>
+     </div>
+    </section><!-- Footer -->
+    <footer id="contato" class="bg-[#004587] text-white">
+     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="grid md:grid-cols-4 gap-12">
+       <div class="md:col-span-2">
+        <p class="text-gray-300 mb-6">Hub Gestão e Negócios: Central de recursos pedagógicos e diretrizes estratégicas da Unidade Araçatuba.</p>
+       </div>
+       <div>
+        <h4 class="font-bold text-lg mb-6">Links Úteis</h4>
+        <ul class="space-y-3">
+         <li><a href="https://www.sp.senac.br" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-[#F7941D] transition-colors">Portal Senac SP</a></li>
+        </ul>
+       </div>
+       <div>
+        <h4 class="font-bold text-lg mb-6">Coordenação</h4>
+        <p class="text-gray-300 mb-2">Senac Araçatuba</p>
+        <p class="text-gray-300 mb-2">Gestão e Negócios</p><a id="footer-email" href="mailto:grupoacagestaoenegocios@sp.senac.br" class="text-gray-300 hover:text-[#F7941D] transition-colors">grupoacagestaoenegocios@sp.senac.br</a>
+       </div>
+      </div>
+     </div>
+    </footer>
+   </div><!-- PÁGINA CADASTRO -->
+   <div id="cadastro-page" class="page-container bg-white min-h-full">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+     <div class="flex items-center justify-between mb-8 pb-6 border-b-2 border-gray-200">
+      <h2 class="text-3xl font-bold text-[#004587]">Cadastro</h2><button onclick="scrollToGestao()" class="px-6 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl font-semibold flex items-center gap-2 transition-all">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+       </svg> Voltar </button>
+     </div><!-- Abas -->
+     <div class="flex flex-wrap gap-2 mb-10 border-b border-gray-200 pb-6 overflow-x-auto"><button class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="cad-docentes" onclick="switchCadastroTab(this)">
+       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+       </svg>Docentes </button> <button class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="turmas" onclick="switchCadastroTab(this)">
+       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-2a6 6 0 0112 0v2zm0 0h6v-2a6 6 0 00-9-5.697M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+       </svg>Turmas </button> <button class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="pitd" onclick="switchCadastroTab(this)">
+       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+       </svg>PITD </button> <button class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="pctd" onclick="switchCadastroTab(this)">
+       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+       </svg>PCTD </button> <button class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="representantes" onclick="switchCadastroTab(this)">
+       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-2a6 6 0 0112 0v2zm0 0h6v-2a6 6 0 00-9-5.697M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+       </svg>Representante </button>
+     </div><!-- Docentes -->
+     <div id="tab-cad-docentes" class="tab-content bg-gray-50 rounded-2xl p-8">
+      <h3 class="text-2xl font-bold text-[#004587] mb-8">Cadastro de Docentes</h3>
+      <form id="cadastro-form" class="space-y-6">
+       <div class="grid md:grid-cols-2 gap-6">
+        <div><label class="block text-[#004587] font-semibold mb-3">Nome Completo</label> <input type="text" placeholder="Seu nome completo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        </div>
+        <div><label class="block text-[#004587] font-semibold mb-3">Telefone</label> <input type="tel" placeholder="(XX) 9XXXX-XXXX" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        </div>
+       </div>
+       <div class="grid md:grid-cols-3 gap-6">
+        <div><label class="block text-[#004587] font-semibold mb-3">Instagram</label> <input type="text" placeholder="@usuario" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
+        </div>
+        <div><label class="block text-[#004587] font-semibold mb-3">Facebook</label> <input type="text" placeholder="Nome do perfil" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
+        </div>
+        <div><label class="block text-[#004587] font-semibold mb-3">LinkedIn</label> <input type="text" placeholder="url do linkedin" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
+        </div>
+       </div>
+       <div><label class="block text-[#004587] font-semibold mb-3">Minidescrição/Minicurrículo</label> <textarea placeholder="Descreva seu perfil profissional, experiências e especialidades..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none h-32" required></textarea>
+       </div><button type="submit" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>Salvar Cadastro </button>
+      </form>
+     </div><!-- Turmas -->
+     <div id="tab-turmas" class="tab-content hidden bg-gray-50 rounded-2xl p-8">
+      <h3 class="text-2xl font-bold text-[#004587] mb-8">Cadastro de Turmas</h3>
+      <form id="turmas-form" class="space-y-6">
+       <div class="grid md:grid-cols-2 gap-6">
+        <div><label class="block text-[#004587] font-semibold mb-3">Nome do Curso</label> <input type="text" placeholder="Ex: Técnico em Administração" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        </div>
+        <div><label class="block text-[#004587] font-semibold mb-3">Código da Oferta</label> <input type="text" placeholder="Ex: 2024-001" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        </div>
+       </div>
+       <div class="grid md:grid-cols-3 gap-6">
+        <div><label class="block text-[#004587] font-semibold mb-3">Data de Início</label> <input type="date" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        </div>
+        <div><label class="block text-[#004587] font-semibold mb-3">Data de Término</label> <input type="date" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        </div>
+        <div><label class="block text-[#004587] font-semibold mb-3">Período</label> <select class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required> <option value="">Selecione</option> <option value="manha">Manhã</option> <option value="tarde">Tarde</option> <option value="noite">Noite</option> </select>
+        </div>
+       </div><button type="submit" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>Salvar Turma </button>
+      </form>
+     </div><!-- PITD -->
+     <div id="tab-pitd" class="tab-content hidden bg-gray-50 rounded-2xl p-8">
+      <h3 class="text-2xl font-bold text-[#004587] mb-8">Plano Individual de Trabalho Docente</h3>
+      <form id="pitd-form" class="space-y-6">
+       <div><label class="block text-[#004587] font-semibold mb-3">Docente</label> <input type="text" placeholder="Nome do docente..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+       </div>
+       <div><label class="block text-[#004587] font-semibold mb-3">Unidade Curricular</label> <input type="text" placeholder="Digite a UC..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+       </div>
+       <div><label class="block text-[#004587] font-semibold mb-3">Link do Arquivo PITD</label> <input type="url" placeholder="https://drive.google.com/... ou https://1drv.ms/..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        <p class="text-gray-500 text-sm mt-2">📎 Compartilhe o link aberto do seu Google Drive ou OneDrive</p>
+       </div><button type="submit" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>Salvar PITD </button>
+      </form>
+     </div><!-- PCTD -->
+     <div id="tab-pctd" class="tab-content hidden bg-gray-50 rounded-2xl p-8">
+      <h3 class="text-2xl font-bold text-[#004587] mb-8">Plano Coletivo de Trabalho Docente</h3>
+      <form id="pctd-form" class="space-y-6">
+       <div class="grid md:grid-cols-2 gap-6">
+        <div><label class="block text-[#004587] font-semibold mb-3">Nome do Curso</label> <input type="text" placeholder="Ex: Técnico em Administração" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        </div>
+        <div><label class="block text-[#004587] font-semibold mb-3">Código da Oferta</label> <input type="text" placeholder="Ex: 2024-001" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        </div>
+       </div>
+       <div class="grid md:grid-cols-3 gap-6">
+        <div><label class="block text-[#004587] font-semibold mb-3">Período</label> <select class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required> <option value="">Selecione</option> <option value="manha">Manhã</option> <option value="tarde">Tarde</option> <option value="noite">Noite</option> </select>
+        </div>
+        <div><label class="block text-[#004587] font-semibold mb-3">Data de Início</label> <input type="date" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        </div>
+        <div><label class="block text-[#004587] font-semibold mb-3">Data de Conclusão</label> <input type="date" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        </div>
+       </div>
+       <div><label class="block text-[#004587] font-semibold mb-3">Link do Arquivo PCTD</label> <input type="url" placeholder="https://drive.google.com/... ou https://1drv.ms/..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        <p class="text-gray-500 text-sm mt-2">📎 Compartilhe o link aberto do seu Google Drive ou OneDrive</p>
+       </div><button type="submit" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>Salvar PCTD </button>
+      </form>
+     </div><!-- Representantes -->
+     <div id="tab-representantes" class="tab-content hidden bg-gray-50 rounded-2xl p-8">
+      <h3 class="text-2xl font-bold text-[#004587] mb-8">Cadastro de Representantes Estudantis</h3>
+      <form id="representantes-form" class="space-y-6">
+       <div><label class="block text-[#004587] font-semibold mb-3">Turma/Curso</label> <input type="text" placeholder="Ex: 1A - Administração" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+       </div>
+       <div class="grid md:grid-cols-2 gap-6">
+        <div><label class="block text-[#004587] font-semibold mb-3">Representante</label> <input type="text" placeholder="Nome completo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        </div>
+        <div><label class="block text-[#004587] font-semibold mb-3">Telefone do Representante</label> <input type="tel" placeholder="(XX) 9XXXX-XXXX" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        </div>
+       </div>
+       <div class="grid md:grid-cols-2 gap-6">
+        <div><label class="block text-[#004587] font-semibold mb-3">Vice-Representante</label> <input type="text" placeholder="Nome completo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        </div>
+        <div><label class="block text-[#004587] font-semibold mb-3">Telefone do Vice-Representante</label> <input type="tel" placeholder="(XX) 9XXXX-XXXX" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        </div>
+       </div><button type="submit" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>Salvar Representante </button>
+      </form>
+     </div>
+    </div>
+   </div><!-- PÁGINA CONSULTA -->
+   <div id="consulta-page" class="page-container bg-white min-h-full">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+     <div class="flex items-center justify-between mb-8 pb-6 border-b-2 border-gray-200">
+      <h2 class="text-3xl font-bold text-[#004587]">Consulta</h2><button onclick="scrollToGestao()" class="px-6 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl font-semibold flex items-center gap-2 transition-all">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+       </svg> Voltar </button>
+     </div><!-- Cards de Seleção -->
+     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-6 shadow-lg border-2 border-[#004587]/20 cursor-pointer" onclick="openConsultaView('docentes-list')">
+       <div class="w-14 h-14 bg-gradient-to-br from-[#004587] to-[#003366] rounded-xl flex items-center justify-center mb-4 mx-auto">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+        </svg>
+       </div>
+       <h4 class="text-lg font-bold text-[#004587] text-center mb-2">Docentes</h4>
+       <p class="text-gray-600 text-sm text-center">Visualize docentes cadastrados</p>
+      </div>
+      <div class="eco-card bg-gradient-to-br from-[#F7941D]/5 to-[#004587]/5 rounded-2xl p-6 shadow-lg border-2 border-[#F7941D]/20 cursor-pointer" onclick="openConsultaView('pctd-list')">
+       <div class="w-14 h-14 bg-gradient-to-br from-[#F7941D] to-[#E8850D] rounded-xl flex items-center justify-center mb-4 mx-auto">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+       </div>
+       <h4 class="text-lg font-bold text-[#004587] text-center mb-2">PCTD</h4>
+       <p class="text-gray-600 text-sm text-center">Planos Coletivos</p>
+      </div>
+      <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-6 shadow-lg border-2 border-[#004587]/20 cursor-pointer" onclick="openConsultaView('pitd-list')">
+       <div class="w-14 h-14 bg-gradient-to-br from-[#004587] to-[#003366] rounded-xl flex items-center justify-center mb-4 mx-auto">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+       </div>
+       <h4 class="text-lg font-bold text-[#004587] text-center mb-2">PITD</h4>
+       <p class="text-gray-600 text-sm text-center">Planos Individuais</p>
+      </div>
+      <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-6 shadow-lg border-2 border-[#004587]/20 cursor-pointer" onclick="openConsultaView('representantes-filter')">
+       <div class="w-14 h-14 bg-gradient-to-br from-[#004587] to-[#003366] rounded-xl flex items-center justify-center mb-4 mx-auto">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-2a6 6 0 0112 0v2zm0 0h6v-2a6 6 0 00-9-5.697M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+       </div>
+       <h4 class="text-lg font-bold text-[#004587] text-center mb-2">Representantes</h4>
+       <p class="text-gray-600 text-sm text-center">Representantes estudantis</p>
+      </div>
+     </div><!-- Consulta Docentes -->
+     <div id="docentes-list" class="hidden mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200"><button onclick="closeConsultaView('docentes-list')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+       </svg> Voltar </button>
+      <div id="docentes-grid" class="grid gap-4"></div>
+     </div><!-- Consulta PCTD -->
+     <div id="pctd-list" class="hidden mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200"><button onclick="closeConsultaView('pctd-list')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+       </svg> Voltar </button>
+      <div id="pctd-grid" class="grid gap-4"></div>
+     </div><!-- Consulta PITD -->
+     <div id="pitd-list" class="hidden mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200"><button onclick="closeConsultaView('pitd-list')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+       </svg> Voltar </button>
+      <div id="pitd-grid" class="grid gap-4"></div>
+     </div><!-- Consulta Representantes -->
+     <div id="representantes-filter" class="hidden mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200"><button onclick="closeConsultaView('representantes-filter')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+       </svg> Voltar </button>
+      <div class="grid md:grid-cols-2 gap-6 mb-8 bg-blue-50 p-6 rounded-xl">
+       <div><label class="block text-[#004587] font-semibold mb-3">Nome do Curso</label> <input type="text" id="rep-curso" placeholder="Ex: Administração" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" onchange="filterRepresentantes()">
+       </div>
+       <div><label class="block text-[#004587] font-semibold mb-3">Período</label> <select id="rep-periodo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" onchange="filterRepresentantes()"> <option value="">Todos</option> <option value="manha">Manhã</option> <option value="tarde">Tarde</option> <option value="noite">Noite</option> </select>
+       </div>
+      </div>
+      <div id="representantes-grid" class="grid gap-4"></div>
+     </div>
+    </div>
+   </div><!-- PÁGINA EVENTOS -->
+   <div id="eventos-page" class="page-container bg-white min-h-full">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+     <div class="flex items-center justify-between mb-8 pb-6 border-b-2 border-gray-200">
+      <h2 class="text-3xl font-bold text-[#004587]">Eventos</h2><button onclick="navigateToPage('home')" class="px-6 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl font-semibold flex items-center gap-2 transition-all">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+       </svg> Voltar </button>
+     </div><!-- Abas de Eventos -->
+     <div class="flex flex-wrap gap-2 mb-10 border-b border-gray-200 pb-6 overflow-x-auto"><button class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap bg-[#004587]/10 text-[#004587] border-b-4 border-[#F7941D]" data-tab="agenda-eventos" onclick="switchEventosTab(this)">
+       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+       </svg>Agenda </button> <button class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="criar-evento" onclick="switchEventosTab(this)">
+       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+       </svg>Criar Evento </button>
+     </div><!-- Agenda de Eventos --> <!-- Agenda de Eventos -->
+     <div id="tab-agenda-eventos" class="tab-content bg-gray-50 rounded-2xl p-8">
+      <h3 class="text-2xl font-bold text-[#004587] mb-8">Agenda de Eventos</h3><!-- Calendário -->
+      <div class="bg-white rounded-2xl p-8 mb-8 border-2 border-gray-200">
+       <div class="flex justify-between items-center mb-6"><button onclick="previousMonth()" class="px-4 py-2 bg-[#004587] text-white rounded-lg hover:bg-[#003366] font-semibold flex items-center gap-2">
+         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+         </svg>Anterior </button>
+        <h2 id="calendar-month" class="text-2xl font-bold text-[#004587] text-center flex-1">Janeiro 2024</h2><button onclick="nextMonth()" class="px-4 py-2 bg-[#004587] text-white rounded-lg hover:bg-[#003366] font-semibold flex items-center gap-2">Próximo 
+         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+         </svg></button>
+       </div><!-- Legenda -->
+       <div class="flex flex-wrap gap-6 mb-6 p-4 bg-gray-50 rounded-lg justify-center">
+        <div class="flex items-center gap-2">
+         <div class="w-4 h-4 bg-yellow-400 rounded"></div><span class="text-sm font-semibold text-gray-700">Manhã (06h-12h)</span>
+        </div>
+        <div class="flex items-center gap-2">
+         <div class="w-4 h-4 bg-orange-500 rounded"></div><span class="text-sm font-semibold text-gray-700">Tarde (12h-18h)</span>
+        </div>
+        <div class="flex items-center gap-2">
+         <div class="w-4 h-4 bg-purple-600 rounded"></div><span class="text-sm font-semibold text-gray-700">Noite (18h-23h)</span>
+        </div>
+       </div><!-- Grid do Calendário -->
+       <div class="mb-6">
+        <div class="grid grid-cols-7 gap-1 mb-2">
+         <div class="text-center font-bold text-[#004587] text-sm py-2">
+          Dom
+         </div>
+         <div class="text-center font-bold text-[#004587] text-sm py-2">
+          Seg
+         </div>
+         <div class="text-center font-bold text-[#004587] text-sm py-2">
+          Ter
+         </div>
+         <div class="text-center font-bold text-[#004587] text-sm py-2">
+          Qua
+         </div>
+         <div class="text-center font-bold text-[#004587] text-sm py-2">
+          Qui
+         </div>
+         <div class="text-center font-bold text-[#004587] text-sm py-2">
+          Sex
+         </div>
+         <div class="text-center font-bold text-[#004587] text-sm py-2">
+          Sab
+         </div>
+        </div>
+        <div id="calendar-grid" class="grid grid-cols-7 gap-1"><!-- Preenchido por renderCalendar() -->
+        </div>
+       </div>
+      </div><!-- Lista de Eventos -->
+      <div class="bg-white rounded-2xl p-8 border-2 border-gray-200">
+       <h4 class="text-xl font-bold text-[#004587] mb-6">Eventos</h4>
+       <div id="eventos-lista" class="grid gap-6">
+       </div>
+      </div>
+     </div><!-- Criar Evento -->
+     <div id="tab-criar-evento" class="tab-content hidden bg-gray-50 rounded-2xl p-8">
+      <h3 class="text-2xl font-bold text-[#004587] mb-8">Cadastrar Novo Evento</h3>
+      <form id="eventos-form" class="space-y-6">
+       <div><label class="block text-[#004587] font-semibold mb-3">Título do Evento</label> <input type="text" placeholder="Digite o título do evento" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+       </div>
+       <div class="grid md:grid-cols-2 gap-6">
+        <div><label class="block text-[#004587] font-semibold mb-3">Categoria</label> <select class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required> <option value="">Selecione</option> <option value="Seminário">Seminário</option> <option value="Workshop">Workshop</option> <option value="Reunião">Reunião</option> <option value="Palestra">Palestra</option> <option value="Outro">Outro</option> </select>
+        </div>
+        <div><label class="block text-[#004587] font-semibold mb-3">Data</label> <input type="date" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        </div>
+       </div>
+       <div class="grid md:grid-cols-2 gap-6">
+        <div><label class="block text-[#004587] font-semibold mb-3">Horário</label> <input type="time" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        </div>
+        <div><label class="block text-[#004587] font-semibold mb-3">Local</label> <input type="text" placeholder="Onde o evento acontecerá" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        </div>
+       </div>
+       <div><label class="block text-[#004587] font-semibold mb-3">Descrição</label> <textarea placeholder="Descreva os detalhes do evento..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none h-32" required></textarea>
+       </div>
+       <div><label class="block text-[#004587] font-semibold mb-3">Responsável</label> <input type="text" placeholder="Nome de quem organizou o evento" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+       </div><button type="submit" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>Salvar Evento </button>
+      </form>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    let allTeachers = [];
+    let allTurmas = [];
+    let allPCTD = [];
+    let allPITD = [];
+    let allRepresentantes = [];
+    let allEventos = [];
+
+    const defaultConfig = {
+      hero_title: 'GESTÃO E NEGÓCIOS',
+      hero_subtitle: 'Central de recursos pedagógicos e diretrizes estratégicas da área de Gestão e Negócios - Unidade Araçatuba.',
+      contact_email: 'grupoacagestaoenegocios@sp.senac.br'
+    };
+
+    const dataHandler = {
+      onDataChanged(data) {
+        if (!data || !Array.isArray(data)) return;
+        allTeachers = data.filter(item => item?.record_type === 'teacher');
+        allTurmas = data.filter(item => item?.record_type === 'turma');
+        allPCTD = data.filter(item => item?.record_type === 'pctd');
+        allPITD = data.filter(item => item?.record_type === 'pitd');
+        allRepresentantes = data.filter(item => item?.record_type === 'representante');
+        allEventos = data.filter(item => item?.record_type === 'evento');
+      }
+    };
+
+    // Inicializar SDKs
+    (async () => {
+      if (window.dataSdk) {
+        await window.dataSdk.init(dataHandler);
+      }
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange: async (config) => {
+            document.getElementById('hero-title').textContent = config.hero_title || defaultConfig.hero_title;
+            document.getElementById('hero-subtitle').textContent = config.hero_subtitle || defaultConfig.hero_subtitle;
+            const footerEmail = document.getElementById('footer-email');
+            const email = config.contact_email || defaultConfig.contact_email;
+            footerEmail.textContent = email;
+            footerEmail.href = `mailto:${email}`;
+          },
+          mapToCapabilities: () => ({ recolorables: [], borderables: [], fontEditable: undefined, fontSizeable: undefined }),
+          mapToEditPanelValues: (config) => new Map([
+            ['hero_title', config.hero_title || defaultConfig.hero_title],
+            ['hero_subtitle', config.hero_subtitle || defaultConfig.hero_subtitle],
+            ['contact_email', config.contact_email || defaultConfig.contact_email]
+          ])
+        });
+      }
+    })();
+
+    // Navegação
+    window.navigateToPage = (page) => {
+      document.querySelectorAll('.page-container').forEach(p => p.classList.remove('active'));
+      document.getElementById(page + '-page').classList.add('active');
+      window.scrollTo(0, 0);
+    };
+
+    window.scrollToGestao = () => {
+      // Primeiro volta para a página home
+      document.querySelectorAll('.page-container').forEach(p => p.classList.remove('active'));
+      document.getElementById('home-page').classList.add('active');
+      
+      // Depois faz scroll até a seção gestão
+      setTimeout(() => {
+        const gestaoSection = document.getElementById('gestao');
+        if (gestaoSection) {
+          gestaoSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    };
+
+    window.scrollToFooter = () => {
+      const footer = document.getElementById('contato');
+      footer.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    window.switchCadastroTab = (btn) => {
+      const tabName = btn.getAttribute('data-tab');
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+      btn.classList.add('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
+      document.getElementById('tab-' + tabName).classList.remove('hidden');
+    };
+
+    // Abrir/Fechar Vistas
+    window.openConsultaView = (viewId) => {
+      // Fechar todas as outras vistas
+      document.getElementById('docentes-list').classList.add('hidden');
+      document.getElementById('pctd-list').classList.add('hidden');
+      document.getElementById('pitd-list').classList.add('hidden');
+      document.getElementById('representantes-filter').classList.add('hidden');
+      
+      // Abrir a vista solicitada
+      if (viewId === 'docentes-list') renderDocentes();
+      if (viewId === 'pctd-list') renderPCTD();
+      if (viewId === 'pitd-list') renderPITD();
+      if (viewId === 'representantes-filter') renderRepresentantesFilter();
+      document.getElementById(viewId).classList.remove('hidden');
+    };
+
+    window.closeConsultaView = (viewId) => {
+      document.getElementById(viewId).classList.add('hidden');
+    };
+
+    // Renderizar Docentes
+    function renderDocentes() {
+      const grid = document.getElementById('docentes-grid');
+      grid.innerHTML = allTeachers.length > 0 
+        ? allTeachers.map(teacher => `
+          <div class="bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 p-4 rounded-lg border-2 border-[#004587]/20 cursor-pointer hover:shadow-lg transition-all" onclick="showDocenteDetail('${teacher.__backendId || ''}')">
+            <p class="font-bold text-[#004587]">${teacher.name || 'Sem nome'}</p>
+            <p class="text-sm text-gray-600">${teacher.phone || 'Telefone não informado'}</p>
+          </div>
+        `).join('')
+        : '<p class="text-gray-600 col-span-4 text-center py-8">Nenhum docente cadastrado</p>';
+    };
+
+    // Renderizar PCTD
+    function renderPCTD() {
+      const grid = document.getElementById('pctd-grid');
+      grid.innerHTML = allPCTD.length > 0
+        ? allPCTD.map(pctd => `
+          <div class="bg-gradient-to-br from-[#F7941D]/5 to-[#004587]/5 p-4 rounded-lg border-2 border-[#F7941D]/20">
+            <p class="font-bold text-[#004587]">${pctd.course_name || 'Sem nome'}</p>
+            <p class="text-sm text-gray-600">Código: ${pctd.offer_code || '-'}</p>
+            <p class="text-sm text-gray-600">Período: ${pctd.period || '-'}</p>
+            <p class="text-sm text-gray-600 mb-3">Arquivo: ${pctd.file_name ? '✅ Sim' : '❌ Não'}</p>
+            ${pctd.file_name ? `<button onclick="window.open('${pctd.file_name}', '_blank', 'noopener,noreferrer')" class="w-full px-3 py-2 bg-[#F7941D] text-white rounded-lg font-semibold text-sm hover:bg-[#E8850D] transition-all flex items-center justify-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              Abrir Arquivo
+            </button>` : ''}
+          </div>
+        `).join('')
+        : '<p class="text-gray-600 col-span-4 text-center py-8">Nenhum PCTD cadastrado</p>';
+    }
+
+    window.downloadFile = (type, key) => {
+      let url;
+      if (type === 'pctd' && window.pctdFiles) {
+        url = window.pctdFiles[key];
+      } else if (type === 'pitd' && window.pitdFiles) {
+        url = window.pitdFiles[key];
+      }
+      
+      if (!url) {
+        showErrorMessage('❌ Link não disponível');
+        return;
+      }
+
+      // Abrir o link em uma nova aba
+      window.open(url, '_blank', 'noopener,noreferrer');
+      showSuccessMessage(`📂 Abrindo arquivo...`);
+    };
+
+    // Renderizar PITD
+    function renderPITD() {
+      const grid = document.getElementById('pitd-grid');
+      grid.innerHTML = allPITD.length > 0
+        ? allPITD.map(pitd => `
+          <div class="bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 p-4 rounded-lg border-2 border-[#004587]/20">
+            <p class="font-bold text-[#004587]">${pitd.teacher_name || 'Sem nome'}</p>
+            <p class="text-sm text-gray-600">UC: ${pitd.uc || '-'}</p>
+            <p class="text-sm text-gray-600 mb-3">Arquivo: ${pitd.file_name ? '✅ Sim' : '❌ Não'}</p>
+            ${pitd.file_name ? `<button onclick="window.open('${pitd.file_name}', '_blank', 'noopener,noreferrer')" class="w-full px-3 py-2 bg-[#004587] text-white rounded-lg font-semibold text-sm hover:bg-[#003366] transition-all flex items-center justify-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              Abrir Arquivo
+            </button>` : ''}
+          </div>
+        `).join('')
+        : '<p class="text-gray-600 col-span-4 text-center py-8">Nenhum PITD cadastrado</p>';
+    }
+
+    // Renderizar Filtro de Representantes
+    function renderRepresentantesFilter() {
+      document.getElementById('rep-curso').value = '';
+      document.getElementById('rep-periodo').value = '';
+      filterRepresentantes();
+    }
+
+    window.filterRepresentantes = () => {
+      const curso = document.getElementById('rep-curso').value.toLowerCase();
+      const periodo = document.getElementById('rep-periodo').value;
+      const filtrados = allRepresentantes.filter(rep => {
+        const matchCurso = !curso || (rep.turma_id && rep.turma_id.toLowerCase().includes(curso));
+        const matchPeriodo = !periodo || rep.period === periodo;
+        return matchCurso && matchPeriodo;
+      });
+      const grid = document.getElementById('representantes-grid');
+      grid.innerHTML = filtrados.length > 0
+        ? filtrados.map(rep => `
+          <div class="bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 p-4 rounded-lg border-2 border-[#004587]/20 cursor-pointer hover:shadow-lg transition-all" onclick="showRepresentanteDetail('${rep.__backendId || ''}')">
+            <p class="font-bold text-[#004587]">${rep.turma_id || 'Sem turma'}</p>
+            <p class="text-sm text-gray-600">Rep: ${rep.representative_name || '-'}</p>
+          </div>
+        `).join('')
+        : '<p class="text-gray-600 col-span-4 text-center py-8">Nenhum representante encontrado</p>';
+    };
+
+    window.showRepresentanteDetail = (id) => {
+      const rep = allRepresentantes.find(r => r.__backendId === id);
+      if (!rep) return;
+      const grid = document.getElementById('representantes-grid');
+      grid.innerHTML = `
+        <button onclick="filterRepresentantes()" class="mb-4 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
+        </button>
+        <div class="col-span-4 bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-8 border-2 border-[#004587]/20">
+          <h3 class="text-2xl font-bold text-[#004587] mb-6">${rep.turma_id}</h3>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <p class="text-gray-600 font-semibold">Representante:</p>
+              <p class="text-[#004587]">${rep.representative_name || 'Não informado'}</p>
+            </div>
+            <div>
+              <p class="text-gray-600 font-semibold">Telefone:</p>
+              <p class="text-[#004587]">${rep.representative_phone || 'Não informado'}</p>
+            </div>
+            <div>
+              <p class="text-gray-600 font-semibold">Vice-Representante:</p>
+              <p class="text-[#004587]">${rep.vice_name || 'Não informado'}</p>
+            </div>
+            <div>
+              <p class="text-gray-600 font-semibold">Telefone Vice:</p>
+              <p class="text-[#004587]">${rep.representative_phone || 'Não informado'}</p>
+            </div>
+          </div>
+        </div>
+      `;
+    };
+
+    // Formulários
+    document.getElementById('cadastro-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const inputs = e.target.querySelectorAll('input[type="text"], input[type="tel"], textarea');
+      if (!inputs[0].value || !inputs[1].value || !inputs[5].value) {
+        showErrorMessage('❌ Preencha todos os campos obrigatórios');
+        return;
+      }
+      const data = {
+        record_type: 'teacher',
+        name: inputs[0].value.trim(),
+        phone: inputs[1].value.trim(),
+        instagram: inputs[2].value.trim() || '',
+        facebook: inputs[3].value.trim() || '',
+        linkedin: inputs[4].value.trim() || '',
+        mini_curriculum: inputs[5].value.trim()
+      };
+      const btn = e.target.querySelector('button');
+      btn.disabled = true;
+      btn.textContent = 'Salvando...';
+      try {
+        const result = await window.dataSdk.create(data);
+        btn.disabled = false;
+        btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>Salvar Cadastro';
+        if (result.isOk) {
+          e.target.reset();
+          showSuccessMessage('✅ Docente cadastrado com sucesso!');
+        } else {
+          showErrorMessage('❌ Erro ao cadastrar: ' + (result.error?.message || 'Desconhecido'));
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>Salvar Cadastro';
+        showErrorMessage('❌ Erro ao conectar: ' + err.message);
+      }
+    });
+
+    document.getElementById('turmas-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const inputs = e.target.querySelectorAll('input, select');
+      if (!inputs[0].value || !inputs[1].value) {
+        showErrorMessage('❌ Preencha todos os campos obrigatórios');
+        return;
+      }
+      const data = {
+        record_type: 'turma',
+        course_name: inputs[0].value.trim(),
+        offer_code: inputs[1].value.trim(),
+        start_date: inputs[2].value,
+        end_date: inputs[3].value,
+        period: inputs[4].value
+      };
+      const btn = e.target.querySelector('button');
+      btn.disabled = true;
+      btn.textContent = 'Salvando...';
+      try {
+        const result = await window.dataSdk.create(data);
+        btn.disabled = false;
+        btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>Salvar Turma';
+        if (result.isOk) {
+          e.target.reset();
+          showSuccessMessage('✅ Turma cadastrada com sucesso!');
+        } else {
+          showErrorMessage('❌ Erro ao cadastrar: ' + (result.error?.message || 'Desconhecido'));
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>Salvar Turma';
+        showErrorMessage('❌ Erro ao conectar: ' + err.message);
+      }
+    });
+
+    document.getElementById('pitd-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const inputs = e.target.querySelectorAll('input[type="text"], input[type="url"]');
+      
+      if (!inputs[0]?.value?.trim()) {
+        showErrorMessage('❌ Digite o nome do docente');
+        return;
+      }
+      if (!inputs[1]?.value?.trim()) {
+        showErrorMessage('❌ Digite a unidade curricular');
+        return;
+      }
+      if (!inputs[2]?.value?.trim()) {
+        showErrorMessage('❌ Cole o link do arquivo');
+        return;
+      }
+      
+      const btn = e.target.querySelector('button');
+      btn.disabled = true;
+      btn.textContent = '⏳ Salvando...';
+      
+      try {
+        const data = {
+          record_type: 'pitd',
+          teacher_name: inputs[0].value.trim(),
+          uc: inputs[1].value.trim(),
+          file_name: inputs[2].value.trim(),
+          uploaded_at: new Date().toISOString()
+        };
+        
+        const result = await window.dataSdk.create(data);
+        
+        if (result.isOk) {
+          e.target.reset();
+          btn.disabled = false;
+          btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>Salvar PITD';
+          showSuccessMessage('✅ PITD salvo com sucesso!');
+        } else {
+          btn.disabled = false;
+          btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>Salvar PITD';
+          showErrorMessage('❌ Erro ao salvar: ' + (result.error?.message || 'Desconhecido'));
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>Salvar PITD';
+        showErrorMessage('❌ Erro: ' + err.message);
+      }
+    });
+
+    document.getElementById('pctd-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const inputs = e.target.querySelectorAll('input, select');
+      
+      if (!inputs[0]?.value?.trim()) {
+        showErrorMessage('❌ Digite o nome do curso');
+        return;
+      }
+      if (!inputs[1]?.value?.trim()) {
+        showErrorMessage('❌ Digite o código da oferta');
+        return;
+      }
+      if (!inputs[2]?.value) {
+        showErrorMessage('❌ Selecione o período');
+        return;
+      }
+      if (!inputs[3]?.value) {
+        showErrorMessage('❌ Selecione a data de início');
+        return;
+      }
+      if (!inputs[4]?.value) {
+        showErrorMessage('❌ Selecione a data de conclusão');
+        return;
+      }
+      if (!inputs[5]?.value?.trim()) {
+        showErrorMessage('❌ Cole o link do arquivo');
+        return;
+      }
+      
+      const btn = e.target.querySelector('button');
+      btn.disabled = true;
+      btn.textContent = '⏳ Salvando...';
+      
+      try {
+        const data = {
+          record_type: 'pctd',
+          course_name: inputs[0].value.trim(),
+          offer_code: inputs[1].value.trim(),
+          period: inputs[2].value,
+          start_date: inputs[3].value,
+          end_date: inputs[4].value,
+          file_name: inputs[5].value.trim(),
+          uploaded_at: new Date().toISOString()
+        };
+        
+        const result = await window.dataSdk.create(data);
+        
+        if (result.isOk) {
+          e.target.reset();
+          btn.disabled = false;
+          btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>Salvar PCTD';
+          showSuccessMessage('✅ PCTD salvo com sucesso!');
+        } else {
+          btn.disabled = false;
+          btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>Salvar PCTD';
+          showErrorMessage('❌ Erro ao salvar: ' + (result.error?.message || 'Desconhecido'));
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>Salvar PCTD';
+        showErrorMessage('❌ Erro: ' + err.message);
+      }
+    });
+
+    window.switchEventosTab = (btn) => {
+      const tabName = btn.getAttribute('data-tab');
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        if (b.closest('#eventos-page')) {
+          b.classList.remove('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
+        }
+      });
+      document.querySelectorAll('#eventos-page .tab-content').forEach(c => c.classList.add('hidden'));
+      btn.classList.add('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
+      document.getElementById('tab-' + tabName).classList.remove('hidden');
+      if (tabName === 'agenda-eventos') {
+        renderCalendar();
+        renderEventos();
+      }
+    };
+
+    let currentCalendarMonth = new Date();
+
+    window.previousMonth = () => {
+      currentCalendarMonth.setMonth(currentCalendarMonth.getMonth() - 1);
+      renderCalendar();
+    };
+
+    window.nextMonth = () => {
+      currentCalendarMonth.setMonth(currentCalendarMonth.getMonth() + 1);
+      renderCalendar();
+    };
+
+    function renderCalendar() {
+      const year = currentCalendarMonth.getFullYear();
+      const month = currentCalendarMonth.getMonth();
+      
+      // Atualizar título
+      const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+      document.getElementById('calendar-month').textContent = monthNames[month] + ' ' + year;
+      
+      // Obter o primeiro dia do mês e quantos dias tem
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const daysInPrevMonth = new Date(year, month, 0).getDate();
+      
+      const calendarGrid = document.getElementById('calendar-grid');
+      calendarGrid.innerHTML = '';
+      
+      // Dias do mês anterior
+      for (let i = firstDay - 1; i >= 0; i--) {
+        const day = document.createElement('div');
+        day.className = 'p-2 bg-gray-100 text-gray-400 text-center rounded min-h-20 flex flex-col items-center justify-center';
+        day.textContent = daysInPrevMonth - i;
+        calendarGrid.appendChild(day);
+      }
+      
+      // Dias do mês atual
+      for (let i = 1; i <= daysInMonth; i++) {
+        const day = document.createElement('div');
+        const currentDate = new Date(year, month, i);
+        const dateStr = currentDate.toISOString().split('T')[0];
+        const eventsOnDay = allEventos.filter(evt => evt.event_date === dateStr);
+        
+        // Separar eventos por período
+        const eventsManha = eventsOnDay.filter(evt => {
+          const hour = parseInt(evt.event_time.split(':')[0]);
+          return hour >= 6 && hour < 12;
+        });
+        const eventsTarde = eventsOnDay.filter(evt => {
+          const hour = parseInt(evt.event_time.split(':')[0]);
+          return hour >= 12 && hour < 18;
+        });
+        const eventsNoite = eventsOnDay.filter(evt => {
+          const hour = parseInt(evt.event_time.split(':')[0]);
+          return hour >= 18 && hour < 24;
+        });
+        
+        let dayClass = 'p-2 bg-white border-2 border-gray-200 rounded min-h-20 flex flex-col items-start justify-start text-left cursor-pointer hover:bg-blue-50 transition-all gap-1';
+        
+        if (eventsOnDay.length > 0) {
+          dayClass = 'p-2 bg-white border-2 border-[#F7941D] rounded min-h-20 flex flex-col items-start justify-start text-left cursor-pointer hover:bg-blue-50 transition-all gap-1';
+        }
+        
+        day.className = dayClass;
+        
+        let html = `<span class="font-bold text-[#004587] text-sm w-full">${i}</span>`;
+        
+        if (eventsManha.length > 0) {
+          html += `<span class="text-xs bg-yellow-400 text-white px-1.5 py-0.5 rounded font-semibold">${eventsManha.length} Manhã</span>`;
+        }
+        if (eventsTarde.length > 0) {
+          html += `<span class="text-xs bg-orange-500 text-white px-1.5 py-0.5 rounded font-semibold">${eventsTarde.length} Tarde</span>`;
+        }
+        if (eventsNoite.length > 0) {
+          html += `<span class="text-xs bg-purple-600 text-white px-1.5 py-0.5 rounded font-semibold">${eventsNoite.length} Noite</span>`;
+        }
+        
+        day.innerHTML = html;
+        day.onclick = () => filterEventosByDate(dateStr);
+        calendarGrid.appendChild(day);
+      }
+      
+      // Dias do próximo mês
+      const totalCells = calendarGrid.children.length + firstDay;
+      const remainingCells = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+      for (let i = 1; i <= remainingCells; i++) {
+        const day = document.createElement('div');
+        day.className = 'p-2 bg-gray-100 text-gray-400 text-center rounded min-h-20 flex flex-col items-center justify-center';
+        day.textContent = i;
+        calendarGrid.appendChild(day);
+      }
+    }
+
+    window.filterEventosByDate = (dateStr) => {
+      const lista = document.getElementById('eventos-lista');
+      const eventosDoDay = allEventos.filter(evt => evt.event_date === dateStr);
+      
+      if (eventosDoDay.length === 0) {
+        lista.innerHTML = '<p class="text-gray-600 text-center py-8 col-span-full">Nenhum evento nesta data</p>';
+        return;
+      }
+      
+      lista.innerHTML = eventosDoDay.map(evt => {
+        const data = new Date(evt.event_date);
+        const dataFormatada = data.toLocaleDateString('pt-BR');
+        return `
+          <div class="bg-gradient-to-r from-[#004587]/10 to-[#F7941D]/10 rounded-xl p-6 border-l-4 border-[#F7941D] shadow-md hover:shadow-lg transition-all cursor-pointer" onclick="showEventoDetail('${evt.__backendId || ''}')">
+            <div class="flex justify-between items-start">
+              <div class="flex-1">
+                <h4 class="text-xl font-bold text-[#004587] mb-2">${evt.event_title || 'Sem título'}</h4>
+                <div class="flex flex-wrap gap-4 text-sm text-gray-600">
+                  <span class="flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    ${dataFormatada} às ${evt.event_time || '--:--'}
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
+                    ${evt.event_location || 'Local não informado'}
+                  </span>
+                </div>
+                <p class="text-gray-700 mt-3 line-clamp-2">${evt.event_description || ''}</p>
+              </div>
+              <span class="bg-[#F7941D] text-white px-3 py-1 rounded-full text-xs font-semibold ml-4 whitespace-nowrap">${evt.event_category || 'Evento'}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    };
+
+    function renderEventos() {
+      const lista = document.getElementById('eventos-lista');
+      if (allEventos.length === 0) {
+        lista.innerHTML = '<p class="text-gray-600 text-center py-8">Nenhum evento cadastrado</p>';
+        return;
+      }
+      lista.innerHTML = allEventos.map(evt => {
+        const data = new Date(evt.event_date);
+        const dataFormatada = data.toLocaleDateString('pt-BR');
+        return `
+          <div class="bg-gradient-to-r from-[#004587]/10 to-[#F7941D]/10 rounded-xl p-6 border-l-4 border-[#F7941D] shadow-md hover:shadow-lg transition-all cursor-pointer" onclick="showEventoDetail('${evt.__backendId || ''}')">
+            <div class="flex justify-between items-start">
+              <div class="flex-1">
+                <h4 class="text-xl font-bold text-[#004587] mb-2">${evt.event_title || 'Sem título'}</h4>
+                <div class="flex flex-wrap gap-4 text-sm text-gray-600">
+                  <span class="flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    ${dataFormatada} às ${evt.event_time || '--:--'}
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
+                    ${evt.event_location || 'Local não informado'}
+                  </span>
+                </div>
+                <p class="text-gray-700 mt-3 line-clamp-2">${evt.event_description || ''}</p>
+              </div>
+              <span class="bg-[#F7941D] text-white px-3 py-1 rounded-full text-xs font-semibold ml-4 whitespace-nowrap">${evt.event_category || 'Evento'}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.showEventoDetail = (id) => {
+      const evt = allEventos.find(e => e.__backendId === id);
+      if (!evt) return;
+      const lista = document.getElementById('eventos-lista');
+      const data = new Date(evt.event_date);
+      const dataFormatada = data.toLocaleDateString('pt-BR');
+      lista.innerHTML = `
+        <button onclick="renderEventos()" class="mb-4 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
+        </button>
+        <div class="bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-8 border-2 border-[#004587]/20">
+          <div class="flex justify-between items-start mb-6">
+            <h3 class="text-3xl font-bold text-[#004587]">${evt.event_title}</h3>
+            <span class="bg-[#F7941D] text-white px-4 py-2 rounded-full font-semibold">${evt.event_category}</span>
+          </div>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <p class="text-gray-600 font-semibold mb-2">Data</p>
+              <p class="text-[#004587]">${dataFormatada}</p>
+            </div>
+            <div>
+              <p class="text-gray-600 font-semibold mb-2">Horário</p>
+              <p class="text-[#004587]">${evt.event_time}</p>
+            </div>
+            <div class="md:col-span-2">
+              <p class="text-gray-600 font-semibold mb-2">Local</p>
+              <p class="text-[#004587]">${evt.event_location}</p>
+            </div>
+            <div class="md:col-span-2">
+              <p class="text-gray-600 font-semibold mb-2">Descrição</p>
+              <p class="text-[#004587] whitespace-pre-wrap">${evt.event_description}</p>
+            </div>
+            <div class="md:col-span-2">
+              <p class="text-gray-600 font-semibold mb-2">Responsável</p>
+              <p class="text-[#004587]">${evt.responsible_name}</p>
+            </div>
+          </div>
+        </div>
+      `;
+    };
+
+    document.getElementById('eventos-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const inputs = e.target.querySelectorAll('input, select, textarea');
+      if (!inputs[0].value || !inputs[1].value || !inputs[2].value || !inputs[3].value || !inputs[4].value || !inputs[5].value) {
+        showErrorMessage('❌ Preencha todos os campos obrigatórios');
+        return;
+      }
+      const data = {
+        record_type: 'evento',
+        event_title: inputs[0].value.trim(),
+        event_category: inputs[1].value,
+        event_date: inputs[2].value,
+        event_time: inputs[3].value,
+        event_location: inputs[4].value.trim(),
+        event_description: inputs[5].value.trim(),
+        responsible_name: inputs[6].value.trim(),
+        created_at: new Date().toISOString()
+      };
+      const btn = e.target.querySelector('button');
+      btn.disabled = true;
+      btn.textContent = '⏳ Salvando...';
+      try {
+        const result = await window.dataSdk.create(data);
+        if (result.isOk) {
+          e.target.reset();
+          btn.disabled = false;
+          btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>Salvar Evento';
+          showSuccessMessage('✅ Evento cadastrado com sucesso!');
+          renderEventos();
+        } else {
+          btn.disabled = false;
+          btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>Salvar Evento';
+          showErrorMessage('❌ Erro ao cadastrar: ' + (result.error?.message || 'Desconhecido'));
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>Salvar Evento';
+        showErrorMessage('❌ Erro ao conectar: ' + err.message);
+      }
+    });
+
+    document.getElementById('representantes-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const inputs = e.target.querySelectorAll('input');
+      if (!inputs[0].value || !inputs[1].value || !inputs[2].value) {
+        showErrorMessage('❌ Preencha todos os campos obrigatórios');
+        return;
+      }
+      const data = {
+        record_type: 'representante',
+        turma_id: inputs[0].value.trim(),
+        representative_name: inputs[1].value.trim(),
+        representative_phone: inputs[2].value.trim(),
+        vice_name: inputs[3].value.trim(),
+        vice_phone: inputs[4].value.trim()
+      };
+      const btn = e.target.querySelector('button');
+      btn.disabled = true;
+      btn.textContent = 'Salvando...';
+      try {
+        const result = await window.dataSdk.create(data);
+        btn.disabled = false;
+        btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>Salvar Representante';
+        if (result.isOk) {
+          e.target.reset();
+          showSuccessMessage('✅ Representante cadastrado com sucesso!');
+        } else {
+          showErrorMessage('❌ Erro ao cadastrar: ' + (result.error?.message || 'Desconhecido'));
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>Salvar Representante';
+        showErrorMessage('❌ Erro ao conectar: ' + err.message);
+      }
+    });
+
+    function showSuccessMessage(msg) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+      msgDiv.textContent = msg;
+      document.body.appendChild(msgDiv);
+      setTimeout(() => msgDiv.remove(), 4000);
+    }
+
+    function showErrorMessage(msg) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+      msgDiv.textContent = msg;
+      document.body.appendChild(msgDiv);
+      setTimeout(() => msgDiv.remove(), 4000);
+    }
+
+    const firstTabBtn = document.querySelector('.tab-btn[data-tab="cad-docentes"]');
+    if (firstTabBtn) {
+      firstTabBtn.classList.add('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
+    }
+  </script>
+</body>
+</html>
