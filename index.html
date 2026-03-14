@@ -265,20 +265,20 @@
       <h3 class="text-2xl font-bold text-[#004587] mb-8">Cadastro de Docentes</h3>
       <form id="cadastro-form" class="space-y-6">
        <div class="grid md:grid-cols-2 gap-6">
-        <div><label class="block text-[#004587] font-semibold mb-3">Nome Completo</label> <input type="text" placeholder="Seu nome completo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        <div><label class="block text-[#004587] font-semibold mb-3">Nome Completo</label> <input type="text" placeholder="Seu nome completo" name="nome_completo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
         </div>
-        <div><label class="block text-[#004587] font-semibold mb-3">Telefone</label> <input type="tel" placeholder="(XX) 9XXXX-XXXX" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        <div><label class="block text-[#004587] font-semibold mb-3">Telefone</label> <input type="tel" placeholder="(XX) 9XXXX-XXXX" name="telefone" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
         </div>
        </div>
        <div class="grid md:grid-cols-3 gap-6">
-        <div><label class="block text-[#004587] font-semibold mb-3">Instagram</label> <input type="text" placeholder="@usuario" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
+        <div><label class="block text-[#004587] font-semibold mb-3">Instagram</label> <input type="text" placeholder="@usuario" name="instagram" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
         </div>
-        <div><label class="block text-[#004587] font-semibold mb-3">Facebook</label> <input type="text" placeholder="Nome do perfil" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
+        <div><label class="block text-[#004587] font-semibold mb-3">Facebook</label> <input type="text" placeholder="Nome do perfil" name="facebook" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
         </div>
-        <div><label class="block text-[#004587] font-semibold mb-3">LinkedIn</label> <input type="text" placeholder="url do linkedin" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
+        <div><label class="block text-[#004587] font-semibold mb-3">LinkedIn</label> <input type="text" placeholder="url do linkedin" name="linkedin" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
         </div>
        </div>
-       <div><label class="block text-[#004587] font-semibold mb-3">Minidescrição/Minicurrículo</label> <textarea placeholder="Descreva seu perfil profissional, experiências e especialidades..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none h-32" required></textarea>
+       <div><label class="block text-[#004587] font-semibold mb-3">Minidescrição/Minicurrículo</label> <textarea placeholder="Descreva seu perfil profissional, experiências e especialidades..." name="mini_curriculo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none h-32" required></textarea>
        </div><button type="submit" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -289,17 +289,17 @@
       <h3 class="text-2xl font-bold text-[#004587] mb-8">Cadastro de Turmas</h3>
       <form id="turmas-form" class="space-y-6">
        <div class="grid md:grid-cols-2 gap-6">
-        <div><label class="block text-[#004587] font-semibold mb-3">Nome do Curso</label> <input type="text" placeholder="Ex: Técnico em Administração" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        <div><label class="block text-[#004587] font-semibold mb-3">Nome do Curso</label> <input type="text" placeholder="Ex: Técnico em Administração" name="nome_do_curso" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
         </div>
-        <div><label class="block text-[#004587] font-semibold mb-3">Código da Oferta</label> <input type="text" placeholder="Ex: 2024-001" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        <div><label class="block text-[#004587] font-semibold mb-3">Código da Oferta</label> <input type="text" placeholder="Ex: 2024-001" name="codigo_da_oferta" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
         </div>
        </div>
        <div class="grid md:grid-cols-3 gap-6">
-        <div><label class="block text-[#004587] font-semibold mb-3">Data de Início</label> <input type="date" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        <div><label class="block text-[#004587] font-semibold mb-3">Data de Início</label> <input type="date" name="data_de_inicio" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
         </div>
-        <div><label class="block text-[#004587] font-semibold mb-3">Data de Término</label> <input type="date" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        <div><label class="block text-[#004587] font-semibold mb-3">Data de Término</label> <input type="date" name="data_de_termino" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
         </div>
-        <div><label class="block text-[#004587] font-semibold mb-3">Período</label> <select class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required> <option value="">Selecione</option> <option value="manha">Manhã</option> <option value="tarde">Tarde</option> <option value="noite">Noite</option> </select>
+        <div><label class="block text-[#004587] font-semibold mb-3">Período</label> <select name="periodo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required> <option value="">Selecione</option> <option value="manha">Manhã</option> <option value="tarde">Tarde</option> <option value="noite">Noite</option> </select>
         </div>
        </div><button type="submit" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
@@ -310,11 +310,11 @@
      <div id="tab-pitd" class="tab-content hidden bg-gray-50 rounded-2xl p-8">
       <h3 class="text-2xl font-bold text-[#004587] mb-8">Plano Individual de Trabalho Docente</h3>
       <form id="pitd-form" class="space-y-6">
-       <div><label class="block text-[#004587] font-semibold mb-3">Docente</label> <input type="text" placeholder="Nome do docente..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+       <div><label class="block text-[#004587] font-semibold mb-3">Docente</label> <input type="text" placeholder="Nome do docente..." name="docente" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
        </div>
-       <div><label class="block text-[#004587] font-semibold mb-3">Unidade Curricular</label> <input type="text" placeholder="Digite a UC..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+       <div><label class="block text-[#004587] font-semibold mb-3">Unidade Curricular</label> <input type="text" placeholder="Digite a UC..." name="unidade_curricular" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
        </div>
-       <div><label class="block text-[#004587] font-semibold mb-3">Link do Arquivo PITD</label> <input type="url" placeholder="https://drive.google.com/... ou https://1drv.ms/..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+       <div><label class="block text-[#004587] font-semibold mb-3">Link do Arquivo PITD</label> <input type="url" placeholder="https://drive.google.com/... ou https://1drv.ms/..." name="link_do_arquivo_pitd" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
         <p class="text-gray-500 text-sm mt-2">📎 Compartilhe o link aberto do seu Google Drive ou OneDrive</p>
        </div><button type="submit" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
@@ -326,20 +326,20 @@
       <h3 class="text-2xl font-bold text-[#004587] mb-8">Plano Coletivo de Trabalho Docente</h3>
       <form id="pctd-form" class="space-y-6">
        <div class="grid md:grid-cols-2 gap-6">
-        <div><label class="block text-[#004587] font-semibold mb-3">Nome do Curso</label> <input type="text" placeholder="Ex: Técnico em Administração" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        <div><label class="block text-[#004587] font-semibold mb-3">Nome do Curso</label> <input type="text" placeholder="Ex: Técnico em Administração" name="nome_do_curso" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
         </div>
-        <div><label class="block text-[#004587] font-semibold mb-3">Código da Oferta</label> <input type="text" placeholder="Ex: 2024-001" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        <div><label class="block text-[#004587] font-semibold mb-3">Código da Oferta</label> <input type="text" placeholder="Ex: 2024-001" name="codigo_da_oferta" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
         </div>
        </div>
        <div class="grid md:grid-cols-3 gap-6">
-        <div><label class="block text-[#004587] font-semibold mb-3">Período</label> <select class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required> <option value="">Selecione</option> <option value="manha">Manhã</option> <option value="tarde">Tarde</option> <option value="noite">Noite</option> </select>
+        <div><label class="block text-[#004587] font-semibold mb-3">Período</label> <select name="periodo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required> <option value="">Selecione</option> <option value="manha">Manhã</option> <option value="tarde">Tarde</option> <option value="noite">Noite</option> </select>
         </div>
-        <div><label class="block text-[#004587] font-semibold mb-3">Data de Início</label> <input type="date" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        <div><label class="block text-[#004587] font-semibold mb-3">Data de Início</label> <input type="date" name="data_de_inicio" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
         </div>
-        <div><label class="block text-[#004587] font-semibold mb-3">Data de Conclusão</label> <input type="date" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        <div><label class="block text-[#004587] font-semibold mb-3">Data de Conclusão</label> <input type="date" name="data_de_conclusao" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
         </div>
        </div>
-       <div><label class="block text-[#004587] font-semibold mb-3">Link do Arquivo PCTD</label> <input type="url" placeholder="https://drive.google.com/... ou https://1drv.ms/..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+       <div><label class="block text-[#004587] font-semibold mb-3">Link do Arquivo PCTD</label> <input type="url" placeholder="https://drive.google.com/... ou https://1drv.ms/..." name="link_do_arquivo_pctd" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
         <p class="text-gray-500 text-sm mt-2">📎 Compartilhe o link aberto do seu Google Drive ou OneDrive</p>
        </div><button type="submit" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
@@ -350,18 +350,18 @@
      <div id="tab-representantes" class="tab-content hidden bg-gray-50 rounded-2xl p-8">
       <h3 class="text-2xl font-bold text-[#004587] mb-8">Cadastro de Representantes Estudantis</h3>
       <form id="representantes-form" class="space-y-6">
-       <div><label class="block text-[#004587] font-semibold mb-3">Turma/Curso</label> <input type="text" placeholder="Ex: 1A - Administração" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+       <div><label class="block text-[#004587] font-semibold mb-3">Turma/Curso</label> <input type="text" placeholder="Ex: 1A - Administração" name="turma_curso" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
        </div>
        <div class="grid md:grid-cols-2 gap-6">
-        <div><label class="block text-[#004587] font-semibold mb-3">Representante</label> <input type="text" placeholder="Nome completo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        <div><label class="block text-[#004587] font-semibold mb-3">Representante</label> <input type="text" placeholder="Nome completo" name="representante" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
         </div>
-        <div><label class="block text-[#004587] font-semibold mb-3">Telefone do Representante</label> <input type="tel" placeholder="(XX) 9XXXX-XXXX" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        <div><label class="block text-[#004587] font-semibold mb-3">Telefone do Representante</label> <input type="tel" placeholder="(XX) 9XXXX-XXXX" name="telefone_do_representante" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
         </div>
        </div>
        <div class="grid md:grid-cols-2 gap-6">
-        <div><label class="block text-[#004587] font-semibold mb-3">Vice-Representante</label> <input type="text" placeholder="Nome completo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        <div><label class="block text-[#004587] font-semibold mb-3">Vice-Representante</label> <input type="text" placeholder="Nome completo" name="vice_representante" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
         </div>
-        <div><label class="block text-[#004587] font-semibold mb-3">Telefone do Vice-Representante</label> <input type="tel" placeholder="(XX) 9XXXX-XXXX" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        <div><label class="block text-[#004587] font-semibold mb-3">Telefone do Vice-Representante</label> <input type="tel" placeholder="(XX) 9XXXX-XXXX" name="telefone_do_vice_representante" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
         </div>
        </div><button type="submit" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
@@ -525,23 +525,23 @@
      <div id="tab-criar-evento" class="tab-content hidden bg-gray-50 rounded-2xl p-8">
       <h3 class="text-2xl font-bold text-[#004587] mb-8">Cadastrar Novo Evento</h3>
       <form id="eventos-form" class="space-y-6">
-       <div><label class="block text-[#004587] font-semibold mb-3">Título do Evento</label> <input type="text" placeholder="Digite o título do evento" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+       <div><label class="block text-[#004587] font-semibold mb-3">Título do Evento</label> <input type="text" placeholder="Digite o título do evento" name="titulo_do_evento" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
        </div>
        <div class="grid md:grid-cols-2 gap-6">
-        <div><label class="block text-[#004587] font-semibold mb-3">Categoria</label> <select class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required> <option value="">Selecione</option> <option value="Seminário">Seminário</option> <option value="Workshop">Workshop</option> <option value="Reunião">Reunião</option> <option value="Palestra">Palestra</option> <option value="Outro">Outro</option> </select>
+        <div><label class="block text-[#004587] font-semibold mb-3">Categoria</label> <select name="categoria" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required> <option value="">Selecione</option> <option value="Seminário">Seminário</option> <option value="Workshop">Workshop</option> <option value="Reunião">Reunião</option> <option value="Palestra">Palestra</option> <option value="Outro">Outro</option> </select>
         </div>
-        <div><label class="block text-[#004587] font-semibold mb-3">Data</label> <input type="date" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        <div><label class="block text-[#004587] font-semibold mb-3">Data</label> <input type="date" name="data" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
         </div>
        </div>
        <div class="grid md:grid-cols-2 gap-6">
-        <div><label class="block text-[#004587] font-semibold mb-3">Horário</label> <input type="time" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        <div><label class="block text-[#004587] font-semibold mb-3">Horário</label> <input type="time" name="horario" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
         </div>
-        <div><label class="block text-[#004587] font-semibold mb-3">Local</label> <input type="text" placeholder="Onde o evento acontecerá" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+        <div><label class="block text-[#004587] font-semibold mb-3">Local</label> <input type="text" placeholder="Onde o evento acontecerá" name="local" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
         </div>
        </div>
-       <div><label class="block text-[#004587] font-semibold mb-3">Descrição</label> <textarea placeholder="Descreva os detalhes do evento..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none h-32" required></textarea>
+       <div><label class="block text-[#004587] font-semibold mb-3">Descrição</label> <textarea placeholder="Descreva os detalhes do evento..." name="descricao" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none h-32" required></textarea>
        </div>
-       <div><label class="block text-[#004587] font-semibold mb-3">Responsável</label> <input type="text" placeholder="Nome de quem organizou o evento" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+       <div><label class="block text-[#004587] font-semibold mb-3">Responsável</label> <input type="text" placeholder="Nome de quem organizou o evento" name="responsavel" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
        </div><button type="submit" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -1200,23 +1200,22 @@
       btn.disabled = true;
       btn.textContent = '⏳ Salvando...';
       try {
-        const formData = new FormData(e.target);
-        const response = await fetch('https://formspree.io/f/xeerznrl', {
-          method: 'POST',
-          body: formData,
-          headers: { 'Accept': 'application/json' }
-        });
-        if (response.ok) {
+        const result = await window.dataSdk.create(data);
+        if (result.isOk) {
           e.target.reset();
           btn.disabled = false;
-          showSuccessMessage('✅ Enviado com sucesso!');
+          btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>Salvar Evento';
+          showSuccessMessage('✅ Evento cadastrado com sucesso!');
           renderEventos();
         } else {
-          throw new Error('Erro ao enviar');
+          btn.disabled = false;
+          btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>Salvar Evento';
+          showErrorMessage('❌ Erro ao cadastrar: ' + (result.error?.message || 'Desconhecido'));
         }
       } catch (err) {
         btn.disabled = false;
-        showErrorMessage('❌ Erro ao enviar: ' + err.message);
+        btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>Salvar Evento';
+        showErrorMessage('❌ Erro ao conectar: ' + err.message);
       }
     });
 
