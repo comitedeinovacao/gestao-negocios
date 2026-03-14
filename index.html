@@ -10,7 +10,7 @@
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.17/dist/tailwind.min.css" />
-  <script src="/_sdk/element_sdk.js" defer></script>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
@@ -79,7 +79,26 @@
     }
   </style>
   <style>body { box-sizing: border-box; }</style>
-  <script src="/_sdk/data_sdk.js" type="text/javascript" defer></script>
+  <script>
+  window.dataSdk = {
+    create: async function(data) {
+      console.log('Dado salvo:', data);
+      return { isOk: true, data: { id: 'id_' + Date.now(), ...data } };
+    },
+    list: async function(filter) {
+      return { isOk: true, data: [] };
+    },
+    update: async function(id, data) {
+      return { isOk: true, data: { id, ...data } };
+    },
+    delete: async function(id) {
+      return { isOk: true };
+    }
+  };
+  window.elementSdk = {
+    getUser: function() { return { name: 'Usuário', email: 'usuario@senac.br' }; }
+  };
+</script>
   <script src="main.js" defer></script>
  </head>
  <body class="h-full bg-gradient-to-b from-[#0a1628] via-[#0f2847] to-[#1a1a2e] overflow-auto">
