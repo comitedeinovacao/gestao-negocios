@@ -1041,6 +1041,7 @@
       const daysInPrevMonth = new Date(year, month, 0).getDate();
       
       const calendarGrid = document.getElementById('calendar-grid');
+      calendarGrid.innerHTML = '<div class="col-span-7 text-center py-8 text-gray-400">? Carregando eventos...</div>';
       calendarGrid.innerHTML = '';
       
       // Dias do mÃªs anterior
@@ -1262,70 +1263,60 @@
     }
 
     function showEventoDetail(evento) {
-      const data = new Date(evento.data);
-      const dataFormatada = data.toLocaleDateString('pt-BR', { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      });
-      
-      let color = '#004587';
-      let tipoTexto = 'Evento';
-      
-      if (evento.tipo === 'reuniao_pedagogica') {
-        tipoTexto = 'ReuniÃ£o PedagÃ³gica';
-        color = '#DC2626';
-      } else if (evento.tipo === 'feriado') {
-        tipoTexto = 'Feriado';
-        color = '#6B7280';
-      } else if (evento.tipo === 'evento_interno') {
-        tipoTexto = 'Evento Interno';
-      } else if (evento.tipo === 'evento_externo') {
-        tipoTexto = 'Evento Externo';
-      }
-      
+      const data = new Date(evento.data + 'T12:00:00');
+      const dataFormatada = data.toLocaleDateString('pt-BR', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+      let color = '#004587', tipoTexto = 'Evento';
+      if (evento.tipo === 'reuniao_pedagogica') { tipoTexto = 'Reunião Pedagógica'; color = '#DC2626'; }
+      else if (evento.tipo === 'feriado') { tipoTexto = 'Feriado'; color = '#6B7280'; }
+      else if (evento.tipo === 'evento_interno') { tipoTexto = 'Evento Interno'; }
+      else if (evento.tipo === 'evento_externo') { tipoTexto = 'Evento Externo'; }
+
       let periodoTexto = 'Dia todo';
-      if (evento.duracao === 'periodo_especifico') {
-        periodoTexto = `${evento.periodo.charAt(0).toUpperCase() + evento.periodo.slice(1)} (${evento.horario_inicio} - ${evento.horario_fim})`;
+      if (evento.duracao === 'periodo_especifico' && evento.periodo) {
+        periodoTexto = evento.periodo.charAt(0).toUpperCase() + evento.periodo.slice(1);
+        if (evento.horario_inicio && evento.horario_fim) {
+          periodoTexto += ' (' + evento.horario_inicio + ' - ' + evento.horario_fim + ')';
+        }
       }
-      
+
+      const isSheets = String(evento.id || '').startsWith('sheets_');
+      const eventoJson = JSON.stringify(evento).replace(/'/g, "&#39;").replace(/"/g, '&quot;');
+      const acoesHtml = isSheets ? `
+        <div class="flex gap-3 mt-6 pt-6 border-t border-gray-200">
+          <button onclick='editarEvento(JSON.parse(decodeURIComponent("${encodeURIComponent(JSON.stringify(evento))}")))' 
+            class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg> Editar
+          </button>
+          <button onclick="excluirEvento('${evento.id}', '${(evento.titulo||'').replace(/'/g,'&#39;')}')"
+            class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg> Excluir
+          </button>
+        </div>` : '';
+
       const lista = document.getElementById('eventos-lista');
       lista.innerHTML = `
         <button onclick="renderEventos()" class="mb-4 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Voltar
         </button>
         <div class="bg-white rounded-2xl p-8 border-2 border-gray-200 shadow-lg">
           <div class="flex justify-between items-start mb-6">
             <h3 class="text-3xl font-bold text-[#004587]">${evento.titulo}</h3>
-            <span class="px-4 py-2 rounded-full font-semibold text-white" style="background-color: ${color}">${tipoTexto}</span>
+            <span class="px-4 py-2 rounded-full font-semibold text-white text-sm" style="background-color:${color}">${tipoTexto}</span>
           </div>
           <div class="grid md:grid-cols-2 gap-6">
-            <div>
-              <p class="text-gray-600 font-semibold mb-2">Data</p>
-              <p class="text-[#004587]">${dataFormatada}</p>
-            </div>
-            <div>
-              <p class="text-gray-600 font-semibold mb-2">PerÃ­odo</p>
-              <p class="text-[#004587]">${periodoTexto}</p>
-            </div>
-            ${evento.recorrente ? `
-            <div class="md:col-span-2">
-              <p class="text-gray-600 font-semibold mb-2">Recorrente</p>
-              <p class="text-[#004587]">Sim - Toda 1Âª segunda do mÃªs</p>
-            </div>
-            ` : ''}
-            <div class="md:col-span-2">
-              <p class="text-gray-600 font-semibold mb-2">DescriÃ§Ã£o</p>
-              <p class="text-[#004587] whitespace-pre-wrap">${evento.descricao || 'Sem descriÃ§Ã£o'}</p>
-            </div>
-            <div class="md:col-span-2">
-              <p class="text-gray-600 font-semibold mb-2">ResponsÃ¡vel</p>
-              <p class="text-[#004587]">${evento.responsavel || 'NÃ£o informado'}</p>
-            </div>
+            <div><p class="text-gray-600 font-semibold mb-2">Data</p><p class="text-[#004587]">${dataFormatada}</p></div>
+            <div><p class="text-gray-600 font-semibold mb-2">Período</p><p class="text-[#004587]">${periodoTexto}</p></div>
+            ${evento.local ? `<div class="md:col-span-2"><p class="text-gray-600 font-semibold mb-2">Local</p><p class="text-[#004587]">${evento.local}</p></div>` : ''}
+            <div class="md:col-span-2"><p class="text-gray-600 font-semibold mb-2">Descrição</p><p class="text-[#004587] whitespace-pre-wrap">${evento.descricao || 'Sem descrição'}</p></div>
+            <div class="md:col-span-2"><p class="text-gray-600 font-semibold mb-2">Responsável</p><p class="text-[#004587]">${evento.responsavel || 'Não informado'}</p></div>
           </div>
-        </div>
-      `;
+          ${acoesHtml}
+        </div>`;
     }
 
     document.getElementById('eventos-form')?.addEventListener('submit', async function(e) {
@@ -1507,4 +1498,7 @@
   </script>
 </body>
 </html>
+
+
+
 
