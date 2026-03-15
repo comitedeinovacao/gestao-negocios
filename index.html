@@ -1456,7 +1456,14 @@
                   const [dd, mm, yyyy] = d.split('/');
                   return `${yyyy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`;
                 }
-                if (d.includes('T')) return d.split('T')[0];
+                if (d.includes('T')) {
+                  // Sheets envia com fuso UTC-3 (Brasília), corrigir pegando data local
+                  const dt = new Date(d);
+                  const yyyy = dt.getFullYear();
+                  const mm = String(dt.getMonth() + 1).padStart(2,'0');
+                  const dd2 = String(dt.getDate()).padStart(2,'0');
+                  return `${yyyy}-${mm}-${dd2}`;
+                }
                 if (/^\d{5}$/.test(d)) {
                   const ms = new Date(Date.UTC(1899,11,30)).getTime() + parseInt(d) * 86400000;
                   return new Date(ms).toISOString().split('T')[0];
@@ -1470,8 +1477,8 @@
                 if (!h && h !== 0) return '';
                 const s = String(h);
                 if (s.includes('T')) {
-                  const parts = s.split('T')[1].split(':');
-                  return parts[0].padStart(2,'0') + ':' + parts[1].padStart(2,'0');
+                  const dt = new Date(s);
+                  return dt.getHours().toString().padStart(2,'0') + ':' + dt.getMinutes().toString().padStart(2,'0');
                 }
                 if (!isNaN(parseFloat(s)) && parseFloat(s) < 1) {
                   const totalMin = Math.round(parseFloat(s) * 24 * 60);
@@ -1486,8 +1493,8 @@
                 if (!h && h !== 0) return '';
                 const s = String(h);
                 if (s.includes('T')) {
-                  const parts = s.split('T')[1].split(':');
-                  return parts[0].padStart(2,'0') + ':' + parts[1].padStart(2,'0');
+                  const dt = new Date(s);
+                  return dt.getHours().toString().padStart(2,'0') + ':' + dt.getMinutes().toString().padStart(2,'0');
                 }
                 if (!isNaN(parseFloat(s)) && parseFloat(s) < 1) {
                   const totalMin = Math.round(parseFloat(s) * 24 * 60);
