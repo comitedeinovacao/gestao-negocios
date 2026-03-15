@@ -1022,6 +1022,11 @@
 
 
     async function renderCalendar() {
+      const year = currentYear;
+      const month = currentMonth;
+      const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+      document.getElementById('calendar-month').textContent = monthNames[month] + ' ' + year;
+
       // Carregar eventos das duas fontes
       try {
         allEventos = await carregarTodosEventos();
@@ -1029,13 +1034,6 @@
         allEventos = [];
         console.error('Erro ao carregar eventos:', err);
       }
-
-      const year = currentYear;
-      const month = currentMonth;
-      
-      // Atualizar título
-      const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-      document.getElementById('calendar-month').textContent = monthNames[month] + ' ' + year;
       
       // Obter o primeiro dia do mês e quantos dias tem
       const firstDay = new Date(year, month, 1).getDay();
@@ -1445,11 +1443,34 @@
               id: 'sheets_' + Math.random(),
               titulo: String(evt.titulo || ''),
               tipo: String(evt.tipo || 'evento_interno'),
-              data: String(evt.data || '').split('T')[0],
+              data: (() => {
+                const d = String(evt.data || '');
+                if (d.includes('/')) {
+                  const parts = d.split('/');
+                  return parts[2] + '-' + parts[1].padStart(2,'0') + '-' + parts[0].padStart(2,'0');
+                }
+                return d.split('T')[0];
+              })(),
               duracao: String(evt.duracao || 'periodo_especifico'),
               periodo: String(evt.periodo || ''),
-              horario_inicio: String(evt.horario_inicio || ''),
-              horario_fim: String(evt.horario_fim || ''),
+              horario_inicio: (() => {
+                const h = evt.horario_inicio;
+                if (!h) return '';
+                if (String(h).includes('T')) {
+                  const d = new Date(h);
+                  return d.getUTCHours().toString().padStart(2,'0') + ':' + d.getUTCMinutes().toString().padStart(2,'0');
+                }
+                return String(h);
+              })(),
+              horario_fim: (() => {
+                const h = evt.horario_fim;
+                if (!h) return '';
+                if (String(h).includes('T')) {
+                  const d = new Date(h);
+                  return d.getUTCHours().toString().padStart(2,'0') + ':' + d.getUTCMinutes().toString().padStart(2,'0');
+                }
+                return String(h);
+              })(),
               local: String(evt.local || ''),
               descricao: String(evt.descricao || ''),
               responsavel: String(evt.responsavel || '')
