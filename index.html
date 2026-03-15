@@ -1020,8 +1020,7 @@
       btn.classList.add('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
       document.getElementById('tab-' + tabName).classList.remove('hidden');
       if (tabName === 'agenda-eventos') {
-        await loadEventos();
-        renderCalendar();
+        await renderCalendar();
         renderEventos();
       }
     };
@@ -1038,27 +1037,17 @@
       renderCalendar();
     };
 
-    async function loadEventos() {
+
+
+    async function renderCalendar() {
+      // Carregar eventos das duas fontes
       try {
-        // Carregar eventos do data.json
-        const responseLocal = await fetch('./data.json');
-        const dataLocal = await responseLocal.json();
-        const eventosLocais = dataLocal.eventos || [];
-
-        // Carregar eventos do Google Sheets
-        const responseSheets = await fetch('https://script.google.com/macros/s/AKfycbyujbQCQ4OKMiLXNl4Q3aOMCQp65ifsjXp8ZQbutBsJwoSfGMlDe9DCok1XKt_qc389hg/exec?aba=Eventos');
-        const dataSheets = await responseSheets.json();
-        const eventosSheets = dataSheets || [];
-
-        // Combinar os arrays de eventos
-        allEventos = [...eventosLocais, ...eventosSheets];
+        allEventos = await carregarTodosEventos();
       } catch (err) {
         allEventos = [];
         console.error('Erro ao carregar eventos:', err);
       }
-    }
 
-    function renderCalendar() {
       const year = currentCalendarMonth.getFullYear();
       const month = currentCalendarMonth.getMonth();
       
@@ -1392,8 +1381,7 @@
         
         form.reset();
         showSuccessMessage('✅ Evento salvo com sucesso!');
-        await loadEventos();
-        renderCalendar();
+        await renderCalendar();
         renderEventos();
       } catch (err) {
         showErrorMessage('❌ Erro ao salvar evento: ' + err.message);
@@ -1449,6 +1437,55 @@
       msgDiv.textContent = msg;
       document.body.appendChild(msgDiv);
       setTimeout(() => msgDiv.remove(), 4000);
+    }
+
+    function carregarEventosSheets() {
+      return new Promise(function(resolve) {
+        var callbackName = 'cb_' + Date.now();
+        var script = document.createElement('script');
+        var timeout = setTimeout(function() {
+          resolve([]);
+          if (script.parentNode) script.parentNode.removeChild(script);
+          delete window[callbackName];
+        }, 5000);
+        
+        window[callbackName] = function(data) {
+          clearTimeout(timeout);
+          if (script.parentNode) script.parentNode.removeChild(script);
+          delete window[callbackName];
+          if (data && data.status === 'ok' && data.dados) {
+            resolve(data.dados.map(function(evt) {
+              return {
+                id: 'sheets_' + Math.random(),
+                titulo: evt.titulo || '',
+                tipo: evt.tipo || 'evento_interno',
+                data: evt.data || '',
+                duracao: evt.duracao || 'periodo_especifico',
+                periodo: evt.periodo || '',
+                horario_inicio: evt.horario_inicio || '',
+                horario_fim: evt.horario_fim || '',
+                local: evt.local || '',
+                descricao: evt.descricao || '',
+                responsavel: evt.responsavel || ''
+              };
+            }));
+          } else {
+            resolve([]);
+          }
+        };
+        
+        script.src = 'https://script.google.com/macros/s/AKfycbyujbQCQ4OKMiLXNl4Q3aOMCQp65ifsjXp8ZQbutBsJwoSfGMlDe9DCok1XKt_qc389hg/exec?aba=Eventos&callback=' + callbackName;
+        document.head.appendChild(script);
+      });
+    }
+
+    async function carregarTodosEventos() {
+      var eventosSheetsPromise = carregarEventosSheets();
+      var response = await fetch('./data.json');
+      var data = await response.json();
+      var eventosJson = data.eventos || [];
+      var eventosSheets = await eventosSheetsPromise;
+      return eventosJson.concat(eventosSheets);
     }
 
     const firstTabBtn = document.querySelector('.tab-btn[data-tab="cad-docentes"]');
