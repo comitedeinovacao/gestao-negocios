@@ -127,25 +127,30 @@
   ],
   "eventos": [
     {
+      "id": "evt1",
+      "titulo": "Teste de Cadastro",
+      "tipo": "evento_interno",
+      "data": "2026-03-16",
+      "duracao": "periodo_especifico",
+      "periodo": "noite",
+      "horario_inicio": "19:30",
+      "horario_fim": "21:00",
+      "local": "Senac Araçatuba",
+      "descricao": "Teste de Cadastro",
+      "responsavel": "Jean Carlos"
+    },
+    {
+      "id": "evt2",
       "titulo": "Reunião Pedagógica",
       "tipo": "reuniao_pedagogica",
       "data": "2026-03-02",
       "duracao": "dia_todo",
-      "recorrente": false,
-      "descricao": "Reunião mensal de planejamento pedagógico",
-      "responsavel": "Coordenação Pedagógica"
-    },
-    {
-      "titulo": "Semana do Consumidor",
-      "tipo": "evento_externo",
-      "data": "2026-03-15",
-      "duracao": "periodo_especifico",
-      "periodo": "tarde",
-      "horario_inicio": "14:00",
-      "horario_fim": "18:00",
-      "recorrente": false,
-      "descricao": "Semana nacional do consumidor com atividades especiais",
-      "responsavel": "Setor de Marketing"
+      "periodo": "",
+      "horario_inicio": "",
+      "horario_fim": "",
+      "local": "Senac Araçatuba",
+      "descricao": "Reunião pedagógica mensal",
+      "responsavel": "Jean Carlos"
     }
   ]
 }
