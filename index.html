@@ -670,27 +670,6 @@
       document.getElementById(page + '-page').classList.add('active');
       window.scrollTo(0, 0);
       if (page === 'eventos') {
-        // Garantir que os botões de navegação do calendário estejam prontos
-        const prevBtn = document.getElementById('prev-month');
-        const nextBtn = document.getElementById('next-month');
-        if (prevBtn && !prevBtn.dataset.initialized) {
-          prevBtn.dataset.initialized = 'true';
-          prevBtn.onclick = async function() {
-            window.currentMonth--;
-            if (window.currentMonth < 0) { window.currentMonth = 11; window.currentYear--; }
-            await renderCalendar();
-            renderEventos();
-          };
-        }
-        if (nextBtn && !nextBtn.dataset.initialized) {
-          nextBtn.dataset.initialized = 'true';
-          nextBtn.onclick = async function() {
-            window.currentMonth++;
-            if (window.currentMonth > 11) { window.currentMonth = 0; window.currentYear++; }
-            await renderCalendar();
-            renderEventos();
-          };
-        }
         await renderCalendar();
         renderEventos();
       }
@@ -1019,6 +998,32 @@
       await loadPCTD();
       await loadPITD();
       await loadRepresentantes();
+
+      // Inicializar botões do calendário
+      const prevBtn = document.getElementById('prev-month');
+      const nextBtn = document.getElementById('next-month');
+      if (prevBtn) {
+        prevBtn.onclick = async function() {
+          window.currentMonth--;
+          if (window.currentMonth < 0) { window.currentMonth = 11; window.currentYear--; }
+          await renderCalendar();
+          renderEventos();
+        };
+      }
+      if (nextBtn) {
+        nextBtn.onclick = async function() {
+          window.currentMonth++;
+          if (window.currentMonth > 11) { window.currentMonth = 0; window.currentYear++; }
+          await renderCalendar();
+          renderEventos();
+        };
+      }
+
+      // Se a página de eventos já estiver ativa, renderizar o calendário
+      if (document.getElementById('eventos-page').classList.contains('active')) {
+        await renderCalendar();
+        renderEventos();
+      }
     });
 
 
