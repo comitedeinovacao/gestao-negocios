@@ -157,31 +157,6 @@
      </div>
      <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white via-white/50 to-transparent"></div>
     </section><!-- Seção Gestão -->
-    <section id="banco-ideias" class="w-full py-16 bg-[#004587]/5 mt-20">
-      <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl p-8 border border-[#004587]/20">
-        <h2 class="text-3xl font-bold text-[#004587] mb-6 flex items-center gap-2">
-          <svg class="w-8 h-8 text-[#F7941D]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-          Banco de Ideias
-        </h2>
-        <form id="ideiaForm" class="space-y-6" action="https://formspree.io/f/xeerznrl" method="POST">
-          <div>
-            <label for="nome" class="block text-sm font-medium text-[#004587]">Nome</label>
-            <input type="text" id="nome" name="nome" required class="mt-1 block w-full rounded-lg border border-[#004587]/30 bg-[#004587]/5 px-4 py-2 text-[#004587]" placeholder="Seu nome" />
-          </div>
-          <div>
-            <label for="email" class="block text-sm font-medium text-[#004587]">E-mail</label>
-            <input type="email" id="email" name="email" required class="mt-1 block w-full rounded-lg border border-[#004587]/30 bg-[#004587]/5 px-4 py-2 text-[#004587]" placeholder="seu@email.com" />
-          </div>
-          <div>
-            <label for="ideia" class="block text-sm font-medium text-[#004587]">Sua Ideia</label>
-            <textarea id="ideia" name="ideia" required rows="5" class="mt-1 block w-full rounded-lg border border-[#004587]/30 bg-[#004587]/5 px-4 py-2 text-[#004587] resize-none" placeholder="Descreva sua ideia..."></textarea>
-          </div>
-          <button type="submit" class="w-full bg-[#F7941D] hover:bg-[#004587] text-white font-bold py-3 rounded-lg shadow-lg transition-all duration-300">
-            Enviar Ideia 🚀
-          </button>
-        </form>
-      </div>
-    </section>
     <section id="gestao" class="py-20 bg-white">
      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16"><span class="text-[#F7941D] font-semibold tracking-wider uppercase text-sm">Área de Gestão</span>
@@ -378,8 +353,30 @@
        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
        </svg> Voltar </button>
-     </div><!-- Cards de Seleção -->
-     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+     </div>     <!-- Cards Iniciais de Modalidade -->
+     <div class="grid md:grid-cols-2 gap-8 mb-12">
+      <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-8 shadow-lg border-2 border-[#004587]/20 cursor-pointer" onclick="openModalidade('tecnicos')">
+       <div class="w-20 h-20 bg-gradient-to-br from-[#004587] to-[#003366] rounded-2xl flex items-center justify-center mb-6 mx-auto">
+        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+        </svg>
+       </div>
+       <h3 class="text-3xl font-bold text-[#004587] mb-4 text-center">Cursos Técnicos</h3>
+       <p class="text-gray-600 text-center text-lg">Formação técnica profissional em Gestão e Negócios</p>
+      </div>
+      <div class="eco-card bg-gradient-to-br from-[#F7941D]/5 to-[#004587]/5 rounded-2xl p-8 shadow-lg border-2 border-[#F7941D]/20 cursor-pointer" onclick="openModalidade('livres')">
+       <div class="w-20 h-20 bg-gradient-to-br from-[#F7941D] to-[#E8850D] rounded-2xl flex items-center justify-center mb-6 mx-auto">
+        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+        </svg>
+       </div>
+       <h3 class="text-3xl font-bold text-[#004587] mb-4 text-center">Cursos Livres / Qualificação</h3>
+       <p class="text-gray-600 text-center text-lg">Cursos de qualificação e aperfeiçoamento profissional</p>
+      </div>
+     </div>
+     
+     <!-- Seções de Consulta Separadas -->
+     <div class="grid md:grid-cols-2 gap-6 mb-8">
       <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-6 shadow-lg border-2 border-[#004587]/20 cursor-pointer" onclick="openConsultaView('docentes-list')">
        <div class="w-14 h-14 bg-gradient-to-br from-[#004587] to-[#003366] rounded-xl flex items-center justify-center mb-4 mx-auto">
         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
@@ -388,24 +385,6 @@
        </div>
        <h4 class="text-lg font-bold text-[#004587] text-center mb-2">Docentes</h4>
        <p class="text-gray-600 text-sm text-center">Visualize docentes cadastrados</p>
-      </div>
-      <div class="eco-card bg-gradient-to-br from-[#F7941D]/5 to-[#004587]/5 rounded-2xl p-6 shadow-lg border-2 border-[#F7941D]/20 cursor-pointer" onclick="openConsultaView('pctd-list')">
-       <div class="w-14 h-14 bg-gradient-to-br from-[#F7941D] to-[#E8850D] rounded-xl flex items-center justify-center mb-4 mx-auto">
-        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-        </svg>
-       </div>
-       <h4 class="text-lg font-bold text-[#004587] text-center mb-2">PCTD</h4>
-       <p class="text-gray-600 text-sm text-center">Planos Coletivos</p>
-      </div>
-      <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-6 shadow-lg border-2 border-[#004587]/20 cursor-pointer" onclick="openConsultaView('pitd-list')">
-       <div class="w-14 h-14 bg-gradient-to-br from-[#004587] to-[#003366] rounded-xl flex items-center justify-center mb-4 mx-auto">
-        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-        </svg>
-       </div>
-       <h4 class="text-lg font-bold text-[#004587] text-center mb-2">PITD</h4>
-       <p class="text-gray-600 text-sm text-center">Planos Individuais</p>
       </div>
       <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-6 shadow-lg border-2 border-[#004587]/20 cursor-pointer" onclick="openConsultaView('representantes-filter')">
        <div class="w-14 h-14 bg-gradient-to-br from-[#004587] to-[#003366] rounded-xl flex items-center justify-center mb-4 mx-auto">
@@ -416,26 +395,50 @@
        <h4 class="text-lg font-bold text-[#004587] text-center mb-2">Representantes</h4>
        <p class="text-gray-600 text-sm text-center">Representantes estudantis</p>
       </div>
+     </div><!-- Modal de Seleção de Cursos -->
+     <div id="modal-cursos" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[80vh] overflow-y-auto">
+       <div class="p-6 border-b border-gray-200">
+        <div class="flex justify-between items-center">
+         <h3 id="modal-title" class="text-2xl font-bold text-[#004587]">Cursos Técnicos</h3>
+         <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+         </button>
+        </div>
+       </div>
+       <div id="modal-cursos-content" class="p-6">
+        <!-- Conteúdo preenchido dinamicamente -->
+       </div>
+      </div>
+     </div>
+     
+     <!-- Modal de Turmas -->
+     <div id="modal-turmas" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl max-w-6xl w-full max-h-[80vh] overflow-y-auto">
+       <div class="p-6 border-b border-gray-200">
+        <div class="flex justify-between items-center">
+         <h3 id="modal-turmas-title" class="text-2xl font-bold text-[#004587]">Turmas do Curso</h3>
+         <button onclick="closeModalTurmas()" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+         </button>
+        </div>
+       </div>
+       <div id="modal-turmas-content" class="p-6">
+        <!-- Conteúdo preenchido dinamicamente -->
+       </div>
+      </div>
      </div><!-- Consulta Docentes -->
-     <div id="docentes-list" class="hidden mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200"><button onclick="closeConsultaView('docentes-list')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
+     <div id="docentes-list" style="display:none" class="mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200"><button onclick="closeConsultaView('docentes-list')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
        </svg> Voltar </button>
       <div id="docentes-grid" class="grid gap-4"></div>
-     </div><!-- Consulta PCTD -->
-     <div id="pctd-list" class="hidden mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200"><button onclick="closeConsultaView('pctd-list')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
-       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-       </svg> Voltar </button>
-      <div id="pctd-grid" class="grid gap-4"></div>
-     </div><!-- Consulta PITD -->
-     <div id="pitd-list" class="hidden mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200"><button onclick="closeConsultaView('pitd-list')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
-       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-       </svg> Voltar </button>
-      <div id="pitd-grid" class="grid gap-4"></div>
      </div><!-- Consulta Representantes -->
-     <div id="representantes-filter" class="hidden mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200"><button onclick="closeConsultaView('representantes-filter')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
+     <div id="representantes-filter" style="display:none" class="mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200"><button onclick="closeConsultaView('representantes-filter')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
        </svg> Voltar </button>
@@ -524,24 +527,34 @@
      </div><!-- Criar Evento -->
      <div id="tab-criar-evento" class="tab-content hidden bg-gray-50 rounded-2xl p-8">
       <h3 class="text-2xl font-bold text-[#004587] mb-8">Cadastrar Novo Evento</h3>
-      <form id="eventos-form" class="space-y-6">
-       <div><label class="block text-[#004587] font-semibold mb-3">Título do Evento</label> <input type="text" placeholder="Digite o título do evento" name="titulo_do_evento" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+      <form id="eventos-form" class="space-y-6" action="https://formspree.io/f/xvzwqjjv" method="POST">
+       <div><label class="block text-[#004587] font-semibold mb-3">Título do Evento</label> <input type="text" placeholder="Digite o título do evento" name="titulo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
        </div>
        <div class="grid md:grid-cols-2 gap-6">
-        <div><label class="block text-[#004587] font-semibold mb-3">Categoria</label> <select name="categoria" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required> <option value="">Selecione</option> <option value="Seminário">Seminário</option> <option value="Workshop">Workshop</option> <option value="Reunião">Reunião</option> <option value="Palestra">Palestra</option> <option value="Outro">Outro</option> </select>
+        <div><label class="block text-[#004587] font-semibold mb-3">Tipo</label> <select name="tipo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required> <option value="">Selecione</option> <option value="reuniao_pedagogica">Reunião Pedagógica</option> <option value="feriado">Feriado</option> <option value="evento_interno">Evento Interno</option> <option value="evento_externo">Evento Externo</option> </select>
         </div>
         <div><label class="block text-[#004587] font-semibold mb-3">Data</label> <input type="date" name="data" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
         </div>
        </div>
-       <div class="grid md:grid-cols-2 gap-6">
-        <div><label class="block text-[#004587] font-semibold mb-3">Horário</label> <input type="time" name="horario" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
-        </div>
-        <div><label class="block text-[#004587] font-semibold mb-3">Local</label> <input type="text" placeholder="Onde o evento acontecerá" name="local" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+       <div><label class="block text-[#004587] font-semibold mb-3">Duração</label>
+        <div class="flex gap-6">
+         <label class="flex items-center"><input type="radio" name="duracao" value="dia_todo" checked onchange="toggleDuracaoFields()"> <span class="ml-2">Dia Todo</span></label>
+         <label class="flex items-center"><input type="radio" name="duracao" value="periodo_especifico" onchange="toggleDuracaoFields()"> <span class="ml-2">Período Específico</span></label>
         </div>
        </div>
-       <div><label class="block text-[#004587] font-semibold mb-3">Descrição</label> <textarea placeholder="Descreva os detalhes do evento..." name="descricao" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none h-32" required></textarea>
+       <div id="periodo-fields" class="hidden grid md:grid-cols-3 gap-6">
+        <div><label class="block text-[#004587] font-semibold mb-3">Período</label> <select name="periodo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none"> <option value="">Selecione</option> <option value="manha">Manhã</option> <option value="tarde">Tarde</option> <option value="noite">Noite</option> </select>
+        </div>
+        <div><label class="block text-[#004587] font-semibold mb-3">Horário Início</label> <input type="time" name="horario_inicio" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
+        </div>
+        <div><label class="block text-[#004587] font-semibold mb-3">Horário Fim</label> <input type="time" name="horario_fim" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
+        </div>
        </div>
-       <div><label class="block text-[#004587] font-semibold mb-3">Responsável</label> <input type="text" placeholder="Nome de quem organizou o evento" name="responsavel" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+       <div><label class="block text-[#004587] font-semibold mb-3"><input type="checkbox" name="recorrente" class="mr-2"> Evento recorrente (toda 1ª segunda do mês)</label>
+       </div>
+       <div><label class="block text-[#004587] font-semibold mb-3">Descrição</label> <textarea placeholder="Descreva os detalhes do evento..." name="descricao" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none h-32"></textarea>
+       </div>
+       <div><label class="block text-[#004587] font-semibold mb-3">Responsável</label> <input type="text" placeholder="Nome de quem organizou o evento" name="responsavel" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
        </div><button type="submit" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -558,6 +571,56 @@
     let allPITD = [];
     let allRepresentantes = [];
     let allEventos = [];
+
+
+
+    async function loadDocentes() {
+      try {
+        const response = await fetch('./data.json');
+        const data = await response.json();
+        allTeachers = data.docentes || [];
+      } catch (err) {
+        allTeachers = [];
+        showErrorMessage('❌ Erro ao carregar docentes: ' + err.message);
+      }
+      renderDocentes();
+    }
+
+    async function loadPCTD() {
+      try {
+        const response = await fetch('./data.json');
+        const data = await response.json();
+        allPCTD = data.pctd || [];
+      } catch (err) {
+        allPCTD = [];
+        showErrorMessage('❌ Erro ao carregar PCTD: ' + err.message);
+      }
+      renderPCTD();
+    }
+
+    async function loadPITD() {
+      try {
+        const response = await fetch('./data.json');
+        const data = await response.json();
+        allPITD = data.pitd || [];
+      } catch (err) {
+        allPITD = [];
+        showErrorMessage('❌ Erro ao carregar PITD: ' + err.message);
+      }
+      renderPITD();
+    }
+
+    async function loadRepresentantes() {
+      try {
+        const response = await fetch('./data.json');
+        const data = await response.json();
+        allRepresentantes = data.representantes || [];
+      } catch (err) {
+        allRepresentantes = [];
+        showErrorMessage('❌ Erro ao carregar representantes: ' + err.message);
+      }
+      renderRepresentantesFilter();
+    }
 
     const defaultConfig = {
       hero_title: 'GESTÃO E NEGÓCIOS',
@@ -640,21 +703,27 @@
     // Abrir/Fechar Vistas
     window.openConsultaView = (viewId) => {
       // Fechar todas as outras vistas
-      document.getElementById('docentes-list').classList.add('hidden');
-      document.getElementById('pctd-list').classList.add('hidden');
-      document.getElementById('pitd-list').classList.add('hidden');
-      document.getElementById('representantes-filter').classList.add('hidden');
+      var painelDocentes = document.getElementById('docentes-list');
+      if (painelDocentes) painelDocentes.style.display = 'none';
+      var painelPctd = document.getElementById('pctd-list');
+      if (painelPctd) painelPctd.style.display = 'none';
+      var painelPitd = document.getElementById('pitd-list');
+      if (painelPitd) painelPitd.style.display = 'none';
+      var painelRepresentantes = document.getElementById('representantes-filter');
+      if (painelRepresentantes) painelRepresentantes.style.display = 'none';
       
       // Abrir a vista solicitada
       if (viewId === 'docentes-list') renderDocentes();
       if (viewId === 'pctd-list') renderPCTD();
       if (viewId === 'pitd-list') renderPITD();
       if (viewId === 'representantes-filter') renderRepresentantesFilter();
-      document.getElementById(viewId).classList.remove('hidden');
+      var view = document.getElementById(viewId);
+      if (view) view.style.display = 'block';
     };
 
     window.closeConsultaView = (viewId) => {
-      document.getElementById(viewId).classList.add('hidden');
+      var view = document.getElementById(viewId);
+      if (view) view.style.display = 'none';
     };
 
     // Renderizar Docentes
@@ -662,9 +731,10 @@
       const grid = document.getElementById('docentes-grid');
       grid.innerHTML = allTeachers.length > 0 
         ? allTeachers.map(teacher => `
-          <div class="bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 p-4 rounded-lg border-2 border-[#004587]/20 cursor-pointer hover:shadow-lg transition-all" onclick="showDocenteDetail('${teacher.__backendId || ''}')">
-            <p class="font-bold text-[#004587]">${teacher.name || 'Sem nome'}</p>
-            <p class="text-sm text-gray-600">${teacher.phone || 'Telefone não informado'}</p>
+          <div class="bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 p-4 rounded-lg border-2 border-[#004587]/20">
+            <p class="font-bold text-[#004587]">${teacher.nome_completo || 'Sem nome'}</p>
+            <p class="text-sm text-gray-600">${teacher.telefone || 'Telefone não informado'}</p>
+            <p class="text-sm text-gray-600">${teacher.mini_curriculo ? teacher.mini_curriculo.substring(0, 100) + '...' : 'Sem descrição'}</p>
           </div>
         `).join('')
         : '<p class="text-gray-600 col-span-4 text-center py-8">Nenhum docente cadastrado</p>';
@@ -676,38 +746,19 @@
       grid.innerHTML = allPCTD.length > 0
         ? allPCTD.map(pctd => `
           <div class="bg-gradient-to-br from-[#F7941D]/5 to-[#004587]/5 p-4 rounded-lg border-2 border-[#F7941D]/20">
-            <p class="font-bold text-[#004587]">${pctd.course_name || 'Sem nome'}</p>
-            <p class="text-sm text-gray-600">Código: ${pctd.offer_code || '-'}</p>
-            <p class="text-sm text-gray-600">Período: ${pctd.period || '-'}</p>
-            <p class="text-sm text-gray-600 mb-3">Arquivo: ${pctd.file_name ? '✅ Sim' : '❌ Não'}</p>
-            ${pctd.file_name ? `<button onclick="window.open('${pctd.file_name}', '_blank', 'noopener,noreferrer')" class="w-full px-3 py-2 bg-[#F7941D] text-white rounded-lg font-semibold text-sm hover:bg-[#E8850D] transition-all flex items-center justify-center gap-2">
+            <p class="font-bold text-[#004587]">${pctd.nome_curso || 'Sem nome'}</p>
+            <p class="text-sm text-gray-600">Código: ${pctd.codigo_oferta || '-'}</p>
+            <p class="text-sm text-gray-600">Período: ${pctd.periodo || '-'}</p>
+            ${pctd.link_arquivo ? `<button onclick="window.open('${pctd.link_arquivo}', '_blank')" class="w-full px-3 py-2 bg-[#F7941D] text-white rounded-lg font-semibold text-sm hover:bg-[#E8850D] transition-all flex items-center justify-center gap-2">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
-              Abrir Arquivo
-            </button>` : ''}
+              Abrir Documento
+            </button>` : '<p class="text-sm text-gray-500">Link não disponível</p>'}
           </div>
         `).join('')
         : '<p class="text-gray-600 col-span-4 text-center py-8">Nenhum PCTD cadastrado</p>';
     }
-
-    window.downloadFile = (type, key) => {
-      let url;
-      if (type === 'pctd' && window.pctdFiles) {
-        url = window.pctdFiles[key];
-      } else if (type === 'pitd' && window.pitdFiles) {
-        url = window.pitdFiles[key];
-      }
-      
-      if (!url) {
-        showErrorMessage('❌ Link não disponível');
-        return;
-      }
-
-      // Abrir o link em uma nova aba
-      window.open(url, '_blank', 'noopener,noreferrer');
-      showSuccessMessage(`📂 Abrindo arquivo...`);
-    };
 
     // Renderizar PITD
     function renderPITD() {
@@ -715,18 +766,24 @@
       grid.innerHTML = allPITD.length > 0
         ? allPITD.map(pitd => `
           <div class="bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 p-4 rounded-lg border-2 border-[#004587]/20">
-            <p class="font-bold text-[#004587]">${pitd.teacher_name || 'Sem nome'}</p>
-            <p class="text-sm text-gray-600">UC: ${pitd.uc || '-'}</p>
-            <p class="text-sm text-gray-600 mb-3">Arquivo: ${pitd.file_name ? '✅ Sim' : '❌ Não'}</p>
-            ${pitd.file_name ? `<button onclick="window.open('${pitd.file_name}', '_blank', 'noopener,noreferrer')" class="w-full px-3 py-2 bg-[#004587] text-white rounded-lg font-semibold text-sm hover:bg-[#003366] transition-all flex items-center justify-center gap-2">
+            <p class="font-bold text-[#004587]">${pitd.docente || 'Sem nome'}</p>
+            <p class="text-sm text-gray-600">UC: ${pitd.unidade_curricular || '-'}</p>
+            ${pitd.link_arquivo_pitd ? `<button onclick="window.open('${pitd.link_arquivo_pitd}', '_blank')" class="w-full px-3 py-2 bg-[#004587] text-white rounded-lg font-semibold text-sm hover:bg-[#003366] transition-all flex items-center justify-center gap-2">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
-              Abrir Arquivo
-            </button>` : ''}
+              Abrir Documento
+            </button>` : '<p class="text-sm text-gray-500">Link não disponível</p>'}
           </div>
         `).join('')
         : '<p class="text-gray-600 col-span-4 text-center py-8">Nenhum PITD cadastrado</p>';
+    }
+
+    // Renderizar Filtro de Representantes
+    function renderRepresentantesFilter() {
+      document.getElementById('rep-curso').value = '';
+      document.getElementById('rep-periodo').value = '';
+      filterRepresentantes();
     }
 
     // Renderizar Filtro de Representantes
@@ -740,226 +797,181 @@
       const curso = document.getElementById('rep-curso').value.toLowerCase();
       const periodo = document.getElementById('rep-periodo').value;
       const filtrados = allRepresentantes.filter(rep => {
-        const matchCurso = !curso || (rep.turma_id && rep.turma_id.toLowerCase().includes(curso));
-        const matchPeriodo = !periodo || rep.period === periodo;
+        const matchCurso = !curso || (rep.turma_curso && rep.turma_curso.toLowerCase().includes(curso));
+        const matchPeriodo = !periodo || rep.periodo === periodo;
         return matchCurso && matchPeriodo;
       });
       const grid = document.getElementById('representantes-grid');
       grid.innerHTML = filtrados.length > 0
         ? filtrados.map(rep => `
-          <div class="bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 p-4 rounded-lg border-2 border-[#004587]/20 cursor-pointer hover:shadow-lg transition-all" onclick="showRepresentanteDetail('${rep.__backendId || ''}')">
-            <p class="font-bold text-[#004587]">${rep.turma_id || 'Sem turma'}</p>
-            <p class="text-sm text-gray-600">Rep: ${rep.representative_name || '-'}</p>
+          <div class="bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 p-4 rounded-lg border-2 border-[#004587]/20">
+            <p class="font-bold text-[#004587]">${rep.turma_curso || 'Sem turma'}</p>
+            <p class="text-sm text-gray-600">Rep: ${rep.representante || '-'}</p>
+            <p class="text-sm text-gray-600">Vice: ${rep.vice_representante || '-'}</p>
           </div>
         `).join('')
         : '<p class="text-gray-600 col-span-4 text-center py-8">Nenhum representante encontrado</p>';
     };
 
-    window.showRepresentanteDetail = (id) => {
-      const rep = allRepresentantes.find(r => r.__backendId === id);
-      if (!rep) return;
-      const grid = document.getElementById('representantes-grid');
-      grid.innerHTML = `
-        <button onclick="filterRepresentantes()" class="mb-4 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
-        </button>
-        <div class="col-span-4 bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-8 border-2 border-[#004587]/20">
-          <h3 class="text-2xl font-bold text-[#004587] mb-6">${rep.turma_id}</h3>
-          <div class="grid md:grid-cols-2 gap-6">
-            <div>
-              <p class="text-gray-600 font-semibold">Representante:</p>
-              <p class="text-[#004587]">${rep.representative_name || 'Não informado'}</p>
-            </div>
-            <div>
-              <p class="text-gray-600 font-semibold">Telefone:</p>
-              <p class="text-[#004587]">${rep.representative_phone || 'Não informado'}</p>
-            </div>
-            <div>
-              <p class="text-gray-600 font-semibold">Vice-Representante:</p>
-              <p class="text-[#004587]">${rep.vice_name || 'Não informado'}</p>
-            </div>
-            <div>
-              <p class="text-gray-600 font-semibold">Telefone Vice:</p>
-              <p class="text-[#004587]">${rep.representative_phone || 'Não informado'}</p>
-            </div>
-          </div>
-        </div>
-      `;
-    };
 
-    // Formulários
+
+    // Função para mostrar/ocultar campos de período
+    function toggleDuracaoFields() {
+      const duracao = document.querySelector('input[name="duracao"]:checked').value;
+      const periodoFields = document.getElementById('periodo-fields');
+      if (duracao === 'periodo_especifico') {
+        periodoFields.classList.remove('hidden');
+      } else {
+        periodoFields.classList.add('hidden');
+      }
+    }
     document.getElementById('cadastro-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const inputs = e.target.querySelectorAll('input[type="text"], input[type="tel"], textarea');
-      if (!inputs[0].value || !inputs[1].value || !inputs[5].value) {
+      const form = e.target;
+      const nome_completo = form.nome_completo.value.trim();
+      const telefone = form.telefone.value.trim();
+      const instagram = form.instagram.value.trim() || '';
+      const facebook = form.facebook.value.trim() || '';
+      const linkedin = form.linkedin.value.trim() || '';
+      const mini_curriculo = form.mini_curriculo.value.trim();
+
+      if (!nome_completo || !telefone || !mini_curriculo) {
         showErrorMessage('❌ Preencha todos os campos obrigatórios');
         return;
       }
-      const data = {
-        record_type: 'teacher',
-        name: inputs[0].value.trim(),
-        phone: inputs[1].value.trim(),
-        instagram: inputs[2].value.trim() || '',
-        facebook: inputs[3].value.trim() || '',
-        linkedin: inputs[4].value.trim() || '',
-        mini_curriculum: inputs[5].value.trim()
-      };
-      const btn = e.target.querySelector('button');
+
+      const btn = form.querySelector('button');
+      const originalBtnHtml = btn.innerHTML;
       btn.disabled = true;
-      btn.textContent = 'Salvando...';
+      btn.innerHTML = '⏳ Salvando...';
+
       try {
-        const formData = new FormData(e.target);
-        const response = await fetch('https://formspree.io/f/mnjgzkyy', {
-          method: 'POST',
-          body: formData,
-          headers: { 'Accept': 'application/json' }
-        });
-        if (response.ok) {
-          e.target.reset();
-          btn.disabled = false;
-          showSuccessMessage('✅ Enviado com sucesso!');
-        } else {
-          throw new Error('Erro ao enviar');
-        }
+        await postToSheet('Docentes', [nome_completo, telefone, instagram, facebook, linkedin, mini_curriculo]);
+        form.reset();
+        showSuccessMessage('✅ Enviado com sucesso!');
+        await loadDocentes();
       } catch (err) {
-        btn.disabled = false;
         showErrorMessage('❌ Erro ao enviar: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalBtnHtml;
       }
     });
 
     document.getElementById('turmas-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const inputs = e.target.querySelectorAll('input, select');
-      if (!inputs[0].value || !inputs[1].value) {
+      const form = e.target;
+      const nome_curso = form.nome_do_curso.value.trim();
+      const codigo_oferta = form.codigo_da_oferta.value.trim();
+      const data_inicio = form.data_de_inicio.value;
+      const data_termino = form.data_de_termino.value;
+      const periodo = form.periodo.value;
+
+      if (!nome_curso || !codigo_oferta) {
         showErrorMessage('❌ Preencha todos os campos obrigatórios');
         return;
       }
-      const data = {
-        record_type: 'turma',
-        course_name: inputs[0].value.trim(),
-        offer_code: inputs[1].value.trim(),
-        start_date: inputs[2].value,
-        end_date: inputs[3].value,
-        period: inputs[4].value
-      };
-      const btn = e.target.querySelector('button');
+
+      const btn = form.querySelector('button');
+      const originalBtnHtml = btn.innerHTML;
       btn.disabled = true;
-      btn.textContent = 'Salvando...';
+      btn.innerHTML = '⏳ Salvando...';
+
       try {
-        const formData = new FormData(e.target);
-        const response = await fetch('https://formspree.io/f/xzdjvlle', {
-          method: 'POST',
-          body: formData,
-          headers: { 'Accept': 'application/json' }
-        });
-        if (response.ok) {
-          e.target.reset();
-          btn.disabled = false;
-          showSuccessMessage('✅ Enviado com sucesso!');
-        } else {
-          throw new Error('Erro ao enviar');
-        }
+        await postToSheet('Turmas', [codigo_oferta, nome_curso, periodo, data_inicio, data_termino]);
+        form.reset();
+        showSuccessMessage('✅ Enviado com sucesso!');
       } catch (err) {
-        btn.disabled = false;
         showErrorMessage('❌ Erro ao enviar: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalBtnHtml;
       }
     });
 
     document.getElementById('pitd-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const inputs = e.target.querySelectorAll('input[type="text"], input[type="url"]');
-      
-      if (!inputs[0]?.value?.trim()) {
+      const form = e.target;
+      const nome_docente = form.docente.value.trim();
+      const codigo_oferta = form.unidade_curricular.value.trim();
+      const link_arquivo = form.link_do_arquivo_pitd.value.trim();
+
+      if (!nome_docente) {
         showErrorMessage('❌ Digite o nome do docente');
         return;
       }
-      if (!inputs[1]?.value?.trim()) {
+      if (!codigo_oferta) {
         showErrorMessage('❌ Digite a unidade curricular');
         return;
       }
-      if (!inputs[2]?.value?.trim()) {
+      if (!link_arquivo) {
         showErrorMessage('❌ Cole o link do arquivo');
         return;
       }
-      
-      const btn = e.target.querySelector('button');
+
+      const btn = form.querySelector('button');
+      const originalBtnHtml = btn.innerHTML;
       btn.disabled = true;
-      btn.textContent = '⏳ Salvando...';
-      
+      btn.innerHTML = '⏳ Salvando...';
+
       try {
-        const formData = new FormData(e.target);
-        const response = await fetch('https://formspree.io/f/xgonzjjz', {
-          method: 'POST',
-          body: formData,
-          headers: { 'Accept': 'application/json' }
-        });
-        if (response.ok) {
-          e.target.reset();
-          btn.disabled = false;
-          showSuccessMessage('✅ Enviado com sucesso!');
-        } else {
-          throw new Error('Erro ao enviar');
-        }
+        await postToSheet('PITD', [nome_docente, codigo_oferta, link_arquivo]);
+        form.reset();
+        showSuccessMessage('✅ Enviado com sucesso!');
       } catch (err) {
-        btn.disabled = false;
         showErrorMessage('❌ Erro ao enviar: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalBtnHtml;
       }
     });
 
     document.getElementById('pctd-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const inputs = e.target.querySelectorAll('input, select');
-      
-      if (!inputs[0]?.value?.trim()) {
+      const form = e.target;
+      const nome_curso = form.nome_do_curso.value.trim();
+      const codigo_oferta = form.codigo_da_oferta.value.trim();
+      const periodo = form.periodo.value;
+      const data_inicio = form.data_de_inicio.value;
+      const data_conclusao = form.data_de_conclusao.value;
+      const link_arquivo = form.link_do_arquivo_pctd.value.trim();
+
+      if (!nome_curso) {
         showErrorMessage('❌ Digite o nome do curso');
         return;
       }
-      if (!inputs[1]?.value?.trim()) {
+      if (!codigo_oferta) {
         showErrorMessage('❌ Digite o código da oferta');
         return;
       }
-      if (!inputs[2]?.value) {
-        showErrorMessage('❌ Selecione o período');
-        return;
-      }
-      if (!inputs[3]?.value) {
-        showErrorMessage('❌ Selecione a data de início');
-        return;
-      }
-      if (!inputs[4]?.value) {
+      if (!data_conclusao) {
         showErrorMessage('❌ Selecione a data de conclusão');
         return;
       }
-      if (!inputs[5]?.value?.trim()) {
+      if (!link_arquivo) {
         showErrorMessage('❌ Cole o link do arquivo');
         return;
       }
-      
-      const btn = e.target.querySelector('button');
+
+      const btn = form.querySelector('button');
+      const originalBtnHtml = btn.innerHTML;
       btn.disabled = true;
-      btn.textContent = '⏳ Salvando...';
-      
+      btn.innerHTML = '⏳ Salvando...';
+
       try {
-        const formData = new FormData(e.target);
-        const response = await fetch('https://formspree.io/f/xpqylggj', {
-          method: 'POST',
-          body: formData,
-          headers: { 'Accept': 'application/json' }
-        });
-        if (response.ok) {
-          e.target.reset();
-          btn.disabled = false;
-          showSuccessMessage('✅ Enviado com sucesso!');
-        } else {
-          throw new Error('Erro ao enviar');
-        }
+        await postToSheet('PCTD', [codigo_oferta, nome_curso, periodo, data_inicio, data_conclusao, link_arquivo]);
+        form.reset();
+        showSuccessMessage('✅ Enviado com sucesso!');
+        await loadPCTD();
       } catch (err) {
-        btn.disabled = false;
         showErrorMessage('❌ Erro ao enviar: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalBtnHtml;
       }
     });
 
-    window.switchEventosTab = (btn) => {
+    window.switchEventosTab = async (btn) => {
       const tabName = btn.getAttribute('data-tab');
       document.querySelectorAll('.tab-btn').forEach(b => {
         if (b.closest('#eventos-page')) {
@@ -970,6 +982,7 @@
       btn.classList.add('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
       document.getElementById('tab-' + tabName).classList.remove('hidden');
       if (tabName === 'agenda-eventos') {
+        await loadEventos();
         renderCalendar();
         renderEventos();
       }
@@ -986,6 +999,17 @@
       currentCalendarMonth.setMonth(currentCalendarMonth.getMonth() + 1);
       renderCalendar();
     };
+
+    async function loadEventos() {
+      try {
+        const response = await fetch('./data.json');
+        const data = await response.json();
+        allEventos = data.eventos || [];
+      } catch (err) {
+        allEventos = [];
+        console.error('Erro ao carregar eventos:', err);
+      }
+    }
 
     function renderCalendar() {
       const year = currentCalendarMonth.getFullYear();
@@ -1013,48 +1037,61 @@
       
       // Dias do mês atual
       for (let i = 1; i <= daysInMonth; i++) {
-        const day = document.createElement('div');
+        const dayElement = document.createElement('div');
         const currentDate = new Date(year, month, i);
         const dateStr = currentDate.toISOString().split('T')[0];
-        const eventsOnDay = allEventos.filter(evt => evt.event_date === dateStr);
-        
-        // Separar eventos por período
-        const eventsManha = eventsOnDay.filter(evt => {
-          const hour = parseInt(evt.event_time.split(':')[0]);
-          return hour >= 6 && hour < 12;
-        });
-        const eventsTarde = eventsOnDay.filter(evt => {
-          const hour = parseInt(evt.event_time.split(':')[0]);
-          return hour >= 12 && hour < 18;
-        });
-        const eventsNoite = eventsOnDay.filter(evt => {
-          const hour = parseInt(evt.event_time.split(':')[0]);
-          return hour >= 18 && hour < 24;
-        });
+        const eventsOnDay = allEventos.filter(evt => evt.data === dateStr);
         
         let dayClass = 'p-2 bg-white border-2 border-gray-200 rounded min-h-20 flex flex-col items-start justify-start text-left cursor-pointer hover:bg-blue-50 transition-all gap-1';
+        let hasEvents = false;
         
         if (eventsOnDay.length > 0) {
           dayClass = 'p-2 bg-white border-2 border-[#F7941D] rounded min-h-20 flex flex-col items-start justify-start text-left cursor-pointer hover:bg-blue-50 transition-all gap-1';
+          hasEvents = true;
         }
         
-        day.className = dayClass;
+        dayElement.className = dayClass;
         
         let html = `<span class="font-bold text-[#004587] text-sm w-full">${i}</span>`;
         
-        if (eventsManha.length > 0) {
-          html += `<span class="text-xs bg-yellow-400 text-white px-1.5 py-0.5 rounded font-semibold">${eventsManha.length} Manhã</span>`;
-        }
-        if (eventsTarde.length > 0) {
-          html += `<span class="text-xs bg-orange-500 text-white px-1.5 py-0.5 rounded font-semibold">${eventsTarde.length} Tarde</span>`;
-        }
-        if (eventsNoite.length > 0) {
-          html += `<span class="text-xs bg-purple-600 text-white px-1.5 py-0.5 rounded font-semibold">${eventsNoite.length} Noite</span>`;
+        // Agrupar eventos por cor
+        const eventGroups = {};
+        eventsOnDay.forEach(evt => {
+          let color = '#004587'; // dia_todo default
+          if (evt.duracao === 'periodo_especifico') {
+            if (evt.periodo === 'manha') color = '#F59E0B';
+            else if (evt.periodo === 'tarde') color = '#F7941D';
+            else if (evt.periodo === 'noite') color = '#7C3AED';
+          } else if (evt.tipo === 'reuniao_pedagogica') color = '#DC2626';
+          else if (evt.tipo === 'feriado') color = '#6B7280';
+          
+          if (!eventGroups[color]) eventGroups[color] = [];
+          eventGroups[color].push(evt);
+        });
+        
+        // Mostrar até 2 eventos por dia
+        let eventCount = 0;
+        Object.keys(eventGroups).forEach(color => {
+          const events = eventGroups[color];
+          if (eventCount >= 2) return;
+          
+          const displayEvents = events.slice(0, 2 - eventCount);
+          displayEvents.forEach(evt => {
+            const truncatedTitle = evt.titulo.length > 15 ? evt.titulo.substring(0, 15) + '...' : evt.titulo;
+            html += `<div class="text-xs rounded px-1 py-0.5 font-semibold text-white" style="background-color: ${color};">${truncatedTitle}</div>`;
+            eventCount++;
+          });
+        });
+        
+        // Se mais de 2 eventos, mostrar "+N"
+        const totalEvents = Object.values(eventGroups).reduce((sum, events) => sum + events.length, 0);
+        if (totalEvents > 2) {
+          html += `<div class="text-xs bg-gray-500 text-white px-1 py-0.5 rounded font-semibold">+${totalEvents - 2}</div>`;
         }
         
-        day.innerHTML = html;
-        day.onclick = () => filterEventosByDate(dateStr);
-        calendarGrid.appendChild(day);
+        dayElement.innerHTML = html;
+        dayElement.onclick = () => showEventosDia(dateStr);
+        calendarGrid.appendChild(dayElement);
       }
       
       // Dias do próximo mês
@@ -1068,89 +1105,184 @@
       }
     }
 
-    window.filterEventosByDate = (dateStr) => {
-      const lista = document.getElementById('eventos-lista');
-      const eventosDoDay = allEventos.filter(evt => evt.event_date === dateStr);
+    // Modal para eventos do dia
+    let eventosDiaModal = null;
+    
+    function showEventosDia(dateStr) {
+      const eventsOnDay = allEventos.filter(evt => evt.data === dateStr);
+      if (eventsOnDay.length === 0) return;
       
-      if (eventosDoDay.length === 0) {
-        lista.innerHTML = '<p class="text-gray-600 text-center py-8 col-span-full">Nenhum evento nesta data</p>';
+      if (eventsOnDay.length <= 2) {
+        // Mostrar detalhes do único evento
+        showEventoDetail(eventsOnDay[0]);
         return;
       }
       
-      lista.innerHTML = eventosDoDay.map(evt => {
-        const data = new Date(evt.event_date);
-        const dataFormatada = data.toLocaleDateString('pt-BR');
-        return `
-          <div class="bg-gradient-to-r from-[#004587]/10 to-[#F7941D]/10 rounded-xl p-6 border-l-4 border-[#F7941D] shadow-md hover:shadow-lg transition-all cursor-pointer" onclick="showEventoDetail('${evt.__backendId || ''}')">
-            <div class="flex justify-between items-start">
-              <div class="flex-1">
-                <h4 class="text-xl font-bold text-[#004587] mb-2">${evt.event_title || 'Sem título'}</h4>
-                <div class="flex flex-wrap gap-4 text-sm text-gray-600">
-                  <span class="flex items-center gap-1">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                    ${dataFormatada} às ${evt.event_time || '--:--'}
-                  </span>
-                  <span class="flex items-center gap-1">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
-                    ${evt.event_location || 'Local não informado'}
-                  </span>
-                </div>
-                <p class="text-gray-700 mt-3 line-clamp-2">${evt.event_description || ''}</p>
-              </div>
-              <span class="bg-[#F7941D] text-white px-3 py-1 rounded-full text-xs font-semibold ml-4 whitespace-nowrap">${evt.event_category || 'Evento'}</span>
+      // Criar modal para múltiplos eventos
+      if (eventosDiaModal) {
+        eventosDiaModal.remove();
+      }
+      
+      const data = new Date(dateStr);
+      const dataFormatada = data.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      
+      eventosDiaModal = document.createElement('div');
+      eventosDiaModal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+      eventosDiaModal.innerHTML = `
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+          <div class="p-6 border-b border-gray-200">
+            <div class="flex justify-between items-center">
+              <h3 class="text-2xl font-bold text-[#004587]">Eventos em ${dataFormatada}</h3>
+              <button onclick="closeEventosDiaModal()" class="text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
           </div>
-        `;
-      }).join('');
-    };
+          <div class="p-6 space-y-4">
+            ${eventsOnDay.map(evt => {
+              let color = '#004587';
+              if (evt.duracao === 'periodo_especifico') {
+                if (evt.periodo === 'manha') color = '#F59E0B';
+                else if (evt.periodo === 'tarde') color = '#F7941D';
+                else if (evt.periodo === 'noite') color = '#7C3AED';
+              } else if (evt.tipo === 'reuniao_pedagogica') color = '#DC2626';
+              else if (evt.tipo === 'feriado') color = '#6B7280';
+              
+              const periodoTexto = evt.duracao === 'dia_todo' ? 'Dia todo' : 
+                (evt.duracao === 'periodo_especifico' ? 
+                  `${evt.periodo.charAt(0).toUpperCase() + evt.periodo.slice(1)} (${evt.horario_inicio} - ${evt.horario_fim})` : 
+                  'Horário não definido');
+              
+              return `
+                <div class="border-l-4 rounded-lg p-4 cursor-pointer hover:bg-gray-50 transition-colors" style="border-left-color: ${color}" onclick="showEventoDetailFromModal(${JSON.stringify(evt).replace(/"/g, '&quot;')})">
+                  <h4 class="font-bold text-[#004587] mb-2">${evt.titulo}</h4>
+                  <p class="text-sm text-gray-600 mb-1">${periodoTexto}</p>
+                  <p class="text-sm text-gray-700">${evt.descricao || 'Sem descrição'}</p>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(eventosDiaModal);
+    }
+    
+    function closeEventosDiaModal() {
+      if (eventosDiaModal) {
+        eventosDiaModal.remove();
+        eventosDiaModal = null;
+      }
+    }
+    
+    function showEventoDetailFromModal(evento) {
+      closeEventosDiaModal();
+      showEventoDetail(evento);
+    }
 
     function renderEventos() {
+      const year = currentCalendarMonth.getFullYear();
+      const month = currentCalendarMonth.getMonth();
+      
+      // Filtrar eventos do mês atual
+      const eventosDoMes = allEventos.filter(evt => {
+        const evtDate = new Date(evt.data);
+        return evtDate.getFullYear() === year && evtDate.getMonth() === month;
+      });
+      
       const lista = document.getElementById('eventos-lista');
-      if (allEventos.length === 0) {
-        lista.innerHTML = '<p class="text-gray-600 text-center py-8">Nenhum evento cadastrado</p>';
+      if (eventosDoMes.length === 0) {
+        lista.innerHTML = '<p class="text-gray-600 text-center py-8">Nenhum evento neste mês</p>';
         return;
       }
-      lista.innerHTML = allEventos.map(evt => {
-        const data = new Date(evt.event_date);
-        const dataFormatada = data.toLocaleDateString('pt-BR');
+      
+      // Ordenar por data crescente
+      eventosDoMes.sort((a, b) => new Date(a.data) - new Date(b.data));
+      
+      lista.innerHTML = eventosDoMes.map(evt => {
+        const data = new Date(evt.data);
+        const dataFormatada = data.toLocaleDateString('pt-BR', { 
+          weekday: 'short', 
+          day: '2-digit', 
+          month: 'short' 
+        });
+        
+        let color = '#004587';
+        let periodoTexto = 'Dia todo';
+        
+        if (evt.duracao === 'periodo_especifico') {
+          if (evt.periodo === 'manha') {
+            color = '#F59E0B';
+            periodoTexto = `Manhã (${evt.horario_inicio} - ${evt.horario_fim})`;
+          } else if (evt.periodo === 'tarde') {
+            color = '#F7941D';
+            periodoTexto = `Tarde (${evt.horario_inicio} - ${evt.horario_fim})`;
+          } else if (evt.periodo === 'noite') {
+            color = '#7C3AED';
+            periodoTexto = `Noite (${evt.horario_inicio} - ${evt.horario_fim})`;
+          }
+        } else if (evt.tipo === 'reuniao_pedagogica') {
+          color = '#DC2626';
+        } else if (evt.tipo === 'feriado') {
+          color = '#6B7280';
+        }
+        
         return `
-          <div class="bg-gradient-to-r from-[#004587]/10 to-[#F7941D]/10 rounded-xl p-6 border-l-4 border-[#F7941D] shadow-md hover:shadow-lg transition-all cursor-pointer" onclick="showEventoDetail('${evt.__backendId || ''}')">
+          <div class="bg-white rounded-xl p-4 border-l-4 shadow-sm hover:shadow-md transition-all cursor-pointer" style="border-left-color: ${color}" onclick="showEventoDetail(${JSON.stringify(evt).replace(/"/g, '&quot;')})">
             <div class="flex justify-between items-start">
               <div class="flex-1">
-                <h4 class="text-xl font-bold text-[#004587] mb-2">${evt.event_title || 'Sem título'}</h4>
-                <div class="flex flex-wrap gap-4 text-sm text-gray-600">
-                  <span class="flex items-center gap-1">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                    ${dataFormatada} às ${evt.event_time || '--:--'}
-                  </span>
-                  <span class="flex items-center gap-1">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
-                    ${evt.event_location || 'Local não informado'}
-                  </span>
+                <h4 class="font-bold text-[#004587] mb-1">${evt.titulo}</h4>
+                <div class="flex items-center gap-4 text-sm text-gray-600">
+                  <span>${dataFormatada}</span>
+                  <span>${periodoTexto}</span>
                 </div>
-                <p class="text-gray-700 mt-3 line-clamp-2">${evt.event_description || ''}</p>
               </div>
-              <span class="bg-[#F7941D] text-white px-3 py-1 rounded-full text-xs font-semibold ml-4 whitespace-nowrap">${evt.event_category || 'Evento'}</span>
             </div>
           </div>
         `;
       }).join('');
     }
 
-    window.showEventoDetail = (id) => {
-      const evt = allEventos.find(e => e.__backendId === id);
-      if (!evt) return;
+    function showEventoDetail(evento) {
+      const data = new Date(evento.data);
+      const dataFormatada = data.toLocaleDateString('pt-BR', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+      
+      let color = '#004587';
+      let tipoTexto = 'Evento';
+      
+      if (evento.tipo === 'reuniao_pedagogica') {
+        tipoTexto = 'Reunião Pedagógica';
+        color = '#DC2626';
+      } else if (evento.tipo === 'feriado') {
+        tipoTexto = 'Feriado';
+        color = '#6B7280';
+      } else if (evento.tipo === 'evento_interno') {
+        tipoTexto = 'Evento Interno';
+      } else if (evento.tipo === 'evento_externo') {
+        tipoTexto = 'Evento Externo';
+      }
+      
+      let periodoTexto = 'Dia todo';
+      if (evento.duracao === 'periodo_especifico') {
+        periodoTexto = `${evento.periodo.charAt(0).toUpperCase() + evento.periodo.slice(1)} (${evento.horario_inicio} - ${evento.horario_fim})`;
+      }
+      
       const lista = document.getElementById('eventos-lista');
-      const data = new Date(evt.event_date);
-      const dataFormatada = data.toLocaleDateString('pt-BR');
       lista.innerHTML = `
         <button onclick="renderEventos()" class="mb-4 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
         </button>
-        <div class="bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-8 border-2 border-[#004587]/20">
+        <div class="bg-white rounded-2xl p-8 border-2 border-gray-200 shadow-lg">
           <div class="flex justify-between items-start mb-6">
-            <h3 class="text-3xl font-bold text-[#004587]">${evt.event_title}</h3>
-            <span class="bg-[#F7941D] text-white px-4 py-2 rounded-full font-semibold">${evt.event_category}</span>
+            <h3 class="text-3xl font-bold text-[#004587]">${evento.titulo}</h3>
+            <span class="px-4 py-2 rounded-full font-semibold text-white" style="background-color: ${color}">${tipoTexto}</span>
           </div>
           <div class="grid md:grid-cols-2 gap-6">
             <div>
@@ -1158,25 +1290,27 @@
               <p class="text-[#004587]">${dataFormatada}</p>
             </div>
             <div>
-              <p class="text-gray-600 font-semibold mb-2">Horário</p>
-              <p class="text-[#004587]">${evt.event_time}</p>
+              <p class="text-gray-600 font-semibold mb-2">Período</p>
+              <p class="text-[#004587]">${periodoTexto}</p>
             </div>
+            ${evento.recorrente ? `
             <div class="md:col-span-2">
-              <p class="text-gray-600 font-semibold mb-2">Local</p>
-              <p class="text-[#004587]">${evt.event_location}</p>
+              <p class="text-gray-600 font-semibold mb-2">Recorrente</p>
+              <p class="text-[#004587]">Sim - Toda 1ª segunda do mês</p>
             </div>
+            ` : ''}
             <div class="md:col-span-2">
               <p class="text-gray-600 font-semibold mb-2">Descrição</p>
-              <p class="text-[#004587] whitespace-pre-wrap">${evt.event_description}</p>
+              <p class="text-[#004587] whitespace-pre-wrap">${evento.descricao || 'Sem descrição'}</p>
             </div>
             <div class="md:col-span-2">
               <p class="text-gray-600 font-semibold mb-2">Responsável</p>
-              <p class="text-[#004587]">${evt.responsible_name}</p>
+              <p class="text-[#004587]">${evento.responsavel || 'Não informado'}</p>
             </div>
           </div>
         </div>
       `;
-    };
+    }
 
     document.getElementById('eventos-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -1222,39 +1356,33 @@
 
     document.getElementById('representantes-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const inputs = e.target.querySelectorAll('input');
-      if (!inputs[0].value || !inputs[1].value || !inputs[2].value) {
+      const form = e.target;
+      const turma_id = form.turma_curso.value.trim();
+      const nome_representante = form.representante.value.trim();
+      const telefone_representante = form.telefone_do_representante.value.trim();
+      const nome_vice = form.vice_representante.value.trim();
+      const telefone_vice = form.telefone_do_vice_representante.value.trim();
+
+      if (!turma_id || !nome_representante || !telefone_representante) {
         showErrorMessage('❌ Preencha todos os campos obrigatórios');
         return;
       }
-      const data = {
-        record_type: 'representante',
-        turma_id: inputs[0].value.trim(),
-        representative_name: inputs[1].value.trim(),
-        representative_phone: inputs[2].value.trim(),
-        vice_name: inputs[3].value.trim(),
-        vice_phone: inputs[4].value.trim()
-      };
-      const btn = e.target.querySelector('button');
+
+      const btn = form.querySelector('button');
+      const originalBtnHtml = btn.innerHTML;
       btn.disabled = true;
-      btn.textContent = 'Salvando...';
+      btn.innerHTML = '⏳ Salvando...';
+
       try {
-        const formData = new FormData(e.target);
-        const response = await fetch('https://formspree.io/f/xkoqzllq', {
-          method: 'POST',
-          body: formData,
-          headers: { 'Accept': 'application/json' }
-        });
-        if (response.ok) {
-          e.target.reset();
-          btn.disabled = false;
-          showSuccessMessage('✅ Enviado com sucesso!');
-        } else {
-          throw new Error('Erro ao enviar');
-        }
+        await postToSheet('Representantes', [turma_id, nome_representante, telefone_representante, nome_vice, telefone_vice]);
+        form.reset();
+        showSuccessMessage('✅ Enviado com sucesso!');
+        await loadRepresentantes();
       } catch (err) {
-        btn.disabled = false;
         showErrorMessage('❌ Erro ao enviar: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalBtnHtml;
       }
     });
 

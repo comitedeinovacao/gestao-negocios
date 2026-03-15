@@ -1,0 +1,151 @@
+{
+  "cursos_tecnicos": [
+    {
+      "id": "adm",
+      "nome": "TÉCNICO EM ADMINISTRAÇÃO",
+      "codigo_ficha": "13935",
+      "modalidade": "Presencial + EAD",
+      "subarea": "ADMINISTRAÇÃO GERAL"
+    },
+    {
+      "id": "comext",
+      "nome": "TÉCNICO EM COMÉRCIO EXTERIOR",
+      "codigo_ficha": "23513",
+      "modalidade": "Presencial",
+      "subarea": "COMÉRCIO EXTERIOR"
+    },
+    {
+      "id": "cont",
+      "nome": "TÉCNICO EM CONTABILIDADE",
+      "codigo_ficha": "25366",
+      "modalidade": "Presencial + EAD",
+      "subarea": "FINANÇAS E CONTABILIDADE"
+    },
+    {
+      "id": "fin",
+      "nome": "TÉCNICO EM FINANÇAS",
+      "codigo_ficha": "17458",
+      "modalidade": "Presencial",
+      "subarea": "FINANÇAS E CONTABILIDADE"
+    },
+    {
+      "id": "log",
+      "nome": "TÉCNICO EM LOGÍSTICA",
+      "codigo_ficha": "12985",
+      "modalidade": "Presencial + EAD",
+      "subarea": "LOGÍSTICA"
+    },
+    {
+      "id": "mkt",
+      "nome": "TÉCNICO EM MARKETING",
+      "codigo_ficha": "26861",
+      "modalidade": "Presencial + EAD",
+      "subarea": "MARKETING"
+    },
+    {
+      "id": "rh",
+      "nome": "TÉCNICO EM RECURSOS HUMANOS",
+      "codigo_ficha": "15065",
+      "modalidade": "Presencial + EAD",
+      "subarea": "GESTÃO DE PESSOAS E LIDERANÇA"
+    }
+  ],
+  "cursos_livres": [
+    { "id": "almox", "nome": "ALMOXARIFE", "codigo_ficha": "14941", "subarea": "LOGÍSTICA" },
+    { "id": "asst_adm", "nome": "ASSISTENTE ADMINISTRATIVO", "codigo_ficha": "13938", "subarea": "ADMINISTRAÇÃO GERAL" },
+    { "id": "asst_brand", "nome": "ASSISTENTE DE BRANDING E INOVAÇÃO", "codigo_ficha": "30563", "subarea": "MARKETING" },
+    { "id": "asst_ecom", "nome": "ASSISTENTE DE E-COMMERCE", "codigo_ficha": "30562", "subarea": "MARKETING" },
+    { "id": "asst_cx", "nome": "ASSISTENTE DE EXPERIÊNCIA DO CLIENTE", "codigo_ficha": "30564", "subarea": "MARKETING" },
+    { "id": "asst_log", "nome": "ASSISTENTE DE LOGÍSTICA", "codigo_ficha": "17548", "subarea": "LOGÍSTICA" },
+    { "id": "asst_mktdig", "nome": "ASSISTENTE DE MARKETING DIGITAL", "codigo_ficha": "30560", "subarea": "MARKETING" },
+    { "id": "asst_mktvnd", "nome": "ASSISTENTE DE MARKETING E VENDAS", "codigo_ficha": "23596", "subarea": "VENDAS" },
+    { "id": "asst_pes", "nome": "ASSISTENTE DE PESSOAL", "codigo_ficha": "13557", "subarea": "GESTÃO DE PESSOAS E LIDERANÇA" },
+    { "id": "asst_plan", "nome": "ASSISTENTE DE PLANEJAMENTO FINANCEIRO", "codigo_ficha": "25629", "subarea": "FINANÇAS E CONTABILIDADE" },
+    { "id": "asst_rh", "nome": "ASSISTENTE DE RECURSOS HUMANOS", "codigo_ficha": "13554", "subarea": "GESTÃO DE PESSOAS E LIDERANÇA" },
+    { "id": "asst_comext", "nome": "ASSISTENTE DE SERVIÇOS EM COMÉRCIO EXTERIOR", "codigo_ficha": "24460", "subarea": "COMÉRCIO EXTERIOR" },
+    { "id": "asst_fin", "nome": "ASSISTENTE FINANCEIRO", "codigo_ficha": "17851", "subarea": "FINANÇAS E CONTABILIDADE" },
+    { "id": "aux_adm", "nome": "AUXILIAR ADMINISTRATIVO - PROA - PSG", "codigo_ficha": "21093", "subarea": "ADMINISTRAÇÃO GERAL" },
+    { "id": "aux_fat", "nome": "AUXILIAR DE FATURAMENTO", "codigo_ficha": "27214", "subarea": "FINANÇAS E CONTABILIDADE" },
+    { "id": "aux_oplog", "nome": "AUXILIAR DE OPERAÇÕES LOGÍSTICAS", "codigo_ficha": "24609", "subarea": "LOGÍSTICA" },
+    { "id": "aux_cont", "nome": "AUXILIAR DE SERVIÇOS CONTÁBEIS", "codigo_ficha": "27211", "subarea": "FINANÇAS E CONTABILIDADE" },
+    { "id": "empreend", "nome": "EMPREENDEDOR EM PEQUENOS NEGÓCIOS", "codigo_ficha": "25744", "subarea": "ADMINISTRAÇÃO GERAL" },
+    { "id": "op_caixa", "nome": "OPERADOR DE CAIXA", "codigo_ficha": "22135", "subarea": "VENDAS" }
+  ],
+  "docentes": [
+    {
+      "nome_completo": "João Silva",
+      "telefone": "(18) 99999-9999",
+      "instagram": "@joaosilva",
+      "facebook": "João Silva",
+      "linkedin": "https://linkedin.com/in/joaosilva",
+      "mini_curriculo": "Especialista em Administração com 10 anos de experiência em gestão empresarial."
+    }
+  ],
+  "turmas": [
+    {
+      "id": "adm-001",
+      "curso_id": "adm",
+      "nome_curso": "TÉCNICO EM ADMINISTRAÇÃO",
+      "codigo_oferta": "2024-001",
+      "periodo": "manha"
+    },
+    {
+      "id": "cont-001", 
+      "curso_id": "cont",
+      "nome_curso": "TÉCNICO EM CONTABILIDADE",
+      "codigo_oferta": "2024-002",
+      "periodo": "tarde"
+    }
+  ],
+  "pitd": [
+    {
+      "id": "pitd-001",
+      "turma_id": "adm-001",
+      "docente": "João Silva",
+      "unidade_curricular": "Gestão Empresarial",
+      "link_arquivo_pitd": "https://drive.google.com/file/d/example1/view"
+    }
+  ],
+  "pctd": [
+    {
+      "id": "pctd-001",
+      "turma_id": "adm-001", 
+      "nome_curso": "TÉCNICO EM ADMINISTRAÇÃO",
+      "codigo_oferta": "2024-001",
+      "periodo": "manha",
+      "link_arquivo_pctd": "https://drive.google.com/file/d/example2/view"
+    }
+  ],
+  "representantes": [
+    {
+      "turma_curso": "1A - Administração",
+      "representante": "Maria Santos",
+      "telefone_do_representante": "(18) 88888-8888",
+      "vice_representante": "Pedro Oliveira",
+      "telefone_do_vice_representante": "(18) 77777-7777"
+    }
+  ],
+  "eventos": [
+    {
+      "titulo": "Reunião Pedagógica",
+      "tipo": "reuniao_pedagogica",
+      "data": "2026-03-02",
+      "duracao": "dia_todo",
+      "recorrente": false,
+      "descricao": "Reunião mensal de planejamento pedagógico",
+      "responsavel": "Coordenação Pedagógica"
+    },
+    {
+      "titulo": "Semana do Consumidor",
+      "tipo": "evento_externo",
+      "data": "2026-03-15",
+      "duracao": "periodo_especifico",
+      "periodo": "tarde",
+      "horario_inicio": "14:00",
+      "horario_fim": "18:00",
+      "recorrente": false,
+      "descricao": "Semana nacional do consumidor com atividades especiais",
+      "responsavel": "Setor de Marketing"
+    }
+  ]
+}
