@@ -471,11 +471,11 @@
      <div id="tab-agenda-eventos" class="tab-content bg-gray-50 rounded-2xl p-8">
       <h3 class="text-2xl font-bold text-[#004587] mb-8">Agenda de Eventos</h3><!-- Calendário -->
       <div class="bg-white rounded-2xl p-8 mb-8 border-2 border-gray-200">
-       <div class="flex justify-between items-center mb-6"><button onclick="previousMonth()" class="px-4 py-2 bg-[#004587] text-white rounded-lg hover:bg-[#003366] font-semibold flex items-center gap-2">
+       <div class="flex justify-between items-center mb-6"><button id="prev-month" class="px-4 py-2 bg-[#004587] text-white rounded-lg hover:bg-[#003366] font-semibold flex items-center gap-2">
          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
          </svg>Anterior </button>
-        <h2 id="calendar-month" class="text-2xl font-bold text-[#004587] text-center flex-1">Janeiro 2024</h2><button onclick="nextMonth()" class="px-4 py-2 bg-[#004587] text-white rounded-lg hover:bg-[#003366] font-semibold flex items-center gap-2">Próximo 
+        <h2 id="calendar-month" class="text-2xl font-bold text-[#004587] text-center flex-1">Janeiro 2024</h2><button id="next-month" class="px-4 py-2 bg-[#004587] text-white rounded-lg hover:bg-[#003366] font-semibold flex items-center gap-2">Próximo 
          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
          </svg></button>
@@ -985,17 +985,34 @@
       }
     };
 
-    let currentCalendarMonth = new Date();
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
 
-    window.previousMonth = () => {
-      currentCalendarMonth.setMonth(currentCalendarMonth.getMonth() - 1);
-      renderCalendar();
-    };
+    document.addEventListener('DOMContentLoaded', async () => {
+      const prevBtn = document.getElementById('prev-month');
+      const nextBtn = document.getElementById('next-month');
 
-    window.nextMonth = () => {
-      currentCalendarMonth.setMonth(currentCalendarMonth.getMonth() + 1);
-      renderCalendar();
-    };
+      if (prevBtn) {
+        prevBtn.onclick = async function() {
+          currentMonth--;
+          if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+          await renderCalendar();
+          renderEventos();
+        };
+      }
+
+      if (nextBtn) {
+        nextBtn.onclick = async function() {
+          currentMonth++;
+          if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+          await renderCalendar();
+          renderEventos();
+        };
+      }
+
+      await renderCalendar();
+      renderEventos();
+    });
 
 
 
@@ -1008,8 +1025,8 @@
         console.error('Erro ao carregar eventos:', err);
       }
 
-      const year = currentCalendarMonth.getFullYear();
-      const month = currentCalendarMonth.getMonth();
+      const year = currentYear;
+      const month = currentMonth;
       
       // Atualizar título
       const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
@@ -1179,8 +1196,8 @@
     }
 
     function renderEventos() {
-      const year = currentCalendarMonth.getFullYear();
-      const month = currentCalendarMonth.getMonth();
+      const year = currentYear;
+      const month = currentMonth;
       
       // Filtrar eventos do mês atual
       const eventosDoMes = allEventos.filter(evt => {
