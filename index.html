@@ -1419,105 +1419,77 @@
     }
 
     async function carregarEventosSheets() {
-      const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyujbQCQ4OKMiLXNl4Q3aOMCQp65ifsjXp8ZQbutBsJwoSfGMlDe9DCok1XKt_qc389hg/exec';
+      const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyujbQCQ4OKMiLXNl4Q3aOMCQp65ifsjXp8ZQbutBsJwoSfGMlDe9DCok1XKt_qc389hg/exec?aba=Eventos&callback=handleEventos';
       
-      const proxies = [
-        'https://corsproxy.io/?' + encodeURIComponent(SCRIPT_URL + '?aba=Eventos'),
-        'https://api.allorigins.win/get?url=' + encodeURIComponent(SCRIPT_URL + '?aba=Eventos'),
-      ];
-      
-      for (const proxyUrl of proxies) {
-        try {
-          const controller = new AbortController();
-          const timeout = setTimeout(() => controller.abort(), 4000);
-          
-          const response = await fetch(proxyUrl, { 
-            cache: 'no-store',
-            signal: controller.signal
-          });
+      return new Promise((resolve) => {
+        const timeout = setTimeout(() => {
+          cleanup();
+          console.warn('Apps Script timeout');
+          resolve([]);
+        }, 8000);
+
+        function cleanup() {
           clearTimeout(timeout);
-          
-          let data;
-          if (proxyUrl.includes('allorigins')) {
-            const wrapper = await response.json();
-            data = JSON.parse(wrapper.contents);
-          } else {
-            data = await response.json();
-          }
-          
-          if (data && data.status === 'ok' && Array.isArray(data.dados)) {
-            return data.dados.map(evt => ({
-              id: 'sheets_' + Math.random(),
-              titulo: String(evt.titulo || ''),
-              tipo: String(evt.tipo || 'evento_interno'),
-              data: (() => {
-                const d = String(evt.data || '');
-                if (/^\d{2}\/\d{2}\/\d{4}$/.test(d)) {
-                  const [dd, mm, yyyy] = d.split('/');
-                  return `${yyyy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`;
-                }
-                if (d.includes('T')) {
-                  // Sheets envia com fuso UTC-3 (Brasília), corrigir pegando data local
-                  const dt = new Date(d);
-                  const yyyy = dt.getFullYear();
-                  const mm = String(dt.getMonth() + 1).padStart(2,'0');
-                  const dd2 = String(dt.getDate()).padStart(2,'0');
-                  return `${yyyy}-${mm}-${dd2}`;
-                }
-                if (/^\d{5}$/.test(d)) {
-                  const ms = new Date(Date.UTC(1899,11,30)).getTime() + parseInt(d) * 86400000;
-                  return new Date(ms).toISOString().split('T')[0];
-                }
-                return d;
-              })(),
-              duracao: String(evt.duracao || 'dia_todo'),
-              periodo: String(evt.periodo || ''),
-              horario_inicio: (() => {
-                const h = evt.horario_inicio;
-                if (!h && h !== 0) return '';
-                const s = String(h);
-                if (s.includes('T')) {
-                  const dt = new Date(s);
-                  return dt.getHours().toString().padStart(2,'0') + ':' + dt.getMinutes().toString().padStart(2,'0');
-                }
-                if (!isNaN(parseFloat(s)) && parseFloat(s) < 1) {
-                  const totalMin = Math.round(parseFloat(s) * 24 * 60);
-                  const hh = Math.floor(totalMin / 60) % 24;
-                  const mm = totalMin % 60;
-                  return hh.toString().padStart(2,'0') + ':' + mm.toString().padStart(2,'0');
-                }
-                return s.substring(0,5);
-              })(),
-              horario_fim: (() => {
-                const h = evt.horario_fim;
-                if (!h && h !== 0) return '';
-                const s = String(h);
-                if (s.includes('T')) {
-                  const dt = new Date(s);
-                  return dt.getHours().toString().padStart(2,'0') + ':' + dt.getMinutes().toString().padStart(2,'0');
-                }
-                if (!isNaN(parseFloat(s)) && parseFloat(s) < 1) {
-                  const totalMin = Math.round(parseFloat(s) * 24 * 60);
-                  const hh = Math.floor(totalMin / 60) % 24;
-                  const mm = totalMin % 60;
-                  return hh.toString().padStart(2,'0') + ':' + mm.toString().padStart(2,'0');
-                }
-                return s.substring(0,5);
-              })(),
-              local: String(evt.local || ''),
-              descricao: String(evt.descricao || ''),
-              responsavel: String(evt.responsavel || '')
-            }));
-          }
-        } catch(err) {
-          if (err.name === 'AbortError') {
-            console.warn('Proxy timeout, tentando próximo...');
-          } else {
-            console.warn('Proxy falhou, tentando próximo...', err);
-          }
+          delete window.handleEventos;
+          const script = document.getElementById('jsonp-eventos');
+          if (script) script.remove();
         }
-      }
-      return [];
+
+        window.handleEventos = function(data) {
+          cleanup();
+          if (!data || !Array.isArray(data.dados)) { resolve([]); return; }
+          resolve(data.dados.map(evt => ({
+            id: 'sheets_' + Math.random(),
+            titulo: String(evt.titulo || ''),
+            tipo: String(evt.tipo || 'evento_interno'),
+            data: (() => {
+              const d = String(evt.data || '');
+              if (/^\d{2}\/\d{2}\/\d{4}$/.test(d)) {
+                const [dd, mm, yyyy] = d.split('/');
+                return `${yyyy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`;
+              }
+              if (d.includes('T')) {
+                const dt = new Date(d);
+                return dt.getFullYear() + '-' +
+                  String(dt.getMonth()+1).padStart(2,'0') + '-' +
+                  String(dt.getDate()).padStart(2,'0');
+              }
+              return d;
+            })(),
+            duracao: String(evt.duracao || 'dia_todo'),
+            periodo: String(evt.periodo || ''),
+            horario_inicio: (() => {
+              const h = evt.horario_inicio;
+              if (!h && h !== 0) return '';
+              const s = String(h);
+              if (s.includes('T')) {
+                const dt = new Date(s);
+                return dt.getHours().toString().padStart(2,'0') + ':' + dt.getMinutes().toString().padStart(2,'0');
+              }
+              return s.substring(0,5);
+            })(),
+            horario_fim: (() => {
+              const h = evt.horario_fim;
+              if (!h && h !== 0) return '';
+              const s = String(h);
+              if (s.includes('T')) {
+                const dt = new Date(s);
+                return dt.getHours().toString().padStart(2,'0') + ':' + dt.getMinutes().toString().padStart(2,'0');
+              }
+              return s.substring(0,5);
+            })(),
+            local: String(evt.local || ''),
+            descricao: String(evt.descricao || ''),
+            responsavel: String(evt.responsavel || '')
+          })));
+        };
+
+        const script = document.createElement('script');
+        script.id = 'jsonp-eventos';
+        script.src = SCRIPT_URL;
+        script.onerror = () => { cleanup(); resolve([]); };
+        document.head.appendChild(script);
+      });
     }
 
     async function carregarTodosEventos() {
@@ -1535,3 +1507,4 @@
   </script>
 </body>
 </html>
+
