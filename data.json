@@ -151,6 +151,19 @@
       "local": "Senac Araçatuba",
       "descricao": "Reunião pedagógica mensal",
       "responsavel": "Jean Carlos"
+    },
+    {
+      "id": "evt3",
+      "titulo": "NOME DO EVENTO",
+      "tipo": "evento_interno",
+      "data": "2026-03-XX",
+      "duracao": "periodo_especifico",
+      "periodo": "noite",
+      "horario_inicio": "19:30",
+      "horario_fim": "21:00",
+      "local": "Senac Araçatuba",
+      "descricao": "DESCRIÇÃO",
+      "responsavel": "NOME"
     }
   ]
 }
