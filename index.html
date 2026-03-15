@@ -290,7 +290,7 @@
        <div><label class="block text-[#004587] font-semibold mb-3">Unidade Curricular</label> <input type="text" placeholder="Digite a UC..." name="unidade_curricular" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
        </div>
        <div><label class="block text-[#004587] font-semibold mb-3">Link do Arquivo PITD</label> <input type="url" placeholder="https://drive.google.com/... ou https://1drv.ms/..." name="link_do_arquivo_pitd" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
-        <p class="text-gray-500 text-sm mt-2">ðŸ“Ž Compartilhe o link aberto do seu Google Drive ou OneDrive</p>
+        <p class="text-gray-500 text-sm mt-2">📎 Compartilhe o link aberto do seu Google Drive ou OneDrive</p>
        </div><button type="submit" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -315,7 +315,7 @@
         </div>
        </div>
        <div><label class="block text-[#004587] font-semibold mb-3">Link do Arquivo PCTD</label> <input type="url" placeholder="https://drive.google.com/... ou https://1drv.ms/..." name="link_do_arquivo_pctd" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
-        <p class="text-gray-500 text-sm mt-2">ðŸ“Ž Compartilhe o link aberto do seu Google Drive ou OneDrive</p>
+        <p class="text-gray-500 text-sm mt-2">📎 Compartilhe o link aberto do seu Google Drive ou OneDrive</p>
        </div><button type="submit" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -579,7 +579,7 @@
         allTeachers = data.docentes || [];
       } catch (err) {
         allTeachers = [];
-        showErrorMessage('âŒ Erro ao carregar docentes: ' + err.message);
+        showErrorMessage('❌ Erro ao carregar docentes: ' + err.message);
       }
       renderDocentes();
     }
@@ -591,7 +591,7 @@
         allPCTD = data.pctd || [];
       } catch (err) {
         allPCTD = [];
-        showErrorMessage('âŒ Erro ao carregar PCTD: ' + err.message);
+        showErrorMessage('❌ Erro ao carregar PCTD: ' + err.message);
       }
       renderPCTD();
     }
@@ -603,7 +603,7 @@
         allPITD = data.pitd || [];
       } catch (err) {
         allPITD = [];
-        showErrorMessage('âŒ Erro ao carregar PITD: ' + err.message);
+        showErrorMessage('❌ Erro ao carregar PITD: ' + err.message);
       }
       renderPITD();
     }
@@ -615,7 +615,7 @@
         allRepresentantes = data.representantes || [];
       } catch (err) {
         allRepresentantes = [];
-        showErrorMessage('âŒ Erro ao carregar representantes: ' + err.message);
+        showErrorMessage('❌ Erro ao carregar representantes: ' + err.message);
       }
       renderRepresentantesFilter();
     }
@@ -665,13 +665,35 @@
     })();
 
     // Navegação
-    window.navigateToPage = (page) => {
+    window.navigateToPage = async (page) => {
       document.querySelectorAll('.page-container').forEach(p => p.classList.remove('active'));
       document.getElementById(page + '-page').classList.add('active');
-      if (page === 'eventos') {
-        renderCalendar();
-      }
       window.scrollTo(0, 0);
+      if (page === 'eventos') {
+        // Garantir que os botões de navegação do calendário estejam prontos
+        const prevBtn = document.getElementById('prev-month');
+        const nextBtn = document.getElementById('next-month');
+        if (prevBtn && !prevBtn.dataset.initialized) {
+          prevBtn.dataset.initialized = 'true';
+          prevBtn.onclick = async function() {
+            window.currentMonth--;
+            if (window.currentMonth < 0) { window.currentMonth = 11; window.currentYear--; }
+            await renderCalendar();
+            renderEventos();
+          };
+        }
+        if (nextBtn && !nextBtn.dataset.initialized) {
+          nextBtn.dataset.initialized = 'true';
+          nextBtn.onclick = async function() {
+            window.currentMonth++;
+            if (window.currentMonth > 11) { window.currentMonth = 0; window.currentYear++; }
+            await renderCalendar();
+            renderEventos();
+          };
+        }
+        await renderCalendar();
+        renderEventos();
+      }
     };
 
     window.scrollToGestao = () => {
@@ -837,22 +859,22 @@
       const mini_curriculo = form.mini_curriculo.value.trim();
 
       if (!nome_completo || !telefone || !mini_curriculo) {
-        showErrorMessage('âŒ Preencha todos os campos obrigatórios');
+        showErrorMessage('❌ Preencha todos os campos obrigatórios');
         return;
       }
 
       const btn = form.querySelector('button');
       const originalBtnHtml = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = 'â³ Salvando...';
+      btn.innerHTML = '⏳ Salvando...';
 
       try {
         await postToSheet('Docentes', [nome_completo, telefone, instagram, facebook, linkedin, mini_curriculo]);
         form.reset();
-        showSuccessMessage('âœ… Enviado com sucesso!');
+        showSuccessMessage('✅ Enviado com sucesso!');
         await loadDocentes();
       } catch (err) {
-        showErrorMessage('âŒ Erro ao enviar: ' + err.message);
+        showErrorMessage('❌ Erro ao enviar: ' + err.message);
       } finally {
         btn.disabled = false;
         btn.innerHTML = originalBtnHtml;
@@ -869,21 +891,21 @@
       const periodo = form.periodo.value;
 
       if (!nome_curso || !codigo_oferta) {
-        showErrorMessage('âŒ Preencha todos os campos obrigatórios');
+        showErrorMessage('❌ Preencha todos os campos obrigatórios');
         return;
       }
 
       const btn = form.querySelector('button');
       const originalBtnHtml = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = 'â³ Salvando...';
+      btn.innerHTML = '⏳ Salvando...';
 
       try {
         await postToSheet('Turmas', [codigo_oferta, nome_curso, periodo, data_inicio, data_termino]);
         form.reset();
-        showSuccessMessage('âœ… Enviado com sucesso!');
+        showSuccessMessage('✅ Enviado com sucesso!');
       } catch (err) {
-        showErrorMessage('âŒ Erro ao enviar: ' + err.message);
+        showErrorMessage('❌ Erro ao enviar: ' + err.message);
       } finally {
         btn.disabled = false;
         btn.innerHTML = originalBtnHtml;
@@ -898,29 +920,29 @@
       const link_arquivo = form.link_do_arquivo_pitd.value.trim();
 
       if (!nome_docente) {
-        showErrorMessage('âŒ Digite o nome do docente');
+        showErrorMessage('❌ Digite o nome do docente');
         return;
       }
       if (!codigo_oferta) {
-        showErrorMessage('âŒ Digite a unidade curricular');
+        showErrorMessage('❌ Digite a unidade curricular');
         return;
       }
       if (!link_arquivo) {
-        showErrorMessage('âŒ Cole o link do arquivo');
+        showErrorMessage('❌ Cole o link do arquivo');
         return;
       }
 
       const btn = form.querySelector('button');
       const originalBtnHtml = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = 'â³ Salvando...';
+      btn.innerHTML = '⏳ Salvando...';
 
       try {
         await postToSheet('PITD', [nome_docente, codigo_oferta, link_arquivo]);
         form.reset();
-        showSuccessMessage('âœ… Enviado com sucesso!');
+        showSuccessMessage('✅ Enviado com sucesso!');
       } catch (err) {
-        showErrorMessage('âŒ Erro ao enviar: ' + err.message);
+        showErrorMessage('❌ Erro ao enviar: ' + err.message);
       } finally {
         btn.disabled = false;
         btn.innerHTML = originalBtnHtml;
@@ -938,34 +960,34 @@
       const link_arquivo = form.link_do_arquivo_pctd.value.trim();
 
       if (!nome_curso) {
-        showErrorMessage('âŒ Digite o nome do curso');
+        showErrorMessage('❌ Digite o nome do curso');
         return;
       }
       if (!codigo_oferta) {
-        showErrorMessage('âŒ Digite o código da oferta');
+        showErrorMessage('❌ Digite o código da oferta');
         return;
       }
       if (!data_conclusao) {
-        showErrorMessage('âŒ Selecione a data de conclusão');
+        showErrorMessage('❌ Selecione a data de conclusão');
         return;
       }
       if (!link_arquivo) {
-        showErrorMessage('âŒ Cole o link do arquivo');
+        showErrorMessage('❌ Cole o link do arquivo');
         return;
       }
 
       const btn = form.querySelector('button');
       const originalBtnHtml = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = 'â³ Salvando...';
+      btn.innerHTML = '⏳ Salvando...';
 
       try {
         await postToSheet('PCTD', [codigo_oferta, nome_curso, periodo, data_inicio, data_conclusao, link_arquivo]);
         form.reset();
-        showSuccessMessage('âœ… Enviado com sucesso!');
+        showSuccessMessage('✅ Enviado com sucesso!');
         await loadPCTD();
       } catch (err) {
-        showErrorMessage('âŒ Erro ao enviar: ' + err.message);
+        showErrorMessage('❌ Erro ao enviar: ' + err.message);
       } finally {
         btn.disabled = false;
         btn.innerHTML = originalBtnHtml;
@@ -992,31 +1014,11 @@
     window.currentYear  = new Date().getFullYear();
 
     document.addEventListener('DOMContentLoaded', async () => {
-      const prevBtn = document.getElementById('prev-month');
-      const nextBtn = document.getElementById('next-month');
-
-      if (prevBtn && !prevBtn.dataset.initialized) {
-        prevBtn.dataset.initialized = 'true';
-        prevBtn.onclick = async function() {
-          window.currentMonth--;
-          if (window.currentMonth < 0) { window.currentMonth = 11; window.currentYear--; }
-          await renderCalendar();
-          renderEventos();
-        };
-      }
-
-      if (nextBtn && !nextBtn.dataset.initialized) {
-        nextBtn.dataset.initialized = 'true';
-        nextBtn.onclick = async function() {
-          window.currentMonth++;
-          if (window.currentMonth > 11) { window.currentMonth = 0; window.currentYear++; }
-          await renderCalendar();
-          renderEventos();
-        };
-      }
-
-      await renderCalendar();
-      renderEventos();
+      // Carregar dados estáticos ao iniciar
+      await loadDocentes();
+      await loadPCTD();
+      await loadPITD();
+      await loadRepresentantes();
     });
 
 
@@ -1367,7 +1369,7 @@
       const form = e.target;
       const btn = form.querySelector('button');
       btn.disabled = true;
-      btn.textContent = 'â³ Salvando...';
+      btn.textContent = '⏳ Salvando...';
 
       const titulo = form.querySelector('[name="titulo"]')?.value || '';
       const tipo = form.querySelector('[name="tipo"]')?.value || '';
@@ -1396,11 +1398,11 @@
         form.reset();
         btn.disabled = false;
         btn.textContent = '+ Salvar Evento';
-        showSuccessMessage('âœ… Evento cadastrado com sucesso!');
+        showSuccessMessage('✅ Evento cadastrado com sucesso!');
       } catch(err) {
         btn.disabled = false;
         btn.textContent = '+ Salvar Evento';
-        showErrorMessage('âŒ Erro ao salvar: ' + err.message);
+        showErrorMessage('❌ Erro ao salvar: ' + err.message);
       }
     });
 
@@ -1414,22 +1416,22 @@
       const telefone_vice = form.telefone_do_vice_representante.value.trim();
 
       if (!turma_id || !nome_representante || !telefone_representante) {
-        showErrorMessage('âŒ Preencha todos os campos obrigatórios');
+        showErrorMessage('❌ Preencha todos os campos obrigatórios');
         return;
       }
 
       const btn = form.querySelector('button');
       const originalBtnHtml = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = 'â³ Salvando...';
+      btn.innerHTML = '⏳ Salvando...';
 
       try {
         await postToSheet('Representantes', [turma_id, nome_representante, telefone_representante, nome_vice, telefone_vice]);
         form.reset();
-        showSuccessMessage('âœ… Enviado com sucesso!');
+        showSuccessMessage('✅ Enviado com sucesso!');
         await loadRepresentantes();
       } catch (err) {
-        showErrorMessage('âŒ Erro ao enviar: ' + err.message);
+        showErrorMessage('❌ Erro ao enviar: ' + err.message);
       } finally {
         btn.disabled = false;
         btn.innerHTML = originalBtnHtml;
