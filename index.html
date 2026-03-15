@@ -1399,40 +1399,50 @@
     }
 
     async function carregarEventosSheets() {
-      try {
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyujbQCQ4OKMiLXNl4Q3aOMCQp65ifsjXp8ZQbutBsJwoSfGMlDe9DCok1XKt_qc389hg/exec';
-        const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(SCRIPT_URL + '?aba=Eventos');
-        
-        const response = await fetch(proxyUrl);
-        const data = await response.json();
-        
-        if (data && data.status === 'ok' && data.dados) {
-          return data.dados.map(function(evt) {
-            return {
+      const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyujbQCQ4OKMiLXNl4Q3aOMCQp65ifsjXp8ZQbutBsJwoSfGMlDe9DCok1XKt_qc389hg/exec';
+      
+      const proxies = [
+        'https://corsproxy.io/?' + encodeURIComponent(SCRIPT_URL + '?aba=Eventos'),
+        'https://api.allorigins.win/get?url=' + encodeURIComponent(SCRIPT_URL + '?aba=Eventos'),
+      ];
+      
+      for (const proxyUrl of proxies) {
+        try {
+          const response = await fetch(proxyUrl, { cache: 'no-store' });
+          let data;
+          
+          if (proxyUrl.includes('allorigins')) {
+            const wrapper = await response.json();
+            data = JSON.parse(wrapper.contents);
+          } else {
+            data = await response.json();
+          }
+          
+          if (data && data.status === 'ok' && Array.isArray(data.dados)) {
+            return data.dados.map(evt => ({
               id: 'sheets_' + Math.random(),
-              titulo: evt.titulo || '',
-              tipo: evt.tipo || 'evento_interno',
-              data: evt.data || '',
-              duracao: evt.duracao || 'periodo_especifico',
-              periodo: evt.periodo || '',
-              horario_inicio: evt.horario_inicio || '',
-              horario_fim: evt.horario_fim || '',
-              local: evt.local || '',
-              descricao: evt.descricao || '',
-              responsavel: evt.responsavel || ''
-            };
-          });
+              titulo: String(evt.titulo || ''),
+              tipo: String(evt.tipo || 'evento_interno'),
+              data: String(evt.data || '').split('T')[0],
+              duracao: String(evt.duracao || 'periodo_especifico'),
+              periodo: String(evt.periodo || ''),
+              horario_inicio: String(evt.horario_inicio || ''),
+              horario_fim: String(evt.horario_fim || ''),
+              local: String(evt.local || ''),
+              descricao: String(evt.descricao || ''),
+              responsavel: String(evt.responsavel || '')
+            }));
+          }
+        } catch(err) {
+          console.warn('Proxy falhou, tentando próximo...', err);
         }
-        return [];
-      } catch(err) {
-        console.warn('Eventos do Sheets não carregados:', err);
-        return [];
       }
+      return [];
     }
 
     async function carregarTodosEventos() {
       var eventosSheets = await carregarEventosSheets();
-      var response = await fetch('./data.json');
+      var response = await fetch('./data.json', { cache: 'no-store' });
       var data = await response.json();
       var eventosJson = data.eventos || [];
       return eventosJson.concat(eventosSheets);
