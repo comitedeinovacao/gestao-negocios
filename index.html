@@ -572,46 +572,6 @@
     let allRepresentantes = [];
     let allEventos = [];
 
-    // Função para submeter dados ao Google Sheets via iframe (contornando CORS)
-    function submitToGoogleSheets(data) {
-      return new Promise((resolve, reject) => {
-        try {
-          // Criar formulário temporário
-          const form = document.createElement('form');
-          form.action = 'https://script.google.com/macros/s/AKfycbyujbQCQ4OKMiLXNl4Q3aOMCQp65ifsjXp8ZQbutBsJwoSfGMlDe9DCok1XKt_qc389hg/exec';
-          form.method = 'POST';
-          form.target = 'hidden-iframe';
-          form.style.display = 'none';
-
-          // Adicionar campo hidden com os dados
-          const input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = 'payload';
-          input.value = JSON.stringify(data);
-          form.appendChild(input);
-
-          // Adicionar ao body e submeter
-          document.body.appendChild(form);
-          form.submit();
-
-          // Resolver após 2 segundos (tempo para processamento)
-          setTimeout(() => {
-            document.body.removeChild(form);
-            resolve();
-          }, 2000);
-
-          // Remover formulário após 3 segundos
-          setTimeout(() => {
-            if (document.body.contains(form)) {
-              document.body.removeChild(form);
-            }
-          }, 3000);
-        } catch (error) {
-          reject(error);
-        }
-      });
-    }
-
     async function loadDocentes() {
       try {
         const response = await fetch('./data.json');
@@ -1348,46 +1308,45 @@
       `;
     }
 
-    document.getElementById('eventos-form')?.addEventListener('submit', async (e) => {
+    document.getElementById('eventos-form')?.addEventListener('submit', async function(e) {
       e.preventDefault();
       const form = e.target;
-      const titulo = form.titulo.value.trim();
-      const tipo = form.tipo.value;
-      const data = form.data.value;
-      const duracao = form.duracao.value;
-      const periodo = form.periodo?.value || '';
-      const horario_inicio = form.horario_inicio?.value || '';
-      const horario_fim = form.horario_fim?.value || '';
-      const local = 'Senac Araçatuba'; // Valor fixo conforme solicitado
-      const descricao = form.descricao.value.trim();
-      const responsavel = form.responsavel.value.trim();
-
-      if (!titulo || !tipo || !data || !duracao || !descricao || !responsavel) {
-        showErrorMessage('❌ Preencha todos os campos obrigatórios');
-        return;
-      }
-
       const btn = form.querySelector('button');
-      const originalBtnHtml = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = '⏳ Salvando...';
+      btn.textContent = '⏳ Salvando...';
+
+      const titulo = form.querySelector('[name="titulo"]')?.value || '';
+      const tipo = form.querySelector('[name="tipo"]')?.value || '';
+      const data = form.querySelector('[name="data"]')?.value || '';
+      const duracao = form.querySelector('[name="duracao"]:checked')?.value || 'dia_todo';
+      const periodo = form.querySelector('[name="periodo"]')?.value || '';
+      const horario_inicio = form.querySelector('[name="horario_inicio"]')?.value || '';
+      const horario_fim = form.querySelector('[name="horario_fim"]')?.value || '';
+      const local = form.querySelector('[name="local"]')?.value || '';
+      const descricao = form.querySelector('[name="descricao"]')?.value || '';
+      const responsavel = form.querySelector('[name="responsavel"]')?.value || '';
+
+      const payload = {
+        aba: 'Eventos',
+        headers: ['titulo','tipo','data','duracao','periodo','horario_inicio','horario_fim','local','descricao','responsavel','criado_em'],
+        linha: [titulo, tipo, data, duracao, periodo, horario_inicio, horario_fim, local, descricao, responsavel, new Date().toISOString()]
+      };
 
       try {
-        await submitToGoogleSheets({
-          aba: 'Eventos',
-          headers: ['titulo','tipo','data','duracao','periodo','horario_inicio','horario_fim','local','descricao','responsavel','criado_em'],
-          linha: [titulo, tipo, data, duracao, periodo, horario_inicio, horario_fim, local, descricao, responsavel, new Date().toISOString()]
+        await fetch('https://script.google.com/macros/s/AKfycbyujbQCQ4OKMiLXNl4Q3aOMCQp65ifsjXp8ZQbutBsJwoSfGMlDe9DCok1XKt_qc389hg/exec', {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(payload)
         });
-        
         form.reset();
-        showSuccessMessage('✅ Evento salvo com sucesso!');
-        await renderCalendar();
-        renderEventos();
-      } catch (err) {
-        showErrorMessage('❌ Erro ao salvar evento: ' + err.message);
-      } finally {
         btn.disabled = false;
-        btn.innerHTML = originalBtnHtml;
+        btn.textContent = '+ Salvar Evento';
+        showSuccessMessage('✅ Evento cadastrado com sucesso!');
+      } catch(err) {
+        btn.disabled = false;
+        btn.textContent = '+ Salvar Evento';
+        showErrorMessage('❌ Erro ao salvar: ' + err.message);
       }
     });
 
@@ -1484,6 +1443,5 @@
       firstTabBtn.classList.add('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
     }
   </script>
-  <iframe name="hidden-iframe" style="display:none"></iframe>
 </body>
 </html>
