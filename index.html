@@ -1428,9 +1428,16 @@
       
       for (const proxyUrl of proxies) {
         try {
-          const response = await fetch(proxyUrl, { cache: 'no-store' });
-          let data;
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 6000);
           
+          const response = await fetch(proxyUrl, { 
+            cache: 'no-store',
+            signal: controller.signal
+          });
+          clearTimeout(timeout);
+          
+          let data;
           if (proxyUrl.includes('allorigins')) {
             const wrapper = await response.json();
             data = JSON.parse(wrapper.contents);
@@ -1445,31 +1452,36 @@
               tipo: String(evt.tipo || 'evento_interno'),
               data: (() => {
                 const d = String(evt.data || '');
-                if (d.includes('/')) {
-                  const parts = d.split('/');
-                  return parts[2] + '-' + parts[1].padStart(2,'0') + '-' + parts[0].padStart(2,'0');
+                if (/^\d{2}\/\d{2}\/\d{4}$/.test(d)) {
+                  const [dd, mm, yyyy] = d.split('/');
+                  return `${yyyy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`;
                 }
-                return d.split('T')[0];
+                if (d.includes('T')) return d.split('T')[0];
+                if (/^\d{5}$/.test(d)) {
+                  const ms = new Date(Date.UTC(1899,11,30)).getTime() + parseInt(d) * 86400000;
+                  return new Date(ms).toISOString().split('T')[0];
+                }
+                return d;
               })(),
-              duracao: String(evt.duracao || 'periodo_especifico'),
+              duracao: String(evt.duracao || 'dia_todo'),
               periodo: String(evt.periodo || ''),
               horario_inicio: (() => {
-                const h = evt.horario_inicio;
+                const h = String(evt.horario_inicio || '');
                 if (!h) return '';
-                if (String(h).includes('T')) {
+                if (h.includes('T')) {
                   const d = new Date(h);
                   return d.getUTCHours().toString().padStart(2,'0') + ':' + d.getUTCMinutes().toString().padStart(2,'0');
                 }
-                return String(h);
+                return h.substring(0,5);
               })(),
               horario_fim: (() => {
-                const h = evt.horario_fim;
+                const h = String(evt.horario_fim || '');
                 if (!h) return '';
-                if (String(h).includes('T')) {
+                if (h.includes('T')) {
                   const d = new Date(h);
                   return d.getUTCHours().toString().padStart(2,'0') + ':' + d.getUTCMinutes().toString().padStart(2,'0');
                 }
-                return String(h);
+                return h.substring(0,5);
               })(),
               local: String(evt.local || ''),
               descricao: String(evt.descricao || ''),
@@ -1477,7 +1489,11 @@
             }));
           }
         } catch(err) {
-          console.warn('Proxy falhou, tentando próximo...', err);
+          if (err.name === 'AbortError') {
+            console.warn('Proxy timeout, tentando próximo...');
+          } else {
+            console.warn('Proxy falhou, tentando próximo...', err);
+          }
         }
       }
       return [];
