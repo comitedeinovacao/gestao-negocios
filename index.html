@@ -998,8 +998,8 @@
       if (prevBtn && !prevBtn.dataset.initialized) {
         prevBtn.dataset.initialized = 'true';
         prevBtn.onclick = async function() {
-          currentMonth--;
-          if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+          window.currentMonth--;
+          if (window.currentMonth < 0) { window.currentMonth = 11; window.currentYear--; }
           await renderCalendar();
           renderEventos();
         };
@@ -1008,8 +1008,8 @@
       if (nextBtn && !nextBtn.dataset.initialized) {
         nextBtn.dataset.initialized = 'true';
         nextBtn.onclick = async function() {
-          currentMonth++;
-          if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+          window.currentMonth++;
+          if (window.currentMonth > 11) { window.currentMonth = 0; window.currentYear++; }
           await renderCalendar();
           renderEventos();
         };
@@ -1262,7 +1262,10 @@
       }).join('');
     }
 
+    window._eventoAtual = null;
+
     function showEventoDetail(evento) {
+      window._eventoAtual = evento;
       const data = new Date(evento.data + 'T12:00:00');
       const dataFormatada = data.toLocaleDateString('pt-BR', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
 
@@ -1283,11 +1286,11 @@
       const isSheets = String(evento.id || '').startsWith('sheets_');
       const acoesHtml = isSheets ? `
         <div class="flex gap-3 mt-6 pt-6 border-t border-gray-200">
-          <button onclick='window.editarEvento(${JSON.stringify(evento).replace(/`/g,"\\`")})' 
+          <button onclick="window.editarEvento(window._eventoAtual)"
             class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 flex items-center justify-center gap-2">
             ✏️ Editar
           </button>
-          <button onclick="window.excluirEvento('${evento.id}', '${(evento.titulo||'').replace(/'/g,"\\'")}' )"
+          <button onclick="window.excluirEvento(window._eventoAtual.id, window._eventoAtual.titulo)"
             class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 flex items-center justify-center gap-2">
             🗑️ Excluir
           </button>
