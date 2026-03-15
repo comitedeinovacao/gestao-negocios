@@ -1439,52 +1439,43 @@
       setTimeout(() => msgDiv.remove(), 4000);
     }
 
-    function carregarEventosSheets() {
-      return new Promise(function(resolve) {
-        var callbackName = 'cb_' + Date.now();
-        var script = document.createElement('script');
-        var timeout = setTimeout(function() {
-          resolve([]);
-          if (script.parentNode) script.parentNode.removeChild(script);
-          delete window[callbackName];
-        }, 5000);
+    async function carregarEventosSheets() {
+      try {
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyujbQCQ4OKMiLXNl4Q3aOMCQp65ifsjXp8ZQbutBsJwoSfGMlDe9DCok1XKt_qc389hg/exec';
+        const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(SCRIPT_URL + '?aba=Eventos');
         
-        window[callbackName] = function(data) {
-          clearTimeout(timeout);
-          if (script.parentNode) script.parentNode.removeChild(script);
-          delete window[callbackName];
-          if (data && data.status === 'ok' && data.dados) {
-            resolve(data.dados.map(function(evt) {
-              return {
-                id: 'sheets_' + Math.random(),
-                titulo: evt.titulo || '',
-                tipo: evt.tipo || 'evento_interno',
-                data: evt.data || '',
-                duracao: evt.duracao || 'periodo_especifico',
-                periodo: evt.periodo || '',
-                horario_inicio: evt.horario_inicio || '',
-                horario_fim: evt.horario_fim || '',
-                local: evt.local || '',
-                descricao: evt.descricao || '',
-                responsavel: evt.responsavel || ''
-              };
-            }));
-          } else {
-            resolve([]);
-          }
-        };
+        const response = await fetch(proxyUrl);
+        const data = await response.json();
         
-        script.src = 'https://script.google.com/macros/s/AKfycbyujbQCQ4OKMiLXNl4Q3aOMCQp65ifsjXp8ZQbutBsJwoSfGMlDe9DCok1XKt_qc389hg/exec?aba=Eventos&callback=' + callbackName;
-        document.head.appendChild(script);
-      });
+        if (data && data.status === 'ok' && data.dados) {
+          return data.dados.map(function(evt) {
+            return {
+              id: 'sheets_' + Math.random(),
+              titulo: evt.titulo || '',
+              tipo: evt.tipo || 'evento_interno',
+              data: evt.data || '',
+              duracao: evt.duracao || 'periodo_especifico',
+              periodo: evt.periodo || '',
+              horario_inicio: evt.horario_inicio || '',
+              horario_fim: evt.horario_fim || '',
+              local: evt.local || '',
+              descricao: evt.descricao || '',
+              responsavel: evt.responsavel || ''
+            };
+          });
+        }
+        return [];
+      } catch(err) {
+        console.warn('Eventos do Sheets não carregados:', err);
+        return [];
+      }
     }
 
     async function carregarTodosEventos() {
-      var eventosSheetsPromise = carregarEventosSheets();
+      var eventosSheets = await carregarEventosSheets();
       var response = await fetch('./data.json');
       var data = await response.json();
       var eventosJson = data.eventos || [];
-      var eventosSheets = await eventosSheetsPromise;
       return eventosJson.concat(eventosSheets);
     }
 
