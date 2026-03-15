@@ -468,7 +468,7 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
        </svg>Criar Evento </button>
      </div><!-- Agenda de Eventos --> <!-- Agenda de Eventos -->
-     <div id="tab-agenda-eventos" class="tab-content bg-gray-50 rounded-2xl p-8">
+     <div id="tab-agenda-eventos" class="tab-content hidden bg-gray-50 rounded-2xl p-8">
       <h3 class="text-2xl font-bold text-[#004587] mb-8">Agenda de Eventos</h3><!-- Calendário -->
       <div class="bg-white rounded-2xl p-8 mb-8 border-2 border-gray-200">
        <div class="flex justify-between items-center mb-6"><button id="prev-month" class="px-4 py-2 bg-[#004587] text-white rounded-lg hover:bg-[#003366] font-semibold flex items-center gap-2">
@@ -670,6 +670,15 @@
       document.getElementById(page + '-page').classList.add('active');
       window.scrollTo(0, 0);
       if (page === 'eventos') {
+        // Mostrar aba agenda por padrão e esconder criar-evento
+        document.querySelectorAll('#eventos-page .tab-content').forEach(c => c.classList.add('hidden'));
+        document.getElementById('tab-agenda-eventos').classList.remove('hidden');
+        // Marcar aba agenda como ativa
+        document.querySelectorAll('#eventos-page .tab-btn').forEach(b => {
+          b.classList.remove('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
+        });
+        const agendaBtn = document.querySelector('#eventos-page .tab-btn[data-tab="agenda-eventos"]');
+        if (agendaBtn) agendaBtn.classList.add('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
         await renderCalendar();
         renderEventos();
       }
