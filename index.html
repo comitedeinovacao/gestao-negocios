@@ -668,6 +668,9 @@
     window.navigateToPage = (page) => {
       document.querySelectorAll('.page-container').forEach(p => p.classList.remove('active'));
       document.getElementById(page + '-page').classList.add('active');
+      if (page === 'eventos') {
+        renderCalendar();
+      }
       window.scrollTo(0, 0);
     };
 
@@ -992,7 +995,8 @@
       const prevBtn = document.getElementById('prev-month');
       const nextBtn = document.getElementById('next-month');
 
-      if (prevBtn) {
+      if (prevBtn && !prevBtn.dataset.initialized) {
+        prevBtn.dataset.initialized = 'true';
         prevBtn.onclick = async function() {
           currentMonth--;
           if (currentMonth < 0) { currentMonth = 11; currentYear--; }
@@ -1001,7 +1005,8 @@
         };
       }
 
-      if (nextBtn) {
+      if (nextBtn && !nextBtn.dataset.initialized) {
+        nextBtn.dataset.initialized = 'true';
         nextBtn.onclick = async function() {
           currentMonth++;
           if (currentMonth > 11) { currentMonth = 0; currentYear++; }
