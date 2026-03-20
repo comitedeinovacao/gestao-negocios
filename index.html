@@ -2968,28 +2968,39 @@
       select.innerHTML = '<option value="">Carregando docentes...</option>';
       if (allTeachers.length === 0) allTeachers = await carregarDaAba('Docentes');
       const periodo = quadroTurmaAtual.periodo;
-      // Mapeamento período da turma → tipo de turno válido na escala do docente
       const tiposValidos = periodo === 'manha' ? ['manha_tarde'] :
                            periodo === 'tarde' ? ['manha_tarde', 'tarde_noite'] :
                            ['tarde_noite'];
-      // Alocações na mesma DATA (não dia da semana) para checar conflito real
+      // Conflito: docente já alocado em outra turma nesta data exata
       const alocsMesmaData = allAlocacoes.filter(a => normData(a.data) === modalAlocacaoData);
-      const disponiveis = allTeachers.filter(d => {
-        let escala = {};
-        try { escala = d.escala_semanal ? JSON.parse(d.escala_semanal) : {}; } catch(e) {}
-        // Verifica se o docente trabalha neste período em QUALQUER dia da semana
-        const temPeriodo = Object.values(escala).some(e => e && e.ativo && tiposValidos.includes(e.tipo));
-        if (!temPeriodo) return false;
-        // Não pode estar alocado em outra turma na mesma data
+      // Separa em: compatíveis (têm escala no período) e demais (sem conflito)
+      const comEscala = [];
+      const semEscala = [];
+      allTeachers.forEach(d => {
+        // Checa conflito — se conflitante, exclui independente da escala
         const conflito = alocsMesmaData.some(a => a.docente_nome === d.nome_completo && a.turma_codigo !== quadroTurmaAtual.codigo_oferta);
-        return !conflito;
+        if (conflito) return;
+        let escala = {};
+        try { if (d.escala_semanal) escala = JSON.parse(d.escala_semanal); } catch(e) {}
+        const temPeriodo = Object.values(escala).some(e => e && e.ativo && tiposValidos.includes(e.tipo));
+        if (temPeriodo) comEscala.push(d); else semEscala.push(d);
       });
-      if (disponiveis.length === 0) {
-        select.innerHTML = '<option value="">Nenhum docente disponível neste período</option>';
+      if (comEscala.length === 0 && semEscala.length === 0) {
+        select.innerHTML = '<option value="">Nenhum docente disponível</option>';
         return;
       }
-      select.innerHTML = '<option value="">Selecione o docente...</option>' +
-        disponiveis.map(d => `<option value="${d.nome_completo}">${d.nome_completo}</option>`).join('');
+      let html = '<option value="">Selecione o docente...</option>';
+      if (comEscala.length > 0) {
+        html += '<optgroup label="✅ Com escala neste período">' +
+          comEscala.map(d => `<option value="${d.nome_completo}">${d.nome_completo}</option>`).join('') +
+          '</optgroup>';
+      }
+      if (semEscala.length > 0) {
+        html += '<optgroup label="⚠️ Sem escala configurada">' +
+          semEscala.map(d => `<option value="${d.nome_completo}">${d.nome_completo}</option>`).join('') +
+          '</optgroup>';
+      }
+      select.innerHTML = html;
     }
 
     window.calcularSaldoUC = function() {
