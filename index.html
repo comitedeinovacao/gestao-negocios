@@ -375,7 +375,7 @@
      </div>
      
      <!-- Seções de Consulta Separadas -->
-     <div class="grid md:grid-cols-2 gap-6 mb-8">
+     <div id="consulta-cards" class="grid md:grid-cols-2 gap-6 mb-8">
       <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-6 shadow-lg border-2 border-[#004587]/20 cursor-pointer hover:border-[#004587] hover:shadow-xl transition-all" onclick="openConsultaView('docentes-list')">
        <div class="w-14 h-14 bg-gradient-to-br from-[#004587] to-[#003366] rounded-xl flex items-center justify-center mb-4 mx-auto">
         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
@@ -806,6 +806,14 @@
     // Variável para docente selecionado
     let docenteAtual = null;
 
+    // Formatar data para pt-BR
+    function formatarData(val) {
+      if (!val) return '-';
+      const d = new Date(val);
+      if (isNaN(d.getTime())) return val;
+      return d.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+    }
+
     // Fechar todas as seções de consulta
     function fecharTodasSecoes() {
       document.querySelectorAll('.consulta-section').forEach(el => {
@@ -815,20 +823,25 @@
 
     // Abrir/Fechar Vistas
     window.openConsultaView = (viewId) => {
+      // Esconde os cards e todas as seções abertas
+      const cards = document.getElementById('consulta-cards');
+      if (cards) cards.style.display = 'none';
       fecharTodasSecoes();
+
+      // Carrega e mostra apenas a seção solicitada
       if (viewId === 'docentes-list') { renderDocentes(); loadDocentes(); }
       if (viewId === 'pctd-list') { filterPCTD(); loadPCTD(); }
       if (viewId === 'pitd-list') { filterPITD(); loadPITD(); }
       if (viewId === 'representantes-filter') { filterRepresentantes(); loadRepresentantes(); }
       const view = document.getElementById(viewId);
-      if (view) {
-        view.style.display = 'block';
-        view.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      if (view) view.style.display = 'block';
     };
 
-    window.closeConsultaView = (viewId) => {
+    // Voltar mostra os cards novamente
+    window.closeConsultaView = () => {
       fecharTodasSecoes();
+      const cards = document.getElementById('consulta-cards');
+      if (cards) cards.style.display = 'grid';
     };
 
     // Renderizar Docentes (com busca e ordem alfabética)
@@ -891,6 +904,7 @@
     window.voltarListaDocentes = function() {
       fecharTodasSecoes();
       document.getElementById('docentes-list').style.display = 'block';
+      // Não mostra os cards - continua na lista de docentes
     };
 
     window.editarDocente = function() {
@@ -925,6 +939,7 @@
         fecharTodasSecoes();
         await loadDocentes();
         document.getElementById('docentes-list').style.display = 'block';
+        // Mantém na lista de docentes após excluir
       } catch(err) {
         showErrorMessage('❌ Erro ao excluir: ' + err.message);
       }
@@ -966,8 +981,8 @@
               <p class="font-bold text-[#004587] text-lg">${pctd.nome_curso || 'Sem nome'}</p>
               <p class="text-sm text-gray-600 mt-1">Código: ${pctd.codigo_oferta || '-'}</p>
               <p class="text-sm text-gray-600">Período: ${periodoLabel[pctd.periodo] || pctd.periodo || '-'}</p>
-              ${pctd.data_inicio ? `<p class="text-sm text-gray-600">Início: ${pctd.data_inicio}</p>` : ''}
-              ${pctd.data_conclusao ? `<p class="text-sm text-gray-600">Conclusão: ${pctd.data_conclusao}</p>` : ''}
+              ${pctd.data_inicio ? `<p class="text-sm text-gray-600">Início: ${formatarData(pctd.data_inicio)}</p>` : ''}
+              ${pctd.data_conclusao ? `<p class="text-sm text-gray-600">Conclusão: ${formatarData(pctd.data_conclusao)}</p>` : ''}
               ${pctd.link_arquivo ? `<a href="${pctd.link_arquivo}" target="_blank" class="mt-3 flex items-center justify-center gap-2 w-full px-3 py-2 bg-[#F7941D] text-white rounded-lg font-semibold text-sm hover:bg-[#E8850D] transition-all">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                 Abrir Documento</a>`
