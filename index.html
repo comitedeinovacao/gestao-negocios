@@ -77,9 +77,7 @@
       transition: all 0.3s ease;
     }
 
-    /* Estado inicial das seções de consulta — o JS assume o controle via style.display */
-    .consulta-section { display: none; }
-    #consulta-cards   { display: none; }
+    /* Visibilidade de seções controlada 100% via style.display no JS */
   </style>
   <style>body { box-sizing: border-box; }</style>
   <script>
@@ -263,7 +261,7 @@
         </svg>Salvar Cadastro </button>
       </form>
      </div><!-- Turmas -->
-     <div id="tab-turmas" class="tab-content hidden bg-gray-50 rounded-2xl p-8">
+     <div id="tab-turmas" class="tab-content bg-gray-50 rounded-2xl p-8" style="display:none">
       <h3 class="text-2xl font-bold text-[#004587] mb-8">Cadastro de Turmas</h3>
       <form id="turmas-form" class="space-y-6">
        <div class="grid md:grid-cols-2 gap-6">
@@ -285,7 +283,7 @@
         </svg>Salvar Turma </button>
       </form>
      </div><!-- PITD -->
-     <div id="tab-pitd" class="tab-content hidden bg-gray-50 rounded-2xl p-8">
+     <div id="tab-pitd" class="tab-content bg-gray-50 rounded-2xl p-8" style="display:none">
       <h3 class="text-2xl font-bold text-[#004587] mb-8">Plano Individual de Trabalho Docente</h3>
       <form id="pitd-form" class="space-y-6">
        <div><label class="block text-[#004587] font-semibold mb-3">Docente</label> <input type="text" placeholder="Nome do docente..." name="docente" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
@@ -300,7 +298,7 @@
         </svg>Salvar PITD </button>
       </form>
      </div><!-- PCTD -->
-     <div id="tab-pctd" class="tab-content hidden bg-gray-50 rounded-2xl p-8">
+     <div id="tab-pctd" class="tab-content bg-gray-50 rounded-2xl p-8" style="display:none">
       <h3 class="text-2xl font-bold text-[#004587] mb-8">Plano Coletivo de Trabalho Docente</h3>
       <form id="pctd-form" class="space-y-6">
        <div class="grid md:grid-cols-2 gap-6">
@@ -325,7 +323,7 @@
         </svg>Salvar PCTD </button>
       </form>
      </div><!-- Representantes -->
-     <div id="tab-representantes" class="tab-content hidden bg-gray-50 rounded-2xl p-8">
+     <div id="tab-representantes" class="tab-content bg-gray-50 rounded-2xl p-8" style="display:none">
       <h3 class="text-2xl font-bold text-[#004587] mb-8">Cadastro de Representantes Estudantis</h3>
       <form id="representantes-form" class="space-y-6">
        <div><label class="block text-[#004587] font-semibold mb-3">Turma/Curso</label> <input type="text" placeholder="Ex: 1A - Administração" name="turma_curso" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
@@ -379,7 +377,7 @@
      </div>
      
      <!-- Seções de Consulta Separadas -->
-     <div id="consulta-cards" class="grid md:grid-cols-2 gap-6 mb-8">
+     <div id="consulta-cards" class="grid md:grid-cols-2 gap-6 mb-8" style="display:none">
       <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-6 shadow-lg border-2 border-[#004587]/20 cursor-pointer hover:border-[#004587] hover:shadow-xl transition-all" onclick="openConsultaView('docentes-list')">
        <div class="w-14 h-14 bg-gradient-to-br from-[#004587] to-[#003366] rounded-xl flex items-center justify-center mb-4 mx-auto">
         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
@@ -455,7 +453,7 @@
      </div>
 
      <!-- Consulta Docentes -->
-     <div id="docentes-list" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
+     <div id="docentes-list" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200" style="display:none">
       <button onclick="closeConsultaView('docentes-list')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
       </button>
@@ -467,7 +465,7 @@
      </div>
 
      <!-- Detalhe do Docente -->
-     <div id="docente-detail" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
+     <div id="docente-detail" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200" style="display:none">
       <button onclick="voltarListaDocentes()" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar à lista
       </button>
@@ -483,7 +481,7 @@
      </div>
 
      <!-- Consulta PCTD -->
-     <div id="pctd-list" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
+     <div id="pctd-list" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200" style="display:none">
       <button onclick="closeConsultaView('pctd-list')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
       </button>
@@ -507,7 +505,7 @@
      </div>
 
      <!-- Consulta PITD -->
-     <div id="pitd-list" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
+     <div id="pitd-list" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200" style="display:none">
       <button onclick="closeConsultaView('pitd-list')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
       </button>
@@ -526,7 +524,7 @@
      </div>
 
      <!-- Consulta Representantes -->
-     <div id="representantes-filter" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
+     <div id="representantes-filter" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200" style="display:none">
       <button onclick="closeConsultaView('representantes-filter')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
       </button>
@@ -561,7 +559,7 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
        </svg>Criar Evento </button>
      </div><!-- Agenda de Eventos --> <!-- Agenda de Eventos -->
-     <div id="tab-agenda-eventos" class="tab-content hidden bg-gray-50 rounded-2xl p-8">
+     <div id="tab-agenda-eventos" class="tab-content bg-gray-50 rounded-2xl p-8" style="display:none">
       <h3 class="text-2xl font-bold text-[#004587] mb-8">Agenda de Eventos</h3><!-- Calendário -->
       <div class="bg-white rounded-2xl p-8 mb-8 border-2 border-gray-200">
        <div class="flex justify-between items-center mb-6"><button id="prev-month" class="px-4 py-2 bg-[#004587] text-white rounded-lg hover:bg-[#003366] font-semibold flex items-center gap-2">
@@ -618,7 +616,7 @@
        </div>
       </div>
      </div><!-- Criar Evento -->
-     <div id="tab-criar-evento" class="tab-content hidden bg-gray-50 rounded-2xl p-8">
+     <div id="tab-criar-evento" class="tab-content bg-gray-50 rounded-2xl p-8" style="display:none">
       <h3 class="text-2xl font-bold text-[#004587] mb-8">Cadastrar Novo Evento</h3>
       <form id="eventos-form" class="space-y-6" method="POST">
        <div><label class="block text-[#004587] font-semibold mb-3">Título do Evento</label> <input type="text" placeholder="Digite o título do evento" name="titulo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
@@ -767,7 +765,16 @@
       document.getElementById(page + '-page').classList.add('active');
       window.scrollTo(0, 0);
       if (page === 'consulta') {
-        renderConsultaView(null); // garante que os cards apareçam
+        renderConsultaView(null);
+      }
+      if (page === 'cadastro') {
+        // Sempre mostra o primeiro tab (Docentes) ao entrar em Cadastro
+        document.querySelectorAll('#cadastro-page .tab-content').forEach(c => { c.style.display = 'none'; });
+        const firstTab = document.getElementById('tab-cad-docentes');
+        if (firstTab) firstTab.style.display = 'block';
+        document.querySelectorAll('#cadastro-page .tab-btn').forEach(b => b.classList.remove('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]'));
+        const firstBtn = document.querySelector('#cadastro-page .tab-btn[data-tab="cad-docentes"]');
+        if (firstBtn) firstBtn.classList.add('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
       }
       if (page === 'eventos') {
         // Mostrar aba agenda por padrão e esconder criar-evento
@@ -1320,6 +1327,7 @@
       const daysInPrevMonth = new Date(year, month, 0).getDate();
 
       const calendarGrid = document.getElementById('calendar-grid');
+      if (!calendarGrid) return;
       calendarGrid.innerHTML = '';
 
       // Dias do mês anterior
