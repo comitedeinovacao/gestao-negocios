@@ -23,59 +23,124 @@
         radial-gradient(circle at 60% 80%, rgba(247, 148, 29, 0.05) 0%, transparent 40%);
     }
     
+    /* ── Animações ── */
+    @keyframes morph {
+      0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+      50%       { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50%       { transform: translateY(-18px) rotate(4deg); }
+    }
+    @keyframes pulse-node {
+      0%, 100% { transform: scale(1);   opacity: 0.4; }
+      50%       { transform: scale(1.6); opacity: 0.9; }
+    }
+    @keyframes scan {
+      0%   { left: -100%; }
+      100% { left:  100%; }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 18px rgba(247,148,29,0.3); }
+      50%       { box-shadow: 0 0 36px rgba(247,148,29,0.65); }
+    }
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    /* ── Blobs decorativos ── */
+    .organic-blob {
+      border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+      animation: morph 9s ease-in-out infinite;
+    }
+    .float-anim          { animation: float 7s ease-in-out infinite; }
+    .float-anim-d1       { animation: float 7s ease-in-out -2.5s infinite; }
+    .float-anim-d2       { animation: float 7s ease-in-out -4.5s infinite; }
+    .spin-anim           { animation: spin-slow 20s linear infinite; }
+
+    /* ── Neural nodes ── */
+    .node {
+      position: absolute; width: 7px; height: 7px;
+      background: #F7941D; border-radius: 50%;
+      animation: pulse-node 2.4s ease-in-out infinite;
+    }
+
+    /* ── Card com efeito scan ── */
+    .card-scan {
+      position: relative; overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .card-scan::after {
+      content: '';
+      position: absolute; top: 0; left: -100%;
+      width: 100%; height: 2px;
+      background: linear-gradient(90deg, transparent, #F7941D, transparent);
+      animation: scan 3.5s linear infinite;
+    }
+    .card-scan:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,69,135,0.18); }
+
+    /* ── Eco-card (consulta/cadastro em outras páginas) ── */
     .eco-card {
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
+      position: relative; overflow: hidden;
     }
-    
     .eco-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(247, 148, 29, 0.1), transparent);
+      content: ''; position: absolute; top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(247,148,29,0.1), transparent);
       transition: left 0.5s ease;
     }
-    
-    .eco-card:hover::before {
-      left: 100%;
-    }
-    
-    .eco-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 40px rgba(0, 69, 135, 0.15);
-    }
-    
+    .eco-card:hover::before { left: 100%; }
+    .eco-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,69,135,0.15); }
+
+    /* ── Fade-in escalonado ── */
+    .fade-up   { animation: fadeUp 0.6s ease-out both; }
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; }
+    .delay-400 { animation-delay: 0.4s; }
+    .delay-500 { animation-delay: 0.5s; }
+
+    /* ── Botão com glow ── */
+    .btn-glow:hover { animation: pulse-glow 1.4s ease-in-out infinite; }
+
     .btn-primary {
       background: linear-gradient(135deg, #004587 0%, #003366 100%);
       transition: all 0.3s ease;
     }
-    
     .btn-primary:hover {
       background: linear-gradient(135deg, #F7941D 0%, #E8850D 100%);
       transform: scale(1.02);
     }
-    
+
+    /* ── Gradient text ── */
+    .gradient-text {
+      background: linear-gradient(135deg, #ffffff 0%, #93c5fd 50%, #F7941D 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── Cyber grid sutil na seção gestão ── */
+    .cyber-grid-bg {
+      background-image:
+        linear-gradient(rgba(0,69,135,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,69,135,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-track { background: #F2F2F2; }
     ::-webkit-scrollbar-thumb { background: #004587; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #F7941D; }
 
-    .page-container {
-      min-height: 100%;
-      display: none;
-    }
-
-    .page-container.active {
-      display: block;
-    }
-
-    .tab-content {
-      transition: all 0.3s ease;
-    }
+    .page-container { min-height: 100%; display: none; }
+    .page-container.active { display: block; }
+    .tab-content { transition: all 0.3s ease; }
 
     /* Visibilidade de seções controlada 100% via style.display no JS */
   </style>
@@ -129,22 +194,33 @@
     </header>
     <div class="h-24"></div><!-- Hero Section -->
     <section class="relative bg-gradient-to-br from-[#0a1628] via-[#0f2847] to-[#1a1a2e] text-white py-24 lg:py-32 overflow-hidden">
+     <!-- Blobs decorativos de fundo -->
+     <div class="absolute top-1/4 left-[-80px] w-72 h-72 bg-[#F7941D]/10 organic-blob float-anim pointer-events-none"></div>
+     <div class="absolute bottom-10 right-[-60px] w-56 h-56 bg-[#004587]/20 organic-blob float-anim-d2 pointer-events-none"></div>
+     <!-- Neural nodes -->
+     <div class="node" style="top:18%;left:12%;animation-delay:0s"></div>
+     <div class="node" style="top:65%;left:28%;animation-delay:0.8s"></div>
+     <div class="node" style="top:30%;left:72%;animation-delay:1.6s"></div>
+     <div class="node" style="top:75%;left:85%;animation-delay:0.4s"></div>
+     <div class="node" style="top:50%;left:55%;animation-delay:2s"></div>
      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
       <div class="grid lg:grid-cols-2 gap-12 items-center">
        <div class="space-y-8">
-        <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-gradient-to-r from-[#F7941D]/20 to-[#F7941D]/5 border border-[#F7941D]/30 backdrop-blur-sm w-fit"><span class="text-sm font-semibold text-[#F7941D] tracking-wider">HUB GESTÃO E NEGÓCIOS</span>
+        <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-gradient-to-r from-[#F7941D]/20 to-[#F7941D]/5 border border-[#F7941D]/30 backdrop-blur-sm w-fit fade-up"><span class="text-sm font-semibold text-[#F7941D] tracking-wider">HUB GESTÃO E NEGÓCIOS</span>
         </div>
-        <div>
-         <h1 id="hero-title" class="text-5xl sm:text-6xl lg:text-7xl font-black leading-tight mb-4 relative"><span class="bg-gradient-to-r from-white via-blue-200 to-[#F7941D] bg-clip-text text-transparent">GESTÃO E NEGÓCIOS</span></h1>
+        <div class="fade-up delay-100">
+         <h1 id="hero-title" class="text-5xl sm:text-6xl lg:text-7xl font-black leading-tight mb-4 relative"><span class="gradient-text">GESTÃO E NEGÓCIOS</span></h1>
         </div>
-        <p id="hero-subtitle" class="text-lg sm:text-xl text-gray-300 leading-relaxed max-w-xl">Central de recursos pedagógicos e diretrizes estratégicas da área de Gestão e Negócios - Unidade Araçatuba.</p>
-        <div class="flex flex-wrap gap-4 pt-4"><button onclick="navigateToPage('cadastro')" class="group relative px-8 py-4 rounded-xl font-semibold text-white overflow-hidden">
+        <p id="hero-subtitle" class="text-lg sm:text-xl text-gray-300 leading-relaxed max-w-xl fade-up delay-200">Central de recursos pedagógicos e diretrizes estratégicas da área de Gestão e Negócios - Unidade Araçatuba.</p>
+        <div class="flex flex-wrap gap-4 pt-4 fade-up delay-300">
+          <button onclick="navigateToPage('cadastro')" class="btn-glow group relative px-8 py-4 rounded-xl font-semibold text-white overflow-hidden">
           <div class="absolute inset-0 bg-gradient-to-r from-[#004587] to-[#F7941D] rounded-xl"></div>
           <div class="relative flex items-center gap-2">
            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
            </svg> Explorar Plataforma
-          </div></button> <button onclick="navigateToPage('eventos')" class="group relative px-8 py-4 rounded-xl font-semibold text-white border-2 border-[#F7941D]/50 hover:border-[#F7941D] transition-all duration-300 overflow-hidden">
+          </div></button>
+          <button onclick="navigateToPage('eventos')" class="btn-glow group relative px-8 py-4 rounded-xl font-semibold text-white border-2 border-[#F7941D]/50 hover:border-[#F7941D] transition-all duration-300 overflow-hidden">
           <div class="absolute inset-0 bg-[#F7941D] opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-xl"></div>
           <div class="relative flex items-center gap-2">
            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
@@ -153,11 +229,65 @@
           </div></button>
         </div>
        </div>
+       <!-- Visual card lado direito -->
+       <div class="hidden lg:flex items-center justify-center fade-up delay-400">
+        <div class="relative w-full max-w-sm">
+         <!-- Card central animado -->
+         <div class="card-scan bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 text-center shadow-2xl">
+          <div class="w-20 h-20 bg-gradient-to-br from-[#F7941D] to-[#004587] organic-blob mx-auto mb-6 flex items-center justify-center">
+           <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+           </svg>
+          </div>
+          <h3 class="text-white font-bold text-xl mb-2">Senac Araçatuba</h3>
+          <p class="text-gray-400 text-sm mb-6">Gestão e Negócios</p>
+          <div class="space-y-3">
+           <div class="flex items-center justify-between bg-white/5 rounded-xl px-4 py-3">
+            <span class="text-gray-300 text-sm">Cursos Técnicos</span>
+            <span class="text-[#F7941D] font-bold">7</span>
+           </div>
+           <div class="flex items-center justify-between bg-white/5 rounded-xl px-4 py-3">
+            <span class="text-gray-300 text-sm">Cursos Livres</span>
+            <span class="text-[#F7941D] font-bold">19</span>
+           </div>
+           <div class="flex items-center justify-between bg-white/5 rounded-xl px-4 py-3">
+            <span class="text-gray-300 text-sm">Plataforma Pedagógica</span>
+            <span class="text-green-400 font-bold text-xs">● Ativo</span>
+           </div>
+          </div>
+         </div>
+         <!-- Blob flutuante atrás do card -->
+         <div class="absolute -z-10 top-[-30px] right-[-30px] w-40 h-40 bg-[#F7941D]/15 organic-blob float-anim-d1"></div>
+        </div>
+       </div>
       </div>
      </div>
      <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white via-white/50 to-transparent"></div>
+    </section>
+    <!-- Stats strip -->
+    <section class="bg-[#004587] py-6">
+     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-white">
+       <div class="fade-up">
+        <div class="text-3xl font-black text-[#F7941D]">7</div>
+        <div class="text-sm font-semibold opacity-80 mt-1">Cursos Técnicos</div>
+       </div>
+       <div class="fade-up delay-100">
+        <div class="text-3xl font-black text-[#F7941D]">19</div>
+        <div class="text-sm font-semibold opacity-80 mt-1">Cursos Livres</div>
+       </div>
+       <div class="fade-up delay-200">
+        <div class="text-3xl font-black text-[#F7941D]">2</div>
+        <div class="text-sm font-semibold opacity-80 mt-1">Módulos de Gestão</div>
+       </div>
+       <div class="fade-up delay-300">
+        <div class="text-3xl font-black text-[#F7941D]">1</div>
+        <div class="text-sm font-semibold opacity-80 mt-1">Hub Centralizado</div>
+       </div>
+      </div>
+     </div>
     </section><!-- Seção Gestão -->
-    <section id="gestao" class="py-20 bg-white">
+    <section id="gestao" class="py-20 bg-white cyber-grid-bg">
      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16"><span class="text-[#F7941D] font-semibold tracking-wider uppercase text-sm">Área de Gestão</span>
        <h2 class="text-3xl sm:text-4xl font-bold text-[#004587] mt-3 mb-4">Gestão Integrada</h2>
@@ -165,24 +295,28 @@
        <div class="w-24 h-1 bg-[#F7941D] mx-auto mt-6 rounded-full"></div>
       </div>
       <div class="grid md:grid-cols-2 gap-8">
-       <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-8 shadow-lg border-2 border-[#004587]/20 cursor-pointer" onclick="navigateToPage('cadastro')">
+       <div class="card-scan bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-8 shadow-lg border-2 border-[#004587]/20 cursor-pointer" onclick="navigateToPage('cadastro')">
         <div class="w-16 h-16 bg-gradient-to-br from-[#004587] to-[#003366] rounded-2xl flex items-center justify-center mb-6 mx-auto">
          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
          </svg>
         </div>
-        <h3 class="text-2xl font-bold text-[#004587] mb-3 text-center">Cadastrar</h3><button class="w-full btn-primary py-3 rounded-xl text-white font-semibold flex items-center justify-center gap-2 hover:scale-105 transition-transform" onclick="navigateToPage('cadastro')">
+        <h3 class="text-2xl font-bold text-[#004587] mb-3 text-center">Cadastrar</h3>
+        <p class="text-gray-500 text-sm text-center mb-6">Registre docentes, turmas, PITD, PCTD e representantes na plataforma.</p>
+        <button class="w-full btn-primary btn-glow py-3 rounded-xl text-white font-semibold flex items-center justify-center gap-2 hover:scale-105 transition-transform" onclick="navigateToPage('cadastro')">
          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
          </svg> Acessar Cadastro </button>
        </div>
-       <div class="eco-card bg-gradient-to-br from-[#F7941D]/5 to-[#004587]/5 rounded-2xl p-8 shadow-lg border-2 border-[#F7941D]/20 cursor-pointer" onclick="navigateToPage('consulta')">
+       <div class="card-scan bg-gradient-to-br from-[#F7941D]/5 to-[#004587]/5 rounded-2xl p-8 shadow-lg border-2 border-[#F7941D]/20 cursor-pointer" onclick="navigateToPage('consulta')">
         <div class="w-16 h-16 bg-gradient-to-br from-[#F7941D] to-[#E8850D] rounded-2xl flex items-center justify-center mb-6 mx-auto">
          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
          </svg>
         </div>
-        <h3 class="text-2xl font-bold text-[#004587] mb-3 text-center">Consultar</h3><button class="w-full btn-primary py-3 rounded-xl text-white font-semibold flex items-center justify-center gap-2 hover:scale-105 transition-transform" onclick="navigateToPage('consulta')">
+        <h3 class="text-2xl font-bold text-[#004587] mb-3 text-center">Consultar</h3>
+        <p class="text-gray-500 text-sm text-center mb-6">Consulte docentes, turmas em andamento, planos de curso e representantes.</p>
+        <button class="w-full btn-primary btn-glow py-3 rounded-xl text-white font-semibold flex items-center justify-center gap-2 hover:scale-105 transition-transform" onclick="navigateToPage('consulta')">
          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
          </svg> Acessar Consulta </button>
