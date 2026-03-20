@@ -2972,20 +2972,20 @@
       const tiposValidos = periodo === 'manha' ? ['manha_tarde'] :
                            periodo === 'tarde' ? ['manha_tarde', 'tarde_noite'] :
                            ['tarde_noite'];
-      // Alocações do dia (todas as turmas) para checar conflito
-      const alocsDia = allAlocacoes.filter(a => a.dia_semana === dia);
+      // Alocações na mesma DATA (não dia da semana) para checar conflito real
+      const alocsMesmaData = allAlocacoes.filter(a => normData(a.data) === modalAlocacaoData);
       const disponiveis = allTeachers.filter(d => {
         let escala = {};
         try { escala = d.escala_semanal ? JSON.parse(d.escala_semanal) : {}; } catch(e) {}
-        const diaEscala = escala[dia];
-        if (!diaEscala || !diaEscala.ativo) return false;
-        if (!tiposValidos.includes(diaEscala.tipo)) return false;
-        // Não pode estar alocado em outra turma no mesmo dia
-        const conflito = alocsDia.some(a => a.docente_nome === d.nome_completo && a.turma_codigo !== quadroTurmaAtual.codigo_oferta);
+        // Verifica se o docente trabalha neste período em QUALQUER dia da semana
+        const temPeriodo = Object.values(escala).some(e => e && e.ativo && tiposValidos.includes(e.tipo));
+        if (!temPeriodo) return false;
+        // Não pode estar alocado em outra turma na mesma data
+        const conflito = alocsMesmaData.some(a => a.docente_nome === d.nome_completo && a.turma_codigo !== quadroTurmaAtual.codigo_oferta);
         return !conflito;
       });
       if (disponiveis.length === 0) {
-        select.innerHTML = '<option value="">Nenhum docente disponível neste dia/período</option>';
+        select.innerHTML = '<option value="">Nenhum docente disponível neste período</option>';
         return;
       }
       select.innerHTML = '<option value="">Selecione o docente...</option>' +
