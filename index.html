@@ -2653,9 +2653,11 @@
         return;
       }
       lista.innerHTML = ucs.map(uc => {
-        const pres  = uc.ch_presencial   ? `${uc.ch_presencial}h pres.` : '';
-        const ead   = uc.ch_ead          ? `${uc.ch_ead}h EAD` : '';
-        const total = uc.carga_horaria_total || uc.carga_horaria || '?';
+        const presNum = Number(uc.ch_presencial) || 0;
+        const eadNum  = Number(uc.ch_ead)        || 0;
+        const total   = Number(uc.carga_horaria_total || uc.carga_horaria) || (presNum + eadNum) || '?';
+        const pres    = presNum ? `${presNum}h pres.` : '';
+        const ead     = eadNum  ? `${eadNum}h EAD`   : '';
         const detalhe = [pres, ead].filter(Boolean).join(' + ');
         return `
         <div class="flex items-center justify-between bg-white border-2 border-gray-100 rounded-xl px-4 py-3">
@@ -2673,17 +2675,24 @@
       if (!quadroCursoAtual) { showErrorMessage('❌ Selecione um curso primeiro'); return; }
       const versao = document.getElementById('q-versao').value.trim();
       if (!versao) { showErrorMessage('❌ Informe a versão do plano antes de adicionar UCs'); return; }
-      const nome  = document.getElementById('q-uc-nome').value.trim();
-      const pres  = document.getElementById('q-uc-pres').value.trim();
-      const ead   = document.getElementById('q-uc-ead').value.trim();
-      const total = document.getElementById('q-uc-total').value.trim();
+      const nome = document.getElementById('q-uc-nome').value.trim();
+      const pres = parseFloat(document.getElementById('q-uc-pres').value) || 0;
+      const ead  = parseFloat(document.getElementById('q-uc-ead').value)  || 0;
+      const total = pres + ead;
       if (!nome || !pres) { showErrorMessage('❌ Preencha o nome e CH Presencial da UC'); return; }
+      // Impede UC duplicada no mesmo curso/versão
+      const jaExiste = allUCs.some(u =>
+        u.curso_id === quadroCursoAtual.id &&
+        String(u.versao) === String(versao) &&
+        (u.uc_nome || '').toLowerCase() === nome.toLowerCase()
+      );
+      if (jaExiste) { showErrorMessage('❌ Esta UC já está cadastrada para este curso/versão'); return; }
       const btn = document.querySelector('#q-add-uc-form button[onclick="qAdicionarUC()"]');
       btn.disabled = true; btn.textContent = '⏳ Salvando...';
       try {
-        await postToSheet('UCs', [quadroCursoAtual.id, quadroCursoAtual.nome, versao, nome, pres, ead || 0, total || pres]);
+        await postToSheet('UCs', [quadroCursoAtual.id, quadroCursoAtual.nome, versao, nome, pres, ead, total]);
         allUCsVersion++; // protege contra sobrescrita por loadUCs() pendente
-        allUCs.push({ curso_id: quadroCursoAtual.id, curso_nome: quadroCursoAtual.nome, versao, uc_nome: nome, ch_presencial: pres, ch_ead: ead || 0, carga_horaria_total: total || pres });
+        allUCs.push({ curso_id: quadroCursoAtual.id, curso_nome: quadroCursoAtual.nome, versao, uc_nome: nome, ch_presencial: pres, ch_ead: ead, carga_horaria_total: total });
         document.getElementById('q-uc-nome').value = '';
         document.getElementById('q-uc-pres').value = '';
         document.getElementById('q-uc-ead').value = '';
@@ -2778,10 +2787,12 @@
       const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
       document.getElementById('q-turma-titulo').textContent = `${turma.nome_curso} — Turma ${turma.codigo_oferta || ''}`;
       document.getElementById('q-turma-info').textContent = `Período: ${periodoLabel[turma.periodo] || turma.periodo || '-'} | ${formatarData(turma.data_de_inicio)} – ${formatarData(turma.data_de_termino)}`;
-      // Inicializa no mês atual
+      // Inicializa no mês atual e busca alocações UMA VEZ do servidor
       const hoje = new Date();
       quadroMesAtual = { ano: hoje.getFullYear(), mes: hoje.getMonth() };
-      await qRenderMonthlyGrid(turma);
+      document.getElementById('q-weekly-grid').innerHTML = '<p class="text-gray-400 py-4 text-sm">Carregando alocações...</p>';
+      allAlocacoes = await carregarDaAba('Alocacoes');
+      qRenderMonthlyGrid(turma);
     };
 
     window.qVoltarSelecao = function() {
@@ -2792,14 +2803,14 @@
     };
 
     // Navega para o mês anterior (-1) ou próximo (+1)
-    window.qNavMes = async function(delta) {
+    window.qNavMes = function(delta) {
       if (!quadroMesAtual) return;
       let { ano, mes } = quadroMesAtual;
       mes += delta;
       if (mes < 0)  { mes = 11; ano--; }
       if (mes > 11) { mes = 0;  ano++; }
       quadroMesAtual = { ano, mes };
-      await qRenderMonthlyGrid(quadroTurmaAtual);
+      qRenderMonthlyGrid(quadroTurmaAtual);
     };
 
     // Retorna as semanas de um mês como array de arrays de 6 elementos (Seg-Sáb)
@@ -2829,14 +2840,12 @@
       return semanas;
     }
 
-    async function qRenderMonthlyGrid(turma) {
+    function qRenderMonthlyGrid(turma) {
       const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
       const DIAS_LABELS = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
       const { ano, mes } = quadroMesAtual;
       document.getElementById('q-mes-label').textContent = `${MESES[mes]} ${ano}`;
       const grid = document.getElementById('q-weekly-grid');
-      grid.innerHTML = '<p class="text-gray-400 py-4 text-sm">Carregando alocações...</p>';
-      allAlocacoes = await carregarDaAba('Alocacoes');
       const turmaAloc = allAlocacoes.filter(a => a.turma_codigo === turma.codigo_oferta);
       const semanas = gerarSemanasDoMes(ano, mes);
       // Monta tabela
@@ -2983,7 +2992,7 @@
         await postToSheet('Alocacoes', [alocId, quadroTurmaAtual.codigo_oferta, quadroTurmaAtual.nome_curso, modalAlocacaoData, diaSemana, ucNome, docenteNome, quadroTurmaAtual.periodo]);
         allAlocacoes.push({ aloc_id: alocId, turma_codigo: quadroTurmaAtual.codigo_oferta, nome_curso: quadroTurmaAtual.nome_curso, data: modalAlocacaoData, dia_semana: diaSemana, uc_nome: ucNome, docente_nome: docenteNome, periodo: quadroTurmaAtual.periodo });
         fecharModalAlocacao();
-        await qRenderMonthlyGrid(quadroTurmaAtual);
+        qRenderMonthlyGrid(quadroTurmaAtual);
         showSuccessMessage('✅ Docente alocado com sucesso!');
       } catch(err) { showErrorMessage('❌ Erro: ' + err.message); }
       finally { btn.disabled = false; btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Salvar Alocação'; }
@@ -2995,7 +3004,7 @@
       try {
         if (alocId) await deleteFromSheet('Alocacoes', 'aloc_id', alocId);
         allAlocacoes = allAlocacoes.filter(a => !(a.data === dataStr && a.uc_nome === ucNome && a.docente_nome === docenteNome && a.turma_codigo === turmaCodigo));
-        await qRenderMonthlyGrid(quadroTurmaAtual);
+        qRenderMonthlyGrid(quadroTurmaAtual);
         showSuccessMessage('✅ Alocação removida!');
       } catch(err) { showErrorMessage('❌ Erro: ' + err.message); }
     };
