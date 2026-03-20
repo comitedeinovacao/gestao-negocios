@@ -379,30 +379,26 @@
        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
        </svg> Voltar </button>
-     </div>     <!-- Cards Iniciais de Modalidade -->
-     <div id="consulta-cursos-grid" class="grid md:grid-cols-2 gap-8 mb-12" style="display:none">
-      <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-8 shadow-lg border-2 border-[#004587]/20 cursor-pointer" onclick="openConsultaView('cursos-tecnicos-list')">
-       <div class="w-20 h-20 bg-gradient-to-br from-[#004587] to-[#003366] rounded-2xl flex items-center justify-center mb-6 mx-auto">
-        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+     </div>     <!-- Todos os cards de consulta — grid unificado -->
+     <div id="consulta-cards" class="grid md:grid-cols-2 gap-6 mb-8" style="display:none">
+      <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-6 shadow-lg border-2 border-[#004587]/20 cursor-pointer hover:border-[#004587] hover:shadow-xl transition-all" onclick="openConsultaView('cursos-tecnicos-list')">
+       <div class="w-14 h-14 bg-gradient-to-br from-[#004587] to-[#003366] rounded-xl flex items-center justify-center mb-4 mx-auto">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
         </svg>
        </div>
-       <h3 class="text-3xl font-bold text-[#004587] mb-4 text-center">Cursos Técnicos</h3>
-       <p class="text-gray-600 text-center text-lg">Formação técnica profissional em Gestão e Negócios</p>
+       <h4 class="text-lg font-bold text-[#004587] text-center mb-2">Cursos Técnicos</h4>
+       <p class="text-gray-600 text-sm text-center">Formação técnica profissional em Gestão e Negócios</p>
       </div>
-      <div class="eco-card bg-gradient-to-br from-[#F7941D]/5 to-[#004587]/5 rounded-2xl p-8 shadow-lg border-2 border-[#F7941D]/20 cursor-pointer" onclick="openConsultaView('cursos-livres-list')">
-       <div class="w-20 h-20 bg-gradient-to-br from-[#F7941D] to-[#E8850D] rounded-2xl flex items-center justify-center mb-6 mx-auto">
-        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+      <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-6 shadow-lg border-2 border-[#F7941D]/20 cursor-pointer hover:border-[#F7941D] hover:shadow-xl transition-all" onclick="openConsultaView('cursos-livres-list')">
+       <div class="w-14 h-14 bg-gradient-to-br from-[#F7941D] to-[#E8850D] rounded-xl flex items-center justify-center mb-4 mx-auto">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
         </svg>
        </div>
-       <h3 class="text-3xl font-bold text-[#004587] mb-4 text-center">Cursos Livres / Qualificação</h3>
-       <p class="text-gray-600 text-center text-lg">Cursos de qualificação e aperfeiçoamento profissional</p>
+       <h4 class="text-lg font-bold text-[#004587] text-center mb-2">Cursos Livres / Qualificação</h4>
+       <p class="text-gray-600 text-sm text-center">Cursos de qualificação e aperfeiçoamento profissional</p>
       </div>
-     </div>
-     
-     <!-- Seções de Consulta Separadas -->
-     <div id="consulta-cards" class="grid md:grid-cols-2 gap-6 mb-8" style="display:none">
       <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-6 shadow-lg border-2 border-[#004587]/20 cursor-pointer hover:border-[#004587] hover:shadow-xl transition-all" onclick="openConsultaView('docentes-list')">
        <div class="w-14 h-14 bg-gradient-to-br from-[#004587] to-[#003366] rounded-xl flex items-center justify-center mb-4 mx-auto">
         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
@@ -887,7 +883,7 @@
     }
 
     // IDs de todas as seções dentro de consulta-page
-    const CONSULTA_SECOES = ['consulta-cursos-grid','consulta-cards','docentes-list','docente-detail','pctd-list','pitd-list','representantes-filter','cursos-tecnicos-list','cursos-livres-list','curso-detail'];
+    const CONSULTA_SECOES = ['consulta-cards','docentes-list','docente-detail','pctd-list','pitd-list','representantes-filter','cursos-tecnicos-list','cursos-livres-list','curso-detail'];
 
     // Função central: esconde tudo e mostra só a seção desejada
     function renderConsultaView(viewId) {
@@ -896,16 +892,8 @@
         const el = document.getElementById(id);
         if (el) el.style.display = 'none';
       });
-      // Na view principal de cards, mostra também o grid de Cursos Técnicos/Livres
-      if (target === 'consulta-cards') {
-        const cursosGrid = document.getElementById('consulta-cursos-grid');
-        if (cursosGrid) cursosGrid.style.display = 'grid';
-        const cards = document.getElementById('consulta-cards');
-        if (cards) cards.style.display = 'grid';
-      } else {
-        const show = document.getElementById(target);
-        if (show) show.style.display = 'block';
-      }
+      const show = document.getElementById(target);
+      if (show) show.style.display = (target === 'consulta-cards') ? 'grid' : 'block';
       const page = document.getElementById('consulta-page');
       if (page) page.setAttribute('data-view', target);
     }
