@@ -671,6 +671,7 @@
     let allPITD = [];
     let allRepresentantes = [];
     let allEventos = [];
+    let eventosStale = true; // força recarga na próxima renderização
 
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyujbQCQ4OKMiLXNl4Q3aOMCQp65ifsjXp8ZQbutBsJwoSfGMlDe9DCok1XKt_qc389hg/exec';
 
@@ -1261,11 +1262,8 @@
     window.currentYear  = new Date().getFullYear();
 
     document.addEventListener('DOMContentLoaded', async () => {
-      // Carregar dados estáticos ao iniciar
-      await loadDocentes();
-      await loadPCTD();
-      await loadPITD();
-      await loadRepresentantes();
+      // Pré-carrega dados de consulta em paralelo (sem bloquear a UI)
+      Promise.all([loadDocentes(), loadPCTD(), loadPITD(), loadRepresentantes()]).catch(() => {});
 
       // Inicializar botões do calendário
       const prevBtn = document.getElementById('prev-month');
@@ -1296,29 +1294,41 @@
 
 
 
+    // Renderiza o cabeçalho e dispara busca só se os dados estiverem desatualizados
     async function renderCalendar() {
       const year = window.currentYear;
       const month = window.currentMonth;
       const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
       document.getElementById('calendar-month').textContent = monthNames[month] + ' ' + year;
 
-      // Carregar eventos das duas fontes
-      try {
-        allEventos = await carregarTodosEventos();
-      } catch (err) {
-        allEventos = [];
-        console.error('Erro ao carregar eventos:', err);
+      // Mostra a grade imediatamente com o cache atual (navegação entre meses é instantânea)
+      drawCalendarGrid(year, month);
+
+      // Busca do servidor apenas quando necessário
+      if (eventosStale) {
+        eventosStale = false;
+        try {
+          allEventos = await carregarEventosSheets();
+        } catch (err) {
+          console.error('Erro ao carregar eventos:', err);
+        }
+        // Redesenha somente se o mês não mudou durante o carregamento
+        if (window.currentYear === year && window.currentMonth === month) {
+          drawCalendarGrid(year, month);
+          renderEventos();
+        }
       }
-      
-      // Obter o primeiro dia do mês e quantos dias tem
+    }
+
+    // Desenha a grade do calendário sincronamente a partir de allEventos (cache)
+    function drawCalendarGrid(year, month) {
       const firstDay = new Date(year, month, 1).getDay();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
       const daysInPrevMonth = new Date(year, month, 0).getDate();
-      
+
       const calendarGrid = document.getElementById('calendar-grid');
-      calendarGrid.innerHTML = '<div class="col-span-7 text-center py-8 text-gray-400">? Carregando eventos...</div>';
       calendarGrid.innerHTML = '';
-      
+
       // Dias do mês anterior
       for (let i = firstDay - 1; i >= 0; i--) {
         const day = document.createElement('div');
@@ -1326,68 +1336,58 @@
         day.textContent = daysInPrevMonth - i;
         calendarGrid.appendChild(day);
       }
-      
+
       // Dias do mês atual
       for (let i = 1; i <= daysInMonth; i++) {
         const dayElement = document.createElement('div');
         const currentDate = new Date(year, month, i);
         const dateStr = currentDate.toISOString().split('T')[0];
         const eventsOnDay = allEventos.filter(evt => evt.data === dateStr);
-        
-        let dayClass = 'p-2 bg-white border-2 border-gray-200 rounded min-h-20 flex flex-col items-start justify-start text-left cursor-pointer hover:bg-blue-50 transition-all gap-1';
-        let hasEvents = false;
-        
-        if (eventsOnDay.length > 0) {
-          dayClass = 'p-2 bg-white border-2 border-[#F7941D] rounded min-h-20 flex flex-col items-start justify-start text-left cursor-pointer hover:bg-blue-50 transition-all gap-1';
-          hasEvents = true;
-        }
-        
-        dayElement.className = dayClass;
-        
+
+        dayElement.className = eventsOnDay.length > 0
+          ? 'p-2 bg-white border-2 border-[#F7941D] rounded min-h-20 flex flex-col items-start justify-start text-left cursor-pointer hover:bg-blue-50 transition-all gap-1'
+          : 'p-2 bg-white border-2 border-gray-200 rounded min-h-20 flex flex-col items-start justify-start text-left cursor-pointer hover:bg-blue-50 transition-all gap-1';
+
         let html = `<span class="font-bold text-[#004587] text-sm w-full">${i}</span>`;
-        
+
         // Agrupar eventos por cor
         const eventGroups = {};
         eventsOnDay.forEach(evt => {
-          let color = '#004587'; // dia_todo default
+          let color = '#004587';
           if (evt.duracao === 'periodo_especifico') {
             if (evt.periodo === 'manha') color = '#F59E0B';
             else if (evt.periodo === 'tarde') color = '#F7941D';
             else if (evt.periodo === 'noite') color = '#7C3AED';
           } else if (evt.tipo === 'reuniao_pedagogica') color = '#DC2626';
           else if (evt.tipo === 'feriado') color = '#6B7280';
-          
           if (!eventGroups[color]) eventGroups[color] = [];
           eventGroups[color].push(evt);
         });
-        
+
         // Mostrar até 2 eventos por dia
         let eventCount = 0;
         Object.keys(eventGroups).forEach(color => {
           const events = eventGroups[color];
           if (eventCount >= 2) return;
-          
-          const displayEvents = events.slice(0, 2 - eventCount);
-          displayEvents.forEach(evt => {
+          events.slice(0, 2 - eventCount).forEach(evt => {
             const truncatedTitle = evt.titulo.length > 15 ? evt.titulo.substring(0, 15) + '...' : evt.titulo;
             html += `<div class="text-xs rounded px-1 py-0.5 font-semibold text-white" style="background-color: ${color};">${truncatedTitle}</div>`;
             eventCount++;
           });
         });
-        
-        // Se mais de 2 eventos, mostrar "+N"
-        const totalEvents = Object.values(eventGroups).reduce((sum, events) => sum + events.length, 0);
+
+        const totalEvents = Object.values(eventGroups).reduce((sum, e) => sum + e.length, 0);
         if (totalEvents > 2) {
           html += `<div class="text-xs bg-gray-500 text-white px-1 py-0.5 rounded font-semibold">+${totalEvents - 2}</div>`;
         }
-        
+
         dayElement.innerHTML = html;
         dayElement.onclick = () => showEventosDia(dateStr);
         calendarGrid.appendChild(dayElement);
       }
-      
-      // Dias do próximo mês
-      const totalCells = calendarGrid.children.length + firstDay;
+
+      // Dias do próximo mês (completa a última linha da grade)
+      const totalCells = firstDay + daysInMonth;
       const remainingCells = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
       for (let i = 1; i <= remainingCells; i++) {
         const day = document.createElement('div');
@@ -1671,6 +1671,7 @@
         form.reset();
         btn.disabled = false;
         btn.textContent = '+ Salvar Evento';
+        eventosStale = true; // força recarga do calendário
         showSuccessMessage('✅ Evento cadastrado com sucesso!');
       } catch(err) {
         btn.disabled = false;
