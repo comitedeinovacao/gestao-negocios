@@ -71,59 +71,10 @@
     { "id": "empreend", "nome": "EMPREENDEDOR EM PEQUENOS NEGÓCIOS", "codigo_ficha": "25744", "subarea": "ADMINISTRAÇÃO GERAL" },
     { "id": "op_caixa", "nome": "OPERADOR DE CAIXA", "codigo_ficha": "22135", "subarea": "VENDAS" }
   ],
-  "docentes": [
-    {
-      "nome_completo": "João Silva",
-      "telefone": "(18) 99999-9999",
-      "instagram": "@joaosilva",
-      "facebook": "João Silva",
-      "linkedin": "https://linkedin.com/in/joaosilva",
-      "mini_curriculo": "Especialista em Administração com 10 anos de experiência em gestão empresarial."
-    }
-  ],
-  "turmas": [
-    {
-      "id": "adm-001",
-      "curso_id": "adm",
-      "nome_curso": "TÉCNICO EM ADMINISTRAÇÃO",
-      "codigo_oferta": "2024-001",
-      "periodo": "manha"
-    },
-    {
-      "id": "cont-001", 
-      "curso_id": "cont",
-      "nome_curso": "TÉCNICO EM CONTABILIDADE",
-      "codigo_oferta": "2024-002",
-      "periodo": "tarde"
-    }
-  ],
-  "pitd": [
-    {
-      "id": "pitd-001",
-      "turma_id": "adm-001",
-      "docente": "João Silva",
-      "unidade_curricular": "Gestão Empresarial",
-      "link_arquivo_pitd": "https://drive.google.com/file/d/example1/view"
-    }
-  ],
-  "pctd": [
-    {
-      "id": "pctd-001",
-      "turma_id": "adm-001", 
-      "nome_curso": "TÉCNICO EM ADMINISTRAÇÃO",
-      "codigo_oferta": "2024-001",
-      "periodo": "manha",
-      "link_arquivo_pctd": "https://drive.google.com/file/d/example2/view"
-    }
-  ],
-  "representantes": [
-    {
-      "turma_curso": "1A - Administração",
-      "representante": "Maria Santos",
-      "telefone_do_representante": "(18) 88888-8888",
-      "vice_representante": "Pedro Oliveira",
-      "telefone_do_vice_representante": "(18) 77777-7777"
-    }
-  ],
+  "docentes": [],
+  "turmas": [],
+  "pitd": [],
+  "pctd": [],
+  "representantes": [],
   "eventos": []
 }

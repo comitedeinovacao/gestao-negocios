@@ -739,6 +739,7 @@
     // Renderizar Docentes
     function renderDocentes() {
       const grid = document.getElementById('docentes-grid');
+      if (!grid) return;
       grid.innerHTML = allTeachers.length > 0 
         ? allTeachers.map(teacher => `
           <div class="bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 p-4 rounded-lg border-2 border-[#004587]/20">
@@ -753,6 +754,7 @@
     // Renderizar PCTD
     function renderPCTD() {
       const grid = document.getElementById('pctd-grid');
+      if (!grid) return;
       grid.innerHTML = allPCTD.length > 0
         ? allPCTD.map(pctd => `
           <div class="bg-gradient-to-br from-[#F7941D]/5 to-[#004587]/5 p-4 rounded-lg border-2 border-[#F7941D]/20">
@@ -773,6 +775,7 @@
     // Renderizar PITD
     function renderPITD() {
       const grid = document.getElementById('pitd-grid');
+      if (!grid) return;
       grid.innerHTML = allPITD.length > 0
         ? allPITD.map(pitd => `
           <div class="bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 p-4 rounded-lg border-2 border-[#004587]/20">
