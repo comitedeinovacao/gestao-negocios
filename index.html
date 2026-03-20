@@ -1025,7 +1025,7 @@
         <select id="modal-docente-select" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
          <option value="">Selecione o docente...</option>
         </select>
-        <p class="text-xs text-gray-400 mt-1">Somente docentes com escala neste dia/período e sem conflito de alocação.</p>
+        <p id="modal-docente-hint" class="text-xs text-gray-400 mt-1">Somente docentes com escala neste dia/período e sem conflito de alocação.</p>
        </div>
       </div>
       <div class="px-6 pb-6">
@@ -2972,11 +2972,16 @@
 
     async function qPopularDocentesDisponiveis(dia) {
       const select = document.getElementById('modal-docente-select');
+      const hint = document.getElementById('modal-docente-hint');
       select.innerHTML = '<option value="">Carregando docentes...</option>';
+      if (hint) hint.textContent = 'Buscando...';
       // Busca direto do servidor — não depende de allTeachers estar populado
       let teachers = await carregarDaAba('Docentes');
       // Fallback: usa cache se servidor não retornou nada
       if (!teachers || teachers.length === 0) teachers = allTeachers;
+      // DEBUG: mostra informação visível no modal
+      const keys0 = (teachers && teachers[0]) ? Object.keys(teachers[0]).join(', ') : 'nenhum';
+      if (hint) hint.textContent = `DEBUG: ${teachers ? teachers.length : 0} registros | campos: ${keys0}`;
       if (!teachers || teachers.length === 0) {
         select.innerHTML = '<option value="">Nenhum docente cadastrado no sistema</option>';
         return;
@@ -2987,10 +2992,12 @@
         .sort((a, b) => (a.nome_completo || '').localeCompare(b.nome_completo || '', 'pt-BR'));
       if (sorted.length === 0) {
         select.innerHTML = '<option value="">Nenhum docente com nome cadastrado</option>';
+        if (hint) hint.textContent += ` | nome_completo ausente! primeiro: ${JSON.stringify(teachers[0])}`;
         return;
       }
       select.innerHTML = '<option value="">Selecione o docente...</option>' +
         sorted.map(d => `<option value="${d.nome_completo}">${d.nome_completo}</option>`).join('');
+      if (hint) hint.textContent = `${sorted.length} docente(s) disponível(is)`;
     }
 
     window.calcularSaldoUC = function() {
