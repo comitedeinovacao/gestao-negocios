@@ -2885,21 +2885,27 @@
       // Monta tabela
       const table = document.createElement('table');
       table.className = 'w-full min-w-[700px] border-collapse';
+      table.style.borderColor = '#4a7ab5';
+      // Cores alternadas por coluna: Seg/Qua/Sex = azul claro | Ter/Qui/Sáb = laranja claro
+      const COL_BG = ['#EFF6FF','#FFF7ED','#EFF6FF','#FFF7ED','#EFF6FF','#FFF7ED']; // índice 0=Seg
+      const COL_BG_VAZIA = ['#F0F7FF','#FFF8F0','#F0F7FF','#FFF8F0','#F0F7FF','#FFF8F0'];
+      const BORDER_STYLE = '2px solid #4a7ab5';
       // Cabeçalho
       const thead = document.createElement('thead');
-      thead.innerHTML = '<tr>' + DIAS_LABELS.map(l =>
-        `<th class="text-center text-xs font-bold text-[#004587] py-2 px-1 bg-[#004587]/5 border border-gray-200">${l}</th>`
+      thead.innerHTML = '<tr>' + DIAS_LABELS.map((l, i) =>
+        `<th style="border:${BORDER_STYLE};background:${i%2===0?'#dbeafe':'#fed7aa'}" class="text-center text-xs font-bold text-[#004587] py-2 px-1">${l}</th>`
       ).join('') + '</tr>';
       table.appendChild(thead);
       // Linhas (semanas)
       const tbody = document.createElement('tbody');
       semanas.forEach(semana => {
         const tr = document.createElement('tr');
-        semana.forEach(cel => {
+        semana.forEach((cel, colIdx) => {
           const td = document.createElement('td');
-          td.className = 'border border-gray-200 align-top p-2 min-w-[110px]';
+          td.style.border = BORDER_STYLE;
+          td.className = 'align-top p-2 min-w-[110px]';
           if (!cel) {
-            td.className += ' bg-gray-50';
+            td.style.background = COL_BG_VAZIA[colIdx];
             td.innerHTML = '';
           } else {
             const alocs = turmaAloc.filter(a => normData(a.data) === cel.dateStr);
@@ -2927,6 +2933,7 @@
                   class="absolute top-0.5 right-0.5 text-red-400 hover:text-red-600 hidden group-hover:block text-xs leading-none px-0.5">✕</button>
               </div>`;
             }).join('');
+            td.style.background = COL_BG[colIdx];
             const resumoHoras = alocs.length > 0 ? `<p class="text-[10px] font-bold ${corTotal} mb-1">${totalH}h / ${limiteH}h</p>` : '';
             td.innerHTML = `
               <p class="text-xs font-bold text-gray-500 mb-1">${cel.diaNum}</p>
