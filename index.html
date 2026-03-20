@@ -1055,7 +1055,6 @@
         const scriptId = 'jsonp_' + cbName; // único por chamada — nunca colide
 
         const timeout = setTimeout(() => {
-          console.warn('[carregarDaAba] TIMEOUT 8s —', aba, '— cbName:', cbName);
           cleanup();
           resolve([]);
         }, 8000);
@@ -1069,9 +1068,7 @@
 
         window[cbName] = function(data) {
           cleanup();
-          const result = (data && Array.isArray(data.dados)) ? data.dados : [];
-          console.log('[carregarDaAba]', aba, '→', result.length, 'registros', result[0] ? Object.keys(result[0]) : '(vazio)');
-          resolve(result);
+          resolve((data && Array.isArray(data.dados)) ? data.dados : []);
         };
 
         const script = document.createElement('script');
@@ -2956,7 +2953,7 @@
           const label = ead ? `${u.uc_nome} (${pres}h pres. + ${ead}h EAD = ${total}h)` : `${u.uc_nome} (${pres}h)`;
           return `<option value="${u.uc_nome}" data-presencial="${pres}" data-ead="${ead}" data-total="${total}">${label}</option>`;
         }).join('');
-      document.getElementById('modal-encontros').classList.add('hidden');
+      document.getElementById('modal-encontros')?.classList.add('hidden');
       // Docentes disponíveis
       await qPopularDocentesDisponiveis(diaNome);
     };
@@ -2972,14 +2969,10 @@
 
     async function qPopularDocentesDisponiveis(dia) {
       const select = document.getElementById('modal-docente-select');
-      if (!select) { alert('ERRO CRÍTICO: elemento modal-docente-select não existe no DOM!'); return; }
+      if (!select) return;
       select.innerHTML = '<option value="">Carregando docentes...</option>';
-      // Busca direto do servidor
       let teachers = await carregarDaAba('Docentes');
       if (!teachers || teachers.length === 0) teachers = allTeachers;
-      // DIAGNÓSTICO: alerta com dados recebidos
-      const primeiroReg = teachers && teachers[0] ? JSON.stringify(teachers[0]).substring(0, 300) : 'VAZIO';
-      alert('DIAGNÓSTICO DOCENTES\n\nTotal: ' + (teachers ? teachers.length : 0) + ' registro(s)\n\nPrimeiro registro:\n' + primeiroReg);
       if (!teachers || teachers.length === 0) {
         select.innerHTML = '<option value="">Nenhum docente cadastrado no sistema</option>';
         return;
@@ -2989,7 +2982,7 @@
         .filter(d => d.nome_completo)
         .sort((a, b) => (a.nome_completo || '').localeCompare(b.nome_completo || '', 'pt-BR'));
       select.innerHTML = sorted.length === 0
-        ? '<option value="">Campo nome_completo ausente nos dados</option>'
+        ? '<option value="">Nenhum docente com nome_completo cadastrado</option>'
         : '<option value="">Selecione o docente...</option>' +
           sorted.map(d => `<option value="${d.nome_completo}">${d.nome_completo}</option>`).join('');
     }
