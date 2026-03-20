@@ -3025,12 +3025,19 @@
       const [y,m,d] = dataStr.split('-');
       const dataFormatada = `${d}/${m}/${y}`;
       document.getElementById('modal-aloc-titulo').textContent = `Alocar — ${dataFormatada} (${diaLabels[diaNome]})`;
-      // UCs do curso — filtra por versão do plano da turma (se disponível)
+      // UCs do curso — filtra por curso_id (via data.json) ou fallback por curso_nome
       const ucSelect = document.getElementById('modal-uc-select');
       if (allUCs.length === 0) await loadUCs();
       const versaoTurma = quadroTurmaAtual.versao_plano || '';
+      // Tenta encontrar o curso_id a partir do nome do curso salvo na turma
+      const norm = s => (s||'').toLowerCase().normalize('NFC').trim();
+      const dadosCursos = await carregarDadosCursos();
+      const todosCursos = [...(dadosCursos.cursos_tecnicos||[]), ...(dadosCursos.cursos_livres||[])];
+      const cursoEncontrado = todosCursos.find(c => norm(c.nome) === norm(quadroTurmaAtual.nome_curso));
       const ucsDisponiveis = allUCs.filter(u => {
-        const mesmoNome = (u.curso_nome||'').toLowerCase() === (quadroTurmaAtual.nome_curso||'').toLowerCase();
+        const mesmoNome = cursoEncontrado
+          ? u.curso_id === cursoEncontrado.id                          // match por id (confiável)
+          : norm(u.curso_nome) === norm(quadroTurmaAtual.nome_curso);  // fallback por nome normalizado
         const mesmaVersao = !versaoTurma || String(u.versao) === String(versaoTurma);
         return mesmoNome && mesmaVersao;
       });
