@@ -1041,11 +1041,15 @@
       const data = await carregarDadosCursos();
       const cursos = modalidade === 'tecnicos' ? data.cursos_tecnicos : data.cursos_livres;
       lista.innerHTML = cursos.map(c => `
-        <button type="button" onclick="selecionarCursoPicker(${JSON.stringify(c.nome).replace(/'/g,"\\'")})"
-          class="w-full text-left px-4 py-3 hover:bg-blue-50 transition-colors">
-          <p class="font-semibold text-[#004587] text-sm">${c.nome}</p>
-          <p class="text-xs text-gray-400">Ficha: ${c.codigo_ficha} · ${c.subarea}</p>
+        <button type="button" data-nome="${c.nome.replace(/"/g,'&quot;')}"
+          class="curso-picker-item w-full text-left px-4 py-3 hover:bg-blue-50 transition-colors">
+          <p class="font-semibold text-[#004587] text-sm pointer-events-none">${c.nome}</p>
+          <p class="text-xs text-gray-400 pointer-events-none">Ficha: ${c.codigo_ficha} · ${c.subarea}</p>
         </button>`).join('');
+      lista.onclick = function(e) {
+        const btn = e.target.closest('.curso-picker-item');
+        if (btn) selecionarCursoPicker(btn.dataset.nome);
+      };
     };
 
     window.selecionarCursoPicker = function(nome) {
@@ -1060,6 +1064,20 @@
       document.getElementById('curso-picker-selecionado').style.display = 'none';
       document.getElementById('curso-picker-lista').style.display = 'block';
     };
+
+    // Fecha o picker ao clicar fora
+    document.addEventListener('click', function(e) {
+      const lista = document.getElementById('curso-picker-lista');
+      if (!lista || lista.style.display === 'none') return;
+      if (!lista.contains(e.target) && !e.target.closest('#btn-picker-tec, #btn-picker-liv')) {
+        lista.style.display = 'none';
+        if (!document.getElementById('nome_do_curso_hidden').value) {
+          const base = 'px-4 py-3 rounded-xl border-2 border-gray-200 font-semibold transition-all';
+          document.getElementById('btn-picker-tec').className = base + ' text-gray-700 hover:border-[#004587] hover:text-[#004587]';
+          document.getElementById('btn-picker-liv').className = base + ' text-gray-700 hover:border-[#F7941D] hover:text-[#F7941D]';
+        }
+      }
+    });
 
     // Renderizar Docentes (com busca e ordem alfabética)
     function renderDocentes() {
