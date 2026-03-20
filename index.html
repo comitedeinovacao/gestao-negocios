@@ -437,7 +437,13 @@
   </div>
   <input type="hidden" name="nome_do_curso" id="nome_do_curso_hidden">
 </div>
-        <div><label class="block text-[#004587] font-semibold mb-3">Código da Oferta</label> <input type="text" placeholder="Ex: 2024-001" name="codigo_da_oferta" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+       </div>
+       <div class="grid md:grid-cols-2 gap-6">
+        <div><label class="block text-[#004587] font-semibold mb-3">Versão do Plano de Curso</label>
+         <input type="text" placeholder="Ex: 2025, 2026..." name="versao_plano" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+         <p class="text-xs text-gray-400 mt-1">Identifica qual plano de curso a turma segue.</p>
+        </div>
+        <div><label class="block text-[#004587] font-semibold mb-3">Período</label> <select name="periodo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required> <option value="">Selecione</option> <option value="manha">Manhã</option> <option value="tarde">Tarde</option> <option value="noite">Noite</option> </select>
         </div>
        </div>
        <div class="grid md:grid-cols-3 gap-6">
@@ -445,7 +451,7 @@
         </div>
         <div><label class="block text-[#004587] font-semibold mb-3">Data de Término</label> <input type="date" name="data_de_termino" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
         </div>
-        <div><label class="block text-[#004587] font-semibold mb-3">Período</label> <select name="periodo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required> <option value="">Selecione</option> <option value="manha">Manhã</option> <option value="tarde">Tarde</option> <option value="noite">Noite</option> </select>
+        <div><label class="block text-[#004587] font-semibold mb-3">Código da Oferta</label> <input type="text" placeholder="Ex: 2026-001" name="codigo_da_oferta" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
         </div>
        </div><button type="submit" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
@@ -880,19 +886,37 @@
          <button type="button" id="q-btn-liv" onclick="qFiltrarCursos('livres')" class="px-4 py-3 rounded-xl border-2 border-gray-200 font-semibold text-sm text-gray-700 hover:border-[#F7941D] hover:text-[#F7941D] transition-all">Livre / Qualificação</button>
         </div>
         <div id="q-curso-lista" style="display:none" class="max-h-52 overflow-y-auto border-2 border-gray-200 rounded-xl bg-white divide-y divide-gray-100 mb-3"></div>
-        <div id="q-curso-selecionado" style="display:none" class="flex items-center justify-between bg-blue-50 border-2 border-[#004587]/30 rounded-xl px-4 py-3 mb-4">
+        <div id="q-curso-selecionado" style="display:none" class="flex items-center justify-between bg-blue-50 border-2 border-[#004587]/30 rounded-xl px-4 py-3 mb-3">
          <div><p class="text-xs text-gray-500 font-semibold uppercase">Curso selecionado</p><p id="q-curso-nome" class="font-bold text-[#004587]"></p></div>
          <button type="button" onclick="qLimparCurso()" class="text-sm text-red-500 hover:text-red-700 font-semibold">Alterar</button>
         </div>
         <input type="hidden" id="q-curso-id">
+        <!-- Versão do Plano -->
+        <div id="q-versao-container" style="display:none" class="mb-4">
+         <label class="block text-[#004587] font-semibold mb-2 text-sm">Versão do Plano de Curso</label>
+         <div class="flex gap-2">
+          <input type="text" id="q-versao" placeholder="Ex: 2025, 2026..." class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+          <button type="button" onclick="qCarregarUCsVersao()" class="px-5 py-3 bg-[#004587] text-white rounded-xl font-semibold text-sm hover:bg-[#003366] transition-all">Carregar</button>
+         </div>
+         <p id="q-versao-ativa" class="text-xs text-[#004587] font-semibold mt-1 hidden"></p>
+        </div>
         <div id="q-add-uc-form" style="display:none" class="bg-gray-50 rounded-xl p-5 border-2 border-gray-200">
-         <h4 class="font-bold text-[#004587] mb-4">Adicionar Unidade Curricular</h4>
+         <h4 class="font-bold text-[#004587] mb-1 text-sm">Adicionar Unidade Curricular</h4>
+         <p class="text-xs text-gray-500 mb-4">CH Presencial = aulas em sala. CH EAD = atividades a distância.</p>
          <div class="space-y-3">
           <div><label class="block text-[#004587] font-semibold mb-1 text-sm">Nome da UC</label>
-           <input type="text" id="q-uc-nome" placeholder="Ex: Gestão de Pessoas..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+           <input type="text" id="q-uc-nome" placeholder="Ex: UC1 - Apoiar a execução de estratégias de marketing..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
           </div>
-          <div><label class="block text-[#004587] font-semibold mb-1 text-sm">Carga Horária (horas)</label>
-           <input type="number" id="q-uc-horas" placeholder="Ex: 60" min="1" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+          <div class="grid grid-cols-3 gap-3">
+           <div><label class="block text-[#004587] font-semibold mb-1 text-xs">CH Presencial (h)</label>
+            <input type="number" id="q-uc-pres" placeholder="64" min="0" oninput="qCalcTotal()" class="w-full px-3 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+           </div>
+           <div><label class="block text-[#004587] font-semibold mb-1 text-xs">CH EAD (h)</label>
+            <input type="number" id="q-uc-ead" placeholder="20" min="0" oninput="qCalcTotal()" class="w-full px-3 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+           </div>
+           <div><label class="block text-[#004587] font-semibold mb-1 text-xs">Total (auto)</label>
+            <input type="number" id="q-uc-total" placeholder="84" readonly class="w-full px-3 py-3 border-2 border-gray-100 rounded-xl bg-gray-100 text-gray-600 text-sm cursor-not-allowed">
+           </div>
           </div>
           <button onclick="qAdicionarUC()" class="btn-primary w-full py-3 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Adicionar UC
@@ -1617,6 +1641,7 @@
       const form = e.target;
       const nome_curso = form.nome_do_curso.value.trim();
       const codigo_oferta = form.codigo_da_oferta.value.trim();
+      const versao_plano = form.versao_plano.value.trim();
       const data_inicio = form.data_de_inicio.value;
       const data_termino = form.data_de_termino.value;
       const periodo = form.periodo.value;
@@ -1625,7 +1650,7 @@
         showErrorMessage('❌ Selecione o curso');
         return;
       }
-      if (!codigo_oferta) {
+      if (!codigo_oferta || !versao_plano) {
         showErrorMessage('❌ Preencha todos os campos obrigatórios');
         return;
       }
@@ -1636,7 +1661,7 @@
       btn.innerHTML = '⏳ Salvando...';
 
       try {
-        await postToSheet('Turmas', [codigo_oferta, nome_curso, periodo, data_inicio, data_termino]);
+        await postToSheet('Turmas', [codigo_oferta, nome_curso, versao_plano, periodo, data_inicio, data_termino]);
         form.reset();
         // Reset picker UI
         const pickerSel = document.getElementById('curso-picker-selecionado');
@@ -2417,7 +2442,8 @@
       btn.classList.add('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
       document.getElementById('tab-' + tabName).style.display = 'block';
       if (tabName === 'quadro-ucs') {
-        loadUCs().then(() => { if (quadroCursoAtual) qRenderUCsLista(quadroCursoAtual.id); });
+        const versaoAtiva = document.getElementById('q-versao')?.value.trim();
+        loadUCs().then(() => { if (quadroCursoAtual && versaoAtiva) qRenderUCsLista(quadroCursoAtual.id, versaoAtiva); });
       }
     };
 
@@ -2449,59 +2475,100 @@
       document.getElementById('q-curso-nome').textContent = nome;
       document.getElementById('q-curso-selecionado').style.display = 'flex';
       document.getElementById('q-curso-lista').style.display = 'none';
-      document.getElementById('q-add-uc-form').style.display = 'block';
-      qRenderUCsLista(id);
+      // Show versão picker — user must pick versão before seeing UCs or add form
+      document.getElementById('q-versao-container').style.display = 'block';
+      document.getElementById('q-versao').value = '';
+      document.getElementById('q-versao-ativa').classList.add('hidden');
+      document.getElementById('q-add-uc-form').style.display = 'none';
+      document.getElementById('q-ucs-lista').innerHTML = '<p class="text-gray-400 text-center py-6 text-sm">Informe a versão do plano de curso e clique em Carregar.</p>';
     };
 
     window.qLimparCurso = function() {
       quadroCursoAtual = null;
       document.getElementById('q-curso-id').value = '';
       document.getElementById('q-curso-selecionado').style.display = 'none';
+      document.getElementById('q-versao-container').style.display = 'none';
+      document.getElementById('q-versao').value = '';
+      document.getElementById('q-versao-ativa').classList.add('hidden');
       document.getElementById('q-add-uc-form').style.display = 'none';
       document.getElementById('q-ucs-lista').innerHTML = '<p class="text-gray-400 text-center py-8 text-sm">Selecione um curso para ver suas UCs.</p>';
     };
 
-    function qRenderUCsLista(cursoId) {
+    window.qCarregarUCsVersao = async function() {
+      if (!quadroCursoAtual) return;
+      const versao = document.getElementById('q-versao').value.trim();
+      if (!versao) { showErrorMessage('❌ Informe a versão do plano (ex: 2025)'); return; }
+      await loadUCs();
+      qRenderUCsLista(quadroCursoAtual.id, versao);
+      const label = document.getElementById('q-versao-ativa');
+      label.textContent = `Versão ativa: ${versao}`;
+      label.classList.remove('hidden');
+      document.getElementById('q-add-uc-form').style.display = 'block';
+    };
+
+    window.qCalcTotal = function() {
+      const pres = parseFloat(document.getElementById('q-uc-pres').value) || 0;
+      const ead  = parseFloat(document.getElementById('q-uc-ead').value)  || 0;
+      document.getElementById('q-uc-total').value = pres + ead || '';
+    };
+
+    function qRenderUCsLista(cursoId, versao) {
       const lista = document.getElementById('q-ucs-lista');
-      const ucs = allUCs.filter(u => u.curso_id === cursoId);
+      const ucs = allUCs.filter(u => u.curso_id === cursoId && String(u.versao) === String(versao));
       if (ucs.length === 0) {
-        lista.innerHTML = '<p class="text-gray-400 text-center py-6 text-sm">Nenhuma UC cadastrada para este curso. Adicione a primeira UC ao lado.</p>';
+        lista.innerHTML = `<p class="text-gray-400 text-center py-6 text-sm">Nenhuma UC cadastrada para este curso na versão ${versao}. Adicione a primeira UC ao lado.</p>`;
         return;
       }
-      lista.innerHTML = ucs.map(uc => `
+      lista.innerHTML = ucs.map(uc => {
+        const pres  = uc.ch_presencial   ? `${uc.ch_presencial}h pres.` : '';
+        const ead   = uc.ch_ead          ? `${uc.ch_ead}h EAD` : '';
+        const total = uc.carga_horaria_total || uc.carga_horaria || '?';
+        const detalhe = [pres, ead].filter(Boolean).join(' + ');
+        return `
         <div class="flex items-center justify-between bg-white border-2 border-gray-100 rounded-xl px-4 py-3">
           <div>
             <p class="font-semibold text-[#004587] text-sm">${uc.uc_nome}</p>
-            <p class="text-xs text-gray-500">Carga Horária: ${uc.carga_horaria}h</p>
+            <p class="text-xs text-gray-500">${detalhe ? detalhe + ` = ${total}h total` : `Carga Horária: ${total}h`}</p>
           </div>
-          <button onclick="qRemoverUC('${uc.uc_nome.replace(/'/g,"\\'")}','${cursoId}')" class="text-red-400 hover:text-red-600 text-xs font-semibold px-2 py-1 rounded hover:bg-red-50 transition-all">Remover</button>
-        </div>`).join('');
+          <button data-ucnome="${uc.uc_nome.replace(/"/g,'&quot;')}" data-cursoid="${cursoId}" data-versao="${versao}"
+            onclick="qRemoverUC(this)" class="text-red-400 hover:text-red-600 text-xs font-semibold px-2 py-1 rounded hover:bg-red-50 transition-all">Remover</button>
+        </div>`;
+      }).join('');
     }
 
     window.qAdicionarUC = async function() {
       if (!quadroCursoAtual) { showErrorMessage('❌ Selecione um curso primeiro'); return; }
-      const nome = document.getElementById('q-uc-nome').value.trim();
-      const horas = document.getElementById('q-uc-horas').value.trim();
-      if (!nome || !horas) { showErrorMessage('❌ Preencha nome e carga horária da UC'); return; }
-      const btn = document.querySelector('#q-add-uc-form button');
+      const versao = document.getElementById('q-versao').value.trim();
+      if (!versao) { showErrorMessage('❌ Informe a versão do plano antes de adicionar UCs'); return; }
+      const nome  = document.getElementById('q-uc-nome').value.trim();
+      const pres  = document.getElementById('q-uc-pres').value.trim();
+      const ead   = document.getElementById('q-uc-ead').value.trim();
+      const total = document.getElementById('q-uc-total').value.trim();
+      if (!nome || !pres) { showErrorMessage('❌ Preencha o nome e CH Presencial da UC'); return; }
+      const btn = document.querySelector('#q-add-uc-form button[onclick="qAdicionarUC()"]');
       btn.disabled = true; btn.textContent = '⏳ Salvando...';
       try {
-        await postToSheet('UCs', [quadroCursoAtual.id, quadroCursoAtual.nome, nome, horas]);
-        allUCs.push({ curso_id: quadroCursoAtual.id, curso_nome: quadroCursoAtual.nome, uc_nome: nome, carga_horaria: horas });
+        await postToSheet('UCs', [quadroCursoAtual.id, quadroCursoAtual.nome, versao, nome, pres, ead || 0, total || pres]);
+        allUCs.push({ curso_id: quadroCursoAtual.id, curso_nome: quadroCursoAtual.nome, versao, uc_nome: nome, ch_presencial: pres, ch_ead: ead || 0, carga_horaria_total: total || pres });
         document.getElementById('q-uc-nome').value = '';
-        document.getElementById('q-uc-horas').value = '';
-        qRenderUCsLista(quadroCursoAtual.id);
+        document.getElementById('q-uc-pres').value = '';
+        document.getElementById('q-uc-ead').value = '';
+        document.getElementById('q-uc-total').value = '';
+        qRenderUCsLista(quadroCursoAtual.id, versao);
         showSuccessMessage('✅ UC adicionada!');
       } catch(err) { showErrorMessage('❌ Erro: ' + err.message); }
       finally { btn.disabled = false; btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Adicionar UC'; }
     };
 
-    window.qRemoverUC = async function(ucNome, cursoId) {
-      if (!confirm(`Remover a UC "${ucNome}"?`)) return;
+    window.qRemoverUC = async function(btn) {
+      const ucNome  = btn.dataset.ucnome;
+      const cursoId = btn.dataset.cursoid;
+      const versao  = btn.dataset.versao;
+      if (!confirm(`Remover a UC "${ucNome}" (versão ${versao})?`)) return;
       try {
         await deleteFromSheet('UCs', 'uc_nome', ucNome);
-        allUCs = allUCs.filter(u => !(u.uc_nome === ucNome && u.curso_id === cursoId));
-        qRenderUCsLista(cursoId);
+        allUCs = allUCs.filter(u => !(u.uc_nome === ucNome && u.curso_id === cursoId && String(u.versao) === String(versao)));
+        qRenderUCsLista(cursoId, versao);
         showSuccessMessage('✅ UC removida!');
       } catch(err) { showErrorMessage('❌ Erro: ' + err.message); }
     };
@@ -2631,12 +2698,22 @@
       const diaLabels = { segunda: 'Segunda-feira', terca: 'Terça-feira', quarta: 'Quarta-feira', quinta: 'Quinta-feira', sexta: 'Sexta-feira', sabado: 'Sábado' };
       const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
       document.getElementById('modal-aloc-titulo').textContent = `Alocar — ${diaLabels[dia]} · ${periodoLabel[quadroTurmaAtual.periodo] || quadroTurmaAtual.periodo}`;
-      // UCs do curso
+      // UCs do curso — filtra por versão do plano da turma
       const ucSelect = document.getElementById('modal-uc-select');
       if (allUCs.length === 0) await loadUCs();
-      const ucsDisponiveis = allUCs.filter(u => (u.curso_nome||'').toLowerCase() === (quadroTurmaAtual.nome_curso||'').toLowerCase());
+      const versaoTurma = quadroTurmaAtual.versao_plano || '';
+      const ucsDisponiveis = allUCs.filter(u =>
+        (u.curso_nome||'').toLowerCase() === (quadroTurmaAtual.nome_curso||'').toLowerCase() &&
+        String(u.versao) === String(versaoTurma)
+      );
       ucSelect.innerHTML = '<option value="">Selecione a UC...</option>' +
-        ucsDisponiveis.map(u => `<option value="${u.uc_nome}" data-horas="${u.carga_horaria}">${u.uc_nome} (${u.carga_horaria}h)</option>`).join('');
+        ucsDisponiveis.map(u => {
+          const pres  = u.ch_presencial || u.carga_horaria || 0;
+          const total = u.carga_horaria_total || u.carga_horaria || 0;
+          const ead   = u.ch_ead || 0;
+          const label = ead ? `${u.uc_nome} (${pres}h pres. + ${ead}h EAD = ${total}h)` : `${u.uc_nome} (${pres}h)`;
+          return `<option value="${u.uc_nome}" data-presencial="${pres}" data-ead="${ead}" data-total="${total}">${label}</option>`;
+        }).join('');
       document.getElementById('modal-encontros').classList.add('hidden');
       // Docentes disponíveis
       await qPopularDocentesDisponiveis(dia);
@@ -2680,11 +2757,15 @@
     window.calcularEncontros = function() {
       const opt = document.getElementById('modal-uc-select').selectedOptions[0];
       const el = document.getElementById('modal-encontros');
-      if (!opt || !opt.dataset.horas || !opt.value) { el.classList.add('hidden'); return; }
-      const horas = parseFloat(opt.dataset.horas);
+      if (!opt || !opt.value) { el.classList.add('hidden'); return; }
+      const pres  = parseFloat(opt.dataset.presencial) || 0;
+      const ead   = parseFloat(opt.dataset.ead)        || 0;
+      const total = parseFloat(opt.dataset.total)      || pres;
+      if (!pres) { el.classList.add('hidden'); return; }
       const hPorAula = quadroTurmaAtual?.periodo === 'noite' ? 3.5 : 4;
-      const encontros = Math.ceil(horas / hPorAula);
-      el.textContent = `→ ${encontros} encontros de ${hPorAula}h (total: ${horas}h)`;
+      const encontros = Math.ceil(pres / hPorAula);
+      const detEAD = ead ? ` · +${ead}h EAD = ${total}h total` : '';
+      el.textContent = `→ ${encontros} encontros de ${hPorAula}h (${pres}h presenciais${detEAD})`;
       el.classList.remove('hidden');
     };
 
