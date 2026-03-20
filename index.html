@@ -814,34 +814,40 @@
       return d.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
     }
 
-    // Fechar todas as seções de consulta
-    function fecharTodasSecoes() {
-      document.querySelectorAll('.consulta-section').forEach(el => {
-        el.style.display = 'none';
+    // Lista fixa de todas as seções
+    const TODAS_SECOES = ['docentes-list', 'docente-detail', 'pctd-list', 'pitd-list', 'representantes-filter'];
+
+    // Função central: controla o que aparece na consulta
+    function renderConsultaView(viewId) {
+      const cards = document.getElementById('consulta-cards');
+      // Esconde TUDO primeiro
+      TODAS_SECOES.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
       });
+      if (viewId === null) {
+        // Mostra os cards
+        if (cards) cards.style.display = 'grid';
+      } else {
+        // Esconde os cards, mostra apenas a seção pedida
+        if (cards) cards.style.display = 'none';
+        const el = document.getElementById(viewId);
+        if (el) el.style.display = 'block';
+      }
     }
 
-    // Abrir/Fechar Vistas
+    // Abrir uma seção de consulta
     window.openConsultaView = (viewId) => {
-      // Esconde os cards e todas as seções abertas
-      const cards = document.getElementById('consulta-cards');
-      if (cards) cards.style.display = 'none';
-      fecharTodasSecoes();
-
-      // Carrega e mostra apenas a seção solicitada
+      renderConsultaView(viewId);
       if (viewId === 'docentes-list') { renderDocentes(); loadDocentes(); }
       if (viewId === 'pctd-list') { filterPCTD(); loadPCTD(); }
       if (viewId === 'pitd-list') { filterPITD(); loadPITD(); }
       if (viewId === 'representantes-filter') { filterRepresentantes(); loadRepresentantes(); }
-      const view = document.getElementById(viewId);
-      if (view) view.style.display = 'block';
     };
 
-    // Voltar mostra os cards novamente
+    // Voltar para os cards principais
     window.closeConsultaView = () => {
-      fecharTodasSecoes();
-      const cards = document.getElementById('consulta-cards');
-      if (cards) cards.style.display = 'grid';
+      renderConsultaView(null);
     };
 
     // Renderizar Docentes (com busca e ordem alfabética)
@@ -874,9 +880,8 @@
     window.verDocente = function(idx) {
       docenteAtual = allTeachers[idx];
       const d = docenteAtual;
-      document.getElementById('docentes-list').style.display = 'none';
+      renderConsultaView('docente-detail');
       const detail = document.getElementById('docente-detail');
-      detail.style.display = 'block';
       const social = [
         d.instagram ? `<span class="text-pink-600 font-semibold">${d.instagram}</span>` : '',
         d.facebook  ? `<span class="text-blue-600">${d.facebook}</span>` : '',
@@ -902,9 +907,7 @@
     };
 
     window.voltarListaDocentes = function() {
-      fecharTodasSecoes();
-      document.getElementById('docentes-list').style.display = 'block';
-      // Não mostra os cards - continua na lista de docentes
+      renderConsultaView('docentes-list');
     };
 
     window.editarDocente = function() {
@@ -936,10 +939,8 @@
         await deleteFromSheet('Docentes', 'nome_completo', docenteAtual.nome_completo);
         showSuccessMessage('✅ Docente excluído com sucesso!');
         docenteAtual = null;
-        fecharTodasSecoes();
         await loadDocentes();
-        document.getElementById('docentes-list').style.display = 'block';
-        // Mantém na lista de docentes após excluir
+        renderConsultaView('docentes-list');
       } catch(err) {
         showErrorMessage('❌ Erro ao excluir: ' + err.message);
       }
