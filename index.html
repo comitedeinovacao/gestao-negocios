@@ -76,6 +76,17 @@
     .tab-content {
       transition: all 0.3s ease;
     }
+
+    /* Controle de navegação da Consulta via CSS puro */
+    .consulta-section { display: none !important; }
+    #consulta-cards   { display: none !important; }
+
+    #consulta-page[data-view="cards"] #consulta-cards             { display: grid !important; }
+    #consulta-page[data-view="docentes-list"] #docentes-list       { display: block !important; }
+    #consulta-page[data-view="docente-detail"] #docente-detail     { display: block !important; }
+    #consulta-page[data-view="pctd-list"] #pctd-list               { display: block !important; }
+    #consulta-page[data-view="pitd-list"] #pitd-list               { display: block !important; }
+    #consulta-page[data-view="representantes-filter"] #representantes-filter { display: block !important; }
   </style>
   <style>body { box-sizing: border-box; }</style>
   <script>
@@ -345,7 +356,7 @@
      </div>
     </div>
    </div><!-- PÁGINA CONSULTA -->
-   <div id="consulta-page" class="page-container bg-white min-h-full">
+   <div id="consulta-page" data-view="cards" class="page-container bg-white min-h-full">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
      <div class="flex items-center justify-between mb-8 pb-6 border-b-2 border-gray-200">
       <h2 class="text-3xl font-bold text-[#004587]">Consulta</h2><button onclick="scrollToGestao()" class="px-6 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl font-semibold flex items-center gap-2 transition-all">
@@ -451,7 +462,7 @@
      </div>
 
      <!-- Consulta Docentes -->
-     <div id="docentes-list" style="display:none" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
+     <div id="docentes-list" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
       <button onclick="closeConsultaView('docentes-list')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
       </button>
@@ -463,7 +474,7 @@
      </div>
 
      <!-- Detalhe do Docente -->
-     <div id="docente-detail" style="display:none" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
+     <div id="docente-detail" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
       <button onclick="voltarListaDocentes()" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar à lista
       </button>
@@ -479,7 +490,7 @@
      </div>
 
      <!-- Consulta PCTD -->
-     <div id="pctd-list" style="display:none" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
+     <div id="pctd-list" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
       <button onclick="closeConsultaView('pctd-list')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
       </button>
@@ -503,7 +514,7 @@
      </div>
 
      <!-- Consulta PITD -->
-     <div id="pitd-list" style="display:none" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
+     <div id="pitd-list" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
       <button onclick="closeConsultaView('pitd-list')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
       </button>
@@ -522,7 +533,7 @@
      </div>
 
      <!-- Consulta Representantes -->
-     <div id="representantes-filter" style="display:none" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
+     <div id="representantes-filter" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
       <button onclick="closeConsultaView('representantes-filter')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
       </button>
@@ -814,26 +825,10 @@
       return d.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
     }
 
-    // Lista fixa de todas as seções
-    const TODAS_SECOES = ['docentes-list', 'docente-detail', 'pctd-list', 'pitd-list', 'representantes-filter'];
-
-    // Função central: controla o que aparece na consulta
+    // Função central: muda data-view no consulta-page — o CSS cuida do resto
     function renderConsultaView(viewId) {
-      const cards = document.getElementById('consulta-cards');
-      // Esconde TUDO primeiro
-      TODAS_SECOES.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = 'none';
-      });
-      if (viewId === null) {
-        // Mostra os cards
-        if (cards) cards.style.display = 'grid';
-      } else {
-        // Esconde os cards, mostra apenas a seção pedida
-        if (cards) cards.style.display = 'none';
-        const el = document.getElementById(viewId);
-        if (el) el.style.display = 'block';
-      }
+      const page = document.getElementById('consulta-page');
+      if (page) page.setAttribute('data-view', viewId || 'cards');
     }
 
     // Abrir uma seção de consulta
