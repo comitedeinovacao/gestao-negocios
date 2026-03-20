@@ -1052,7 +1052,7 @@
 
         const script = document.createElement('script');
         script.id = scriptId;
-        script.src = APPS_SCRIPT_URL + '?aba=' + encodeURIComponent(aba) + '&callback=' + cbName;
+        script.src = APPS_SCRIPT_URL + '?aba=' + encodeURIComponent(aba) + '&callback=' + cbName + '&t=' + Date.now();
         document.head.appendChild(script);
       });
     }
@@ -2364,8 +2364,9 @@
     }
 
     async function carregarEventosSheets() {
-      const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyujbQCQ4OKMiLXNl4Q3aOMCQp65ifsjXp8ZQbutBsJwoSfGMlDe9DCok1XKt_qc389hg/exec?aba=Eventos&callback=handleEventos';
-      
+      const cbName = 'handleEventos_' + Date.now();
+      const SCRIPT_URL = APPS_SCRIPT_URL + '?aba=Eventos&callback=' + cbName + '&t=' + Date.now();
+
       return new Promise((resolve) => {
         const timeout = setTimeout(() => {
           cleanup();
@@ -2375,12 +2376,12 @@
 
         function cleanup() {
           clearTimeout(timeout);
-          delete window.handleEventos;
+          delete window[cbName];
           const script = document.getElementById('jsonp-eventos');
           if (script) script.remove();
         }
 
-        window.handleEventos = function(data) {
+        window[cbName] = function(data) {
           cleanup();
           if (!data || !Array.isArray(data.dados)) { resolve([]); return; }
           resolve(data.dados.map(evt => ({
@@ -2429,6 +2430,8 @@
           })));
         };
 
+        const old = document.getElementById('jsonp-eventos');
+        if (old) old.remove();
         const script = document.createElement('script');
         script.id = 'jsonp-eventos';
         script.src = SCRIPT_URL;
