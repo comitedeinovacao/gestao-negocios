@@ -373,7 +373,26 @@
        </svg>Representante </button>
      </div><!-- Docentes -->
      <div id="tab-cad-docentes" class="tab-content bg-gray-50 rounded-2xl p-8">
-      <h3 class="text-2xl font-bold text-[#004587] mb-8">Cadastro de Docentes</h3>
+      <!-- Painel: docentes já cadastrados -->
+      <div class="mb-8 bg-white rounded-2xl border-2 border-gray-200 p-5">
+       <div class="flex items-center justify-between mb-4">
+        <h4 class="font-bold text-[#004587] text-lg">Docentes Cadastrados</h4>
+        <button type="button" onclick="novoDocente()" class="px-4 py-2 bg-[#F7941D] text-white rounded-xl font-semibold text-sm hover:bg-[#E8850D] transition-all flex items-center gap-2">
+         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Novo Docente
+        </button>
+       </div>
+       <input type="text" id="busca-docente-cad" placeholder="Buscar docente pelo nome..." oninput="filtrarDocentesCad(this.value)" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm focus:border-[#004587] focus:outline-none mb-3">
+       <div id="docentes-cad-lista" class="space-y-1 max-h-52 overflow-y-auto">
+        <p class="text-gray-400 text-sm text-center py-3">Carregando...</p>
+       </div>
+      </div>
+      <!-- Cabeçalho dinâmico do formulário -->
+      <div class="flex items-center justify-between mb-6">
+       <h3 id="docentes-form-titulo" class="text-2xl font-bold text-[#004587]">Novo Cadastro</h3>
+       <button type="button" id="docentes-form-limpar" onclick="novoDocente()" style="display:none" class="text-sm text-gray-500 hover:text-gray-700 font-semibold px-3 py-2 rounded-lg hover:bg-gray-200 transition-all flex items-center gap-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg> Limpar / Novo
+       </button>
+      </div>
       <form id="cadastro-form" class="space-y-6">
        <div class="grid md:grid-cols-2 gap-6">
         <div><label class="block text-[#004587] font-semibold mb-3">Nome Completo</label> <input type="text" placeholder="Seu nome completo" name="nome_completo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
@@ -1041,7 +1060,66 @@
     async function loadDocentes() {
       allTeachers = await carregarDaAba('Docentes');
       renderDocentes();
+      renderDocentesCadLista();
     }
+
+    function renderDocentesCadLista(query) {
+      const lista = document.getElementById('docentes-cad-lista');
+      if (!lista) return;
+      let docs = allTeachers;
+      if (query) docs = docs.filter(d => (d.nome_completo||'').toLowerCase().includes(query.toLowerCase()));
+      if (docs.length === 0) {
+        lista.innerHTML = `<p class="text-gray-400 text-sm text-center py-4">${allTeachers.length === 0 ? 'Nenhum docente cadastrado ainda.' : 'Nenhum resultado para "'+query+'".'}</p>`;
+        return;
+      }
+      lista.innerHTML = docs.map(d => {
+        const idx = allTeachers.indexOf(d);
+        const inicial = (d.nome_completo||'?')[0].toUpperCase();
+        return `<button type="button" onclick="selecionarDocenteParaEditar(${idx})"
+          class="w-full text-left px-4 py-3 rounded-xl hover:bg-blue-50 transition-colors flex items-center gap-3 group border border-transparent hover:border-[#004587]/20">
+          <div class="w-9 h-9 bg-[#004587]/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <span class="text-[#004587] font-bold text-sm">${inicial}</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold text-[#004587] text-sm truncate">${d.nome_completo||'Sem nome'}</p>
+            <p class="text-xs text-gray-400">${d.telefone || 'Telefone não informado'}</p>
+          </div>
+          <svg class="w-4 h-4 text-gray-300 group-hover:text-[#004587] flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 13l6.5-6.5M3 21h4l10-10-4-4L3 17v4z"/></svg>
+        </button>`;
+      }).join('');
+    }
+
+    window.filtrarDocentesCad = function(query) { renderDocentesCadLista(query); };
+
+    window.selecionarDocenteParaEditar = function(idx) {
+      const d = allTeachers[idx];
+      if (!d) return;
+      docenteAtual = d;
+      const form = document.getElementById('cadastro-form');
+      form.nome_completo.value = d.nome_completo || '';
+      form.telefone.value     = d.telefone     || '';
+      form.instagram.value    = d.instagram    || '';
+      form.facebook.value     = d.facebook     || '';
+      form.linkedin.value     = d.linkedin     || '';
+      form.mini_curriculo.value = d.mini_curriculo || '';
+      try { renderEscalaContainer(d.escala_semanal ? JSON.parse(d.escala_semanal) : null); } catch(e) { renderEscalaContainer(); }
+      form.dataset.editingNome = d.nome_completo;
+      document.getElementById('docentes-form-titulo').textContent = `Editando: ${d.nome_completo}`;
+      document.getElementById('docentes-form-limpar').style.display = 'flex';
+      form.scrollIntoView({ behavior: 'smooth' });
+      showSuccessMessage('✏️ Edite os dados e clique em Salvar para atualizar');
+    };
+
+    window.novoDocente = function() {
+      const form = document.getElementById('cadastro-form');
+      form.reset();
+      delete form.dataset.editingNome;
+      renderEscalaContainer();
+      document.getElementById('docentes-form-titulo').textContent = 'Novo Cadastro';
+      document.getElementById('docentes-form-limpar').style.display = 'none';
+      document.getElementById('busca-docente-cad').value = '';
+      form.scrollIntoView({ behavior: 'smooth' });
+    };
 
     async function loadPCTD() {
       allPCTD = await carregarDaAba('PCTD');
@@ -1111,13 +1189,14 @@
         renderConsultaView(null);
       }
       if (page === 'cadastro') {
-        // Sempre mostra o primeiro tab (Docentes) ao entrar em Cadastro
         document.querySelectorAll('#cadastro-page .tab-content').forEach(c => { c.style.display = 'none'; });
         const firstTab = document.getElementById('tab-cad-docentes');
         if (firstTab) firstTab.style.display = 'block';
         document.querySelectorAll('#cadastro-page .tab-btn').forEach(b => b.classList.remove('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]'));
         const firstBtn = document.querySelector('#cadastro-page .tab-btn[data-tab="cad-docentes"]');
         if (firstBtn) firstBtn.classList.add('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
+        // Carrega/atualiza lista de docentes no painel superior
+        if (allTeachers.length === 0) loadDocentes(); else renderDocentesCadLista();
       }
       if (page === 'quadros') {
         document.querySelectorAll('#quadros-page .tab-content').forEach(c => { c.style.display = 'none'; });
@@ -1465,27 +1544,9 @@
 
     window.editarDocente = function() {
       if (!docenteAtual) return;
-      const d = docenteAtual;
+      const idx = allTeachers.indexOf(docenteAtual);
       navigateToPage('cadastro');
-      setTimeout(() => {
-        const tab = document.querySelector('[data-tab="cad-docentes"]');
-        if (tab) switchCadastroTab(tab);
-        const form = document.getElementById('cadastro-form');
-        if (form) {
-          form.nome_completo.value = d.nome_completo || '';
-          form.telefone.value = d.telefone || '';
-          form.instagram.value = d.instagram || '';
-          form.facebook.value = d.facebook || '';
-          form.linkedin.value = d.linkedin || '';
-          form.mini_curriculo.value = d.mini_curriculo || '';
-          if (d.escala_semanal) {
-            try { renderEscalaContainer(JSON.parse(d.escala_semanal)); } catch(e) {}
-          }
-          form.dataset.editingNome = d.nome_completo;
-          form.scrollIntoView({ behavior: 'smooth' });
-          showSuccessMessage('✏️ Edite os dados e clique em Salvar para atualizar');
-        }
-      }, 300);
+      setTimeout(() => { selecionarDocenteParaEditar(idx >= 0 ? idx : 0); }, 350);
     };
 
     window.excluirDocente = async function() {
@@ -1663,6 +1724,9 @@
         const escala = JSON.stringify(coletarEscala());
         await postToSheet('Docentes', [nome_completo, telefone, instagram, facebook, linkedin, mini_curriculo, escala]);
         form.reset();
+        renderEscalaContainer();
+        document.getElementById('docentes-form-titulo').textContent = 'Novo Cadastro';
+        document.getElementById('docentes-form-limpar').style.display = 'none';
         showSuccessMessage('✅ Docente salvo com sucesso!');
         await loadDocentes();
       } catch (err) {
