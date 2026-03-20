@@ -1051,10 +1051,11 @@
 
     function carregarDaAba(aba) {
       return new Promise((resolve) => {
-        const cbName = 'cb_' + aba.toLowerCase() + '_' + Date.now();
-        const scriptId = 'jsonp-' + aba.toLowerCase();
+        const cbName = 'cb_' + aba.toLowerCase() + '_' + Date.now() + '_' + Math.floor(Math.random() * 1e6);
+        const scriptId = 'jsonp_' + cbName; // único por chamada — nunca colide
 
         const timeout = setTimeout(() => {
+          console.warn('[carregarDaAba] TIMEOUT 8s —', aba, '— cbName:', cbName);
           cleanup();
           resolve([]);
         }, 8000);
@@ -1068,7 +1069,9 @@
 
         window[cbName] = function(data) {
           cleanup();
-          resolve((data && Array.isArray(data.dados)) ? data.dados : []);
+          const result = (data && Array.isArray(data.dados)) ? data.dados : [];
+          console.log('[carregarDaAba]', aba, '→', result.length, 'registros', result[0] ? Object.keys(result[0]) : '(vazio)');
+          resolve(result);
         };
 
         const script = document.createElement('script');
@@ -2970,14 +2973,22 @@
     async function qPopularDocentesDisponiveis(dia) {
       const select = document.getElementById('modal-docente-select');
       select.innerHTML = '<option value="">Carregando docentes...</option>';
-      // allTeachers já foi carregado em qsAbrirQuadro — usa direto
-      if (allTeachers.length === 0) {
+      // Busca direto do servidor — não depende de allTeachers estar populado
+      let teachers = await carregarDaAba('Docentes');
+      // Fallback: usa cache se servidor não retornou nada
+      if (!teachers || teachers.length === 0) teachers = allTeachers;
+      if (!teachers || teachers.length === 0) {
         select.innerHTML = '<option value="">Nenhum docente cadastrado no sistema</option>';
         return;
       }
-      const sorted = [...allTeachers]
+      allTeachers = teachers; // atualiza cache
+      const sorted = [...teachers]
         .filter(d => d.nome_completo)
         .sort((a, b) => (a.nome_completo || '').localeCompare(b.nome_completo || '', 'pt-BR'));
+      if (sorted.length === 0) {
+        select.innerHTML = '<option value="">Nenhum docente com nome cadastrado</option>';
+        return;
+      }
       select.innerHTML = '<option value="">Selecione o docente...</option>' +
         sorted.map(d => `<option value="${d.nome_completo}">${d.nome_completo}</option>`).join('');
     }
