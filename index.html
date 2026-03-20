@@ -376,23 +376,41 @@
      
      <!-- Seções de Consulta Separadas -->
      <div class="grid md:grid-cols-2 gap-6 mb-8">
-      <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-6 shadow-lg border-2 border-[#004587]/20 cursor-pointer" onclick="openConsultaView('docentes-list')">
+      <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-6 shadow-lg border-2 border-[#004587]/20 cursor-pointer hover:border-[#004587] hover:shadow-xl transition-all" onclick="openConsultaView('docentes-list')">
        <div class="w-14 h-14 bg-gradient-to-br from-[#004587] to-[#003366] rounded-xl flex items-center justify-center mb-4 mx-auto">
         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
         </svg>
        </div>
        <h4 class="text-lg font-bold text-[#004587] text-center mb-2">Docentes</h4>
-       <p class="text-gray-600 text-sm text-center">Visualize docentes cadastrados</p>
+       <p class="text-gray-600 text-sm text-center">Visualize e pesquise docentes cadastrados</p>
       </div>
-      <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-6 shadow-lg border-2 border-[#004587]/20 cursor-pointer" onclick="openConsultaView('representantes-filter')">
-       <div class="w-14 h-14 bg-gradient-to-br from-[#004587] to-[#003366] rounded-xl flex items-center justify-center mb-4 mx-auto">
+      <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-6 shadow-lg border-2 border-[#004587]/20 cursor-pointer hover:border-[#004587] hover:shadow-xl transition-all" onclick="openConsultaView('representantes-filter')">
+       <div class="w-14 h-14 bg-gradient-to-br from-[#F7941D] to-[#E8850D] rounded-xl flex items-center justify-center mb-4 mx-auto">
         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-2a6 6 0 0112 0v2zm0 0h6v-2a6 6 0 00-9-5.697M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
        </div>
        <h4 class="text-lg font-bold text-[#004587] text-center mb-2">Representantes</h4>
-       <p class="text-gray-600 text-sm text-center">Representantes estudantis</p>
+       <p class="text-gray-600 text-sm text-center">Busque por turma ou nome do representante</p>
+      </div>
+      <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-6 shadow-lg border-2 border-[#004587]/20 cursor-pointer hover:border-[#004587] hover:shadow-xl transition-all" onclick="openConsultaView('pctd-list')">
+       <div class="w-14 h-14 bg-gradient-to-br from-[#004587] to-[#003366] rounded-xl flex items-center justify-center mb-4 mx-auto">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+        </svg>
+       </div>
+       <h4 class="text-lg font-bold text-[#004587] text-center mb-2">PCTD</h4>
+       <p class="text-gray-600 text-sm text-center">Plano Coletivo de Trabalho Docente</p>
+      </div>
+      <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-6 shadow-lg border-2 border-[#004587]/20 cursor-pointer hover:border-[#004587] hover:shadow-xl transition-all" onclick="openConsultaView('pitd-list')">
+       <div class="w-14 h-14 bg-gradient-to-br from-[#F7941D] to-[#E8850D] rounded-xl flex items-center justify-center mb-4 mx-auto">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+       </div>
+       <h4 class="text-lg font-bold text-[#004587] text-center mb-2">PITD</h4>
+       <p class="text-gray-600 text-sm text-center">Plano Individual de Trabalho Docente</p>
       </div>
      </div><!-- Modal de Seleção de Cursos -->
      <div id="modal-cursos" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
@@ -430,21 +448,93 @@
         <!-- Conteúdo preenchido dinamicamente -->
        </div>
       </div>
-     </div><!-- Consulta Docentes -->
-     <div id="docentes-list" style="display:none" class="mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200"><button onclick="closeConsultaView('docentes-list')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
-       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-       </svg> Voltar </button>
+     </div>
+
+     <!-- Consulta Docentes -->
+     <div id="docentes-list" style="display:none" class="mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
+      <button onclick="closeConsultaView('docentes-list')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
+      </button>
+      <h3 class="text-xl font-bold text-[#004587] mb-4">Docentes Cadastrados</h3>
+      <div class="mb-6">
+       <input type="text" id="docentes-search" placeholder="Buscar por nome do docente..." oninput="filterDocentes()" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" />
+      </div>
       <div id="docentes-grid" class="grid gap-4"></div>
-     </div><!-- Consulta Representantes -->
-     <div id="representantes-filter" style="display:none" class="mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200"><button onclick="closeConsultaView('representantes-filter')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
-       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-       </svg> Voltar </button>
-      <div class="grid md:grid-cols-2 gap-6 mb-8 bg-blue-50 p-6 rounded-xl">
-       <div><label class="block text-[#004587] font-semibold mb-3">Nome do Curso</label> <input type="text" id="rep-curso" placeholder="Ex: Administração" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" onchange="filterRepresentantes()">
+     </div>
+
+     <!-- Detalhe do Docente -->
+     <div id="docente-detail" style="display:none" class="mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
+      <button onclick="voltarListaDocentes()" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar à lista
+      </button>
+      <div id="docente-detail-content" class="mb-6"></div>
+      <div class="flex gap-3 flex-wrap">
+       <button onclick="editarDocente()" class="px-6 py-3 bg-[#004587] text-white rounded-xl font-semibold hover:bg-[#003366] transition-all flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg> Editar
+       </button>
+       <button onclick="excluirDocente()" class="px-6 py-3 bg-red-500 text-white rounded-xl font-semibold hover:bg-red-600 transition-all flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg> Excluir
+       </button>
+      </div>
+     </div>
+
+     <!-- Consulta PCTD -->
+     <div id="pctd-list" style="display:none" class="mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
+      <button onclick="closeConsultaView('pctd-list')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
+      </button>
+      <h3 class="text-xl font-bold text-[#004587] mb-4">Planos Coletivos de Trabalho Docente</h3>
+      <div class="grid md:grid-cols-2 gap-4 mb-6 bg-blue-50 p-6 rounded-xl">
+       <div>
+        <label class="block text-[#004587] font-semibold mb-2">Nome do Curso</label>
+        <input type="text" id="pctd-search-curso" placeholder="Ex: Administração..." oninput="filterPCTD()" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" />
        </div>
-       <div><label class="block text-[#004587] font-semibold mb-3">Período</label> <select id="rep-periodo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" onchange="filterRepresentantes()"> <option value="">Todos</option> <option value="manha">Manhã</option> <option value="tarde">Tarde</option> <option value="noite">Noite</option> </select>
+       <div>
+        <label class="block text-[#004587] font-semibold mb-2">Período</label>
+        <select id="pctd-search-periodo" onchange="filterPCTD()" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
+         <option value="">Todos</option>
+         <option value="manha">Manhã</option>
+         <option value="tarde">Tarde</option>
+         <option value="noite">Noite</option>
+        </select>
+       </div>
+      </div>
+      <div id="pctd-grid" class="grid md:grid-cols-2 gap-4"></div>
+     </div>
+
+     <!-- Consulta PITD -->
+     <div id="pitd-list" style="display:none" class="mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
+      <button onclick="closeConsultaView('pitd-list')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
+      </button>
+      <h3 class="text-xl font-bold text-[#004587] mb-4">Planos Individuais de Trabalho Docente</h3>
+      <div class="grid md:grid-cols-2 gap-4 mb-6 bg-blue-50 p-6 rounded-xl">
+       <div>
+        <label class="block text-[#004587] font-semibold mb-2">Nome do Docente</label>
+        <input type="text" id="pitd-search-docente" placeholder="Ex: João Silva..." oninput="filterPITD()" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" />
+       </div>
+       <div>
+        <label class="block text-[#004587] font-semibold mb-2">Unidade Curricular</label>
+        <input type="text" id="pitd-search-uc" placeholder="Ex: Gestão Empresarial..." oninput="filterPITD()" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" />
+       </div>
+      </div>
+      <div id="pitd-grid" class="grid md:grid-cols-2 gap-4"></div>
+     </div>
+
+     <!-- Consulta Representantes -->
+     <div id="representantes-filter" style="display:none" class="mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
+      <button onclick="closeConsultaView('representantes-filter')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
+      </button>
+      <h3 class="text-xl font-bold text-[#004587] mb-4">Representantes Estudantis</h3>
+      <div class="grid md:grid-cols-2 gap-4 mb-6 bg-blue-50 p-6 rounded-xl">
+       <div>
+        <label class="block text-[#004587] font-semibold mb-2">Nome do Representante</label>
+        <input type="text" id="rep-nome" placeholder="Buscar por nome..." oninput="filterRepresentantes()" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" />
+       </div>
+       <div>
+        <label class="block text-[#004587] font-semibold mb-2">Turma / Curso</label>
+        <input type="text" id="rep-curso" placeholder="Ex: 1A - Administração..." oninput="filterRepresentantes()" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" />
        </div>
       </div>
       <div id="representantes-grid" class="grid gap-4"></div>
@@ -713,24 +803,20 @@
       document.getElementById('tab-' + tabName).classList.remove('hidden');
     };
 
+    // Variável para docente selecionado
+    let docenteAtual = null;
+
     // Abrir/Fechar Vistas
     window.openConsultaView = (viewId) => {
-      // Fechar todas as outras vistas
-      var painelDocentes = document.getElementById('docentes-list');
-      if (painelDocentes) painelDocentes.style.display = 'none';
-      var painelPctd = document.getElementById('pctd-list');
-      if (painelPctd) painelPctd.style.display = 'none';
-      var painelPitd = document.getElementById('pitd-list');
-      if (painelPitd) painelPitd.style.display = 'none';
-      var painelRepresentantes = document.getElementById('representantes-filter');
-      if (painelRepresentantes) painelRepresentantes.style.display = 'none';
-      
-      // Abrir a vista solicitada
-      if (viewId === 'docentes-list') renderDocentes();
-      if (viewId === 'pctd-list') renderPCTD();
-      if (viewId === 'pitd-list') renderPITD();
-      if (viewId === 'representantes-filter') renderRepresentantesFilter();
-      var view = document.getElementById(viewId);
+      ['docentes-list','docente-detail','pctd-list','pitd-list','representantes-filter'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+      if (viewId === 'docentes-list') { renderDocentes(); loadDocentes(); }
+      if (viewId === 'pctd-list') { filterPCTD(); loadPCTD(); }
+      if (viewId === 'pitd-list') { filterPITD(); loadPITD(); }
+      if (viewId === 'representantes-filter') { filterRepresentantes(); loadRepresentantes(); }
+      const view = document.getElementById(viewId);
       if (view) view.style.display = 'block';
     };
 
@@ -739,87 +825,224 @@
       if (view) view.style.display = 'none';
     };
 
-    // Renderizar Docentes
+    // Renderizar Docentes (com busca e ordem alfabética)
     function renderDocentes() {
       const grid = document.getElementById('docentes-grid');
       if (!grid) return;
-      grid.innerHTML = allTeachers.length > 0 
-        ? allTeachers.map(teacher => `
-          <div class="bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 p-4 rounded-lg border-2 border-[#004587]/20">
-            <p class="font-bold text-[#004587]">${teacher.nome_completo || 'Sem nome'}</p>
-            <p class="text-sm text-gray-600">${teacher.telefone || 'Telefone não informado'}</p>
-            <p class="text-sm text-gray-600">${teacher.mini_curriculo ? teacher.mini_curriculo.substring(0, 100) + '...' : 'Sem descrição'}</p>
+      const search = (document.getElementById('docentes-search')?.value || '').toLowerCase();
+      const sorted = [...allTeachers].sort((a, b) =>
+        (a.nome_completo || '').localeCompare(b.nome_completo || '', 'pt-BR')
+      );
+      const filtrados = sorted.filter(t =>
+        !search || (t.nome_completo || '').toLowerCase().includes(search)
+      );
+      grid.innerHTML = filtrados.length > 0
+        ? filtrados.map(teacher => {
+            const idx = allTeachers.indexOf(teacher);
+            return `
+              <div onclick="verDocente(${idx})" class="cursor-pointer bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 p-5 rounded-xl border-2 border-[#004587]/20 hover:border-[#004587] hover:shadow-md transition-all">
+                <p class="font-bold text-[#004587] text-lg">${teacher.nome_completo || 'Sem nome'}</p>
+                <p class="text-sm text-gray-600 mt-1">${teacher.telefone || 'Telefone não informado'}</p>
+                <p class="text-sm text-gray-500 mt-2 line-clamp-2">${teacher.mini_curriculo ? teacher.mini_curriculo.substring(0, 120) + '...' : 'Sem descrição'}</p>
+                <p class="text-xs text-[#004587] font-semibold mt-3">Clique para ver detalhes e editar →</p>
+              </div>`;
+          }).join('')
+        : '<p class="text-gray-500 text-center py-8 col-span-2">Nenhum docente encontrado</p>';
+    }
+
+    window.filterDocentes = function() { renderDocentes(); };
+
+    window.verDocente = function(idx) {
+      docenteAtual = allTeachers[idx];
+      const d = docenteAtual;
+      document.getElementById('docentes-list').style.display = 'none';
+      const detail = document.getElementById('docente-detail');
+      detail.style.display = 'block';
+      const social = [
+        d.instagram ? `<span class="text-pink-600 font-semibold">${d.instagram}</span>` : '',
+        d.facebook  ? `<span class="text-blue-600">${d.facebook}</span>` : '',
+        d.linkedin  ? `<a href="${d.linkedin}" target="_blank" class="text-blue-800 font-semibold underline">LinkedIn</a>` : ''
+      ].filter(Boolean).join(' &nbsp;|&nbsp; ');
+      document.getElementById('docente-detail-content').innerHTML = `
+        <h3 class="text-2xl font-bold text-[#004587] mb-6">${d.nome_completo || 'Sem nome'}</h3>
+        <div class="grid md:grid-cols-2 gap-4 mb-4">
+          <div class="bg-gray-50 rounded-xl p-4">
+            <p class="text-xs text-gray-500 uppercase font-semibold mb-1">Telefone</p>
+            <p class="text-gray-800 font-semibold">${d.telefone || 'Não informado'}</p>
           </div>
-        `).join('')
-        : '<p class="text-gray-600 col-span-4 text-center py-8">Nenhum docente cadastrado</p>';
+          <div class="bg-gray-50 rounded-xl p-4">
+            <p class="text-xs text-gray-500 uppercase font-semibold mb-1">Redes Sociais</p>
+            <p class="text-gray-800">${social || 'Não informado'}</p>
+          </div>
+        </div>
+        <div class="bg-gray-50 rounded-xl p-4">
+          <p class="text-xs text-gray-500 uppercase font-semibold mb-2">Mini Currículo</p>
+          <p class="text-gray-800 leading-relaxed">${d.mini_curriculo || 'Não informado'}</p>
+        </div>`;
+      detail.scrollIntoView({ behavior: 'smooth' });
     };
 
-    // Renderizar PCTD
+    window.voltarListaDocentes = function() {
+      document.getElementById('docente-detail').style.display = 'none';
+      document.getElementById('docentes-list').style.display = 'block';
+    };
+
+    window.editarDocente = function() {
+      if (!docenteAtual) return;
+      const d = docenteAtual;
+      navigateToPage('gestao');
+      setTimeout(() => {
+        const tab = document.querySelector('[data-tab="cad-docentes"]');
+        if (tab) switchCadastroTab(tab);
+        const form = document.getElementById('docentes-form');
+        if (form) {
+          form.nome_completo.value = d.nome_completo || '';
+          form.telefone.value = d.telefone || '';
+          form.instagram.value = d.instagram || '';
+          form.facebook.value = d.facebook || '';
+          form.linkedin.value = d.linkedin || '';
+          form.mini_curriculo.value = d.mini_curriculo || '';
+          form.dataset.editingNome = d.nome_completo;
+          form.scrollIntoView({ behavior: 'smooth' });
+          showSuccessMessage('✏️ Edite os dados e clique em Salvar para atualizar');
+        }
+      }, 300);
+    };
+
+    window.excluirDocente = async function() {
+      if (!docenteAtual) return;
+      if (!confirm(`Confirma a exclusão de "${docenteAtual.nome_completo}"?`)) return;
+      try {
+        await deleteFromSheet('Docentes', 'nome_completo', docenteAtual.nome_completo);
+        showSuccessMessage('✅ Docente excluído com sucesso!');
+        docenteAtual = null;
+        document.getElementById('docente-detail').style.display = 'none';
+        await loadDocentes();
+        document.getElementById('docentes-list').style.display = 'block';
+      } catch(err) {
+        showErrorMessage('❌ Erro ao excluir: ' + err.message);
+      }
+    };
+
+    async function deleteFromSheet(aba, keyCol, keyVal) {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'delete', aba, keyCol, keyVal })
+      });
+    }
+
+    // Renderizar PCTD (usa filterPCTD)
     function renderPCTD() {
       const grid = document.getElementById('pctd-grid');
       if (!grid) return;
-      grid.innerHTML = allPCTD.length > 0
-        ? allPCTD.map(pctd => `
-          <div class="bg-gradient-to-br from-[#F7941D]/5 to-[#004587]/5 p-4 rounded-lg border-2 border-[#F7941D]/20">
-            <p class="font-bold text-[#004587]">${pctd.nome_curso || 'Sem nome'}</p>
-            <p class="text-sm text-gray-600">Código: ${pctd.codigo_oferta || '-'}</p>
-            <p class="text-sm text-gray-600">Período: ${pctd.periodo || '-'}</p>
-            ${pctd.link_arquivo ? `<button onclick="window.open('${pctd.link_arquivo}', '_blank')" class="w-full px-3 py-2 bg-[#F7941D] text-white rounded-lg font-semibold text-sm hover:bg-[#E8850D] transition-all flex items-center justify-center gap-2">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-              Abrir Documento
-            </button>` : '<p class="text-sm text-gray-500">Link não disponível</p>'}
-          </div>
-        `).join('')
-        : '<p class="text-gray-600 col-span-4 text-center py-8">Nenhum PCTD cadastrado</p>';
+      filterPCTD();
     }
 
-    // Renderizar PITD
+    window.filterPCTD = function() {
+      const grid = document.getElementById('pctd-grid');
+      if (!grid) return;
+      const curso = (document.getElementById('pctd-search-curso')?.value || '').toLowerCase();
+      const periodo = document.getElementById('pctd-search-periodo')?.value || '';
+      const sorted = [...allPCTD].sort((a, b) =>
+        (a.nome_curso || '').localeCompare(b.nome_curso || '', 'pt-BR')
+      );
+      const filtrados = sorted.filter(p => {
+        const matchCurso = !curso || (p.nome_curso || '').toLowerCase().includes(curso) || (p.codigo_oferta || '').toLowerCase().includes(curso);
+        const matchPeriodo = !periodo || (p.periodo || '') === periodo;
+        return matchCurso && matchPeriodo;
+      });
+      const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
+      grid.innerHTML = filtrados.length > 0
+        ? filtrados.map(pctd => `
+            <div class="bg-gradient-to-br from-[#F7941D]/5 to-[#004587]/5 p-5 rounded-xl border-2 border-[#F7941D]/20">
+              <p class="font-bold text-[#004587] text-lg">${pctd.nome_curso || 'Sem nome'}</p>
+              <p class="text-sm text-gray-600 mt-1">Código: ${pctd.codigo_oferta || '-'}</p>
+              <p class="text-sm text-gray-600">Período: ${periodoLabel[pctd.periodo] || pctd.periodo || '-'}</p>
+              ${pctd.data_inicio ? `<p class="text-sm text-gray-600">Início: ${pctd.data_inicio}</p>` : ''}
+              ${pctd.data_conclusao ? `<p class="text-sm text-gray-600">Conclusão: ${pctd.data_conclusao}</p>` : ''}
+              ${pctd.link_arquivo ? `<a href="${pctd.link_arquivo}" target="_blank" class="mt-3 flex items-center justify-center gap-2 w-full px-3 py-2 bg-[#F7941D] text-white rounded-lg font-semibold text-sm hover:bg-[#E8850D] transition-all">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                Abrir Documento</a>`
+              : '<p class="text-sm text-gray-500 mt-2">Link não disponível</p>'}
+            </div>`).join('')
+        : '<p class="text-gray-500 text-center py-8 col-span-2">Nenhum PCTD encontrado</p>';
+    };
+
+    // Renderizar PITD (usa filterPITD)
     function renderPITD() {
       const grid = document.getElementById('pitd-grid');
       if (!grid) return;
-      grid.innerHTML = allPITD.length > 0
-        ? allPITD.map(pitd => `
-          <div class="bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 p-4 rounded-lg border-2 border-[#004587]/20">
-            <p class="font-bold text-[#004587]">${pitd.docente || 'Sem nome'}</p>
-            <p class="text-sm text-gray-600">UC: ${pitd.unidade_curricular || '-'}</p>
-            ${pitd.link_arquivo_pitd ? `<button onclick="window.open('${pitd.link_arquivo_pitd}', '_blank')" class="w-full px-3 py-2 bg-[#004587] text-white rounded-lg font-semibold text-sm hover:bg-[#003366] transition-all flex items-center justify-center gap-2">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-              Abrir Documento
-            </button>` : '<p class="text-sm text-gray-500">Link não disponível</p>'}
-          </div>
-        `).join('')
-        : '<p class="text-gray-600 col-span-4 text-center py-8">Nenhum PITD cadastrado</p>';
+      filterPITD();
     }
 
-    // Renderizar Filtro de Representantes
+    window.filterPITD = function() {
+      const grid = document.getElementById('pitd-grid');
+      if (!grid) return;
+      const docente = (document.getElementById('pitd-search-docente')?.value || '').toLowerCase();
+      const uc = (document.getElementById('pitd-search-uc')?.value || '').toLowerCase();
+      const sorted = [...allPITD].sort((a, b) =>
+        (a.docente || '').localeCompare(b.docente || '', 'pt-BR')
+      );
+      const filtrados = sorted.filter(p => {
+        const matchDocente = !docente || (p.docente || '').toLowerCase().includes(docente);
+        const matchUC = !uc || (p.unidade_curricular || '').toLowerCase().includes(uc);
+        return matchDocente && matchUC;
+      });
+      grid.innerHTML = filtrados.length > 0
+        ? filtrados.map(pitd => `
+            <div class="bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 p-5 rounded-xl border-2 border-[#004587]/20">
+              <p class="font-bold text-[#004587] text-lg">${pitd.docente || 'Sem nome'}</p>
+              <p class="text-sm text-gray-600 mt-1">UC: ${pitd.unidade_curricular || '-'}</p>
+              ${pitd.link_arquivo_pitd ? `<a href="${pitd.link_arquivo_pitd}" target="_blank" class="mt-3 flex items-center justify-center gap-2 w-full px-3 py-2 bg-[#004587] text-white rounded-lg font-semibold text-sm hover:bg-[#003366] transition-all">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                Abrir Documento</a>`
+              : '<p class="text-sm text-gray-500 mt-2">Link não disponível</p>'}
+            </div>`).join('')
+        : '<p class="text-gray-500 text-center py-8 col-span-2">Nenhum PITD encontrado</p>';
+    };
+
+    // Renderizar Representantes (com busca por nome e turma)
     function renderRepresentantesFilter() {
-      document.getElementById('rep-curso').value = '';
-      document.getElementById('rep-periodo').value = '';
+      const nomeFld = document.getElementById('rep-nome');
+      const cursoFld = document.getElementById('rep-curso');
+      if (nomeFld) nomeFld.value = '';
+      if (cursoFld) cursoFld.value = '';
       filterRepresentantes();
     }
 
     window.filterRepresentantes = () => {
-      const curso = document.getElementById('rep-curso').value.toLowerCase();
-      const periodo = document.getElementById('rep-periodo').value;
-      const filtrados = allRepresentantes.filter(rep => {
-        const matchCurso = !curso || (rep.turma_curso && rep.turma_curso.toLowerCase().includes(curso));
-        const matchPeriodo = !periodo || rep.periodo === periodo;
-        return matchCurso && matchPeriodo;
+      const nome = (document.getElementById('rep-nome')?.value || '').toLowerCase();
+      const curso = (document.getElementById('rep-curso')?.value || '').toLowerCase();
+      const sorted = [...allRepresentantes].sort((a, b) =>
+        (a.turma_curso || '').localeCompare(b.turma_curso || '', 'pt-BR')
+      );
+      const filtrados = sorted.filter(rep => {
+        const matchNome = !nome || (rep.representante || '').toLowerCase().includes(nome) || (rep.vice_representante || '').toLowerCase().includes(nome);
+        const matchCurso = !curso || (rep.turma_curso || '').toLowerCase().includes(curso);
+        return matchNome && matchCurso;
       });
       const grid = document.getElementById('representantes-grid');
+      if (!grid) return;
       grid.innerHTML = filtrados.length > 0
         ? filtrados.map(rep => `
-          <div class="bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 p-4 rounded-lg border-2 border-[#004587]/20">
-            <p class="font-bold text-[#004587]">${rep.turma_curso || 'Sem turma'}</p>
-            <p class="text-sm text-gray-600">Rep: ${rep.representante || '-'}</p>
-            <p class="text-sm text-gray-600">Vice: ${rep.vice_representante || '-'}</p>
-          </div>
-        `).join('')
-        : '<p class="text-gray-600 col-span-4 text-center py-8">Nenhum representante encontrado</p>';
+            <div class="bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 p-5 rounded-xl border-2 border-[#004587]/20">
+              <p class="font-bold text-[#004587] text-lg mb-3">${rep.turma_curso || 'Sem turma'}</p>
+              <div class="grid md:grid-cols-2 gap-3">
+                <div class="bg-white rounded-lg p-3">
+                  <p class="text-xs text-gray-500 uppercase font-semibold mb-1">Representante</p>
+                  <p class="font-semibold text-gray-800">${rep.representante || '-'}</p>
+                  <p class="text-sm text-gray-600">${rep.telefone_do_representante || ''}</p>
+                </div>
+                <div class="bg-white rounded-lg p-3">
+                  <p class="text-xs text-gray-500 uppercase font-semibold mb-1">Vice-Representante</p>
+                  <p class="font-semibold text-gray-800">${rep.vice_representante || '-'}</p>
+                  <p class="text-sm text-gray-600">${rep.telefone_do_vice_representante || ''}</p>
+                </div>
+              </div>
+            </div>`).join('')
+        : '<p class="text-gray-500 text-center py-8">Nenhum representante encontrado</p>';
     };
 
 
@@ -855,9 +1078,13 @@
       btn.innerHTML = '⏳ Salvando...';
 
       try {
+        if (form.dataset.editingNome) {
+          await deleteFromSheet('Docentes', 'nome_completo', form.dataset.editingNome);
+          delete form.dataset.editingNome;
+        }
         await postToSheet('Docentes', [nome_completo, telefone, instagram, facebook, linkedin, mini_curriculo]);
         form.reset();
-        showSuccessMessage('✅ Enviado com sucesso!');
+        showSuccessMessage('✅ Docente salvo com sucesso!');
         await loadDocentes();
       } catch (err) {
         showErrorMessage('❌ Erro ao enviar: ' + err.message);
