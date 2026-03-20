@@ -1001,10 +1001,24 @@
       <div class="p-6 space-y-5">
        <div>
         <label class="block text-[#004587] font-semibold mb-2">Unidade Curricular</label>
-        <select id="modal-uc-select" onchange="calcularEncontros()" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
+        <select id="modal-uc-select" onchange="calcularSaldoUC()" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
          <option value="">Selecione a UC...</option>
         </select>
-        <p id="modal-encontros" class="text-sm text-[#004587] font-semibold mt-2 hidden"></p>
+        <!-- Tipo de aula + saldo -->
+        <div id="modal-tipo-container" class="hidden mt-3 p-4 bg-gray-50 rounded-xl space-y-3">
+         <div>
+          <p class="text-[#004587] font-semibold text-sm mb-2">Tipo de Aula</p>
+          <div class="flex gap-4">
+           <label class="flex items-center gap-2 cursor-pointer text-sm font-medium text-gray-700">
+            <input type="radio" name="tipo_aula" value="presencial" checked class="accent-[#004587]"> Presencial
+           </label>
+           <label class="flex items-center gap-2 cursor-pointer text-sm font-medium text-gray-700">
+            <input type="radio" name="tipo_aula" value="ead" class="accent-[#F7941D]"> EAD
+           </label>
+          </div>
+         </div>
+         <div id="modal-saldo" class="border-t border-gray-200 pt-3 space-y-1"></div>
+        </div>
        </div>
        <div>
         <label class="block text-[#004587] font-semibold mb-2">Docente Disponível</label>
@@ -2840,6 +2854,14 @@
       return semanas;
     }
 
+    // Normaliza qualquer representação de data para 'YYYY-MM-DD'
+    function normData(v) {
+      if (!v) return '';
+      const s = String(v);
+      const m = s.match(/(\d{4})-(\d{2})-(\d{2})/);
+      return m ? `${m[1]}-${m[2]}-${m[3]}` : '';
+    }
+
     function qRenderMonthlyGrid(turma) {
       const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
       const DIAS_LABELS = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
@@ -2868,14 +2890,20 @@
             td.className += ' bg-gray-50';
             td.innerHTML = '';
           } else {
-            const alocs = turmaAloc.filter(a => a.data === cel.dateStr);
-            const alocHtml = alocs.map(a => `
-              <div class="bg-white rounded p-1.5 border border-[#004587]/20 group relative mb-1">
-                <p class="text-xs font-bold text-[#004587] leading-tight">${a.uc_nome}</p>
-                <p class="text-xs text-gray-500 leading-tight mt-0.5">${a.docente_nome}</p>
+            const alocs = turmaAloc.filter(a => normData(a.data) === cel.dateStr);
+            const alocHtml = alocs.map(a => {
+              const isEad = (a.tipo_aula || '').toLowerCase() === 'ead';
+              const badge = isEad
+                ? '<span class="text-[10px] font-bold bg-orange-100 text-orange-600 px-1 rounded">EAD</span>'
+                : '<span class="text-[10px] font-bold bg-blue-100 text-[#004587] px-1 rounded">PRES</span>';
+              return `
+              <div class="bg-white rounded p-1.5 border ${isEad ? 'border-orange-200' : 'border-[#004587]/20'} group relative mb-1">
+                <div class="flex items-center gap-1 mb-0.5">${badge}<p class="text-xs font-bold text-[#004587] leading-tight truncate">${a.uc_nome}</p></div>
+                <p class="text-xs text-gray-500 leading-tight">${a.docente_nome}</p>
                 <button onclick="qRemoverAlocacao('${(a.aloc_id||'').replace(/'/g,"\\'")}','${cel.dateStr}','${a.uc_nome.replace(/'/g,"\\'")}','${a.docente_nome.replace(/'/g,"\\'")}','${turma.codigo_oferta}')"
                   class="absolute top-0.5 right-0.5 text-red-400 hover:text-red-600 hidden group-hover:block text-xs leading-none px-0.5">✕</button>
-              </div>`).join('');
+              </div>`;
+            }).join('');
             td.innerHTML = `
               <p class="text-xs font-bold text-gray-500 mb-1">${cel.diaNum}</p>
               ${alocHtml}
@@ -2929,6 +2957,9 @@
     window.fecharModalAlocacao = function() {
       document.getElementById('modal-alocacao').classList.add('hidden');
       document.getElementById('modal-alocacao').classList.remove('flex');
+      document.getElementById('modal-tipo-container').classList.add('hidden');
+      const radPres = document.querySelector('input[name="tipo_aula"][value="presencial"]');
+      if (radPres) radPres.checked = true;
       modalAlocacaoData = null;
     };
 
@@ -2961,19 +2992,32 @@
         disponiveis.map(d => `<option value="${d.nome_completo}">${d.nome_completo}</option>`).join('');
     }
 
-    window.calcularEncontros = function() {
+    window.calcularSaldoUC = function() {
       const opt = document.getElementById('modal-uc-select').selectedOptions[0];
-      const el = document.getElementById('modal-encontros');
-      if (!opt || !opt.value) { el.classList.add('hidden'); return; }
+      const container = document.getElementById('modal-tipo-container');
+      const saldoDiv  = document.getElementById('modal-saldo');
+      if (!opt || !opt.value) { container.classList.add('hidden'); return; }
       const pres  = parseFloat(opt.dataset.presencial) || 0;
       const ead   = parseFloat(opt.dataset.ead)        || 0;
-      const total = parseFloat(opt.dataset.total)      || pres;
-      if (!pres) { el.classList.add('hidden'); return; }
+      if (!pres && !ead) { container.classList.add('hidden'); return; }
       const hPorAula = quadroTurmaAtual?.periodo === 'noite' ? 3.5 : 4;
-      const encontros = Math.ceil(pres / hPorAula);
-      const detEAD = ead ? ` · +${ead}h EAD = ${total}h total` : '';
-      el.textContent = `→ ${encontros} encontros de ${hPorAula}h (${pres}h presenciais${detEAD})`;
-      el.classList.remove('hidden');
+      const totalPres = Math.ceil(pres / hPorAula);
+      const totalEad  = ead ? Math.ceil(ead / hPorAula) : 0;
+      // Conta alocações já feitas para esta UC nesta turma
+      const ucNome = opt.value;
+      const alocUC = allAlocacoes.filter(a =>
+        a.uc_nome === ucNome && a.turma_codigo === quadroTurmaAtual?.codigo_oferta
+      );
+      const presAlocados = alocUC.filter(a => (a.tipo_aula || 'presencial') !== 'ead').length;
+      const eadAlocados  = alocUC.filter(a => (a.tipo_aula || '') === 'ead').length;
+      const presRestam = Math.max(0, totalPres - presAlocados);
+      const eadRestam  = Math.max(0, totalEad  - eadAlocados);
+      container.classList.remove('hidden');
+      const corPres = presRestam === 0 ? 'text-red-600' : presRestam <= 2 ? 'text-amber-600' : 'text-green-700';
+      const corEad  = eadRestam  === 0 ? 'text-red-600' : eadRestam  <= 2 ? 'text-amber-600' : 'text-green-700';
+      saldoDiv.innerHTML =
+        `<p class="text-xs"><span class="font-bold text-[#004587]">Presencial:</span> ${presAlocados}/${totalPres} alocados · <span class="font-bold ${corPres}">${presRestam} encontro${presRestam !== 1 ? 's' : ''} restam</span></p>` +
+        (ead ? `<p class="text-xs mt-1"><span class="font-bold text-[#F7941D]">EAD:</span> ${eadAlocados}/${totalEad} alocados · <span class="font-bold ${corEad}">${eadRestam} encontro${eadRestam !== 1 ? 's' : ''} restam</span></p>` : '');
     };
 
     window.salvarAlocacao = async function() {
@@ -2984,13 +3028,14 @@
       const btn = document.querySelector('#modal-alocacao button[onclick="salvarAlocacao()"]');
       btn.disabled = true; btn.textContent = '⏳ Salvando...';
       const alocId = 'aloc_' + Date.now();
+      const tipoAula = document.querySelector('input[name="tipo_aula"]:checked')?.value || 'presencial';
       // Deriva o dia da semana a partir da data
       const DIAS_ID = ['domingo','segunda','terca','quarta','quinta','sexta','sabado'];
       const [y,m,d] = modalAlocacaoData.split('-').map(Number);
       const diaSemana = DIAS_ID[new Date(y, m-1, d).getDay()];
       try {
-        await postToSheet('Alocacoes', [alocId, quadroTurmaAtual.codigo_oferta, quadroTurmaAtual.nome_curso, modalAlocacaoData, diaSemana, ucNome, docenteNome, quadroTurmaAtual.periodo]);
-        allAlocacoes.push({ aloc_id: alocId, turma_codigo: quadroTurmaAtual.codigo_oferta, nome_curso: quadroTurmaAtual.nome_curso, data: modalAlocacaoData, dia_semana: diaSemana, uc_nome: ucNome, docente_nome: docenteNome, periodo: quadroTurmaAtual.periodo });
+        await postToSheet('Alocacoes', [alocId, quadroTurmaAtual.codigo_oferta, quadroTurmaAtual.nome_curso, modalAlocacaoData, diaSemana, ucNome, docenteNome, quadroTurmaAtual.periodo, tipoAula]);
+        allAlocacoes.push({ aloc_id: alocId, turma_codigo: quadroTurmaAtual.codigo_oferta, nome_curso: quadroTurmaAtual.nome_curso, data: modalAlocacaoData, dia_semana: diaSemana, uc_nome: ucNome, docente_nome: docenteNome, periodo: quadroTurmaAtual.periodo, tipo_aula: tipoAula });
         fecharModalAlocacao();
         qRenderMonthlyGrid(quadroTurmaAtual);
         showSuccessMessage('✅ Docente alocado com sucesso!');
@@ -3003,7 +3048,7 @@
       if (!confirm(`Remover alocação de "${docenteNome}" — ${ucNome} em ${d}/${m}/${y}?`)) return;
       try {
         if (alocId) await deleteFromSheet('Alocacoes', 'aloc_id', alocId);
-        allAlocacoes = allAlocacoes.filter(a => !(a.data === dataStr && a.uc_nome === ucNome && a.docente_nome === docenteNome && a.turma_codigo === turmaCodigo));
+        allAlocacoes = allAlocacoes.filter(a => !(normData(a.data) === dataStr && a.uc_nome === ucNome && a.docente_nome === docenteNome && a.turma_codigo === turmaCodigo));
         qRenderMonthlyGrid(quadroTurmaAtual);
         showSuccessMessage('✅ Alocação removida!');
       } catch(err) { showErrorMessage('❌ Erro: ' + err.message); }
