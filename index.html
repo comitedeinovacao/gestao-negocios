@@ -451,7 +451,7 @@
      </div>
 
      <!-- Consulta Docentes -->
-     <div id="docentes-list" style="display:none" class="mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
+     <div id="docentes-list" style="display:none" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
       <button onclick="closeConsultaView('docentes-list')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
       </button>
@@ -463,7 +463,7 @@
      </div>
 
      <!-- Detalhe do Docente -->
-     <div id="docente-detail" style="display:none" class="mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
+     <div id="docente-detail" style="display:none" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
       <button onclick="voltarListaDocentes()" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar à lista
       </button>
@@ -479,7 +479,7 @@
      </div>
 
      <!-- Consulta PCTD -->
-     <div id="pctd-list" style="display:none" class="mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
+     <div id="pctd-list" style="display:none" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
       <button onclick="closeConsultaView('pctd-list')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
       </button>
@@ -503,7 +503,7 @@
      </div>
 
      <!-- Consulta PITD -->
-     <div id="pitd-list" style="display:none" class="mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
+     <div id="pitd-list" style="display:none" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
       <button onclick="closeConsultaView('pitd-list')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
       </button>
@@ -522,7 +522,7 @@
      </div>
 
      <!-- Consulta Representantes -->
-     <div id="representantes-filter" style="display:none" class="mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
+     <div id="representantes-filter" style="display:none" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200">
       <button onclick="closeConsultaView('representantes-filter')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
       </button>
@@ -806,23 +806,29 @@
     // Variável para docente selecionado
     let docenteAtual = null;
 
+    // Fechar todas as seções de consulta
+    function fecharTodasSecoes() {
+      document.querySelectorAll('.consulta-section').forEach(el => {
+        el.style.display = 'none';
+      });
+    }
+
     // Abrir/Fechar Vistas
     window.openConsultaView = (viewId) => {
-      ['docentes-list','docente-detail','pctd-list','pitd-list','representantes-filter'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = 'none';
-      });
+      fecharTodasSecoes();
       if (viewId === 'docentes-list') { renderDocentes(); loadDocentes(); }
       if (viewId === 'pctd-list') { filterPCTD(); loadPCTD(); }
       if (viewId === 'pitd-list') { filterPITD(); loadPITD(); }
       if (viewId === 'representantes-filter') { filterRepresentantes(); loadRepresentantes(); }
       const view = document.getElementById(viewId);
-      if (view) view.style.display = 'block';
+      if (view) {
+        view.style.display = 'block';
+        view.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     };
 
     window.closeConsultaView = (viewId) => {
-      var view = document.getElementById(viewId);
-      if (view) view.style.display = 'none';
+      fecharTodasSecoes();
     };
 
     // Renderizar Docentes (com busca e ordem alfabética)
@@ -883,7 +889,7 @@
     };
 
     window.voltarListaDocentes = function() {
-      document.getElementById('docente-detail').style.display = 'none';
+      fecharTodasSecoes();
       document.getElementById('docentes-list').style.display = 'block';
     };
 
@@ -916,7 +922,7 @@
         await deleteFromSheet('Docentes', 'nome_completo', docenteAtual.nome_completo);
         showSuccessMessage('✅ Docente excluído com sucesso!');
         docenteAtual = null;
-        document.getElementById('docente-detail').style.display = 'none';
+        fecharTodasSecoes();
         await loadDocentes();
         document.getElementById('docentes-list').style.display = 'block';
       } catch(err) {
