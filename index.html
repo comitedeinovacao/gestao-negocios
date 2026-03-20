@@ -354,7 +354,7 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
        </svg> Voltar </button>
      </div>     <!-- Cards Iniciais de Modalidade -->
-     <div class="grid md:grid-cols-2 gap-8 mb-12">
+     <div id="consulta-cursos-grid" class="grid md:grid-cols-2 gap-8 mb-12" style="display:none">
       <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-8 shadow-lg border-2 border-[#004587]/20 cursor-pointer" onclick="openModalidade('tecnicos')">
        <div class="w-20 h-20 bg-gradient-to-br from-[#004587] to-[#003366] rounded-2xl flex items-center justify-center mb-6 mx-auto">
         <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
@@ -829,7 +829,7 @@
     }
 
     // IDs de todas as seções dentro de consulta-page
-    const CONSULTA_SECOES = ['consulta-cards','docentes-list','docente-detail','pctd-list','pitd-list','representantes-filter'];
+    const CONSULTA_SECOES = ['consulta-cursos-grid','consulta-cards','docentes-list','docente-detail','pctd-list','pitd-list','representantes-filter'];
 
     // Função central: esconde tudo e mostra só a seção desejada
     function renderConsultaView(viewId) {
@@ -838,12 +838,16 @@
         const el = document.getElementById(id);
         if (el) el.style.display = 'none';
       });
-      const show = document.getElementById(target);
-      if (show) {
-        // consulta-cards usa grid, demais usam block
-        show.style.display = (target === 'consulta-cards') ? 'grid' : 'block';
+      // Na view principal de cards, mostra também o grid de Cursos Técnicos/Livres
+      if (target === 'consulta-cards') {
+        const cursosGrid = document.getElementById('consulta-cursos-grid');
+        if (cursosGrid) cursosGrid.style.display = 'grid';
+        const cards = document.getElementById('consulta-cards');
+        if (cards) cards.style.display = 'grid';
+      } else {
+        const show = document.getElementById(target);
+        if (show) show.style.display = 'block';
       }
-      // mantém data-view para referência
       const page = document.getElementById('consulta-page');
       if (page) page.setAttribute('data-view', target);
     }
