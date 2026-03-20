@@ -2910,13 +2910,19 @@
             const alocHtml = alocs.map(a => {
               const isEad = (a.tipo_aula || '').toLowerCase() === 'ead';
               const hAloc = parseFloat(a.horas) || hPad;
+              // Extrai apenas o número da UC: "UC 1 - Texto..." → "UC 01"
+              const ucMatch = (a.uc_nome || '').match(/UC\s*(\d+)/i);
+              const ucLabel = ucMatch ? 'UC ' + String(ucMatch[1]).padStart(2, '0') : (a.uc_nome || '').substring(0, 5);
               const badge = isEad
                 ? '<span class="text-[10px] font-bold bg-orange-100 text-orange-600 px-1 rounded">EAD</span>'
                 : '<span class="text-[10px] font-bold bg-blue-100 text-[#004587] px-1 rounded">PRES</span>';
               return `
               <div class="bg-white rounded p-1.5 border ${isEad ? 'border-orange-200' : 'border-[#004587]/20'} group relative mb-1">
-                <div class="flex items-center gap-1 mb-0.5">${badge}<span class="text-[10px] font-bold text-gray-500">${hAloc}h</span><p class="text-xs font-bold text-[#004587] leading-tight truncate">${a.uc_nome}</p></div>
-                <p class="text-xs text-gray-500 leading-tight">${a.docente_nome}</p>
+                <div class="flex flex-col items-center text-center gap-0.5">
+                  <div class="flex items-center gap-1">${badge}<span class="text-[10px] font-bold text-gray-500">${hAloc}h</span></div>
+                  <p class="text-sm font-bold text-[#004587] leading-tight">${ucLabel}</p>
+                  <p class="text-[10px] text-gray-500 leading-tight">${a.docente_nome}</p>
+                </div>
                 <button onclick="qRemoverAlocacao('${(a.aloc_id||'').replace(/'/g,"\\'")}','${cel.dateStr}','${a.uc_nome.replace(/'/g,"\\'")}','${a.docente_nome.replace(/'/g,"\\'")}','${turma.codigo_oferta}')"
                   class="absolute top-0.5 right-0.5 text-red-400 hover:text-red-600 hidden group-hover:block text-xs leading-none px-0.5">✕</button>
               </div>`;
