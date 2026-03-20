@@ -77,16 +77,9 @@
       transition: all 0.3s ease;
     }
 
-    /* Controle de navegação da Consulta via CSS puro */
-    .consulta-section { display: none !important; }
-    #consulta-cards   { display: none !important; }
-
-    #consulta-page[data-view="cards"] #consulta-cards             { display: grid !important; }
-    #consulta-page[data-view="docentes-list"] #docentes-list       { display: block !important; }
-    #consulta-page[data-view="docente-detail"] #docente-detail     { display: block !important; }
-    #consulta-page[data-view="pctd-list"] #pctd-list               { display: block !important; }
-    #consulta-page[data-view="pitd-list"] #pitd-list               { display: block !important; }
-    #consulta-page[data-view="representantes-filter"] #representantes-filter { display: block !important; }
+    /* Estado inicial das seções de consulta — o JS assume o controle via style.display */
+    .consulta-section { display: none; }
+    #consulta-cards   { display: none; }
   </style>
   <style>body { box-sizing: border-box; }</style>
   <script>
@@ -778,8 +771,8 @@
       }
       if (page === 'eventos') {
         // Mostrar aba agenda por padrão e esconder criar-evento
-        document.querySelectorAll('#eventos-page .tab-content').forEach(c => c.classList.add('hidden'));
-        document.getElementById('tab-agenda-eventos').classList.remove('hidden');
+        document.querySelectorAll('#eventos-page .tab-content').forEach(c => { c.style.display = 'none'; });
+        document.getElementById('tab-agenda-eventos').style.display = 'block';
         // Marcar aba agenda como ativa
         document.querySelectorAll('#eventos-page .tab-btn').forEach(b => {
           b.classList.remove('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
@@ -812,10 +805,10 @@
 
     window.switchCadastroTab = (btn) => {
       const tabName = btn.getAttribute('data-tab');
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+      document.querySelectorAll('#cadastro-page .tab-btn').forEach(b => b.classList.remove('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]'));
+      document.querySelectorAll('#cadastro-page .tab-content').forEach(c => { c.style.display = 'none'; });
       btn.classList.add('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
-      document.getElementById('tab-' + tabName).classList.remove('hidden');
+      document.getElementById('tab-' + tabName).style.display = 'block';
     };
 
     // Variável para docente selecionado
@@ -1249,9 +1242,9 @@
           b.classList.remove('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
         }
       });
-      document.querySelectorAll('#eventos-page .tab-content').forEach(c => c.classList.add('hidden'));
+      document.querySelectorAll('#eventos-page .tab-content').forEach(c => { c.style.display = 'none'; });
       btn.classList.add('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
-      document.getElementById('tab-' + tabName).classList.remove('hidden');
+      document.getElementById('tab-' + tabName).style.display = 'block';
       if (tabName === 'agenda-eventos') {
         await renderCalendar();
         renderEventos();
