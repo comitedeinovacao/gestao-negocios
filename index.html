@@ -1717,18 +1717,32 @@
       btn.innerHTML = '⏳ Salvando...';
 
       try {
-        if (form.dataset.editingNome) {
-          await deleteFromSheet('Docentes', 'nome_completo', form.dataset.editingNome);
-          delete form.dataset.editingNome;
-        }
         const escala = JSON.stringify(coletarEscala());
+        const editandoNome = form.dataset.editingNome || null;
+        if (editandoNome) {
+          await deleteFromSheet('Docentes', 'nome_completo', editandoNome);
+        }
         await postToSheet('Docentes', [nome_completo, telefone, instagram, facebook, linkedin, mini_curriculo, escala]);
+
+        // Atualiza allTeachers em memória imediatamente (sem esperar round-trip)
+        const novoDocente = { nome_completo, telefone, instagram, facebook, linkedin, mini_curriculo, escala_semanal: escala };
+        if (editandoNome) {
+          const idx = allTeachers.findIndex(t => t.nome_completo === editandoNome);
+          if (idx >= 0) allTeachers[idx] = novoDocente; else allTeachers.push(novoDocente);
+        } else {
+          allTeachers.push(novoDocente);
+        }
+        delete form.dataset.editingNome;
+
         form.reset();
         renderEscalaContainer();
         document.getElementById('docentes-form-titulo').textContent = 'Novo Cadastro';
         document.getElementById('docentes-form-limpar').style.display = 'none';
+        renderDocentes();
+        renderDocentesCadLista();
         showSuccessMessage('✅ Docente salvo com sucesso!');
-        await loadDocentes();
+        // Sincroniza com o servidor em background (sem bloquear UI)
+        setTimeout(() => loadDocentes(), 3000);
       } catch (err) {
         showErrorMessage('❌ Erro ao enviar: ' + err.message);
       } finally {
