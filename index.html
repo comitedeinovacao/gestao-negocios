@@ -1052,7 +1052,7 @@
 
         const script = document.createElement('script');
         script.id = scriptId;
-        script.src = APPS_SCRIPT_URL + '?aba=' + encodeURIComponent(aba) + '&callback=' + cbName + '&t=' + Date.now();
+        script.src = APPS_SCRIPT_URL + '?aba=' + encodeURIComponent(aba) + '&callback=' + cbName + '&t=' + Date.now() + '&r=' + Math.floor(Math.random() * 1e9);
         document.head.appendChild(script);
       });
     }
@@ -1279,7 +1279,7 @@
     // Abrir uma seção de consulta
     window.openConsultaView = (viewId) => {
       renderConsultaView(viewId);
-      if (viewId === 'docentes-list') { renderDocentes(); loadDocentes(); }
+      if (viewId === 'docentes-list') { renderDocentes(); if (allTeachers.length === 0) loadDocentes(); }
       if (viewId === 'pctd-list') { filterPCTD(); loadPCTD(); }
       if (viewId === 'pitd-list') { filterPITD(); loadPITD(); }
       if (viewId === 'representantes-filter') { filterRepresentantes(); loadRepresentantes(); }
@@ -1741,8 +1741,6 @@
         renderDocentes();
         renderDocentesCadLista();
         showSuccessMessage('✅ Docente salvo com sucesso!');
-        // Sincroniza com o servidor em background (sem bloquear UI)
-        setTimeout(() => loadDocentes(), 3000);
       } catch (err) {
         showErrorMessage('❌ Erro ao enviar: ' + err.message);
       } finally {
