@@ -186,6 +186,8 @@
          <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-[#F7941D] to-transparent group-hover:w-full transition-all duration-300"></div></a>
          <button onclick="navigateToPage('eventos')" class="relative px-1 py-2 text-white font-semibold text-sm group transition-all duration-300 hover:text-[#F7941D] bg-none border-none cursor-pointer" aria-label="Ir para Eventos"><span class="relative z-10">Eventos</span>
          <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-[#F7941D] to-transparent group-hover:w-full transition-all duration-300"></div></button>
+         <button onclick="navigateToPage('quadros')" class="relative px-1 py-2 text-white font-semibold text-sm group transition-all duration-300 hover:text-[#F7941D] bg-none border-none cursor-pointer" aria-label="Ir para Quadros"><span class="relative z-10">Quadros</span>
+         <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-[#F7941D] to-transparent group-hover:w-full transition-all duration-300"></div></button>
          <button onclick="scrollToFooter()" class="relative px-1 py-2 text-white font-semibold text-sm group transition-all duration-300 hover:text-[#F7941D] bg-none border-none cursor-pointer" aria-label="Ir para Contato"><span class="relative z-10">Contato</span>
          <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-[#F7941D] to-transparent group-hover:w-full transition-all duration-300"></div></button>
        </nav>
@@ -388,7 +390,16 @@
         </div>
        </div>
        <div><label class="block text-[#004587] font-semibold mb-3">Minidescrição/Minicurrículo</label> <textarea placeholder="Descreva seu perfil profissional, experiências e especialidades..." name="mini_curriculo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none h-32" required></textarea>
-       </div><button type="submit" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
+       </div>
+       <!-- Escala de Trabalho Semanal -->
+       <div class="border-t-2 border-gray-200 pt-6">
+        <h4 class="text-lg font-bold text-[#004587] mb-1">Escala de Trabalho Semanal</h4>
+        <p class="text-sm text-gray-500 mb-4">Marque os dias em que o docente trabalha e informe as 4 marcações de ponto (entrada, saída almoço/janta, retorno, saída).</p>
+        <div id="escala-container" class="space-y-2">
+         <p class="text-gray-400 text-sm text-center py-4">Carregando...</p>
+        </div>
+       </div>
+       <button type="submit" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
         </svg>Salvar Cadastro </button>
@@ -840,6 +851,127 @@
       </form>
      </div>
     </div>
+   </div><!-- PÁGINA QUADROS -->
+   <div id="quadros-page" class="page-container bg-white min-h-full">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+     <div class="flex items-center justify-between mb-8 pb-6 border-b-2 border-gray-200">
+      <h2 class="text-3xl font-bold text-[#004587]">Quadros</h2>
+      <button onclick="scrollToGestao()" class="px-6 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl font-semibold flex items-center gap-2 transition-all">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg> Voltar
+      </button>
+     </div>
+     <!-- Abas Quadros -->
+     <div class="flex flex-wrap gap-2 mb-10 border-b border-gray-200 pb-6 overflow-x-auto">
+      <button class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="quadro-ucs" onclick="switchQuadrosTab(this)">
+       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>UCs por Curso
+      </button>
+      <button class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="quadro-semanal" onclick="switchQuadrosTab(this)">
+       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Quadro Semanal
+      </button>
+     </div>
+     <!-- Tab: UCs por Curso -->
+     <div id="tab-quadro-ucs" class="tab-content">
+      <div class="grid md:grid-cols-2 gap-8">
+       <!-- Esquerda: seletor de curso + formulário de UC -->
+       <div>
+        <h3 class="text-xl font-bold text-[#004587] mb-4">Selecione o Curso</h3>
+        <div class="grid grid-cols-2 gap-3 mb-3">
+         <button type="button" id="q-btn-tec" onclick="qFiltrarCursos('tecnicos')" class="px-4 py-3 rounded-xl border-2 border-gray-200 font-semibold text-sm text-gray-700 hover:border-[#004587] hover:text-[#004587] transition-all">Técnico</button>
+         <button type="button" id="q-btn-liv" onclick="qFiltrarCursos('livres')" class="px-4 py-3 rounded-xl border-2 border-gray-200 font-semibold text-sm text-gray-700 hover:border-[#F7941D] hover:text-[#F7941D] transition-all">Livre / Qualificação</button>
+        </div>
+        <div id="q-curso-lista" style="display:none" class="max-h-52 overflow-y-auto border-2 border-gray-200 rounded-xl bg-white divide-y divide-gray-100 mb-3"></div>
+        <div id="q-curso-selecionado" style="display:none" class="flex items-center justify-between bg-blue-50 border-2 border-[#004587]/30 rounded-xl px-4 py-3 mb-4">
+         <div><p class="text-xs text-gray-500 font-semibold uppercase">Curso selecionado</p><p id="q-curso-nome" class="font-bold text-[#004587]"></p></div>
+         <button type="button" onclick="qLimparCurso()" class="text-sm text-red-500 hover:text-red-700 font-semibold">Alterar</button>
+        </div>
+        <input type="hidden" id="q-curso-id">
+        <div id="q-add-uc-form" style="display:none" class="bg-gray-50 rounded-xl p-5 border-2 border-gray-200">
+         <h4 class="font-bold text-[#004587] mb-4">Adicionar Unidade Curricular</h4>
+         <div class="space-y-3">
+          <div><label class="block text-[#004587] font-semibold mb-1 text-sm">Nome da UC</label>
+           <input type="text" id="q-uc-nome" placeholder="Ex: Gestão de Pessoas..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+          </div>
+          <div><label class="block text-[#004587] font-semibold mb-1 text-sm">Carga Horária (horas)</label>
+           <input type="number" id="q-uc-horas" placeholder="Ex: 60" min="1" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+          </div>
+          <button onclick="qAdicionarUC()" class="btn-primary w-full py-3 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
+           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Adicionar UC
+          </button>
+         </div>
+        </div>
+       </div>
+       <!-- Direita: lista de UCs do curso -->
+       <div>
+        <h3 class="text-xl font-bold text-[#004587] mb-4">UCs Cadastradas</h3>
+        <div id="q-ucs-lista" class="space-y-2">
+         <p class="text-gray-400 text-center py-8 text-sm">Selecione um curso para ver suas UCs.</p>
+        </div>
+       </div>
+      </div>
+     </div>
+     <!-- Tab: Quadro Semanal -->
+     <div id="tab-quadro-semanal" class="tab-content" style="display:none">
+      <!-- Step 1: Seleção de turma -->
+      <div id="q-step-selecao">
+       <h3 class="text-xl font-bold text-[#004587] mb-4">Selecione o Curso e a Turma</h3>
+       <div class="grid grid-cols-2 gap-3 mb-3 max-w-sm">
+        <button type="button" id="qs-btn-tec" onclick="qsFiltrarCursos('tecnicos')" class="px-4 py-3 rounded-xl border-2 border-gray-200 font-semibold text-sm text-gray-700 hover:border-[#004587] hover:text-[#004587] transition-all">Técnico</button>
+        <button type="button" id="qs-btn-liv" onclick="qsFiltrarCursos('livres')" class="px-4 py-3 rounded-xl border-2 border-gray-200 font-semibold text-sm text-gray-700 hover:border-[#F7941D] hover:text-[#F7941D] transition-all">Livre / Qualificação</button>
+       </div>
+       <div id="qs-curso-lista" style="display:none" class="max-w-lg max-h-52 overflow-y-auto border-2 border-gray-200 rounded-xl bg-white divide-y divide-gray-100 mb-4"></div>
+       <div id="qs-turmas-lista" style="display:none" class="max-w-lg space-y-2"></div>
+      </div>
+      <!-- Step 2: Grade semanal -->
+      <div id="q-step-quadro" style="display:none">
+       <div class="flex flex-wrap items-start justify-between gap-4 mb-6">
+        <div>
+         <h3 class="text-xl font-bold text-[#004587]" id="q-turma-titulo"></h3>
+         <p class="text-sm text-gray-500 mt-1" id="q-turma-info"></p>
+        </div>
+        <button onclick="qVoltarSelecao()" class="px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold text-sm flex items-center gap-2">
+         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Trocar turma
+        </button>
+       </div>
+       <div id="q-weekly-grid" class="overflow-x-auto pb-4">
+        <!-- Preenchido por qRenderWeeklyGrid() -->
+       </div>
+      </div>
+     </div>
+    </div>
+    <!-- Modal de Alocação -->
+    <div id="modal-alocacao" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+     <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl">
+      <div class="p-6 border-b border-gray-200">
+       <div class="flex justify-between items-center">
+        <h3 id="modal-aloc-titulo" class="text-xl font-bold text-[#004587]">Alocar Docente</h3>
+        <button onclick="fecharModalAlocacao()" class="text-gray-400 hover:text-gray-600">
+         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+       </div>
+      </div>
+      <div class="p-6 space-y-5">
+       <div>
+        <label class="block text-[#004587] font-semibold mb-2">Unidade Curricular</label>
+        <select id="modal-uc-select" onchange="calcularEncontros()" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
+         <option value="">Selecione a UC...</option>
+        </select>
+        <p id="modal-encontros" class="text-sm text-[#004587] font-semibold mt-2 hidden"></p>
+       </div>
+       <div>
+        <label class="block text-[#004587] font-semibold mb-2">Docente Disponível</label>
+        <select id="modal-docente-select" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
+         <option value="">Selecione o docente...</option>
+        </select>
+        <p class="text-xs text-gray-400 mt-1">Somente docentes com escala neste dia/período e sem conflito de alocação.</p>
+       </div>
+      </div>
+      <div class="px-6 pb-6">
+       <button onclick="salvarAlocacao()" class="w-full btn-primary py-3 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Salvar Alocação
+       </button>
+      </div>
+     </div>
+    </div>
    </div>
   </div>
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
@@ -962,6 +1094,15 @@
         document.querySelectorAll('#cadastro-page .tab-btn').forEach(b => b.classList.remove('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]'));
         const firstBtn = document.querySelector('#cadastro-page .tab-btn[data-tab="cad-docentes"]');
         if (firstBtn) firstBtn.classList.add('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
+      }
+      if (page === 'quadros') {
+        document.querySelectorAll('#quadros-page .tab-content').forEach(c => { c.style.display = 'none'; });
+        const firstQTab = document.getElementById('tab-quadro-ucs');
+        if (firstQTab) firstQTab.style.display = 'block';
+        document.querySelectorAll('#quadros-page .tab-btn').forEach(b => b.classList.remove('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]'));
+        const firstQBtn = document.querySelector('#quadros-page .tab-btn[data-tab="quadro-ucs"]');
+        if (firstQBtn) firstQBtn.classList.add('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
+        loadUCs();
       }
       if (page === 'eventos') {
         // Mostrar aba agenda por padrão e esconder criar-evento
@@ -1276,6 +1417,9 @@
           form.facebook.value = d.facebook || '';
           form.linkedin.value = d.linkedin || '';
           form.mini_curriculo.value = d.mini_curriculo || '';
+          if (d.escala_semanal) {
+            try { renderEscalaContainer(JSON.parse(d.escala_semanal)); } catch(e) {}
+          }
           form.dataset.editingNome = d.nome_completo;
           form.scrollIntoView({ behavior: 'smooth' });
           showSuccessMessage('✏️ Edite os dados e clique em Salvar para atualizar');
@@ -1455,7 +1599,8 @@
           await deleteFromSheet('Docentes', 'nome_completo', form.dataset.editingNome);
           delete form.dataset.editingNome;
         }
-        await postToSheet('Docentes', [nome_completo, telefone, instagram, facebook, linkedin, mini_curriculo]);
+        const escala = JSON.stringify(coletarEscala());
+        await postToSheet('Docentes', [nome_completo, telefone, instagram, facebook, linkedin, mini_curriculo, escala]);
         form.reset();
         showSuccessMessage('✅ Docente salvo com sucesso!');
         await loadDocentes();
@@ -1609,8 +1754,10 @@
     window.currentYear  = new Date().getFullYear();
 
     document.addEventListener('DOMContentLoaded', async () => {
-      // Pré-carrega dados de consulta em paralelo (sem bloquear a UI)
-      Promise.all([loadDocentes(), loadPCTD(), loadPITD(), loadRepresentantes()]).catch(() => {});
+      // Pré-carrega dados em paralelo (sem bloquear a UI)
+      Promise.all([loadDocentes(), loadPCTD(), loadPITD(), loadRepresentantes(), loadUCs()]).catch(() => {});
+      // Renderiza a grade de escala semanal no form de docentes
+      renderEscalaContainer();
 
       // Inicializar botões do calendário
       const prevBtn = document.getElementById('prev-month');
@@ -2167,6 +2314,423 @@
         body: JSON.stringify({ aba, linha })
       });
     }
+
+    // ═══════════════════════════════════════════════════
+    // ESCALA SEMANAL
+    // ═══════════════════════════════════════════════════
+    const DIAS_SEMANA = [
+      { id: 'segunda', label: 'Segunda-feira' },
+      { id: 'terca',   label: 'Terça-feira'   },
+      { id: 'quarta',  label: 'Quarta-feira'  },
+      { id: 'quinta',  label: 'Quinta-feira'  },
+      { id: 'sexta',   label: 'Sexta-feira'   },
+      { id: 'sabado',  label: 'Sábado'        },
+      { id: 'domingo', label: 'Domingo'       }
+    ];
+
+    const ESCALA_TIPOS = {
+      manha_tarde: { label: 'Manhã + Tarde', labels: ['Entrada (manhã)', 'Saída p/ almoço', 'Retorno (tarde)', 'Saída (tarde)'] },
+      tarde_noite: { label: 'Tarde + Noite', labels: ['Entrada (tarde)', 'Saída p/ janta', 'Retorno (noite)', 'Saída (noite)'] }
+    };
+
+    function renderEscalaContainer(dados) {
+      dados = dados || {};
+      const container = document.getElementById('escala-container');
+      if (!container) return;
+      container.innerHTML = DIAS_SEMANA.map(dia => {
+        const d = dados[dia.id] || { ativo: false };
+        const tipo = d.tipo || 'manha_tarde';
+        const labs = ESCALA_TIPOS[tipo].labels;
+        return `<div class="bg-gray-50 rounded-xl border-2 ${d.ativo ? 'border-[#004587]/30' : 'border-gray-100'} p-4">
+  <div class="flex flex-wrap items-center gap-4">
+    <label class="flex items-center gap-2 cursor-pointer min-w-[150px]">
+      <input type="checkbox" id="escala-${dia.id}-ativo" ${d.ativo ? 'checked' : ''} class="w-4 h-4 accent-[#004587]" onchange="toggleEscalaDia('${dia.id}')">
+      <span class="font-semibold text-[#004587] text-sm">${dia.label}</span>
+    </label>
+    <div id="escala-${dia.id}-campos" class="${d.ativo ? '' : 'hidden'} flex flex-wrap gap-3 items-end">
+      <div>
+        <p class="text-xs text-gray-500 mb-1 font-semibold">Turno</p>
+        <select id="escala-${dia.id}-tipo" onchange="updateEscalaTipo('${dia.id}')" class="px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-[#004587] focus:outline-none">
+          <option value="manha_tarde" ${tipo === 'manha_tarde' ? 'selected' : ''}>Manhã + Tarde</option>
+          <option value="tarde_noite" ${tipo === 'tarde_noite' ? 'selected' : ''}>Tarde + Noite</option>
+        </select>
+      </div>
+      ${[1,2,3,4].map(n => `<div>
+        <p id="escala-${dia.id}-l${n}" class="text-xs text-gray-500 mb-1">${labs[n-1]}</p>
+        <input type="time" id="escala-${dia.id}-h${n}" value="${d['h'+n]||''}" class="px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-[#004587] focus:outline-none w-28">
+      </div>`).join('')}
+    </div>
+  </div>
+</div>`;
+      }).join('');
+    }
+
+    window.toggleEscalaDia = function(dia) {
+      const ativo = document.getElementById(`escala-${dia}-ativo`).checked;
+      document.getElementById(`escala-${dia}-campos`).classList.toggle('hidden', !ativo);
+    };
+
+    window.updateEscalaTipo = function(dia) {
+      const tipo = document.getElementById(`escala-${dia}-tipo`).value;
+      const labs = ESCALA_TIPOS[tipo]?.labels || ESCALA_TIPOS.manha_tarde.labels;
+      [1,2,3,4].forEach(n => {
+        const el = document.getElementById(`escala-${dia}-l${n}`);
+        if (el) el.textContent = labs[n-1];
+      });
+    };
+
+    function coletarEscala() {
+      const escala = {};
+      DIAS_SEMANA.forEach(({ id }) => {
+        const ck = document.getElementById(`escala-${id}-ativo`);
+        if (!ck) return;
+        if (!ck.checked) { escala[id] = { ativo: false }; return; }
+        escala[id] = {
+          ativo: true,
+          tipo: document.getElementById(`escala-${id}-tipo`)?.value || 'manha_tarde',
+          h1: document.getElementById(`escala-${id}-h1`)?.value || '',
+          h2: document.getElementById(`escala-${id}-h2`)?.value || '',
+          h3: document.getElementById(`escala-${id}-h3`)?.value || '',
+          h4: document.getElementById(`escala-${id}-h4`)?.value || ''
+        };
+      });
+      return escala;
+    }
+
+    // ═══════════════════════════════════════════════════
+    // QUADROS — Estado global
+    // ═══════════════════════════════════════════════════
+    let allUCs = [];
+    let allAlocacoes = [];
+    let quadroCursoAtual = null;
+    let quadroTurmaAtual = null;
+    let modalAlocacaoDia = null;
+
+    async function loadUCs() {
+      allUCs = await carregarDaAba('UCs');
+    }
+
+    window.switchQuadrosTab = function(btn) {
+      const tabName = btn.getAttribute('data-tab');
+      document.querySelectorAll('#quadros-page .tab-btn').forEach(b => b.classList.remove('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]'));
+      document.querySelectorAll('#quadros-page .tab-content').forEach(c => { c.style.display = 'none'; });
+      btn.classList.add('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
+      document.getElementById('tab-' + tabName).style.display = 'block';
+      if (tabName === 'quadro-ucs') {
+        loadUCs().then(() => { if (quadroCursoAtual) qRenderUCsLista(quadroCursoAtual.id); });
+      }
+    };
+
+    // ── UCs por Curso ──
+    window.qFiltrarCursos = async function(modalidade) {
+      const base = 'px-4 py-3 rounded-xl border-2 font-semibold text-sm transition-all';
+      document.getElementById('q-btn-tec').className = base + (modalidade === 'tecnicos' ? ' border-[#004587] bg-[#004587]/10 text-[#004587]' : ' border-gray-200 text-gray-700');
+      document.getElementById('q-btn-liv').className = base + (modalidade === 'livres' ? ' border-[#F7941D] bg-[#F7941D]/10 text-[#F7941D]' : ' border-gray-200 text-gray-700');
+      const lista = document.getElementById('q-curso-lista');
+      lista.style.display = 'block';
+      lista.innerHTML = '<p class="text-gray-400 text-center py-3 text-sm">Carregando...</p>';
+      const data = await carregarDadosCursos();
+      const cursos = modalidade === 'tecnicos' ? data.cursos_tecnicos : data.cursos_livres;
+      lista.innerHTML = cursos.map(c => `
+        <button type="button" data-id="${c.id}" data-nome="${c.nome.replace(/"/g,'&quot;')}" data-modalidade="${modalidade}"
+          class="q-curso-item w-full text-left px-4 py-3 hover:bg-blue-50 transition-colors">
+          <p class="font-semibold text-[#004587] text-sm pointer-events-none">${c.nome}</p>
+          <p class="text-xs text-gray-400 pointer-events-none">Ficha: ${c.codigo_ficha} · ${c.subarea}</p>
+        </button>`).join('');
+      lista.onclick = function(e) {
+        const btn = e.target.closest('.q-curso-item');
+        if (btn) qSelecionarCurso(btn.dataset.id, btn.dataset.nome, btn.dataset.modalidade);
+      };
+    };
+
+    window.qSelecionarCurso = function(id, nome, modalidade) {
+      quadroCursoAtual = { id, nome, modalidade };
+      document.getElementById('q-curso-id').value = id;
+      document.getElementById('q-curso-nome').textContent = nome;
+      document.getElementById('q-curso-selecionado').style.display = 'flex';
+      document.getElementById('q-curso-lista').style.display = 'none';
+      document.getElementById('q-add-uc-form').style.display = 'block';
+      qRenderUCsLista(id);
+    };
+
+    window.qLimparCurso = function() {
+      quadroCursoAtual = null;
+      document.getElementById('q-curso-id').value = '';
+      document.getElementById('q-curso-selecionado').style.display = 'none';
+      document.getElementById('q-add-uc-form').style.display = 'none';
+      document.getElementById('q-ucs-lista').innerHTML = '<p class="text-gray-400 text-center py-8 text-sm">Selecione um curso para ver suas UCs.</p>';
+    };
+
+    function qRenderUCsLista(cursoId) {
+      const lista = document.getElementById('q-ucs-lista');
+      const ucs = allUCs.filter(u => u.curso_id === cursoId);
+      if (ucs.length === 0) {
+        lista.innerHTML = '<p class="text-gray-400 text-center py-6 text-sm">Nenhuma UC cadastrada para este curso. Adicione a primeira UC ao lado.</p>';
+        return;
+      }
+      lista.innerHTML = ucs.map(uc => `
+        <div class="flex items-center justify-between bg-white border-2 border-gray-100 rounded-xl px-4 py-3">
+          <div>
+            <p class="font-semibold text-[#004587] text-sm">${uc.uc_nome}</p>
+            <p class="text-xs text-gray-500">Carga Horária: ${uc.carga_horaria}h</p>
+          </div>
+          <button onclick="qRemoverUC('${uc.uc_nome.replace(/'/g,"\\'")}','${cursoId}')" class="text-red-400 hover:text-red-600 text-xs font-semibold px-2 py-1 rounded hover:bg-red-50 transition-all">Remover</button>
+        </div>`).join('');
+    }
+
+    window.qAdicionarUC = async function() {
+      if (!quadroCursoAtual) { showErrorMessage('❌ Selecione um curso primeiro'); return; }
+      const nome = document.getElementById('q-uc-nome').value.trim();
+      const horas = document.getElementById('q-uc-horas').value.trim();
+      if (!nome || !horas) { showErrorMessage('❌ Preencha nome e carga horária da UC'); return; }
+      const btn = document.querySelector('#q-add-uc-form button');
+      btn.disabled = true; btn.textContent = '⏳ Salvando...';
+      try {
+        await postToSheet('UCs', [quadroCursoAtual.id, quadroCursoAtual.nome, nome, horas]);
+        allUCs.push({ curso_id: quadroCursoAtual.id, curso_nome: quadroCursoAtual.nome, uc_nome: nome, carga_horaria: horas });
+        document.getElementById('q-uc-nome').value = '';
+        document.getElementById('q-uc-horas').value = '';
+        qRenderUCsLista(quadroCursoAtual.id);
+        showSuccessMessage('✅ UC adicionada!');
+      } catch(err) { showErrorMessage('❌ Erro: ' + err.message); }
+      finally { btn.disabled = false; btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Adicionar UC'; }
+    };
+
+    window.qRemoverUC = async function(ucNome, cursoId) {
+      if (!confirm(`Remover a UC "${ucNome}"?`)) return;
+      try {
+        await deleteFromSheet('UCs', 'uc_nome', ucNome);
+        allUCs = allUCs.filter(u => !(u.uc_nome === ucNome && u.curso_id === cursoId));
+        qRenderUCsLista(cursoId);
+        showSuccessMessage('✅ UC removida!');
+      } catch(err) { showErrorMessage('❌ Erro: ' + err.message); }
+    };
+
+    // ── Quadro Semanal ──
+    window.qsFiltrarCursos = async function(modalidade) {
+      const base = 'px-4 py-3 rounded-xl border-2 font-semibold text-sm transition-all';
+      document.getElementById('qs-btn-tec').className = base + (modalidade === 'tecnicos' ? ' border-[#004587] bg-[#004587]/10 text-[#004587]' : ' border-gray-200 text-gray-700');
+      document.getElementById('qs-btn-liv').className = base + (modalidade === 'livres' ? ' border-[#F7941D] bg-[#F7941D]/10 text-[#F7941D]' : ' border-gray-200 text-gray-700');
+      const lista = document.getElementById('qs-curso-lista');
+      lista.style.display = 'block';
+      lista.innerHTML = '<p class="text-gray-400 text-center py-3 text-sm">Carregando...</p>';
+      const data = await carregarDadosCursos();
+      const cursos = modalidade === 'tecnicos' ? data.cursos_tecnicos : data.cursos_livres;
+      lista.innerHTML = cursos.map(c => `
+        <button type="button" data-id="${c.id}" data-nome="${c.nome.replace(/"/g,'&quot;')}" data-modalidade="${modalidade}"
+          class="qs-curso-item w-full text-left px-4 py-3 hover:bg-blue-50 transition-colors">
+          <p class="font-semibold text-[#004587] text-sm pointer-events-none">${c.nome}</p>
+          <p class="text-xs text-gray-400 pointer-events-none">Ficha: ${c.codigo_ficha}</p>
+        </button>`).join('');
+      lista.onclick = function(e) {
+        const btn = e.target.closest('.qs-curso-item');
+        if (btn) qsCarregarTurmas(btn.dataset.id, btn.dataset.nome, btn.dataset.modalidade);
+      };
+    };
+
+    async function qsCarregarTurmas(cursoId, cursoNome, modalidade) {
+      document.getElementById('qs-curso-lista').style.display = 'none';
+      const container = document.getElementById('qs-turmas-lista');
+      container.style.display = 'block';
+      container.innerHTML = `<div class="flex items-center justify-between mb-4 bg-blue-50 rounded-xl px-4 py-3">
+        <div><p class="text-xs text-gray-500 uppercase font-semibold">Curso selecionado</p><p class="font-bold text-[#004587] text-sm">${cursoNome}</p></div>
+        <button onclick="qsVoltarCursos('${modalidade}')" class="text-sm text-blue-600 hover:text-blue-800 font-semibold">← Trocar</button>
+      </div>
+      <p class="text-gray-400 text-sm text-center py-4">Carregando turmas...</p>`;
+      const turmas = await carregarDaAba('Turmas');
+      const filtradas = turmas.filter(t => (t.nome_curso||'').toLowerCase() === cursoNome.toLowerCase());
+      const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
+      const header = `<div class="flex items-center justify-between mb-4 bg-blue-50 rounded-xl px-4 py-3">
+        <div><p class="text-xs text-gray-500 uppercase font-semibold">Curso selecionado</p><p class="font-bold text-[#004587] text-sm">${cursoNome}</p></div>
+        <button onclick="qsVoltarCursos('${modalidade}')" class="text-sm text-blue-600 hover:text-blue-800 font-semibold">← Trocar</button>
+      </div>`;
+      if (filtradas.length === 0) {
+        container.innerHTML = header + '<p class="text-gray-500 text-center py-6 text-sm">Nenhuma turma cadastrada para este curso.</p>';
+        return;
+      }
+      container.innerHTML = header + '<p class="font-semibold text-gray-700 text-sm mb-3">Selecione a turma:</p>';
+      filtradas.forEach(t => {
+        const div = document.createElement('div');
+        div.className = 'cursor-pointer flex items-center justify-between bg-white border-2 border-gray-100 hover:border-[#004587]/30 rounded-xl px-5 py-4 transition-all mb-2';
+        div.innerHTML = `<div>
+          <p class="font-bold text-[#004587] text-sm">${t.nome_curso} — Turma ${t.codigo_oferta || ''}</p>
+          <p class="text-xs text-gray-500">${periodoLabel[t.periodo] || t.periodo || '-'} · ${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)}</p>
+        </div>
+        <svg class="w-5 h-5 text-[#004587] flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>`;
+        div.onclick = () => qsAbrirQuadro(t);
+        container.appendChild(div);
+      });
+    }
+
+    window.qsVoltarCursos = function(modalidade) {
+      document.getElementById('qs-turmas-lista').style.display = 'none';
+      qsFiltrarCursos(modalidade);
+    };
+
+    window.qsAbrirQuadro = async function(turma) {
+      quadroTurmaAtual = turma;
+      document.getElementById('qs-turmas-lista').style.display = 'none';
+      document.getElementById('q-step-selecao').style.display = 'none';
+      const step2 = document.getElementById('q-step-quadro');
+      step2.style.display = 'block';
+      const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
+      document.getElementById('q-turma-titulo').textContent = `${turma.nome_curso} — Turma ${turma.codigo_oferta || ''}`;
+      document.getElementById('q-turma-info').textContent = `Período: ${periodoLabel[turma.periodo] || turma.periodo || '-'} | ${formatarData(turma.data_de_inicio)} – ${formatarData(turma.data_de_termino)}`;
+      await qRenderWeeklyGrid(turma);
+    };
+
+    window.qVoltarSelecao = function() {
+      quadroTurmaAtual = null;
+      document.getElementById('q-step-quadro').style.display = 'none';
+      document.getElementById('q-step-selecao').style.display = 'block';
+    };
+
+    async function qRenderWeeklyGrid(turma) {
+      const grid = document.getElementById('q-weekly-grid');
+      grid.innerHTML = '<p class="text-gray-400 py-4 text-sm">Carregando alocações...</p>';
+      allAlocacoes = await carregarDaAba('Alocacoes');
+      const turmaAloc = allAlocacoes.filter(a => a.turma_codigo === turma.codigo_oferta);
+      const diasCols = [
+        { id: 'segunda', label: 'Segunda' }, { id: 'terca', label: 'Terça' },
+        { id: 'quarta',  label: 'Quarta'  }, { id: 'quinta', label: 'Quinta' },
+        { id: 'sexta',   label: 'Sexta'   }, { id: 'sabado', label: 'Sábado' }
+      ];
+      const wrapper = document.createElement('div');
+      wrapper.className = 'grid grid-cols-6 gap-3 min-w-[700px]';
+      diasCols.forEach(dia => {
+        const col = document.createElement('div');
+        col.className = 'bg-gray-50 rounded-xl p-3 min-h-[140px]';
+        const alocs = turmaAloc.filter(a => a.dia_semana === dia.id);
+        let html = `<p class="font-bold text-[#004587] text-sm mb-3 text-center border-b border-gray-200 pb-2">${dia.label}</p>
+          <div class="space-y-2">
+          ${alocs.map(a => `
+            <div class="bg-white rounded-lg p-2 border border-[#004587]/20 group relative">
+              <p class="text-xs font-bold text-[#004587] leading-tight">${a.uc_nome}</p>
+              <p class="text-xs text-gray-600 leading-tight mt-0.5">${a.docente_nome}</p>
+              <button onclick="qRemoverAlocacao('${(a.aloc_id||'').replace(/'/g,"\\'")}','${dia.id}','${a.uc_nome.replace(/'/g,"\\'")}','${a.docente_nome.replace(/'/g,"\\'")}','${turma.codigo_oferta}')"
+                class="absolute top-1 right-1 text-red-400 hover:text-red-600 hidden group-hover:block text-xs leading-none px-1">✕</button>
+            </div>`).join('')}
+          </div>`;
+        html += `<button onclick="qAbrirModalAlocacao('${dia.id}')"
+          class="mt-3 w-full py-2 rounded-lg border-2 border-dashed border-[#004587]/30 hover:border-[#004587] text-[#004587] text-xs font-semibold hover:bg-[#004587]/5 transition-all flex items-center justify-center gap-1">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Alocar
+        </button>`;
+        col.innerHTML = html;
+        wrapper.appendChild(col);
+      });
+      grid.innerHTML = '';
+      grid.appendChild(wrapper);
+    }
+
+    window.qAbrirModalAlocacao = async function(dia) {
+      if (!quadroTurmaAtual) return;
+      modalAlocacaoDia = dia;
+      const modal = document.getElementById('modal-alocacao');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      const diaLabels = { segunda: 'Segunda-feira', terca: 'Terça-feira', quarta: 'Quarta-feira', quinta: 'Quinta-feira', sexta: 'Sexta-feira', sabado: 'Sábado' };
+      const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
+      document.getElementById('modal-aloc-titulo').textContent = `Alocar — ${diaLabels[dia]} · ${periodoLabel[quadroTurmaAtual.periodo] || quadroTurmaAtual.periodo}`;
+      // UCs do curso
+      const ucSelect = document.getElementById('modal-uc-select');
+      if (allUCs.length === 0) await loadUCs();
+      const ucsDisponiveis = allUCs.filter(u => (u.curso_nome||'').toLowerCase() === (quadroTurmaAtual.nome_curso||'').toLowerCase());
+      ucSelect.innerHTML = '<option value="">Selecione a UC...</option>' +
+        ucsDisponiveis.map(u => `<option value="${u.uc_nome}" data-horas="${u.carga_horaria}">${u.uc_nome} (${u.carga_horaria}h)</option>`).join('');
+      document.getElementById('modal-encontros').classList.add('hidden');
+      // Docentes disponíveis
+      await qPopularDocentesDisponiveis(dia);
+    };
+
+    window.fecharModalAlocacao = function() {
+      document.getElementById('modal-alocacao').classList.add('hidden');
+      document.getElementById('modal-alocacao').classList.remove('flex');
+      modalAlocacaoDia = null;
+    };
+
+    async function qPopularDocentesDisponiveis(dia) {
+      const select = document.getElementById('modal-docente-select');
+      select.innerHTML = '<option value="">Carregando docentes...</option>';
+      if (allTeachers.length === 0) allTeachers = await carregarDaAba('Docentes');
+      const periodo = quadroTurmaAtual.periodo;
+      // Mapeamento período da turma → tipo de turno válido na escala do docente
+      const tiposValidos = periodo === 'manha' ? ['manha_tarde'] :
+                           periodo === 'tarde' ? ['manha_tarde', 'tarde_noite'] :
+                           ['tarde_noite'];
+      // Alocações do dia (todas as turmas) para checar conflito
+      const alocsDia = allAlocacoes.filter(a => a.dia_semana === dia);
+      const disponiveis = allTeachers.filter(d => {
+        let escala = {};
+        try { escala = d.escala_semanal ? JSON.parse(d.escala_semanal) : {}; } catch(e) {}
+        const diaEscala = escala[dia];
+        if (!diaEscala || !diaEscala.ativo) return false;
+        if (!tiposValidos.includes(diaEscala.tipo)) return false;
+        // Não pode estar alocado em outra turma no mesmo dia
+        const conflito = alocsDia.some(a => a.docente_nome === d.nome_completo && a.turma_codigo !== quadroTurmaAtual.codigo_oferta);
+        return !conflito;
+      });
+      if (disponiveis.length === 0) {
+        select.innerHTML = '<option value="">Nenhum docente disponível neste dia/período</option>';
+        return;
+      }
+      select.innerHTML = '<option value="">Selecione o docente...</option>' +
+        disponiveis.map(d => `<option value="${d.nome_completo}">${d.nome_completo}</option>`).join('');
+    }
+
+    window.calcularEncontros = function() {
+      const opt = document.getElementById('modal-uc-select').selectedOptions[0];
+      const el = document.getElementById('modal-encontros');
+      if (!opt || !opt.dataset.horas || !opt.value) { el.classList.add('hidden'); return; }
+      const horas = parseFloat(opt.dataset.horas);
+      const hPorAula = quadroTurmaAtual?.periodo === 'noite' ? 3.5 : 4;
+      const encontros = Math.ceil(horas / hPorAula);
+      el.textContent = `→ ${encontros} encontros de ${hPorAula}h (total: ${horas}h)`;
+      el.classList.remove('hidden');
+    };
+
+    window.salvarAlocacao = async function() {
+      const ucNome = document.getElementById('modal-uc-select').value;
+      const docenteNome = document.getElementById('modal-docente-select').value;
+      if (!ucNome || !docenteNome) { showErrorMessage('❌ Selecione UC e Docente'); return; }
+      if (!quadroTurmaAtual || !modalAlocacaoDia) return;
+      const btn = document.querySelector('#modal-alocacao button[onclick="salvarAlocacao()"]');
+      btn.disabled = true; btn.textContent = '⏳ Salvando...';
+      const alocId = 'aloc_' + Date.now();
+      try {
+        await postToSheet('Alocacoes', [alocId, quadroTurmaAtual.codigo_oferta, quadroTurmaAtual.nome_curso, modalAlocacaoDia, ucNome, docenteNome, quadroTurmaAtual.periodo]);
+        allAlocacoes.push({ aloc_id: alocId, turma_codigo: quadroTurmaAtual.codigo_oferta, nome_curso: quadroTurmaAtual.nome_curso, dia_semana: modalAlocacaoDia, uc_nome: ucNome, docente_nome: docenteNome, periodo: quadroTurmaAtual.periodo });
+        fecharModalAlocacao();
+        await qRenderWeeklyGrid(quadroTurmaAtual);
+        showSuccessMessage('✅ Docente alocado com sucesso!');
+      } catch(err) { showErrorMessage('❌ Erro: ' + err.message); }
+      finally { btn.disabled = false; btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Salvar Alocação'; }
+    };
+
+    window.qRemoverAlocacao = async function(alocId, dia, ucNome, docenteNome, turmaCodigo) {
+      if (!confirm(`Remover alocação de "${docenteNome}" — ${ucNome} na ${dia}?`)) return;
+      try {
+        if (alocId) await deleteFromSheet('Alocacoes', 'aloc_id', alocId);
+        allAlocacoes = allAlocacoes.filter(a => !(a.dia_semana === dia && a.uc_nome === ucNome && a.docente_nome === docenteNome && a.turma_codigo === turmaCodigo));
+        await qRenderWeeklyGrid(quadroTurmaAtual);
+        showSuccessMessage('✅ Alocação removida!');
+      } catch(err) { showErrorMessage('❌ Erro: ' + err.message); }
+    };
+
+    // Fecha pickers ao clicar fora
+    document.addEventListener('click', function(e) {
+      const qLista = document.getElementById('q-curso-lista');
+      if (qLista && qLista.style.display !== 'none' && !qLista.contains(e.target) && !e.target.closest('#q-btn-tec, #q-btn-liv')) {
+        qLista.style.display = 'none';
+      }
+      const qsLista = document.getElementById('qs-curso-lista');
+      if (qsLista && qsLista.style.display !== 'none' && !qsLista.contains(e.target) && !e.target.closest('#qs-btn-tec, #qs-btn-liv')) {
+        qsLista.style.display = 'none';
+      }
+      const modal = document.getElementById('modal-alocacao');
+      if (modal && !modal.classList.contains('hidden') && e.target === modal) {
+        fecharModalAlocacao();
+      }
+    });
   </script>
  </body>
 </html>
