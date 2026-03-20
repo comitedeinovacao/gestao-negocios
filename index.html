@@ -571,51 +571,54 @@
     let allRepresentantes = [];
     let allEventos = [];
 
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyujbQCQ4OKMiLXNl4Q3aOMCQp65ifsjXp8ZQbutBsJwoSfGMlDe9DCok1XKt_qc389hg/exec';
+
+    function carregarDaAba(aba) {
+      return new Promise((resolve) => {
+        const cbName = 'cb_' + aba.toLowerCase() + '_' + Date.now();
+        const scriptId = 'jsonp-' + aba.toLowerCase();
+
+        const timeout = setTimeout(() => {
+          cleanup();
+          resolve([]);
+        }, 8000);
+
+        function cleanup() {
+          clearTimeout(timeout);
+          delete window[cbName];
+          const s = document.getElementById(scriptId);
+          if (s) s.remove();
+        }
+
+        window[cbName] = function(data) {
+          cleanup();
+          resolve((data && Array.isArray(data.dados)) ? data.dados : []);
+        };
+
+        const script = document.createElement('script');
+        script.id = scriptId;
+        script.src = APPS_SCRIPT_URL + '?aba=' + encodeURIComponent(aba) + '&callback=' + cbName;
+        document.head.appendChild(script);
+      });
+    }
+
     async function loadDocentes() {
-      try {
-        const response = await fetch('./data.json');
-        const data = await response.json();
-        allTeachers = data.docentes || [];
-      } catch (err) {
-        allTeachers = [];
-        showErrorMessage('❌ Erro ao carregar docentes: ' + err.message);
-      }
+      allTeachers = await carregarDaAba('Docentes');
       renderDocentes();
     }
 
     async function loadPCTD() {
-      try {
-        const response = await fetch('./data.json');
-        const data = await response.json();
-        allPCTD = data.pctd || [];
-      } catch (err) {
-        allPCTD = [];
-        showErrorMessage('❌ Erro ao carregar PCTD: ' + err.message);
-      }
+      allPCTD = await carregarDaAba('PCTD');
       renderPCTD();
     }
 
     async function loadPITD() {
-      try {
-        const response = await fetch('./data.json');
-        const data = await response.json();
-        allPITD = data.pitd || [];
-      } catch (err) {
-        allPITD = [];
-        showErrorMessage('❌ Erro ao carregar PITD: ' + err.message);
-      }
+      allPITD = await carregarDaAba('PITD');
       renderPITD();
     }
 
     async function loadRepresentantes() {
-      try {
-        const response = await fetch('./data.json');
-        const data = await response.json();
-        allRepresentantes = data.representantes || [];
-      } catch (err) {
-        allRepresentantes = [];
-        showErrorMessage('❌ Erro ao carregar representantes: ' + err.message);
-      }
+      allRepresentantes = await carregarDaAba('Representantes');
       renderRepresentantesFilter();
     }
 
