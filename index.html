@@ -264,8 +264,34 @@
       <h3 class="text-2xl font-bold text-[#004587] mb-8">Cadastro de Turmas</h3>
       <form id="turmas-form" class="space-y-6">
        <div class="grid md:grid-cols-2 gap-6">
-        <div><label class="block text-[#004587] font-semibold mb-3">Nome do Curso</label> <input type="text" placeholder="Ex: Técnico em Administração" name="nome_do_curso" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
-        </div>
+        <!-- Seleção de Modalidade e Curso -->
+        <div>
+  <label class="block text-[#004587] font-semibold mb-3">Modalidade do Curso</label>
+  <div class="grid grid-cols-2 gap-3 mb-3">
+    <button type="button" id="btn-picker-tec" onclick="filtrarCursosPicker('tecnicos')"
+      class="px-4 py-3 rounded-xl border-2 border-gray-200 font-semibold text-gray-700 hover:border-[#004587] hover:text-[#004587] transition-all">
+      Técnico
+    </button>
+    <button type="button" id="btn-picker-liv" onclick="filtrarCursosPicker('livres')"
+      class="px-4 py-3 rounded-xl border-2 border-gray-200 font-semibold text-gray-700 hover:border-[#F7941D] hover:text-[#F7941D] transition-all">
+      Livre / Qualificação
+    </button>
+  </div>
+  <div id="curso-picker-lista" style="display:none"
+    class="max-h-52 overflow-y-auto border-2 border-gray-200 rounded-xl bg-white divide-y divide-gray-100">
+    <!-- preenchido por JS -->
+  </div>
+  <div id="curso-picker-selecionado" style="display:none"
+    class="flex items-center justify-between bg-blue-50 border-2 border-[#004587]/30 rounded-xl px-4 py-3">
+    <div>
+      <p class="text-xs text-gray-500 font-semibold uppercase">Curso selecionado</p>
+      <p id="curso-picker-nome" class="font-bold text-[#004587]"></p>
+    </div>
+    <button type="button" onclick="limparCursoPicker()"
+      class="text-sm text-red-500 hover:text-red-700 font-semibold">Alterar</button>
+  </div>
+  <input type="hidden" name="nome_do_curso" id="nome_do_curso_hidden">
+</div>
         <div><label class="block text-[#004587] font-semibold mb-3">Código da Oferta</label> <input type="text" placeholder="Ex: 2024-001" name="codigo_da_oferta" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
         </div>
        </div>
@@ -355,7 +381,7 @@
        </svg> Voltar </button>
      </div>     <!-- Cards Iniciais de Modalidade -->
      <div id="consulta-cursos-grid" class="grid md:grid-cols-2 gap-8 mb-12" style="display:none">
-      <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-8 shadow-lg border-2 border-[#004587]/20 cursor-pointer" onclick="openModalidade('tecnicos')">
+      <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-8 shadow-lg border-2 border-[#004587]/20 cursor-pointer" onclick="openConsultaView('cursos-tecnicos-list')">
        <div class="w-20 h-20 bg-gradient-to-br from-[#004587] to-[#003366] rounded-2xl flex items-center justify-center mb-6 mx-auto">
         <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
@@ -364,7 +390,7 @@
        <h3 class="text-3xl font-bold text-[#004587] mb-4 text-center">Cursos Técnicos</h3>
        <p class="text-gray-600 text-center text-lg">Formação técnica profissional em Gestão e Negócios</p>
       </div>
-      <div class="eco-card bg-gradient-to-br from-[#F7941D]/5 to-[#004587]/5 rounded-2xl p-8 shadow-lg border-2 border-[#F7941D]/20 cursor-pointer" onclick="openModalidade('livres')">
+      <div class="eco-card bg-gradient-to-br from-[#F7941D]/5 to-[#004587]/5 rounded-2xl p-8 shadow-lg border-2 border-[#F7941D]/20 cursor-pointer" onclick="openConsultaView('cursos-livres-list')">
        <div class="w-20 h-20 bg-gradient-to-br from-[#F7941D] to-[#E8850D] rounded-2xl flex items-center justify-center mb-6 mx-auto">
         <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
@@ -540,6 +566,38 @@
       </div>
       <div id="representantes-grid" class="grid gap-4"></div>
      </div>
+
+<!-- Lista Cursos Técnicos -->
+<div id="cursos-tecnicos-list" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200" style="display:none">
+  <button onclick="closeConsultaView()" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
+  </button>
+  <h3 class="text-xl font-bold text-[#004587] mb-6">Cursos Técnicos</h3>
+  <div id="cursos-tecnicos-grid" class="grid gap-3"></div>
+</div>
+
+<!-- Lista Cursos Livres -->
+<div id="cursos-livres-list" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200" style="display:none">
+  <button onclick="closeConsultaView()" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
+  </button>
+  <h3 class="text-xl font-bold text-[#004587] mb-6">Cursos Livres / Qualificação</h3>
+  <div id="cursos-livres-grid" class="grid gap-3"></div>
+</div>
+
+<!-- Detalhe do Curso -->
+<div id="curso-detail" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200" style="display:none">
+  <button onclick="voltarListaCursos()" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar à lista
+  </button>
+  <div id="curso-detail-header" class="mb-8"></div>
+  <div class="bg-gray-50 rounded-2xl p-6">
+    <h4 class="text-lg font-bold text-[#004587] mb-4">Turmas em Andamento</h4>
+    <div id="curso-turmas-grid" class="grid gap-4">
+      <p class="text-gray-500 text-center py-4">Carregando turmas...</p>
+    </div>
+  </div>
+</div>
     </div>
    </div><!-- PÁGINA EVENTOS -->
    <div id="eventos-page" class="page-container bg-white min-h-full">
@@ -829,7 +887,7 @@
     }
 
     // IDs de todas as seções dentro de consulta-page
-    const CONSULTA_SECOES = ['consulta-cursos-grid','consulta-cards','docentes-list','docente-detail','pctd-list','pitd-list','representantes-filter'];
+    const CONSULTA_SECOES = ['consulta-cursos-grid','consulta-cards','docentes-list','docente-detail','pctd-list','pitd-list','representantes-filter','cursos-tecnicos-list','cursos-livres-list','curso-detail'];
 
     // Função central: esconde tudo e mostra só a seção desejada
     function renderConsultaView(viewId) {
@@ -859,11 +917,148 @@
       if (viewId === 'pctd-list') { filterPCTD(); loadPCTD(); }
       if (viewId === 'pitd-list') { filterPITD(); loadPITD(); }
       if (viewId === 'representantes-filter') { filterRepresentantes(); loadRepresentantes(); }
+      if (viewId === 'cursos-tecnicos-list') { renderCursosLista('tecnicos'); }
+      if (viewId === 'cursos-livres-list') { renderCursosLista('livres'); }
     };
 
     // Voltar para os cards principais
     window.closeConsultaView = () => {
       renderConsultaView(null);
+    };
+
+    let cursoDetalheModalidade = 'tecnicos';
+
+    // Renderiza lista de cursos na Consulta
+    async function renderCursosLista(modalidade) {
+      const gridId = modalidade === 'tecnicos' ? 'cursos-tecnicos-grid' : 'cursos-livres-grid';
+      const grid = document.getElementById(gridId);
+      if (!grid) return;
+      grid.innerHTML = '<p class="text-gray-400 text-center py-4">Carregando...</p>';
+      try {
+        const resp = await fetch('./data.json');
+        const data = await resp.json();
+        const cursos = modalidade === 'tecnicos' ? data.cursos_tecnicos : data.cursos_livres;
+        grid.innerHTML = cursos.map(c => `
+          <div onclick="verCurso('${c.id}','${modalidade}',${JSON.stringify(c).replace(/'/g,"\\'")})"
+            class="cursor-pointer flex items-center justify-between bg-gradient-to-r from-[#004587]/5 to-transparent hover:from-[#004587]/10 border-2 border-gray-100 hover:border-[#004587]/30 rounded-xl px-5 py-4 transition-all">
+            <div>
+              <p class="font-bold text-[#004587]">${c.nome}</p>
+              <p class="text-sm text-gray-500 mt-0.5">Ficha: ${c.codigo_ficha} &nbsp;·&nbsp; ${c.subarea}</p>
+            </div>
+            <svg class="w-5 h-5 text-[#004587] flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>`).join('');
+      } catch(e) {
+        grid.innerHTML = '<p class="text-red-500">Erro ao carregar cursos.</p>';
+      }
+    }
+
+    // Abre detalhe de um curso (Consulta)
+    window.verCurso = function(id, modalidade, curso) {
+      cursoDetalheModalidade = modalidade;
+      renderConsultaView('curso-detail');
+      const header = document.getElementById('curso-detail-header');
+      if (header) {
+        const modalLabel = modalidade === 'tecnicos' ? 'Técnico' : 'Livre / Qualificação';
+        header.innerHTML = `
+          <span class="inline-block px-3 py-1 rounded-full text-xs font-bold mb-3 ${modalidade === 'tecnicos' ? 'bg-[#004587]/10 text-[#004587]' : 'bg-[#F7941D]/10 text-[#F7941D]'}">${modalLabel}</span>
+          <h3 class="text-2xl font-bold text-[#004587] mb-2">${curso.nome}</h3>
+          <div class="flex flex-wrap gap-4 text-sm text-gray-600">
+            <span><strong>Código da Ficha:</strong> ${curso.codigo_ficha}</span>
+            ${curso.modalidade ? `<span><strong>Modalidade:</strong> ${curso.modalidade}</span>` : ''}
+            <span><strong>Subárea:</strong> ${curso.subarea}</span>
+          </div>`;
+      }
+      carregarTurmasDoCurso(curso.nome);
+    };
+
+    // Volta para a lista correta de cursos
+    window.voltarListaCursos = function() {
+      openConsultaView(cursoDetalheModalidade === 'tecnicos' ? 'cursos-tecnicos-list' : 'cursos-livres-list');
+    };
+
+    // Carrega turmas de um curso específico do Sheets
+    async function carregarTurmasDoCurso(nomeCurso) {
+      const grid = document.getElementById('curso-turmas-grid');
+      if (!grid) return;
+      grid.innerHTML = '<p class="text-gray-400 text-center py-4">Carregando turmas...</p>';
+      try {
+        const turmas = await carregarDaAba('Turmas');
+        const filtradas = turmas.filter(t => (t.nome_curso || '').toLowerCase() === nomeCurso.toLowerCase());
+        if (filtradas.length === 0) {
+          grid.innerHTML = '<p class="text-gray-500 text-center py-6">Nenhuma turma cadastrada para este curso.</p>';
+          return;
+        }
+        const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
+        grid.innerHTML = filtradas.map(t => `
+          <div class="bg-white border-2 border-gray-100 rounded-xl p-5">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p class="font-bold text-[#004587] text-lg">${t.nome_curso}</p>
+                <p class="text-sm text-gray-600 mt-1"><strong>Código da Oferta:</strong> ${t.codigo_oferta || '-'}</p>
+                <p class="text-sm text-gray-600"><strong>Período:</strong> ${periodoLabel[t.periodo] || t.periodo || '-'}</p>
+              </div>
+              <div class="text-right text-sm text-gray-500">
+                <p><strong>Início:</strong> ${formatarData(t.data_de_inicio)}</p>
+                <p><strong>Término:</strong> ${formatarData(t.data_de_termino)}</p>
+              </div>
+            </div>
+          </div>`).join('');
+      } catch(e) {
+        grid.innerHTML = '<p class="text-red-500">Erro ao carregar turmas.</p>';
+      }
+    }
+
+    // ── Picker de curso no Cadastro de Turmas ──
+    let cursosPickerData = null;
+
+    async function carregarDadosCursos() {
+      if (cursosPickerData) return cursosPickerData;
+      const resp = await fetch('./data.json');
+      cursosPickerData = await resp.json();
+      return cursosPickerData;
+    }
+
+    window.filtrarCursosPicker = async function(modalidade) {
+      // Destaque no botão ativo
+      document.getElementById('btn-picker-tec').className = 'px-4 py-3 rounded-xl border-2 font-semibold transition-all ' +
+        (modalidade === 'tecnicos' ? 'border-[#004587] bg-[#004587]/10 text-[#004587]' : 'border-gray-200 text-gray-700 hover:border-[#004587] hover:text-[#004587]');
+      document.getElementById('btn-picker-liv').className = 'px-4 py-3 rounded-xl border-2 font-semibold transition-all ' +
+        (modalidade === 'livres' ? 'border-[#F7941D] bg-[#F7941D]/10 text-[#F7941D]' : 'border-gray-200 text-gray-700 hover:border-[#F7941D] hover:text-[#F7941D]');
+
+      const lista = document.getElementById('curso-picker-lista');
+      const selecionado = document.getElementById('curso-picker-selecionado');
+      const hidden = document.getElementById('nome_do_curso_hidden');
+      if (hidden && hidden.value) {
+        // já tem seleção, não reseta
+      } else {
+        selecionado.style.display = 'none';
+        hidden.value = '';
+      }
+
+      lista.style.display = 'block';
+      lista.innerHTML = '<p class="text-gray-400 text-center py-3 text-sm">Carregando...</p>';
+
+      const data = await carregarDadosCursos();
+      const cursos = modalidade === 'tecnicos' ? data.cursos_tecnicos : data.cursos_livres;
+      lista.innerHTML = cursos.map(c => `
+        <button type="button" onclick="selecionarCursoPicker(${JSON.stringify(c.nome).replace(/'/g,"\\'")})"
+          class="w-full text-left px-4 py-3 hover:bg-blue-50 transition-colors">
+          <p class="font-semibold text-[#004587] text-sm">${c.nome}</p>
+          <p class="text-xs text-gray-400">Ficha: ${c.codigo_ficha} · ${c.subarea}</p>
+        </button>`).join('');
+    };
+
+    window.selecionarCursoPicker = function(nome) {
+      document.getElementById('nome_do_curso_hidden').value = nome;
+      document.getElementById('curso-picker-nome').textContent = nome;
+      document.getElementById('curso-picker-selecionado').style.display = 'flex';
+      document.getElementById('curso-picker-lista').style.display = 'none';
+    };
+
+    window.limparCursoPicker = function() {
+      document.getElementById('nome_do_curso_hidden').value = '';
+      document.getElementById('curso-picker-selecionado').style.display = 'none';
+      document.getElementById('curso-picker-lista').style.display = 'block';
     };
 
     // Renderizar Docentes (com busca e ordem alfabética)
@@ -1141,7 +1336,11 @@
       const data_termino = form.data_de_termino.value;
       const periodo = form.periodo.value;
 
-      if (!nome_curso || !codigo_oferta) {
+      if (!nome_curso) {
+        showErrorMessage('❌ Selecione o curso');
+        return;
+      }
+      if (!codigo_oferta) {
         showErrorMessage('❌ Preencha todos os campos obrigatórios');
         return;
       }
@@ -1154,6 +1353,11 @@
       try {
         await postToSheet('Turmas', [codigo_oferta, nome_curso, periodo, data_inicio, data_termino]);
         form.reset();
+        // Reset picker UI
+        const pickerSel = document.getElementById('curso-picker-selecionado');
+        if (pickerSel) pickerSel.style.display = 'none';
+        const pickerLista = document.getElementById('curso-picker-lista');
+        if (pickerLista) pickerLista.style.display = 'none';
         showSuccessMessage('✅ Enviado com sucesso!');
       } catch (err) {
         showErrorMessage('❌ Erro ao enviar: ' + err.message);
