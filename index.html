@@ -772,6 +772,9 @@
       document.querySelectorAll('.page-container').forEach(p => p.classList.remove('active'));
       document.getElementById(page + '-page').classList.add('active');
       window.scrollTo(0, 0);
+      if (page === 'consulta') {
+        renderConsultaView(null); // garante que os cards apareçam
+      }
       if (page === 'eventos') {
         // Mostrar aba agenda por padrão e esconder criar-evento
         document.querySelectorAll('#eventos-page .tab-content').forEach(c => c.classList.add('hidden'));
@@ -825,10 +828,24 @@
       return d.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
     }
 
-    // Função central: muda data-view no consulta-page — o CSS cuida do resto
+    // IDs de todas as seções dentro de consulta-page
+    const CONSULTA_SECOES = ['consulta-cards','docentes-list','docente-detail','pctd-list','pitd-list','representantes-filter'];
+
+    // Função central: esconde tudo e mostra só a seção desejada
     function renderConsultaView(viewId) {
+      const target = viewId || 'consulta-cards';
+      CONSULTA_SECOES.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+      const show = document.getElementById(target);
+      if (show) {
+        // consulta-cards usa grid, demais usam block
+        show.style.display = (target === 'consulta-cards') ? 'grid' : 'block';
+      }
+      // mantém data-view para referência
       const page = document.getElementById('consulta-page');
-      if (page) page.setAttribute('data-view', viewId || 'cards');
+      if (page) page.setAttribute('data-view', target);
     }
 
     // Abrir uma seção de consulta
@@ -908,7 +925,7 @@
     window.editarDocente = function() {
       if (!docenteAtual) return;
       const d = docenteAtual;
-      navigateToPage('gestao');
+      navigateToPage('cadastro');
       setTimeout(() => {
         const tab = document.querySelector('[data-tab="cad-docentes"]');
         if (tab) switchCadastroTab(tab);
