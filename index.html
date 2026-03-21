@@ -1806,7 +1806,7 @@
       <span style="margin-left:auto;font-size:9px;font-weight:600;color:#b0bec5;letter-spacing:2.5px;text-transform:uppercase;">Senac Araçatuba · Gestão de Espaços</span>
      </div>
      <!-- Room grid: 1920 - 4 - 148 - 78 - 48 - 82 = 1560px -->
-     <div id="ms-t-grid" style="padding:16px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(5,1fr);gap:12px;height:1560px;"></div>
+     <div id="ms-t-grid" style="padding:14px 16px;display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(10,1fr);gap:10px;height:1560px;"></div>
      <!-- Footer -->
      <div style="position:absolute;bottom:0;left:0;right:0;height:82px;background:white;border-top:1px solid #e2e8f0;box-shadow:0 -2px 24px rgba(0,69,135,0.06);display:flex;align-items:center;justify-content:space-between;padding:0 36px;">
       <div style="display:flex;gap:22px;align-items:center;">
@@ -5477,25 +5477,27 @@
         if (aloc && isFixo) tFix++;
         else if (aloc) tOcup++;
         else tDisp++;
-        const borderColor = aloc ? (isFixo ? '#004587' : '#F7941D') : '#10b981';
-        const bgCard      = aloc ? (isFixo ? 'linear-gradient(135deg,#eef2ff,#e8f0fe)' : 'linear-gradient(135deg,#fff8f0,#fff3e0)') : 'white';
-        const animStyle   = aloc ? (isFixo ? 'animation:ms-glow-blue 3.5s ease-in-out infinite;' : 'animation:ms-glow-orange 3s ease-in-out infinite;') : '';
-        return `<div style="background:${bgCard};border-radius:16px;padding:14px 12px;display:flex;flex-direction:column;gap:7px;border-left:5px solid ${borderColor};box-shadow:0 2px 14px rgba(0,0,0,0.06);${animStyle}">
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-size:12px;font-weight:900;color:${borderColor};font-family:'Montserrat',sans-serif;">${sala.id}</span>
-            <span style="font-size:18px;line-height:1;">${MS_TIPO_ICONS[sala.tipo]||'🏫'}</span>
+        const bColor  = aloc ? (isFixo ? '#004587' : '#F7941D') : '#10b981';
+        const bgCard  = aloc ? (isFixo ? 'linear-gradient(135deg,#eef2ff,#e8f0fe)' : 'linear-gradient(135deg,#fff8f0,#fff3e0)') : 'white';
+        const animSt  = aloc ? (isFixo ? 'animation:ms-glow-blue 3.5s ease-in-out infinite;' : 'animation:ms-glow-orange 3s ease-in-out infinite;') : '';
+        const icon    = MS_TIPO_ICONS[sala.tipo] || '🏫';
+        return `<div style="background:${bgCard};border-radius:16px;border-left:7px solid ${bColor};box-shadow:0 2px 16px rgba(0,0,0,0.07);${animSt}display:flex;flex-direction:row;align-items:stretch;overflow:hidden;">
+          <div style="width:42%;padding:16px 18px;display:flex;flex-direction:column;justify-content:center;gap:5px;border-right:1px solid rgba(0,0,0,0.05);">
+            <div style="display:flex;align-items:center;gap:7px;">
+              <span style="font-size:11px;font-weight:900;color:${bColor};font-family:'Montserrat',sans-serif;background:${bColor}20;border-radius:6px;padding:2px 8px;letter-spacing:0.5px;">${sala.id}</span>
+              <span style="font-size:16px;line-height:1;">${icon}</span>
+            </div>
+            <div style="font-size:22px;font-weight:900;color:#004587;line-height:1.15;font-family:'Montserrat',sans-serif;">${sala.nome}</div>
+            <div style="font-size:11px;color:#94a3b8;font-weight:600;font-family:'Montserrat',sans-serif;">${sala.tipo} · ${sala.capacidade} lug.</div>
           </div>
-          <div style="font-size:14px;font-weight:800;color:#004587;line-height:1.2;font-family:'Montserrat',sans-serif;">${sala.nome}</div>
-          <div style="font-size:10px;color:#94a3b8;font-weight:600;font-family:'Montserrat',sans-serif;">${sala.tipo} · ${sala.capacidade} lug.</div>
-          ${aloc
-            ? `<div style="background:rgba(255,255,255,0.7);border-radius:10px;padding:10px;flex:1;backdrop-filter:blur(4px);">
-                <div style="font-size:13px;font-weight:800;color:#1e293b;line-height:1.3;font-family:'Montserrat',sans-serif;">${aloc.curso||'—'}</div>
-                <div style="font-size:11px;color:#64748b;margin-top:5px;font-weight:500;font-family:'Montserrat',sans-serif;">${aloc.docente||'—'}</div>
-                <div style="font-size:10px;color:#94a3b8;margin-top:6px;font-weight:600;font-family:'Montserrat',sans-serif;">⏰ ${aloc.inicio}–${aloc.fim}${isFixo?' 🔒':''}</div>
-              </div>`
-            : `<div style="flex:1;display:flex;align-items:center;justify-content:center;">
-                <span style="font-size:14px;font-weight:800;color:#10b981;font-family:'Montserrat',sans-serif;animation:ms-shimmer 2.5s ease-in-out infinite;">✓ Disponível</span>
-              </div>`}
+          <div style="width:58%;padding:16px 20px;display:flex;flex-direction:column;justify-content:center;gap:5px;">
+            ${aloc
+              ? `<div style="font-size:20px;font-weight:900;color:#1e293b;line-height:1.2;font-family:'Montserrat',sans-serif;">${aloc.curso||'—'}</div>
+                 <div style="font-size:13px;color:#64748b;font-weight:600;font-family:'Montserrat',sans-serif;">${aloc.docente||'—'}</div>
+                 <div style="font-size:11px;color:#94a3b8;font-weight:600;font-family:'Montserrat',sans-serif;margin-top:2px;">⏰ ${aloc.inicio}–${aloc.fim}${isFixo?' &nbsp;🔒':''}</div>`
+              : `<div style="font-size:22px;font-weight:900;color:#10b981;font-family:'Montserrat',sans-serif;animation:ms-shimmer 2.5s ease-in-out infinite;">✓ Disponível</div>
+                 <div style="font-size:11px;color:#b0bec5;font-weight:600;font-family:'Montserrat',sans-serif;">Sem alocação neste período</div>`}
+          </div>
         </div>`;
       }).join('');
       const oEl = document.getElementById('ms-t-stat-ocup');
