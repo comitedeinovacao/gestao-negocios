@@ -1015,6 +1015,9 @@
          <p class="text-sm text-gray-500 mt-1" id="q-turma-info"></p>
         </div>
         <div class="flex gap-2">
+         <button onclick="qAbrirModalLote()" class="px-4 py-2 bg-orange-50 text-orange-700 hover:bg-orange-100 rounded-lg font-semibold text-sm flex items-center gap-2 border border-orange-200">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg> Lançar em Lote
+         </button>
          <button onclick="imprimirCalendario()" class="px-4 py-2 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg font-semibold text-sm flex items-center gap-2 border border-green-200">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg> Imprimir
          </button>
@@ -1035,6 +1038,77 @@
       </div>
      </div>
     </div>
+    <!-- Modal Lançamento em Lote -->
+    <div id="modal-lote" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+     <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div class="p-6 border-b border-gray-200">
+       <div class="flex justify-between items-center">
+        <h3 class="text-xl font-bold text-[#004587]">Lançamento em Lote</h3>
+        <button onclick="fecharModalLote()" class="text-gray-400 hover:text-gray-600">
+         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+       </div>
+      </div>
+      <div class="p-6 space-y-5">
+       <!-- UC -->
+       <div>
+        <label class="block text-[#004587] font-semibold mb-2">Unidade Curricular</label>
+        <select id="lote-uc" onchange="qAtualizarPreviewLote()" class="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-[#004587] outline-none">
+         <option value="">Selecione a UC...</option>
+        </select>
+       </div>
+       <!-- Tipo -->
+       <div>
+        <label class="block text-[#004587] font-semibold mb-2">Tipo de Aula</label>
+        <div class="flex gap-6">
+         <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="lote-tipo" value="presencial" checked onchange="qAtualizarPreviewLote()"> Presencial</label>
+         <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="lote-tipo" value="ead" onchange="qAtualizarPreviewLote()"> EAD</label>
+        </div>
+       </div>
+       <!-- Docente -->
+       <div>
+        <label class="block text-[#004587] font-semibold mb-2">Docente</label>
+        <select id="lote-docente" class="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-[#004587] outline-none">
+         <option value="">Selecione o docente...</option>
+        </select>
+       </div>
+       <!-- Horas por encontro -->
+       <div>
+        <label class="block text-[#004587] font-semibold mb-2">Horas por Encontro</label>
+        <input id="lote-horas" type="number" step="0.5" min="0.5" max="8" value="3.5" onchange="qAtualizarPreviewLote()" class="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-[#004587] outline-none">
+       </div>
+       <!-- Dias da semana -->
+       <div>
+        <label class="block text-[#004587] font-semibold mb-2">Dias da Semana</label>
+        <div class="flex flex-wrap gap-2">
+         <label class="flex items-center gap-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 cursor-pointer text-sm"><input type="checkbox" value="1" class="lote-dia" onchange="qAtualizarPreviewLote()"> Seg</label>
+         <label class="flex items-center gap-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 cursor-pointer text-sm"><input type="checkbox" value="2" class="lote-dia" onchange="qAtualizarPreviewLote()"> Ter</label>
+         <label class="flex items-center gap-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 cursor-pointer text-sm"><input type="checkbox" value="3" class="lote-dia" onchange="qAtualizarPreviewLote()"> Qua</label>
+         <label class="flex items-center gap-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 cursor-pointer text-sm"><input type="checkbox" value="4" class="lote-dia" onchange="qAtualizarPreviewLote()"> Qui</label>
+         <label class="flex items-center gap-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 cursor-pointer text-sm"><input type="checkbox" value="5" class="lote-dia" onchange="qAtualizarPreviewLote()"> Sex</label>
+         <label class="flex items-center gap-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 cursor-pointer text-sm"><input type="checkbox" value="6" class="lote-dia" onchange="qAtualizarPreviewLote()"> Sáb</label>
+        </div>
+       </div>
+       <!-- Quantidade de encontros -->
+       <div>
+        <label class="block text-[#004587] font-semibold mb-2">Número de Encontros</label>
+        <input id="lote-qtd" type="number" min="1" max="200" value="10" onchange="qAtualizarPreviewLote()" class="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-[#004587] outline-none">
+       </div>
+       <!-- Data inicial -->
+       <div>
+        <label class="block text-[#004587] font-semibold mb-2">A partir de</label>
+        <input id="lote-data-inicio" type="date" onchange="qAtualizarPreviewLote()" class="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-[#004587] outline-none">
+       </div>
+       <!-- Preview -->
+       <div id="lote-preview" class="bg-blue-50 rounded-xl p-4 text-sm hidden"></div>
+       <!-- Botão -->
+       <button id="lote-btn-salvar" onclick="qSalvarLote()" class="w-full bg-[#004587] text-white font-bold py-3 rounded-xl hover:bg-[#003366] transition-colors hidden">
+        Lançar encontros
+       </button>
+      </div>
+     </div>
+    </div>
+
     <!-- Modal de Alocação -->
     <div id="modal-alocacao" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
      <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl">
@@ -3063,6 +3137,141 @@
       const radPres = document.querySelector('input[name="tipo_aula"][value="presencial"]');
       if (radPres) radPres.checked = true;
       modalAlocacaoData = null;
+    };
+
+    // ══════════════════════════════════════════════
+    // LANÇAMENTO EM LOTE
+    // ══════════════════════════════════════════════
+    window.qAbrirModalLote = async function() {
+      if (!quadroTurmaAtual) return;
+      const modal = document.getElementById('modal-lote');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+
+      // Popula UCs
+      if (allUCs.length === 0) await loadUCs();
+      const norm = s => (s||'').toLowerCase().normalize('NFC').trim();
+      const dadosCursos = await carregarDadosCursos();
+      const todosCursos = [...(dadosCursos.cursos_tecnicos||[]), ...(dadosCursos.cursos_livres||[])];
+      const cursoEncontrado = todosCursos.find(c => norm(c.nome) === norm(quadroTurmaAtual.nome_curso));
+      const versaoTurma = quadroTurmaAtual.versao_plano || '';
+      const ucsDisponiveis = allUCs.filter(u => {
+        const mesmoNome = cursoEncontrado ? u.curso_id === cursoEncontrado.id : norm(u.curso_nome) === norm(quadroTurmaAtual.nome_curso);
+        const mesmaVersao = !versaoTurma || String(u.versao) === String(versaoTurma);
+        return mesmoNome && mesmaVersao;
+      });
+      const ucSel = document.getElementById('lote-uc');
+      ucSel.innerHTML = '<option value="">Selecione a UC...</option>' +
+        ucsDisponiveis.map(u => `<option value="${u.uc_nome}" data-pres="${u.ch_presencial||0}" data-ead="${u.ch_ead||0}" data-total="${u.carga_horaria_total||0}">${u.uc_nome}</option>`).join('');
+
+      // Popula docentes
+      if (allTeachers.length === 0) allTeachers = await carregarDaAba('Docentes');
+      const docSel = document.getElementById('lote-docente');
+      const sorted = [...allTeachers].filter(d => d.nome_completo).sort((a,b) => (a.nome_completo||'').localeCompare(b.nome_completo||'','pt-BR'));
+      docSel.innerHTML = '<option value="">Selecione o docente...</option>' + sorted.map(d => `<option value="${d.nome_completo}">${d.nome_completo}</option>`).join('');
+
+      // Horas padrão por período
+      const hDefault = quadroTurmaAtual.periodo === 'noite' ? 3.5 : 4;
+      document.getElementById('lote-horas').value = hDefault;
+
+      // Data inicial = hoje
+      const hoje = new Date();
+      document.getElementById('lote-data-inicio').value = hoje.toISOString().slice(0,10);
+
+      document.getElementById('lote-preview').classList.add('hidden');
+      document.getElementById('lote-btn-salvar').classList.add('hidden');
+    };
+
+    window.fecharModalLote = function() {
+      document.getElementById('modal-lote').classList.add('hidden');
+      document.getElementById('modal-lote').classList.remove('flex');
+    };
+
+    function gerarDatasLote(diasSemana, qtd, dataInicio) {
+      // diasSemana: array de índices JS (1=Seg,2=Ter,...,6=Sáb)
+      const datas = [];
+      const data = new Date(dataInicio + 'T12:00:00');
+      let seguranca = 0;
+      while (datas.length < qtd && seguranca < 3000) {
+        seguranca++;
+        if (diasSemana.includes(data.getDay())) {
+          const y = data.getFullYear();
+          const m = String(data.getMonth()+1).padStart(2,'0');
+          const d = String(data.getDate()).padStart(2,'0');
+          datas.push(`${y}-${m}-${d}`);
+        }
+        data.setDate(data.getDate() + 1);
+      }
+      return datas;
+    }
+
+    window.qAtualizarPreviewLote = function() {
+      const diasChecked = [...document.querySelectorAll('.lote-dia:checked')].map(c => parseInt(c.value));
+      const qtd = parseInt(document.getElementById('lote-qtd').value) || 0;
+      const horas = parseFloat(document.getElementById('lote-horas').value) || 0;
+      const dataInicio = document.getElementById('lote-data-inicio').value;
+      const preview = document.getElementById('lote-preview');
+      const btn = document.getElementById('lote-btn-salvar');
+
+      if (!diasChecked.length || !qtd || !horas || !dataInicio) {
+        preview.classList.add('hidden');
+        btn.classList.add('hidden');
+        return;
+      }
+
+      const datas = gerarDatasLote(diasChecked, qtd, dataInicio);
+      const totalH = (qtd * horas).toFixed(1).replace('.0','');
+      const NOMES_DIA = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+
+      preview.innerHTML = `
+        <p class="font-bold text-[#004587] mb-2">${qtd} encontros × ${horas}h = <span class="text-orange-600">${totalH}h total</span></p>
+        <div class="grid grid-cols-2 gap-1 max-h-40 overflow-y-auto">
+          ${datas.map((d,i) => {
+            const [y,mo,dia] = d.split('-').map(Number);
+            const nomeDia = NOMES_DIA[new Date(y,mo-1,dia).getDay()];
+            return `<div class="bg-white rounded px-2 py-1 text-xs border border-blue-100">
+              <span class="font-semibold text-[#004587]">Aula ${i+1}/${qtd}</span>
+              <span class="text-gray-500 ml-1">${dia.toString().padStart(2,'0')}/${mo.toString().padStart(2,'0')}/${y} (${nomeDia})</span>
+            </div>`;
+          }).join('')}
+        </div>`;
+      preview.classList.remove('hidden');
+      btn.textContent = `Lançar ${qtd} encontros`;
+      btn.classList.remove('hidden');
+    };
+
+    window.qSalvarLote = async function() {
+      const ucNome   = document.getElementById('lote-uc').value;
+      const docente  = document.getElementById('lote-docente').value;
+      const tipo     = document.querySelector('input[name="lote-tipo"]:checked')?.value || 'presencial';
+      const horas    = parseFloat(document.getElementById('lote-horas').value) || 0;
+      const qtd      = parseInt(document.getElementById('lote-qtd').value) || 0;
+      const dataInicio = document.getElementById('lote-data-inicio').value;
+      const diasChecked = [...document.querySelectorAll('.lote-dia:checked')].map(c => parseInt(c.value));
+
+      if (!ucNome)    { showErrorMessage('❌ Selecione a UC');       return; }
+      if (!docente)   { showErrorMessage('❌ Selecione o docente');  return; }
+      if (!diasChecked.length) { showErrorMessage('❌ Selecione ao menos um dia da semana'); return; }
+
+      const datas = gerarDatasLote(diasChecked, qtd, dataInicio);
+      const btn = document.getElementById('lote-btn-salvar');
+      const DIAS_ID = ['domingo','segunda','terca','quarta','quinta','sexta','sabado'];
+
+      btn.disabled = true;
+      for (let i = 0; i < datas.length; i++) {
+        btn.textContent = `Salvando ${i+1}/${datas.length}...`;
+        const dateStr = datas[i];
+        const [y,m,d] = dateStr.split('-').map(Number);
+        const diaSemana = DIAS_ID[new Date(y,m-1,d).getDay()];
+        const alocId = 'aloc_' + Date.now() + '_' + Math.floor(Math.random()*1e6);
+        await postToSheet('Alocacoes', [alocId, quadroTurmaAtual.codigo_oferta, quadroTurmaAtual.nome_curso, dateStr, diaSemana, ucNome, docente, quadroTurmaAtual.periodo, tipo, horas]);
+        allAlocacoes.push({ aloc_id: alocId, turma_codigo: quadroTurmaAtual.codigo_oferta, nome_curso: quadroTurmaAtual.nome_curso, data: dateStr, dia_semana: diaSemana, uc_nome: ucNome, docente_nome: docente, periodo: quadroTurmaAtual.periodo, tipo_aula: tipo, horas });
+      }
+
+      btn.disabled = false;
+      fecharModalLote();
+      qRenderMonthlyGrid(quadroTurmaAtual);
+      showSuccessMessage(`✅ ${datas.length} encontros lançados com sucesso!`);
     };
 
     async function qPopularDocentesDisponiveis(dia) {
