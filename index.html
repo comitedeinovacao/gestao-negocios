@@ -1772,9 +1772,14 @@
       const grid = document.getElementById('turmas-consulta-grid');
       if (!grid) return;
       grid.innerHTML = '<p class="text-gray-400 text-center py-4 text-sm">Carregando...</p>';
-      const data = await carregarDaAba('Turmas').catch(() => []);
-      _turmasConsultaCache = Array.isArray(data) ? data : [];
-      window.filtrarTurmasConsulta();
+      try {
+        const data = await carregarDaAba('Turmas').catch(() => []);
+        _turmasConsultaCache = Array.isArray(data) ? data : [];
+        window.filtrarTurmasConsulta();
+      } catch(e) {
+        console.error('renderTurmasConsulta erro:', e);
+        if (grid) grid.innerHTML = '<p class="text-red-400 text-center py-4 text-sm">Erro: ' + (e && e.message || e) + '</p>';
+      }
     };
 
     window.filtrarTurmasConsulta = function() {
@@ -1800,9 +1805,14 @@
       const grid = document.getElementById('parceiros-consulta-grid');
       if (!grid) return;
       grid.innerHTML = '<p class="text-gray-400 text-center py-4 text-sm">Carregando...</p>';
-      const data = await carregarDaAba('Turmas').catch(() => []);
-      _turmasConsultaCache = Array.isArray(data) ? data : [];
-      window.filtrarParceirosConsulta();
+      try {
+        const data = await carregarDaAba('Turmas').catch(() => []);
+        _turmasConsultaCache = Array.isArray(data) ? data : [];
+        window.filtrarParceirosConsulta();
+      } catch(e) {
+        console.error('renderParceirosConsulta erro:', e);
+        if (grid) grid.innerHTML = '<p class="text-red-400 text-center py-4 text-sm">Erro: ' + (e && e.message || e) + '</p>';
+      }
     };
 
     window.filtrarParceirosConsulta = function() {
@@ -1829,9 +1839,14 @@
       if (open) {
         const div = document.getElementById('cad-busca-turma-resultado');
         if (div) div.innerHTML = '<p class="text-xs text-gray-400 text-center py-3">Carregando turmas...</p>';
-        const data = await carregarDaAba('Turmas').catch(() => []);
-        _turmasConsultaCache = Array.isArray(data) ? data : [];
-        window.cadBuscarTurmas(document.getElementById('cad-busca-turma-input')?.value || '');
+        try {
+          const data = await carregarDaAba('Turmas').catch(() => []);
+          _turmasConsultaCache = Array.isArray(data) ? data : [];
+          window.cadBuscarTurmas(document.getElementById('cad-busca-turma-input')?.value || '');
+        } catch(e) {
+          console.error('toggleBuscaTurmas erro:', e);
+          if (div) div.innerHTML = '<p class="text-xs text-red-400 text-center py-3">Erro: ' + (e && e.message || e) + '</p>';
+        }
       }
     };
 
@@ -3318,32 +3333,37 @@
         const container = document.getElementById('qs-turmas-lista');
         container.style.display = 'block';
         container.innerHTML = '<p class="text-gray-400 text-center py-3 text-sm">Carregando parceiros...</p>';
-        const turmas = (await carregarDaAba('Turmas').catch(() => [])) || [];
-        _turmasConsultaCache = turmas; // compartilha o cache
-        const parceiras = turmas.filter(t => {
-          const cod = t.codigo_oferta || '';
-          const nome = t.nome_curso || '';
-          return cod.startsWith('PARC-') || ['GEP/GD','Sebrae'].includes(nome) || nome.startsWith('Evento —');
-        });
-        const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
-        const tipoIcon = { 'GEP/GD': '🤝', 'Sebrae': '🏢' };
-        if (parceiras.length === 0) {
-          container.innerHTML = '<p class="text-gray-500 text-center py-6 text-sm">Nenhuma turma parceira cadastrada.<br><span class="text-xs text-gray-400">Cadastre em Cadastro → Turmas → Parceiros</span></p>';
-          return;
+        try {
+          const turmas = (await carregarDaAba('Turmas').catch(() => [])) || [];
+          _turmasConsultaCache = turmas;
+          const parceiras = turmas.filter(t => {
+            const cod = t.codigo_oferta || '';
+            const nome = t.nome_curso || '';
+            return cod.startsWith('PARC-') || ['GEP/GD','Sebrae'].includes(nome) || nome.startsWith('Evento —');
+          });
+          const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
+          const tipoIcon = { 'GEP/GD': '🤝', 'Sebrae': '🏢' };
+          if (parceiras.length === 0) {
+            container.innerHTML = '<p class="text-gray-500 text-center py-6 text-sm">Nenhuma turma parceira cadastrada.<br><span class="text-xs text-gray-400">Cadastre em Cadastro → Turmas → Parceiros</span></p>';
+            return;
+          }
+          container.innerHTML = '<p class="font-semibold text-gray-700 text-sm mb-3">Selecione a atividade parceira:</p>';
+          parceiras.forEach(t => {
+            const div = document.createElement('div');
+            div.className = 'cursor-pointer flex items-center justify-between bg-purple-50 border-2 border-purple-100 hover:border-purple-400 rounded-xl px-5 py-4 transition-all mb-2';
+            const icone = tipoIcon[(t.nome_curso||'')] || '📋';
+            div.innerHTML = `<div>
+              <p class="font-bold text-purple-700 text-sm">${icone} ${t.nome_curso} — ${t.codigo_oferta || ''}</p>
+              <p class="text-xs text-gray-500">${periodoLabel[t.periodo] || t.periodo || '-'} · ${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)}</p>
+            </div>
+            <svg class="w-5 h-5 text-purple-400 flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>`;
+            div.onclick = () => qsAbrirQuadro(t);
+            container.appendChild(div);
+          });
+        } catch(e) {
+          console.error('qsFiltrarCursos parceiros erro:', e);
+          container.innerHTML = '<p class="text-red-400 text-center py-4 text-sm">Erro: ' + (e && e.message || e) + '</p>';
         }
-        container.innerHTML = '<p class="font-semibold text-gray-700 text-sm mb-3">Selecione a atividade parceira:</p>';
-        parceiras.forEach(t => {
-          const div = document.createElement('div');
-          div.className = 'cursor-pointer flex items-center justify-between bg-purple-50 border-2 border-purple-100 hover:border-purple-400 rounded-xl px-5 py-4 transition-all mb-2';
-          const icone = tipoIcon[(t.nome_curso||'')] || '📋';
-          div.innerHTML = `<div>
-            <p class="font-bold text-purple-700 text-sm">${icone} ${t.nome_curso} — ${t.codigo_oferta || ''}</p>
-            <p class="text-xs text-gray-500">${periodoLabel[t.periodo] || t.periodo || '-'} · ${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)}</p>
-          </div>
-          <svg class="w-5 h-5 text-purple-400 flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>`;
-          div.onclick = () => qsAbrirQuadro(t);
-          container.appendChild(div);
-        });
         return;
       }
 
