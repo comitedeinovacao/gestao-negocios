@@ -3336,11 +3336,7 @@
         try {
           const turmas = (await carregarDaAba('Turmas').catch(() => [])) || [];
           _turmasConsultaCache = turmas;
-          const parceiras = turmas.filter(t => {
-            const cod = t.codigo_oferta || '';
-            const nome = t.nome_curso || '';
-            return cod.startsWith('PARC-') || ['GEP/GD','Sebrae'].includes(nome) || nome.startsWith('Evento —');
-          });
+          const parceiras = turmas.filter(t => isParceiro(t));
           const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
           const tipoIcon = { 'GEP/GD': '🤝', 'Sebrae': '🏢' };
           if (parceiras.length === 0) {
@@ -3981,8 +3977,8 @@
 
     function isParceiro(turma) {
       if (!turma) return false;
-      const cod = (turma.codigo_oferta || turma.turma_codigo || '');
-      const nome = (turma.nome_curso || '');
+      const cod = String(turma.codigo_oferta || turma.turma_codigo || '');
+      const nome = String(turma.nome_curso || '');
       return cod.startsWith('PARC-') || ['GEP/GD','Sebrae'].includes(nome) || nome.startsWith('Evento —');
     }
 
