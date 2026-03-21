@@ -4112,32 +4112,22 @@
       localStorage.setItem('dc_' + btoa(unescape(encodeURIComponent(nome))) + '_' + field, String(val));
     }
 
-    // Escala semanal por docente: { seg: ['tarde','noite'], ter: ['tarde'], ... }
-    function dcSchedGet(nome) {
-      const raw = localStorage.getItem('dc_' + btoa(unescape(encodeURIComponent(nome))) + '_sched');
-      if (!raw) return null;
-      try { return JSON.parse(raw); } catch(e) { return null; }
-    }
-    function dcSchedSet(nome, sched) {
-      localStorage.setItem('dc_' + btoa(unescape(encodeURIComponent(nome))) + '_sched', JSON.stringify(sched));
-    }
-
-    // Gera o HTML do editor de escala semanal (tabela de checkboxes)
-    function percSchedEditorHTML(idSafe, sched) {
-      const DIAS_KEY = ['seg','ter','qua','qui','sex','sab'];
-      const DIAS_PT  = ['Seg','Ter','Qua','Qui','Sex','Sáb'];
-      const PERIODOS = [{ key:'manha',label:'Manhã' },{ key:'tarde',label:'Tarde' },{ key:'noite',label:'Noite' }];
-      const header = `<tr class="text-gray-500"><th class="text-left py-0.5 pr-2 font-semibold">Turno</th>${DIAS_PT.map(d => `<th class="text-center font-semibold px-1">${d}</th>`).join('')}</tr>`;
-      const body = PERIODOS.map(({ key, label }) =>
-        `<tr><td class="py-1 pr-2 font-semibold text-gray-600">${label}</td>${DIAS_KEY.map(dk => {
-          const chk = sched && (sched[dk] || []).includes(key) ? 'checked' : '';
-          return `<td class="text-center px-1"><input type="checkbox" id="psched-${idSafe}-${dk}-${key}" ${chk} class="w-3.5 h-3.5 rounded accent-[#004587]"></td>`;
-        }).join('')}</tr>`
-      ).join('');
-      return `<div class="col-span-3 border-t border-blue-200 pt-2 mt-1">
-        <p class="font-semibold text-gray-600 mb-1.5 text-[10px] uppercase tracking-wide">Escala de trabalho semanal</p>
-        <table class="w-full text-[10px]"><thead>${header}</thead><tbody>${body}</tbody></table>
-      </div>`;
+    // Deriva escala de trabalho do campo escala_semanal do cadastro do docente
+    // Retorna { seg: ['tarde','noite'], ter: ['tarde','noite'], ... } ou null se não cadastrado
+    function painelSchedFromDocente(nome) {
+      const doc = allTeachers.find(d => d.nome_completo === nome);
+      if (!doc || !doc.escala_semanal) return null;
+      try {
+        const escala = JSON.parse(doc.escala_semanal);
+        const DIA_MAP = { segunda:'seg', terca:'ter', quarta:'qua', quinta:'qui', sexta:'sex', sabado:'sab' };
+        const TIPO_PERIODOS = { manha_tarde: ['manha','tarde'], tarde_noite: ['tarde','noite'] };
+        const sched = { seg:[], ter:[], qua:[], qui:[], sex:[], sab:[] };
+        for (const [diaEscala, diaKey] of Object.entries(DIA_MAP)) {
+          const d = escala[diaEscala];
+          if (d && d.ativo) sched[diaKey] = TIPO_PERIODOS[d.tipo] || ['tarde','noite'];
+        }
+        return sched;
+      } catch(e) { return null; }
     }
 
     function isParceiro(turma) {
@@ -4199,7 +4189,6 @@
           const pReun     = chMensal > 0 ? Math.round(hReun  / chMensal * 100) : 0;
           const pPlan     = Math.max(0, 100 - pSala - pParc - pReun);
           const idSafe    = 'doc_' + btoa(unescape(encodeURIComponent(nome))).replace(/[^a-zA-Z0-9]/g,'');
-          const sched     = dcSchedGet(nome);
 
           return `
             <div class="perc-docente-card bg-white rounded-2xl border border-gray-100 p-4 mb-3 shadow-sm" data-nome="${nome.replace(/"/g,'&quot;')}">
@@ -4220,7 +4209,6 @@
                 <div><label class="block font-semibold text-gray-600 mb-1">H Reuniões/mês</label>
                   <input id="pre-${idSafe}" type="number" step="0.5" value="${hReunPed}" min="0" max="20"
                     class="w-full border border-gray-300 rounded-lg px-2 py-1 text-sm"></div>
-                ${percSchedEditorHTML(idSafe, sched)}
                 <div class="col-span-3 flex justify-end gap-2 mt-2">
                   <button onclick="percSalvarConfig('${idSafe}','${nome.replace(/'/g,"\\'")}'); renderPercDocentes()"
                     class="bg-[#004587] text-white text-xs px-3 py-1 rounded-lg font-semibold">Salvar</button>
@@ -4285,14 +4273,6 @@
       dcfgSet(nome, 'ch_mensal', ch);
       dcfgSet(nome, 'parc_semanal', parc);
       dcfgSet(nome, 'reuniao_mensal', reun);
-      // Salva escala semanal
-      const DIAS_KEY = ['seg','ter','qua','qui','sex','sab'];
-      const PERIODOS = ['manha','tarde','noite'];
-      const sched = {};
-      for (const dk of DIAS_KEY) {
-        sched[dk] = PERIODOS.filter(p => document.getElementById(`psched-${idSafe}-${dk}-${p}`)?.checked);
-      }
-      dcSchedSet(nome, sched);
       document.getElementById('perc-edit-' + idSafe)?.classList.add('hidden');
     };
 
@@ -4564,7 +4544,7 @@
       // Sempre 3 linhas por docente: Manhã, Tarde, Noite
       const tbodyRows = docentes.map(doc => {
         const nome  = doc.nome_completo;
-        const sched = dcSchedGet(nome); // null se não configurado
+        const sched = painelSchedFromDocente(nome); // lê do cadastro do docente
 
         return PERIODOS_ORD.map((periodo, pi) => {
           const isFirst = pi === 0;
