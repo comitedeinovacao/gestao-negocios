@@ -4112,6 +4112,34 @@
       localStorage.setItem('dc_' + btoa(unescape(encodeURIComponent(nome))) + '_' + field, String(val));
     }
 
+    // Escala semanal por docente: { seg: ['tarde','noite'], ter: ['tarde'], ... }
+    function dcSchedGet(nome) {
+      const raw = localStorage.getItem('dc_' + btoa(unescape(encodeURIComponent(nome))) + '_sched');
+      if (!raw) return null;
+      try { return JSON.parse(raw); } catch(e) { return null; }
+    }
+    function dcSchedSet(nome, sched) {
+      localStorage.setItem('dc_' + btoa(unescape(encodeURIComponent(nome))) + '_sched', JSON.stringify(sched));
+    }
+
+    // Gera o HTML do editor de escala semanal (tabela de checkboxes)
+    function percSchedEditorHTML(idSafe, sched) {
+      const DIAS_KEY = ['seg','ter','qua','qui','sex','sab'];
+      const DIAS_PT  = ['Seg','Ter','Qua','Qui','Sex','Sáb'];
+      const PERIODOS = [{ key:'manha',label:'Manhã' },{ key:'tarde',label:'Tarde' },{ key:'noite',label:'Noite' }];
+      const header = `<tr class="text-gray-500"><th class="text-left py-0.5 pr-2 font-semibold">Turno</th>${DIAS_PT.map(d => `<th class="text-center font-semibold px-1">${d}</th>`).join('')}</tr>`;
+      const body = PERIODOS.map(({ key, label }) =>
+        `<tr><td class="py-1 pr-2 font-semibold text-gray-600">${label}</td>${DIAS_KEY.map(dk => {
+          const chk = sched && (sched[dk] || []).includes(key) ? 'checked' : '';
+          return `<td class="text-center px-1"><input type="checkbox" id="psched-${idSafe}-${dk}-${key}" ${chk} class="w-3.5 h-3.5 rounded accent-[#004587]"></td>`;
+        }).join('')}</tr>`
+      ).join('');
+      return `<div class="col-span-3 border-t border-blue-200 pt-2 mt-1">
+        <p class="font-semibold text-gray-600 mb-1.5 text-[10px] uppercase tracking-wide">Escala de trabalho semanal</p>
+        <table class="w-full text-[10px]"><thead>${header}</thead><tbody>${body}</tbody></table>
+      </div>`;
+    }
+
     function isParceiro(turma) {
       if (!turma) return false;
       const cod = String(turma.codigo_oferta || turma.turma_codigo || '');
@@ -4171,6 +4199,7 @@
           const pReun     = chMensal > 0 ? Math.round(hReun  / chMensal * 100) : 0;
           const pPlan     = Math.max(0, 100 - pSala - pParc - pReun);
           const idSafe    = 'doc_' + btoa(unescape(encodeURIComponent(nome))).replace(/[^a-zA-Z0-9]/g,'');
+          const sched     = dcSchedGet(nome);
 
           return `
             <div class="perc-docente-card bg-white rounded-2xl border border-gray-100 p-4 mb-3 shadow-sm" data-nome="${nome.replace(/"/g,'&quot;')}">
@@ -4191,7 +4220,8 @@
                 <div><label class="block font-semibold text-gray-600 mb-1">H Reuniões/mês</label>
                   <input id="pre-${idSafe}" type="number" step="0.5" value="${hReunPed}" min="0" max="20"
                     class="w-full border border-gray-300 rounded-lg px-2 py-1 text-sm"></div>
-                <div class="col-span-3 flex justify-end gap-2">
+                ${percSchedEditorHTML(idSafe, sched)}
+                <div class="col-span-3 flex justify-end gap-2 mt-2">
                   <button onclick="percSalvarConfig('${idSafe}','${nome.replace(/'/g,"\\'")}'); renderPercDocentes()"
                     class="bg-[#004587] text-white text-xs px-3 py-1 rounded-lg font-semibold">Salvar</button>
                   <button onclick="document.getElementById('perc-edit-${idSafe}').classList.add('hidden')"
@@ -4255,6 +4285,14 @@
       dcfgSet(nome, 'ch_mensal', ch);
       dcfgSet(nome, 'parc_semanal', parc);
       dcfgSet(nome, 'reuniao_mensal', reun);
+      // Salva escala semanal
+      const DIAS_KEY = ['seg','ter','qua','qui','sex','sab'];
+      const PERIODOS = ['manha','tarde','noite'];
+      const sched = {};
+      for (const dk of DIAS_KEY) {
+        sched[dk] = PERIODOS.filter(p => document.getElementById(`psched-${idSafe}-${dk}-${p}`)?.checked);
+      }
+      dcSchedSet(nome, sched);
       document.getElementById('perc-edit-' + idSafe)?.classList.add('hidden');
     };
 
@@ -4482,18 +4520,21 @@
       }
     }
 
-    // Gera o HTML de uma célula (um dia para um docente)
-    function painelCelulaAloc(nomeDoc, dateStr) {
-      const alocs = allAlocacoes.filter(a => a.docente_nome === nomeDoc && normData(a.data) === dateStr);
+    // Gera o HTML de uma célula (um dia/turno para um docente)
+    // periodo: null (todos) | 'manha' | 'tarde' | 'noite'
+    function painelCelulaAloc(nomeDoc, dateStr, periodo) {
+      let alocs = allAlocacoes.filter(a => a.docente_nome === nomeDoc && normData(a.data) === dateStr);
+      if (periodo !== null) {
+        alocs = alocs.filter(a => (a.periodo || '').toLowerCase() === periodo);
+      }
       if (alocs.length === 0) {
-        return `<td class="px-2 py-2 text-center align-middle border-r border-gray-50"><span class="text-[9px] text-green-500 font-semibold">Disponível</span></td>`;
+        return `<td class="px-2 py-1.5 text-center align-middle border-r border-gray-50"><span class="text-[9px] text-green-500 font-semibold">Disponível</span></td>`;
       }
       const pills = alocs.map(a => {
         const isParc = a.tipo_aula === 'parceiro';
         const isEad  = a.tipo_aula === 'ead';
         const cor = isParc ? 'bg-purple-100 text-purple-700' : isEad ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700';
         const h   = parseFloat(a.horas) || 0;
-        // Abreviação: primeiras 3 palavras do nome
         const abrev = (a.nome_curso || '').split(' ').slice(0, 3).join(' ');
         return `<div class="mb-0.5"><span class="inline-block px-1.5 py-0.5 rounded text-[9px] font-semibold ${cor}" title="${(a.nome_curso||'')} — ${(a.uc_nome||'')} — ${h}h">${abrev} · ${h}h</span></div>`;
       }).join('');
@@ -4501,32 +4542,60 @@
     }
 
     function painelTabelaHTML(dias, docentes, mesFiltro) {
-      // mesFiltro: null (não filtra) ou número do mês (0-11)
-      const DIAS_PT = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-      const hoje    = painelFmtDate(new Date());
+      const DIAS_PT      = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+      const DIAS_KEY     = ['seg', 'ter', 'qua', 'qui', 'sex', 'sab'];
+      const PERIODOS_ORD = ['manha', 'tarde', 'noite'];
+      const PERIODO_LBL  = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
+      const PERIODO_COR  = { manha: 'text-yellow-600', tarde: 'text-sky-600', noite: 'text-indigo-700' };
+      const hoje = painelFmtDate(new Date());
 
       const theadCols = dias.map((d, i) => {
-        const ds       = painelFmtDate(d);
-        const isHoje   = ds === hoje;
+        const isHoje   = painelFmtDate(d) === hoje;
         const outMonth = mesFiltro !== null && d.getMonth() !== mesFiltro;
         return `<th class="px-2 py-1.5 text-center min-w-[110px] text-[10px] font-bold ${isHoje ? 'bg-[#F7941D]' : outMonth ? 'opacity-40' : ''}">
-          <div>${DIAS_PT[i]}</div>
-          <div class="font-normal opacity-80">${painelFmtDDMM(d)}</div>
+          <div>${DIAS_PT[i]}</div><div class="font-normal opacity-80">${painelFmtDDMM(d)}</div>
         </th>`;
       }).join('');
 
       const tbodyRows = docentes.map(doc => {
-        const nome = doc.nome_completo;
-        const celulas = dias.map((d, i) => {
-          if (mesFiltro !== null && d.getMonth() !== mesFiltro) {
-            return `<td class="px-2 py-1 bg-gray-50/40 border-r border-gray-50"></td>`;
-          }
-          return painelCelulaAloc(nome, painelFmtDate(d));
+        const nome  = doc.nome_completo;
+        const sched = dcSchedGet(nome);
+
+        // Períodos ativos = união dos turnos definidos em qualquer dia da semana visível
+        const periodosAtivos = sched
+          ? PERIODOS_ORD.filter(p => DIAS_KEY.some(dk => (sched[dk] || []).includes(p)))
+          : [];
+
+        if (periodosAtivos.length === 0) {
+          // Sem escala configurada: linha única, todas as alocações do dia
+          const celulas = dias.map((d, i) => {
+            if (mesFiltro !== null && d.getMonth() !== mesFiltro) return `<td class="px-2 py-1 bg-gray-50/40 border-r border-gray-50"></td>`;
+            return painelCelulaAloc(nome, painelFmtDate(d), null);
+          }).join('');
+          return `<tr class="border-b border-gray-200 hover:bg-blue-50/20">
+            <td class="px-3 py-1.5 font-semibold text-[#004587] text-[10px] sticky left-0 bg-white border-r border-gray-100 min-w-[130px]">${nome}</td>
+            <td class="px-2 py-1 border-r border-gray-100 text-center text-[9px] text-gray-300 min-w-[45px]">—</td>
+            ${celulas}
+          </tr>`;
+        }
+
+        // Com escala: uma linha por turno ativo (rowspan no nome)
+        return periodosAtivos.map((periodo, pi) => {
+          const isFirst = pi === 0;
+          const isLast  = pi === periodosAtivos.length - 1;
+          const celulas = dias.map((d, di) => {
+            if (mesFiltro !== null && d.getMonth() !== mesFiltro) return `<td class="px-2 py-1 bg-gray-50/40 border-r border-gray-50"></td>`;
+            if (!(sched[DIAS_KEY[di]] || []).includes(periodo)) {
+              return `<td class="px-2 py-1 bg-gray-50/30 border-r border-gray-50 text-center"><span class="text-[9px] text-gray-200">—</span></td>`;
+            }
+            return painelCelulaAloc(nome, painelFmtDate(d), periodo);
+          }).join('');
+          return `<tr class="${isLast ? 'border-b border-gray-200' : 'border-b border-gray-50'} hover:bg-blue-50/10">
+            ${isFirst ? `<td rowspan="${periodosAtivos.length}" class="px-3 py-1.5 font-semibold text-[#004587] text-[10px] sticky left-0 bg-white border-r border-gray-100 min-w-[130px] align-middle">${nome}</td>` : ''}
+            <td class="px-2 py-1 border-r border-gray-100 text-center min-w-[45px]"><span class="text-[9px] font-bold uppercase tracking-wide ${PERIODO_COR[periodo]}">${PERIODO_LBL[periodo]}</span></td>
+            ${celulas}
+          </tr>`;
         }).join('');
-        return `<tr class="border-b border-gray-100 hover:bg-blue-50/20">
-          <td class="px-3 py-1.5 font-semibold text-[#004587] text-[10px] sticky left-0 bg-white border-r border-gray-100 min-w-[130px]">${nome}</td>
-          ${celulas}
-        </tr>`;
       }).join('');
 
       return `<div class="overflow-x-auto rounded-xl border border-gray-100 shadow-sm">
@@ -4534,6 +4603,7 @@
           <thead>
             <tr class="bg-[#004587] text-white">
               <th class="px-3 py-1.5 text-left sticky left-0 bg-[#004587] min-w-[130px] text-[10px]">Docente</th>
+              <th class="px-2 py-1.5 text-center text-[10px] min-w-[45px]">Turno</th>
               ${theadCols}
             </tr>
           </thead>
