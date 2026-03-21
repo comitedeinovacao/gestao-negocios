@@ -5218,12 +5218,45 @@
       }
     }
 
+    // Google Sheets retorna datas como '2026-03-21T03:00:00.000Z' e horas como '1899-12-30T16:00:00.000Z'
+    function msNormDataField(val) {
+      if (!val) return '';
+      const s = String(val).trim();
+      if (!s) return '';
+      if (s.includes('T')) {
+        const year = parseInt(s.substring(0, 4));
+        if (year < 1970) return ''; // serial de tempo do Sheets, não é uma data real
+        const d = new Date(s);
+        return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+      }
+      const m = s.match(/(\d{4})-(\d{2})-(\d{2})/);
+      return m ? `${m[1]}-${m[2]}-${m[3]}` : s;
+    }
+    function msNormHora(val) {
+      if (!val) return '';
+      const s = String(val).trim();
+      if (/^\d{1,2}:\d{2}$/.test(s)) return s.padStart(5,'0'); // já está em HH:MM
+      if (s.includes('T')) {
+        // Serial de tempo do Sheets: extrair HH:MM do UTC (Sheets armazena tempo em UTC)
+        const d = new Date(s);
+        return String(d.getUTCHours()).padStart(2,'0') + ':' + String(d.getUTCMinutes()).padStart(2,'0');
+      }
+      return s;
+    }
+
     async function msCarregar() {
       const dados = await carregarDaAba('MapaSalas');
       const cancelados = new Set(dados.filter(r => r.status === 'cancelado').map(r => r.id));
       const byId = {};
       dados.forEach(r => { byId[r.id] = r; });
-      msAlocacoes = Object.values(byId).filter(r => !cancelados.has(r.id) && r.status !== 'cancelado');
+      msAlocacoes = Object.values(byId)
+        .filter(r => !cancelados.has(r.id) && r.status !== 'cancelado')
+        .map(r => ({
+          ...r,
+          data:   msNormDataField(r.data),
+          inicio: msNormHora(r.inicio),
+          fim:    msNormHora(r.fim),
+        }));
       msCarregado = true;
       return msAlocacoes;
     }
