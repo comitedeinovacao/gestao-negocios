@@ -2648,27 +2648,8 @@
     }
 
     async function carregarEventosSheets() {
-      const cbName = 'handleEventos_' + Date.now();
-      const SCRIPT_URL = APPS_SCRIPT_URL + '?aba=Eventos&callback=' + cbName + '&t=' + Date.now();
-
-      return new Promise((resolve) => {
-        const timeout = setTimeout(() => {
-          cleanup();
-          console.warn('Apps Script timeout');
-          resolve([]);
-        }, 8000);
-
-        function cleanup() {
-          clearTimeout(timeout);
-          delete window[cbName];
-          const script = document.getElementById('jsonp-eventos');
-          if (script) script.remove();
-        }
-
-        window[cbName] = function(data) {
-          cleanup();
-          if (!data || !Array.isArray(data.dados)) { resolve([]); return; }
-          resolve(data.dados.map(evt => ({
+      const raw = await carregarDaAba('Eventos');
+      return raw.map(evt => ({
             id: 'sheets_' + Math.random(),
             titulo: String(evt.titulo || ''),
             tipo: String(evt.tipo || 'evento_interno'),
@@ -2711,17 +2692,7 @@
             local: String(evt.local || ''),
             descricao: String(evt.descricao || ''),
             responsavel: String(evt.responsavel || '')
-          })));
-        };
-
-        const old = document.getElementById('jsonp-eventos');
-        if (old) old.remove();
-        const script = document.createElement('script');
-        script.id = 'jsonp-eventos';
-        script.src = SCRIPT_URL;
-        script.onerror = () => { cleanup(); resolve([]); };
-        document.head.appendChild(script);
-      });
+      }));
     }
 
     async function carregarTodosEventos() {
