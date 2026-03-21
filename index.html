@@ -3204,22 +3204,23 @@
         quadroCursoAtual = null;
         lista.style.display = 'block';
         lista.innerHTML = '<p class="text-gray-400 text-center py-3 text-sm">Carregando parceiros...</p>';
-        if (ucsList) ucsList.innerHTML = '<div class="bg-purple-50 border-2 border-purple-100 rounded-xl p-4 text-sm text-purple-700"><p class="font-semibold mb-1">ℹ️ UCs de Parceiros</p><p>Para atividades parceiras, a Unidade Curricular é definida automaticamente como o nome da atividade. Não é necessário cadastrar UCs separadamente.</p></div>';
+        if (ucsList) ucsList.innerHTML = '<p class="text-gray-400 text-center py-8 text-sm">Selecione uma atividade parceira para cadastrar competências.</p>';
         try {
           const turmas = await carregarDaAba('Turmas').catch(() => []);
           const parceiros = (Array.isArray(turmas) ? turmas : []).filter(t => isParceiro(t));
           if (parceiros.length === 0) {
-            lista.innerHTML = '<p class="text-gray-400 text-center py-4 text-sm">Nenhuma atividade parceira cadastrada.</p>';
+            lista.innerHTML = '<p class="text-gray-400 text-center py-4 text-sm">Nenhuma atividade parceira cadastrada.<br><span class="text-xs text-gray-300">Cadastre em Cadastro → Turmas → Parceiros</span></p>';
             return;
           }
           const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
-          lista.innerHTML = parceiros.map(t => `
-            <div class="px-4 py-3 border-b border-gray-100 last:border-0">
-              <p class="font-semibold text-purple-700 text-sm">${t.nome_curso || '—'} <span class="text-xs text-gray-400 font-normal">· ${String(t.codigo_oferta || '')}</span></p>
-              <p class="text-xs text-gray-400">${periodoLabel[t.periodo] || t.periodo || '-'} · ${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)}</p>
-              <p class="text-xs text-purple-500 mt-0.5 font-medium">UC automática: "${t.nome_curso}"</p>
-            </div>`).join('');
-          lista.onclick = null;
+          lista.innerHTML = '<p class="text-xs text-gray-500 px-4 py-2 font-semibold uppercase">Selecione a atividade:</p>' +
+            parceiros.map((t, i) => `
+            <button type="button" class="q-parceiro-item w-full text-left px-4 py-3 hover:bg-purple-50 transition-colors border-b border-gray-100 last:border-0" data-idx="${i}">
+              <p class="font-semibold text-purple-700 text-sm pointer-events-none">${t.nome_curso || '—'} <span class="text-xs text-gray-400 font-normal">· ${String(t.codigo_oferta || '')}</span></p>
+              <p class="text-xs text-gray-400 pointer-events-none">${periodoLabel[t.periodo] || t.periodo || '-'} · ${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)}</p>
+            </button>`).join('');
+          const snap = parceiros;
+          lista.onclick = e => { const b = e.target.closest('.q-parceiro-item'); if (b) qSelecionarParceiro(snap[+b.dataset.idx]); };
         } catch(e) {
           lista.innerHTML = '<p class="text-red-400 text-center py-4 text-sm">Erro: ' + (e && e.message || e) + '</p>';
         }
@@ -3265,6 +3266,33 @@
       document.getElementById('q-versao-ativa').classList.add('hidden');
       document.getElementById('q-add-uc-form').style.display = 'none';
       document.getElementById('q-ucs-lista').innerHTML = '<p class="text-gray-400 text-center py-8 text-sm">Selecione um curso para ver suas UCs.</p>';
+    };
+
+    window.qSelecionarParceiro = async function(turma) {
+      const parcId = String(turma.codigo_oferta || turma.nome_curso);
+      const versao = String(turma.versao_plano || '');
+      quadroCursoAtual = { id: parcId, nome: turma.nome_curso, modalidade: 'parceiros' };
+      // Pré-preenche versão oculta
+      document.getElementById('q-versao').value = versao;
+      document.getElementById('q-versao-container').style.display = 'none';
+      // Exibe o parceiro selecionado no banner
+      document.getElementById('q-curso-nome').textContent = turma.nome_curso + (versao ? ' (' + versao + ')' : '');
+      document.getElementById('q-curso-selecionado').style.display = 'flex';
+      document.getElementById('q-curso-lista').style.display = 'none';
+      // Adapta form para "Competência / Atividade"
+      const form = document.getElementById('q-add-uc-form');
+      const formTitle = form.querySelector('h4');
+      const formDesc  = form.querySelector('p');
+      if (formTitle) formTitle.textContent = 'Adicionar Competência / Atividade';
+      if (formDesc)  formDesc.textContent  = 'Nome da ação que o docente irá executar nesta atividade parceira.';
+      document.getElementById('q-uc-nome').placeholder = 'Ex: Multiplicação de Inovação, Consultoria Sebraetec...';
+      document.getElementById('q-uc-pres').value = '';
+      document.getElementById('q-uc-ead').value  = '';
+      document.getElementById('q-uc-total').value = '';
+      form.style.display = 'block';
+      // Carrega competências já cadastradas
+      if (allUCs.length === 0) await loadUCs();
+      qRenderUCsLista(parcId, versao);
     };
 
     window.qCarregarUCsVersao = async function() {
@@ -3319,7 +3347,9 @@
       const pres = parseFloat(document.getElementById('q-uc-pres').value) || 0;
       const ead  = parseFloat(document.getElementById('q-uc-ead').value)  || 0;
       const total = pres + ead;
-      if (!nome || !pres) { showErrorMessage('❌ Preencha o nome e CH Presencial da UC'); return; }
+      const isParc = quadroCursoAtual.modalidade === 'parceiros';
+      if (!nome) { showErrorMessage('❌ Preencha o nome da ' + (isParc ? 'competência/atividade' : 'UC')); return; }
+      if (!isParc && !pres) { showErrorMessage('❌ Preencha o nome e CH Presencial da UC'); return; }
       // Impede UC duplicada no mesmo curso/versão
       const jaExiste = allUCs.some(u =>
         u.curso_id === quadroCursoAtual.id &&
@@ -3650,15 +3680,35 @@
       // UCs do curso — filtra por curso_id (via data.json) ou fallback por curso_nome
       const ucSelect = document.getElementById('modal-uc-select');
 
-      // Modo parceiro: sem UC, apenas docente + horas
+      // Modo parceiro: mostra atividades cadastradas, ou oculta se não houver
       const isParc = isParceiro(quadroTurmaAtual);
       const ucRow = document.getElementById('modal-uc-row');
       if (isParc) {
-        ucSelect.innerHTML = `<option value="${quadroTurmaAtual.nome_curso}" selected>${quadroTurmaAtual.nome_curso}</option>`;
-        if (ucRow) ucRow.style.display = 'none';
+        if (allUCs.length === 0) await loadUCs();
+        const normS = s => (s||'').toLowerCase().normalize('NFC').trim();
+        const parcId = String(quadroTurmaAtual.codigo_oferta || '');
+        const versaoT = String(quadroTurmaAtual.versao_plano || '');
+        const ucsParc = allUCs.filter(u => {
+          const matchId   = parcId && u.curso_id === parcId;
+          const matchNome = normS(u.curso_nome) === normS(quadroTurmaAtual.nome_curso);
+          const matchVers = !versaoT || String(u.versao) === versaoT;
+          return (matchId || matchNome) && matchVers;
+        });
+        if (ucsParc.length > 0) {
+          if (ucRow) ucRow.style.display = '';
+          const lbl = ucRow?.querySelector('label');
+          if (lbl) lbl.textContent = 'Competência / Atividade';
+          ucSelect.innerHTML = '<option value="">Selecione a atividade...</option>' +
+            ucsParc.map(u => `<option value="${u.uc_nome}">${u.uc_nome}</option>`).join('');
+        } else {
+          ucSelect.innerHTML = `<option value="${quadroTurmaAtual.nome_curso}" selected>${quadroTurmaAtual.nome_curso}</option>`;
+          if (ucRow) ucRow.style.display = 'none';
+        }
         document.getElementById('modal-tipo-container')?.classList.add('hidden');
       } else {
         if (ucRow) ucRow.style.display = '';
+        const lbl = ucRow?.querySelector('label');
+        if (lbl) lbl.textContent = 'Unidade Curricular';
         if (allUCs.length === 0) await loadUCs();
       }
 
@@ -3710,20 +3760,38 @@
       modal.classList.remove('hidden');
       modal.classList.add('flex');
 
-      // Popula UCs
+      // Popula UCs / Atividades
       if (allUCs.length === 0) await loadUCs();
       const norm = s => (s||'').toLowerCase().normalize('NFC').trim();
-      const dadosCursos = await carregarDadosCursos();
-      const todosCursos = [...(dadosCursos.cursos_tecnicos||[]), ...(dadosCursos.cursos_livres||[])];
-      const cursoEncontrado = todosCursos.find(c => norm(c.nome) === norm(quadroTurmaAtual.nome_curso));
-      const versaoTurma = quadroTurmaAtual.versao_plano || '';
-      const ucsDisponiveis = allUCs.filter(u => {
-        const mesmoNome = cursoEncontrado ? u.curso_id === cursoEncontrado.id : norm(u.curso_nome) === norm(quadroTurmaAtual.nome_curso);
-        const mesmaVersao = !versaoTurma || String(u.versao) === String(versaoTurma);
-        return mesmoNome && mesmaVersao;
-      });
+      const versaoTurma = String(quadroTurmaAtual.versao_plano || '');
       const ucSel = document.getElementById('lote-uc');
-      ucSel.innerHTML = '<option value="">Selecione a UC...</option>' +
+      const loteUcLabel = ucSel.closest('div')?.querySelector('label');
+      let ucsDisponiveis;
+      if (isParceiro(quadroTurmaAtual)) {
+        const parcId = String(quadroTurmaAtual.codigo_oferta || '');
+        ucsDisponiveis = allUCs.filter(u => {
+          const matchId   = parcId && u.curso_id === parcId;
+          const matchNome = norm(u.curso_nome) === norm(quadroTurmaAtual.nome_curso);
+          const matchVers = !versaoTurma || String(u.versao) === versaoTurma;
+          return (matchId || matchNome) && matchVers;
+        });
+        if (loteUcLabel) loteUcLabel.textContent = 'Competência / Atividade';
+        if (ucsDisponiveis.length === 0) {
+          // Sem atividades cadastradas: usa o nome da turma como UC automática
+          ucsDisponiveis = [{ uc_nome: quadroTurmaAtual.nome_curso, ch_presencial: 0, ch_ead: 0, carga_horaria_total: 0 }];
+        }
+      } else {
+        if (loteUcLabel) loteUcLabel.textContent = 'Unidade Curricular';
+        const dadosCursos = await carregarDadosCursos();
+        const todosCursos = [...(dadosCursos.cursos_tecnicos||[]), ...(dadosCursos.cursos_livres||[])];
+        const cursoEncontrado = todosCursos.find(c => norm(c.nome) === norm(quadroTurmaAtual.nome_curso));
+        ucsDisponiveis = allUCs.filter(u => {
+          const mesmoNome = cursoEncontrado ? u.curso_id === cursoEncontrado.id : norm(u.curso_nome) === norm(quadroTurmaAtual.nome_curso);
+          const mesmaVersao = !versaoTurma || String(u.versao) === versaoTurma;
+          return mesmoNome && mesmaVersao;
+        });
+      }
+      ucSel.innerHTML = '<option value="">Selecione...</option>' +
         ucsDisponiveis.map(u => `<option value="${u.uc_nome}" data-pres="${u.ch_presencial||0}" data-ead="${u.ch_ead||0}" data-total="${u.carga_horaria_total||0}">${u.uc_nome}</option>`).join('');
 
       // Popula docentes
