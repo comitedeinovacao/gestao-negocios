@@ -1768,22 +1768,13 @@
       </div>`;
     }
 
-    // Carrega turmas do servidor e armazena no cache
-    function _carregarTurmasCache() {
-      return carregarDaAba('Turmas').then(data => {
-        _turmasConsultaCache = Array.isArray(data) ? data : [];
-        return _turmasConsultaCache;
-      }).catch(() => { _turmasConsultaCache = []; return []; });
-    }
-
-    window.renderTurmasConsulta = function() {
+    window.renderTurmasConsulta = async function() {
       const grid = document.getElementById('turmas-consulta-grid');
       if (!grid) return;
       grid.innerHTML = '<p class="text-gray-400 text-center py-4 text-sm">Carregando...</p>';
-      _carregarTurmasCache().then(() => {
-        try { window.filtrarTurmasConsulta(); }
-        catch(e) { grid.innerHTML = '<p class="text-red-400 text-center py-4 text-sm">Erro ao carregar turmas.</p>'; console.error(e); }
-      });
+      const data = await carregarDaAba('Turmas').catch(() => []);
+      _turmasConsultaCache = Array.isArray(data) ? data : [];
+      window.filtrarTurmasConsulta();
     };
 
     window.filtrarTurmasConsulta = function() {
@@ -1805,14 +1796,13 @@
         : turmas.map(t => _turmaRow(t, false)).join('');
     };
 
-    window.renderParceirosConsulta = function() {
+    window.renderParceirosConsulta = async function() {
       const grid = document.getElementById('parceiros-consulta-grid');
       if (!grid) return;
       grid.innerHTML = '<p class="text-gray-400 text-center py-4 text-sm">Carregando...</p>';
-      _carregarTurmasCache().then(() => {
-        try { window.filtrarParceirosConsulta(); }
-        catch(e) { grid.innerHTML = '<p class="text-red-400 text-center py-4 text-sm">Erro ao carregar parceiros.</p>'; console.error(e); }
-      });
+      const data = await carregarDaAba('Turmas').catch(() => []);
+      _turmasConsultaCache = Array.isArray(data) ? data : [];
+      window.filtrarParceirosConsulta();
     };
 
     window.filtrarParceirosConsulta = function() {
@@ -1830,18 +1820,18 @@
     };
 
     // ── Busca rápida no Cadastro de Turmas ──
-    window.toggleBuscaTurmas = function() {
+    window.toggleBuscaTurmas = async function() {
       const panel = document.getElementById('busca-turmas-panel');
       const chev  = document.getElementById('busca-turmas-chevron');
       const open  = panel.style.display === 'none';
       panel.style.display = open ? 'block' : 'none';
       if (chev) chev.style.transform = open ? 'rotate(180deg)' : '';
       if (open) {
-        if (!Array.isArray(_turmasConsultaCache)) {
-          _carregarTurmasCache().then(() => cadBuscarTurmas(''));
-        } else {
-          cadBuscarTurmas('');
-        }
+        const div = document.getElementById('cad-busca-turma-resultado');
+        if (div) div.innerHTML = '<p class="text-xs text-gray-400 text-center py-3">Carregando turmas...</p>';
+        const data = await carregarDaAba('Turmas').catch(() => []);
+        _turmasConsultaCache = Array.isArray(data) ? data : [];
+        window.cadBuscarTurmas(document.getElementById('cad-busca-turma-input')?.value || '');
       }
     };
 
@@ -1852,7 +1842,6 @@
       if (!div) return;
       if (!Array.isArray(_turmasConsultaCache)) {
         div.innerHTML = '<p class="text-xs text-gray-400 text-center py-3">Carregando...</p>';
-        _carregarTurmasCache().then(() => cadBuscarTurmas(termo));
         return;
       }
       const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
