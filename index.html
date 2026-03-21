@@ -1273,6 +1273,28 @@
               <tbody id="rel-doc-body"></tbody>
             </table>
           </div>
+          <!-- Resumo -->
+          <div id="rel-doc-resumo" class="mt-6 border-t-2 border-gray-200 pt-5">
+            <p class="text-xs font-bold text-gray-500 uppercase mb-3">Resumo do Mês</p>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="bg-gray-50 rounded-xl px-4 py-3 flex justify-between items-center">
+                <span class="text-sm text-gray-600 font-semibold">Horas em Aula</span>
+                <span class="text-sm font-bold text-[#004587]" id="rel-resumo-horas-aula">—</span>
+              </div>
+              <div class="bg-gray-50 rounded-xl px-4 py-3 flex justify-between items-center">
+                <span class="text-sm text-gray-600 font-semibold">Número de Aulas</span>
+                <span class="text-sm font-bold text-[#004587]" id="rel-resumo-num-aulas">—</span>
+              </div>
+              <div class="bg-blue-50 rounded-xl px-4 py-3 flex justify-between items-center">
+                <span class="text-sm text-blue-700 font-semibold">Alocação em Sala</span>
+                <span class="text-sm font-bold text-blue-700" id="rel-resumo-perc-sala">—</span>
+              </div>
+              <div class="bg-green-50 rounded-xl px-4 py-3 flex justify-between items-center">
+                <span class="text-sm text-green-700 font-semibold">Planejamento</span>
+                <span class="text-sm font-bold text-green-700" id="rel-resumo-plan">—</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -3877,8 +3899,16 @@
       const alocs = allAlocacoes.filter(a => a.docente_nome === nome && normData(a.data).startsWith(mesStr) && (parseFloat(a.horas) || 0) > 0);
       alocs.sort((a, b) => normData(a.data).localeCompare(normData(b.data)));
 
-      const totalSala = alocs.filter(a => (a.tipo_aula || '') !== 'parceiro').reduce((s, a) => s + (parseFloat(a.horas) || 0), 0);
-      const totalParc = alocs.filter(a => a.tipo_aula === 'parceiro').reduce((s, a) => s + (parseFloat(a.horas) || 0), 0);
+      const alocsAula  = alocs.filter(a => (a.tipo_aula || '') !== 'parceiro');
+      const alocsParc  = alocs.filter(a => a.tipo_aula === 'parceiro');
+      const totalSala  = alocsAula.reduce((s, a) => s + (parseFloat(a.horas) || 0), 0);
+      const totalParc  = alocsParc.reduce((s, a) => s + (parseFloat(a.horas) || 0), 0);
+      const numAulas   = alocsAula.length;
+      const chMensal   = dcfgGet(nome, 'ch_mensal', 160);
+      const hReunPed   = dcfgGet(nome, 'reuniao_mensal', 0);
+      const hPlan      = Math.max(0, chMensal - totalSala - totalParc - hReunPed);
+      const percSala   = chMensal > 0 ? Math.round((totalSala / chMensal) * 100) : 0;
+      const percPlan   = chMensal > 0 ? Math.round((hPlan / chMensal) * 100) : 0;
 
       const rows = alocs.length === 0
         ? '<p class="text-gray-400 text-center py-6 text-sm">Nenhuma alocação neste mês.</p>'
@@ -3903,6 +3933,10 @@
       document.getElementById('rel-doc-total-sala').textContent = totalSala.toFixed(1) + 'h';
       document.getElementById('rel-doc-total-parc').textContent = totalParc.toFixed(1) + 'h';
       document.getElementById('rel-doc-body').innerHTML = rows;
+      document.getElementById('rel-resumo-horas-aula').textContent = totalSala.toFixed(1) + ' horas';
+      document.getElementById('rel-resumo-num-aulas').textContent  = numAulas + (numAulas === 1 ? ' aula' : ' aulas');
+      document.getElementById('rel-resumo-perc-sala').textContent  = `${totalSala.toFixed(1)}h (${percSala}% da CH)`;
+      document.getElementById('rel-resumo-plan').textContent       = `${hPlan.toFixed(1)}h (${percPlan}% da CH)`;
       modal.classList.remove('hidden');
       modal.classList.add('flex');
     };
