@@ -1033,9 +1033,10 @@
        <!-- Esquerda: seletor de curso + formulário de UC -->
        <div>
         <h3 class="text-xl font-bold text-[#004587] mb-4">Selecione o Curso</h3>
-        <div class="grid grid-cols-2 gap-3 mb-3">
+        <div class="grid grid-cols-3 gap-3 mb-3">
          <button type="button" id="q-btn-tec" onclick="qFiltrarCursos('tecnicos')" class="px-4 py-3 rounded-xl border-2 border-gray-200 font-semibold text-sm text-gray-700 hover:border-[#004587] hover:text-[#004587] transition-all">Técnico</button>
          <button type="button" id="q-btn-liv" onclick="qFiltrarCursos('livres')" class="px-4 py-3 rounded-xl border-2 border-gray-200 font-semibold text-sm text-gray-700 hover:border-[#F7941D] hover:text-[#F7941D] transition-all">Livre / Qualificação</button>
+         <button type="button" id="q-btn-parc" onclick="qFiltrarCursos('parceiros')" class="px-4 py-3 rounded-xl border-2 border-gray-200 font-semibold text-sm text-gray-700 hover:border-purple-500 hover:text-purple-600 transition-all">Parceiros</button>
         </div>
         <div id="q-curso-lista" style="display:none" class="max-h-52 overflow-y-auto border-2 border-gray-200 rounded-xl bg-white divide-y divide-gray-100 mb-3"></div>
         <div id="q-curso-selecionado" style="display:none" class="flex items-center justify-between bg-blue-50 border-2 border-[#004587]/30 rounded-xl px-4 py-3 mb-3">
@@ -1392,7 +1393,8 @@
       </div>
       <div class="p-6 space-y-5">
        <div id="modal-feriado-aviso" class="hidden"></div>
-       <div>
+       <!-- UC (oculto para parceiros) -->
+       <div id="modal-uc-row">
         <label class="block text-[#004587] font-semibold mb-2">Unidade Curricular</label>
         <select id="modal-uc-select" onchange="calcularSaldoUC()" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
          <option value="">Selecione a UC...</option>
@@ -1410,15 +1412,16 @@
            </label>
           </div>
          </div>
-         <div class="border-t border-gray-200 pt-3">
-          <p class="text-[#004587] font-semibold text-sm mb-2">Horas desta alocação</p>
-          <div class="flex items-center gap-3">
-           <input type="number" id="modal-horas" min="0.5" max="8" step="0.5" value="4"
-                  class="w-24 px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-center font-bold text-lg">
-           <span class="text-gray-400 text-xs">manhã/tarde: até 4h · noite: até 3,5h<br>pode usar frações: 2, 1, 0.5</span>
-          </div>
-         </div>
          <div id="modal-saldo" class="border-t border-gray-200 pt-3 space-y-1"></div>
+        </div>
+       </div>
+       <!-- Horas (sempre visível) -->
+       <div id="modal-horas-row">
+        <label class="block text-[#004587] font-semibold mb-2">Horas desta alocação</label>
+        <div class="flex items-center gap-3">
+         <input type="number" id="modal-horas" min="0.5" max="8" step="0.5" value="4"
+                class="w-24 px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-center font-bold text-lg">
+         <span class="text-gray-400 text-xs">manhã/tarde: até 4h · noite: até 3,5h<br>pode usar frações: 2, 1, 0.5</span>
         </div>
        </div>
        <div>
@@ -3188,7 +3191,41 @@
       const base = 'px-4 py-3 rounded-xl border-2 font-semibold text-sm transition-all';
       document.getElementById('q-btn-tec').className = base + (modalidade === 'tecnicos' ? ' border-[#004587] bg-[#004587]/10 text-[#004587]' : ' border-gray-200 text-gray-700');
       document.getElementById('q-btn-liv').className = base + (modalidade === 'livres' ? ' border-[#F7941D] bg-[#F7941D]/10 text-[#F7941D]' : ' border-gray-200 text-gray-700');
+      const parcBtn = document.getElementById('q-btn-parc');
+      if (parcBtn) parcBtn.className = base + (modalidade === 'parceiros' ? ' border-purple-500 bg-purple-50 text-purple-600' : ' border-gray-200 text-gray-700');
+
       const lista = document.getElementById('q-curso-lista');
+      const ucsList = document.getElementById('q-ucs-lista');
+
+      if (modalidade === 'parceiros') {
+        document.getElementById('q-versao-container').style.display = 'none';
+        document.getElementById('q-add-uc-form').style.display = 'none';
+        document.getElementById('q-curso-selecionado').style.display = 'none';
+        quadroCursoAtual = null;
+        lista.style.display = 'block';
+        lista.innerHTML = '<p class="text-gray-400 text-center py-3 text-sm">Carregando parceiros...</p>';
+        if (ucsList) ucsList.innerHTML = '<div class="bg-purple-50 border-2 border-purple-100 rounded-xl p-4 text-sm text-purple-700"><p class="font-semibold mb-1">ℹ️ UCs de Parceiros</p><p>Para atividades parceiras, a Unidade Curricular é definida automaticamente como o nome da atividade. Não é necessário cadastrar UCs separadamente.</p></div>';
+        try {
+          const turmas = await carregarDaAba('Turmas').catch(() => []);
+          const parceiros = (Array.isArray(turmas) ? turmas : []).filter(t => isParceiro(t));
+          if (parceiros.length === 0) {
+            lista.innerHTML = '<p class="text-gray-400 text-center py-4 text-sm">Nenhuma atividade parceira cadastrada.</p>';
+            return;
+          }
+          const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
+          lista.innerHTML = parceiros.map(t => `
+            <div class="px-4 py-3 border-b border-gray-100 last:border-0">
+              <p class="font-semibold text-purple-700 text-sm">${t.nome_curso || '—'} <span class="text-xs text-gray-400 font-normal">· ${String(t.codigo_oferta || '')}</span></p>
+              <p class="text-xs text-gray-400">${periodoLabel[t.periodo] || t.periodo || '-'} · ${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)}</p>
+              <p class="text-xs text-purple-500 mt-0.5 font-medium">UC automática: "${t.nome_curso}"</p>
+            </div>`).join('');
+          lista.onclick = null;
+        } catch(e) {
+          lista.innerHTML = '<p class="text-red-400 text-center py-4 text-sm">Erro: ' + (e && e.message || e) + '</p>';
+        }
+        return;
+      }
+
       lista.style.display = 'block';
       lista.innerHTML = '<p class="text-gray-400 text-center py-3 text-sm">Carregando...</p>';
       const data = await carregarDadosCursos();
@@ -3615,12 +3652,11 @@
 
       // Modo parceiro: sem UC, apenas docente + horas
       const isParc = isParceiro(quadroTurmaAtual);
-      const ucRow = ucSelect?.closest?.('div.space-y-5 > div') || ucSelect?.parentElement;
+      const ucRow = document.getElementById('modal-uc-row');
       if (isParc) {
         ucSelect.innerHTML = `<option value="${quadroTurmaAtual.nome_curso}" selected>${quadroTurmaAtual.nome_curso}</option>`;
         if (ucRow) ucRow.style.display = 'none';
         document.getElementById('modal-tipo-container')?.classList.add('hidden');
-        document.getElementById('modal-saldo')?.classList?.add?.('hidden');
       } else {
         if (ucRow) ucRow.style.display = '';
         if (allUCs.length === 0) await loadUCs();
