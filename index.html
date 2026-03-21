@@ -3873,7 +3873,8 @@
     window.qSalvarLote = async function() {
       const ucNome   = document.getElementById('lote-uc').value;
       const docente  = document.getElementById('lote-docente').value;
-      const tipo     = document.querySelector('input[name="lote-tipo"]:checked')?.value || 'presencial';
+      const tipoRadio = document.querySelector('input[name="lote-tipo"]:checked')?.value || 'presencial';
+      const tipo     = isParceiro(quadroTurmaAtual) ? 'parceiro' : tipoRadio;
       const horas    = parseFloat(document.getElementById('lote-horas').value) || 0;
       const qtd      = parseInt(document.getElementById('lote-qtd').value) || 0;
       const dataInicio = document.getElementById('lote-data-inicio').value;
@@ -4336,7 +4337,7 @@
       const docenteNome = document.getElementById('modal-docente-select').value;
       const isParc = isParceiro(quadroTurmaAtual);
       if ((!ucNome && !isParc) || !docenteNome) { showErrorMessage('❌ Selecione ' + (isParc ? '' : 'UC e ') + 'Docente'); return; }
-      const ucNomeFinal = isParc ? (quadroTurmaAtual.nome_curso) : ucNome;
+      const ucNomeFinal = isParc ? (ucNome || quadroTurmaAtual.nome_curso) : ucNome;
       if (!quadroTurmaAtual || !modalAlocacaoData) return;
       const btn = document.querySelector('#modal-alocacao button[onclick="salvarAlocacao()"]');
       btn.disabled = true; btn.textContent = '⏳ Salvando...';
