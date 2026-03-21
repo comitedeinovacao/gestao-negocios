@@ -1652,7 +1652,7 @@
            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
            Buscar Turma Cadastrada
           </label>
-          <input type="text" id="ms-busca-turma" placeholder="Digite nome ou código da turma..." autocomplete="off"
+          <input type="text" id="ms-busca-turma" placeholder="Buscar por nome do curso..." autocomplete="off"
            oninput="msBuscarTurmaDropdown(this.value,'ms-turma-lista','manual')"
            onfocus="msBuscarTurmaDropdown(this.value,'ms-turma-lista','manual')"
            class="w-full border-2 border-[#004587]/30 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none bg-[#004587]/5">
@@ -1701,7 +1701,7 @@
            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
            Buscar Turma Cadastrada
           </label>
-          <input type="text" id="ms-busca-turma-auto" placeholder="Digite nome ou código da turma..." autocomplete="off"
+          <input type="text" id="ms-busca-turma-auto" placeholder="Buscar por nome do curso..." autocomplete="off"
            oninput="msBuscarTurmaDropdown(this.value,'ms-turma-lista-auto','auto')"
            onfocus="msBuscarTurmaDropdown(this.value,'ms-turma-lista-auto','auto')"
            class="w-full border-2 border-[#F7941D]/30 rounded-lg px-3 py-2 text-sm focus:border-[#F7941D] focus:outline-none bg-[#F7941D]/5">
@@ -5179,6 +5179,9 @@
     let msTurmaCategoria = 'todos';
     let msTurmaCategoriaAuto = 'todos';
     let _msTurmasAguardando = [];
+    let msTurmaPickerCurso = { manual: null, auto: null };
+    let msTurmaPickerTurmas = { manual: [], auto: [] };
+    let _msCursoMap = {};
 
     // ---- Date helpers ----
     function msHoje() {
@@ -5245,10 +5248,14 @@
       } else {
         msRenderPainel(); msRenderTotemPreview();
       }
-      // Carrega quadro horário para sidebar de turmas
-      if (!allAlocacoes.length) {
-        carregarDaAba('Alocacoes').then(data => { allAlocacoes = data; msRenderTurmasParaAlocar(); });
-      }
+      // Carrega turmas e quadro horário para o picker e sidebar
+      const _loadTurmas = !allTurmas.length
+        ? carregarDaAba('Turmas').then(data => { if (data.length && !allTurmas.length) allTurmas = data; })
+        : Promise.resolve();
+      const _loadAlocs = !allAlocacoes.length
+        ? carregarDaAba('Alocacoes').then(data => { if (data.length) allAlocacoes = data; })
+        : Promise.resolve();
+      Promise.all([_loadTurmas, _loadAlocs]).then(() => msRenderTurmasParaAlocar());
       // Polling: re-read sheet every 3 min while page is open
       if (!msPainelRefreshInterval) {
         msPainelRefreshInterval = setInterval(async () => {
@@ -5578,10 +5585,10 @@
           .filter(a => normData(a.data) === msDataAtiva)
           .map(a => String(a.turma_codigo))
       );
-      // Match with allTurmas, filter by period
+      // Match with allTurmas, filter by period (integral always included)
       const turmasHoje = allTurmas.filter(t => {
         if (!turmaCodesHoje.has(String(t.codigo_oferta))) return false;
-        if (t.periodo && t.periodo !== msPeriodoAtivo) return false;
+        if (t.periodo && t.periodo !== msPeriodoAtivo && t.periodo !== 'integral') return false;
         return true;
       });
       // Turmas already with a room today/period
@@ -5841,7 +5848,15 @@
       </div>`;
     }
 
-    // ---- TURMA SEARCH ----
+    // ---- TURMA PICKER (Curso → Turma) ----
+    function msPickerGetSource(modo) {
+      const cat = modo === 'manual' ? msTurmaCategoria : msTurmaCategoriaAuto;
+      let src = allTurmas;
+      if (cat === 'regular') src = src.filter(x => !isParceiro(x));
+      else if (cat === 'parceiros') src = src.filter(x => isParceiro(x));
+      return src;
+    }
+
     window.msSetTurmaCategoria = function(cat, modo) {
       const btnContainer = document.getElementById(modo === 'manual' ? 'ms-cat-btns-manual' : 'ms-cat-btns-auto');
       if (btnContainer) {
@@ -5850,66 +5865,146 @@
           if (b.getAttribute('onclick')?.includes(`'${cat}'`)) b.classList.add('active');
         });
       }
-      if (modo === 'manual') {
-        msTurmaCategoria = cat;
-        const inp = document.getElementById('ms-busca-turma');
-        if (inp) msBuscarTurmaDropdown(inp.value, 'ms-turma-lista', 'manual');
-      } else {
-        msTurmaCategoriaAuto = cat;
-        const inp = document.getElementById('ms-busca-turma-auto');
-        if (inp) msBuscarTurmaDropdown(inp.value, 'ms-turma-lista-auto', 'auto');
-      }
+      if (modo === 'manual') msTurmaCategoria = cat;
+      else msTurmaCategoriaAuto = cat;
+      // Reset course selection and show course list
+      msTurmaPickerCurso[modo] = null;
+      const inp = document.getElementById(modo === 'manual' ? 'ms-busca-turma' : 'ms-busca-turma-auto');
+      const listaId = modo === 'manual' ? 'ms-turma-lista' : 'ms-turma-lista-auto';
+      if (inp) { inp.value = ''; msBuscarTurmaDropdown('', listaId, modo); }
     };
 
+    // Mostra lista de CURSOS (agrupados por nome_curso)
     window.msBuscarTurmaDropdown = function(termo, listaId, modo) {
       const lista = document.getElementById(listaId);
       if (!lista) return;
       const t = (termo || '').toLowerCase().trim();
-      const cat = modo === 'manual' ? msTurmaCategoria : msTurmaCategoriaAuto;
-      let source = allTurmas;
-      if (cat === 'regular') source = source.filter(x => !isParceiro(x));
-      else if (cat === 'parceiros') source = source.filter(x => isParceiro(x));
-      const resultados = source.filter(x =>
-        !t || x.nome_curso?.toLowerCase().includes(t) ||
-        String(x.codigo_oferta||'').toLowerCase().includes(t)
-      ).slice(0, 25);
-      msTurmaSearchResults = resultados;
-      if (!resultados.length) { lista.classList.add('hidden'); return; }
-      const perLabel = { manha:'Manhã', tarde:'Tarde', noite:'Noite', integral:'Integral', sabado:'Sábado' };
+      // Se curso já selecionado e input não foi alterado, mostra turmas do curso
+      const cursoSel = msTurmaPickerCurso[modo];
+      const inp = document.getElementById(listaId === 'ms-turma-lista' ? 'ms-busca-turma' : 'ms-busca-turma-auto');
+      if (cursoSel && inp && (inp.value === cursoSel || !inp.value)) {
+        msPickerMostrarTurmas(cursoSel, modo, listaId);
+        return;
+      }
+      // Limpa seleção de curso se usuário digitou algo diferente
+      if (cursoSel && t && !cursoSel.toLowerCase().startsWith(t)) {
+        msTurmaPickerCurso[modo] = null;
+      }
+      const source = msPickerGetSource(modo);
+      if (!source.length) {
+        lista.innerHTML = '<div class="px-3 py-4 text-xs text-gray-400 text-center">Carregando cursos... <button type="button" onclick="carregarDaAba(\'Turmas\').then(d=>{if(d.length)allTurmas=d;msBuscarTurmaDropdown(\'\',\''+listaId+'\',\''+modo+'\');})" class="text-[#004587] font-bold underline ml-1">Recarregar</button></div>';
+        lista.classList.remove('hidden');
+        return;
+      }
+      // Agrupa por nome_curso
+      const cursoMap = {};
+      source.forEach(turma => {
+        const nome = turma.nome_curso || '—';
+        if (t && !nome.toLowerCase().includes(t) && !String(turma.codigo_oferta||'').toLowerCase().includes(t)) return;
+        if (!cursoMap[nome]) cursoMap[nome] = [];
+        cursoMap[nome].push(turma);
+      });
+      _msCursoMap = cursoMap;
+      const cursos = Object.entries(cursoMap).sort((a, b) => a[0].localeCompare(b[0]));
+      if (!cursos.length) { lista.classList.add('hidden'); return; }
       lista.classList.remove('hidden');
-      lista.innerHTML = resultados.map((x, i) => {
-        const per = perLabel[x.periodo] || x.periodo || '';
-        const ini = x.data_de_inicio ? (x.data_de_inicio.substring(0,10).split('-').reverse().join('/')) : '';
-        const fim = x.data_de_termino ? (x.data_de_termino.substring(0,10).split('-').reverse().join('/')) : '';
-        return `<div class="px-3 py-2.5 hover:bg-[#004587]/5 cursor-pointer border-b border-gray-50 last:border-0" onclick="msSelectTurmaIdx(${i},'${modo}','${listaId}')">
-          <div class="font-semibold text-sm text-gray-800 leading-tight">${x.nome_curso||'—'}</div>
-          <div class="text-xs text-gray-400 mt-0.5">${x.codigo_oferta||''} · ${per}${ini?' · '+ini+(fim?' → '+fim:''):''}</div>
-        </div>`;
-      }).join('');
+      lista.innerHTML =
+        `<div class="px-3 py-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-wide bg-gray-50 border-b border-gray-100 flex items-center gap-1">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/></svg>
+          ${cursos.length} curso${cursos.length !== 1 ? 's' : ''} — clique para ver turmas
+        </div>` +
+        cursos.map(([nome, turmas]) => {
+          const isParc = turmas.some(t => isParceiro(t));
+          const tagCl = isParc ? 'bg-purple-100 text-purple-600' : 'bg-blue-50 text-[#004587]';
+          const cnt = turmas.length;
+          return `<div class="px-3 py-2.5 hover:bg-[#004587]/5 cursor-pointer border-b border-gray-50 last:border-0 ms-picker-curso-item" data-nome="${nome.replace(/"/g,'&quot;')}" data-lista="${listaId}" data-modo="${modo}">
+            <div class="flex items-center justify-between gap-2">
+              <div class="font-semibold text-sm text-gray-800 leading-tight flex-1 min-w-0 truncate">${nome}</div>
+              <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full ${tagCl} flex-shrink-0">${cnt} turma${cnt!==1?'s':''}</span>
+            </div>
+          </div>`;
+        }).join('');
+      // Attach click via delegation to avoid escaping issues
+      lista.onclick = function(e) {
+        const item = e.target.closest('.ms-picker-curso-item');
+        if (item) msPickerMostrarTurmas(item.dataset.nome, item.dataset.modo, item.dataset.lista);
+      };
     };
 
-    window.msSelectTurmaIdx = function(idx, modo, listaId) {
-      const turma = msTurmaSearchResults[idx];
+    // Mostra TURMAS de um curso selecionado
+    window.msPickerMostrarTurmas = function(nomeCurso, modo, listaId) {
+      const lista = document.getElementById(listaId);
+      if (!lista) return;
+      msTurmaPickerCurso[modo] = nomeCurso;
+      const turmas = (_msCursoMap[nomeCurso] || msPickerGetSource(modo).filter(t => t.nome_curso === nomeCurso));
+      msTurmaPickerTurmas[modo] = turmas;
+      const inp = document.getElementById(listaId === 'ms-turma-lista' ? 'ms-busca-turma' : 'ms-busca-turma-auto');
+      if (inp) inp.value = nomeCurso;
+      const perLabel = { manha:'Manhã', tarde:'Tarde', noite:'Noite', integral:'Integral', sabado:'Sábado' };
+      lista.classList.remove('hidden');
+      lista.onclick = null; // will set below
+      lista.innerHTML =
+        `<div class="flex items-center gap-2 px-3 py-2 bg-[#004587]/5 border-b border-[#004587]/10 sticky top-0">
+          <button type="button" class="ms-picker-voltar text-[#004587] text-xs font-bold flex items-center gap-1 hover:underline" data-modo="${modo}" data-lista="${listaId}">
+            <svg class="w-3.5 h-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>Voltar
+          </button>
+          <span class="text-xs font-bold text-[#004587] truncate flex-1">${nomeCurso}</span>
+        </div>` +
+        (turmas.length === 0
+          ? '<p class="text-xs text-gray-400 text-center py-3">Nenhuma turma cadastrada</p>'
+          : turmas.map((turma, i) => {
+              const per = perLabel[turma.periodo] || turma.periodo || '—';
+              const ini = turma.data_de_inicio ? String(turma.data_de_inicio).substring(0,10).split('-').reverse().join('/') : '';
+              const fim = turma.data_de_termino ? String(turma.data_de_termino).substring(0,10).split('-').reverse().join('/') : '';
+              const perColor = {manha:'text-amber-600 bg-amber-50', tarde:'text-blue-600 bg-blue-50', noite:'text-indigo-600 bg-indigo-50', integral:'text-green-600 bg-green-50'}[turma.periodo] || 'text-gray-600 bg-gray-100';
+              return `<div class="px-3 py-2.5 hover:bg-[#004587]/5 cursor-pointer border-b border-gray-50 last:border-0 ms-picker-turma-item" data-idx="${i}">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="min-w-0 flex-1">
+                    <div class="font-bold text-xs text-[#004587]">Turma ${turma.codigo_oferta || '—'}</div>
+                    <div class="text-[10px] text-gray-400 mt-0.5">${ini ? ini+' → '+fim : 'Sem data definida'}</div>
+                  </div>
+                  <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0 ${perColor}">${per}</span>
+                </div>
+              </div>`;
+            }).join(''));
+      lista.onclick = function(e) {
+        const item = e.target.closest('.ms-picker-turma-item');
+        if (item) { msPickerSelectTurma(parseInt(item.dataset.idx), modo, listaId); return; }
+        const btn = e.target.closest('.ms-picker-voltar');
+        if (btn) msPickerVoltarCursos(btn.dataset.modo, btn.dataset.lista);
+      };
+    };
+
+    window.msPickerVoltarCursos = function(modo, listaId) {
+      msTurmaPickerCurso[modo] = null;
+      const inp = document.getElementById(listaId === 'ms-turma-lista' ? 'ms-busca-turma' : 'ms-busca-turma-auto');
+      if (inp) { inp.value = ''; }
+      msBuscarTurmaDropdown('', listaId, modo);
+    };
+
+    window.msPickerSelectTurma = function(idx, modo, listaId) {
+      const turma = (msTurmaPickerTurmas[modo] || [])[idx];
       if (!turma) return;
-      // Find most-used docente for this turma from existing allocations
-      const docs = allAlocacoes.filter(a => a.turma_codigo === String(turma.codigo_oferta));
+      const docs = allAlocacoes.filter(a => String(a.turma_codigo) === String(turma.codigo_oferta));
       const cnt = {}; docs.forEach(a => { if (a.docente_nome) cnt[a.docente_nome] = (cnt[a.docente_nome]||0)+1; });
       const docente = Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0]?.[0] || '';
+      const label = `${turma.nome_curso || '—'} — Turma ${turma.codigo_oferta || ''}`;
       if (modo === 'manual') {
         const c = document.getElementById('ms-inp-curso');
         const d = document.getElementById('ms-inp-docente');
         const b = document.getElementById('ms-busca-turma');
         if (c) c.value = turma.nome_curso || '';
         if (d) d.value = docente;
-        if (b) b.value = '';
+        if (b) b.value = label;
       } else {
         const c = document.getElementById('ms-auto-curso');
         const d = document.getElementById('ms-auto-docente');
         const b = document.getElementById('ms-busca-turma-auto');
         if (c) c.value = turma.nome_curso || '';
         if (d) d.value = docente;
-        if (b) b.value = '';
+        if (b) b.value = label;
       }
+      msTurmaPickerCurso[modo] = null;
       document.getElementById(listaId)?.classList.add('hidden');
     };
 
