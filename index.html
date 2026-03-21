@@ -1675,7 +1675,17 @@
           <div>
            <label class="block text-xs font-semibold text-gray-600 mb-1">Tipo de Sala</label>
            <select id="ms-auto-tipo" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none">
-            <option value="">Qualquer</option><option value="Convencional">Convencional</option><option value="Lab. Informática">Lab. Informática</option><option value="Lab. Enfermagem">Lab. Enfermagem</option><option value="Lab. Estética">Lab. Estética</option><option value="Lab. Gastronomia">Lab. Gastronomia</option><option value="Auditório">Auditório</option>
+            <option value="">Qualquer</option>
+            <option value="Convencional">Convencional</option>
+            <option value="Lab. Informática">Lab. Informática</option>
+            <option value="Lab. de Hardware">Lab. de Hardware</option>
+            <option value="Lab. de Saúde">Lab. de Saúde</option>
+            <option value="Lab. de Estética">Lab. de Estética</option>
+            <option value="Lab. de Beleza">Lab. de Beleza</option>
+            <option value="Sala Experimental">Sala Experimental</option>
+            <option value="Lab. Móvel">Lab. Móvel</option>
+            <option value="Sala de Teatro">Sala de Teatro</option>
+            <option value="Lab. de Moda">Lab. de Moda</option>
            </select>
           </div>
          </div>
@@ -5051,26 +5061,26 @@
     // MapaSalas sheet columns: id | sala_id | data | periodo | curso | docente | inicio | fim | fixo | status | timestamp
 
     const MS_SALAS = [
-      { id:'S01', nome:'Sala 01',              tipo:'Convencional',      capacidade:35,  andar:'Térreo'    },
-      { id:'S02', nome:'Sala 02',              tipo:'Convencional',      capacidade:35,  andar:'Térreo'    },
-      { id:'S03', nome:'Sala 03',              tipo:'Convencional',      capacidade:35,  andar:'Térreo'    },
-      { id:'S04', nome:'Sala 04',              tipo:'Convencional',      capacidade:35,  andar:'1º Andar'  },
-      { id:'S05', nome:'Sala 05',              tipo:'Convencional',      capacidade:35,  andar:'1º Andar'  },
-      { id:'S06', nome:'Sala 06',              tipo:'Convencional',      capacidade:35,  andar:'1º Andar'  },
-      { id:'S07', nome:'Sala 07',              tipo:'Convencional',      capacidade:35,  andar:'1º Andar'  },
-      { id:'S08', nome:'Sala 08',              tipo:'Convencional',      capacidade:35,  andar:'2º Andar'  },
-      { id:'S09', nome:'Sala 09',              tipo:'Convencional',      capacidade:35,  andar:'2º Andar'  },
-      { id:'S10', nome:'Sala 10',              tipo:'Convencional',      capacidade:35,  andar:'2º Andar'  },
-      { id:'S11', nome:'Lab. Informática 1',   tipo:'Lab. Informática',  capacidade:30,  andar:'Térreo'    },
-      { id:'S12', nome:'Lab. Informática 2',   tipo:'Lab. Informática',  capacidade:30,  andar:'1º Andar'  },
-      { id:'S13', nome:'Lab. Enfermagem',      tipo:'Lab. Enfermagem',   capacidade:25,  andar:'Térreo'    },
-      { id:'S14', nome:'Lab. Estética',        tipo:'Lab. Estética',     capacidade:20,  andar:'Térreo'    },
-      { id:'S15', nome:'Lab. Gastronomia',     tipo:'Lab. Gastronomia',  capacidade:25,  andar:'Térreo'    },
-      { id:'S16', nome:'Lab. Coz. Industrial', tipo:'Lab. Gastronomia',  capacidade:25,  andar:'Térreo'    },
-      { id:'S17', nome:'Lab. Confeitaria',     tipo:'Lab. Gastronomia',  capacidade:20,  andar:'Térreo'    },
-      { id:'S18', nome:'Lab. Beleza',          tipo:'Lab. Estética',     capacidade:20,  andar:'1º Andar'  },
-      { id:'S19', nome:'Auditório',            tipo:'Auditório',         capacidade:120, andar:'Térreo'    },
-      { id:'S20', nome:'Sala de Reuniões',     tipo:'Convencional',      capacidade:20,  andar:'2º Andar'  },
+      { id:'S01', nome:'Sala 01', tipo:'Lab. Informática',  capacidade:30, andar:'Térreo'   },
+      { id:'S02', nome:'Sala 02', tipo:'Lab. Informática',  capacidade:30, andar:'Térreo'   },
+      { id:'S03', nome:'Sala 03', tipo:'Lab. Informática',  capacidade:30, andar:'Térreo'   },
+      { id:'S04', nome:'Sala 04', tipo:'Sala Experimental', capacidade:25, andar:'Térreo'   },
+      { id:'S05', nome:'Sala 05', tipo:'Lab. Informática',  capacidade:30, andar:'1º Andar' },
+      { id:'S06', nome:'Sala 06', tipo:'Lab. de Hardware',  capacidade:20, andar:'1º Andar' },
+      { id:'S07', nome:'Sala 07', tipo:'Lab. de Saúde',     capacidade:25, andar:'1º Andar' },
+      { id:'S08', nome:'Sala 08', tipo:'Lab. de Estética',  capacidade:20, andar:'1º Andar' },
+      { id:'S09', nome:'Sala 09', tipo:'Lab. de Beleza',    capacidade:20, andar:'2º Andar' },
+      { id:'S10', nome:'Sala 10', tipo:'Convencional',      capacidade:35, andar:'2º Andar' },
+      { id:'S11', nome:'Sala 11', tipo:'Convencional',      capacidade:35, andar:'2º Andar' },
+      { id:'S12', nome:'Sala 12', tipo:'Convencional',      capacidade:35, andar:'2º Andar' },
+      { id:'S13', nome:'Sala 13', tipo:'Lab. Móvel',        capacidade:30, andar:'Térreo'   },
+      { id:'S14', nome:'Sala 14', tipo:'Sala de Teatro',    capacidade:50, andar:'Térreo'   },
+      { id:'S15', nome:'Sala 15', tipo:'Lab. de Moda',      capacidade:25, andar:'1º Andar' },
+      { id:'S16', nome:'Sala 16', tipo:'Convencional',      capacidade:35, andar:'1º Andar' },
+      { id:'S17', nome:'Sala 17', tipo:'Convencional',      capacidade:35, andar:'2º Andar' },
+      { id:'S18', nome:'Sala 18', tipo:'Convencional',      capacidade:35, andar:'2º Andar' },
+      { id:'S19', nome:'Sala 19', tipo:'Convencional',      capacidade:35, andar:'2º Andar' },
+      { id:'S20', nome:'Sala 20', tipo:'Convencional',      capacidade:35, andar:'2º Andar' },
     ];
 
     const MS_PERIODOS = {
@@ -5232,8 +5242,10 @@
     }
 
     const MS_TIPO_ICONS = {
-      'Convencional':'🏫','Lab. Informática':'💻','Lab. Enfermagem':'🏥',
-      'Lab. Estética':'💅','Lab. Gastronomia':'🍳','Auditório':'🎭'
+      'Convencional':'🏫','Lab. Informática':'💻','Lab. de Hardware':'🖥️',
+      'Lab. de Saúde':'🏥','Lab. de Estética':'💅','Lab. de Beleza':'💄',
+      'Sala Experimental':'🔬','Lab. Móvel':'🚐','Sala de Teatro':'🎭',
+      'Lab. de Moda':'👗'
     };
 
     function msRenderPainel() {
