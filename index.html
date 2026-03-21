@@ -1026,6 +1026,9 @@
       <button type="button" id="btn-tab-perc" class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="perc-docentes" onclick="switchQuadrosTab(this)">
        <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>% Docentes
       </button>
+      <button type="button" id="btn-tab-painel-doc" class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="painel-docentes" onclick="switchQuadrosTab(this)">
+       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>Painel Docentes
+      </button>
      </div>
      <!-- Tab: UCs por Curso -->
      <div id="tab-quadro-ucs" class="tab-content">
@@ -1157,6 +1160,30 @@
        </div>
       </div>
       <div id="perc-table-container"></div>
+     </div>
+     <!-- Aba Painel Docentes -->
+     <div id="tab-painel-docentes" class="tab-content" style="display:none">
+      <div class="no-print flex flex-wrap items-center justify-between gap-3 mb-5">
+       <!-- Navegação -->
+       <div class="flex items-center gap-3">
+        <button onclick="painelNavAnterior()" class="w-9 h-9 flex items-center justify-center rounded-full bg-white border-2 border-[#004587]/20 hover:border-[#004587] text-[#004587] font-bold text-lg transition-all">&#8249;</button>
+        <span id="painel-nav-label" class="font-bold text-[#004587] text-base min-w-[210px] text-center"></span>
+        <button onclick="painelNavProximo()" class="w-9 h-9 flex items-center justify-center rounded-full bg-white border-2 border-[#004587]/20 hover:border-[#004587] text-[#004587] font-bold text-lg transition-all">&#8250;</button>
+       </div>
+       <!-- Alternar visão -->
+       <div class="flex gap-2">
+        <button id="painel-btn-sem" onclick="painelSetView('semanal')" class="px-4 py-2 rounded-lg text-sm font-semibold border-2 transition-all border-[#004587] bg-[#004587]/10 text-[#004587]">Semanal</button>
+        <button id="painel-btn-mes" onclick="painelSetView('mensal')" class="px-4 py-2 rounded-lg text-sm font-semibold border-2 transition-all border-gray-200 text-gray-500">Mensal</button>
+       </div>
+       <!-- Legenda -->
+       <div class="flex gap-4 text-[11px] text-gray-500 flex-wrap">
+        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-blue-400 inline-block"></span>Presencial</span>
+        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-amber-400 inline-block"></span>EAD</span>
+        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-purple-400 inline-block"></span>Parceiro</span>
+        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-green-300 inline-block"></span>Disponível</span>
+       </div>
+      </div>
+      <div id="painel-container"></div>
      </div>
     </div>
     <!-- Modal Editar em Lote -->
@@ -3184,6 +3211,11 @@
       if (tabName === 'perc-docentes') {
         renderPercDocentes();
       }
+      if (tabName === 'painel-docentes') {
+        if (!painelSemanaAtual) painelSemanaAtual = painelGetMonday(new Date());
+        if (!painelMesAtual) painelMesAtual = { ano: new Date().getFullYear(), mes: new Date().getMonth() };
+        renderPainelDocentes();
+      }
     };
 
     // ── UCs por Curso ──
@@ -4370,6 +4402,183 @@
         showSuccessMessage('✅ Alocação removida!');
       } catch(err) { showErrorMessage('❌ Erro: ' + err.message); }
     };
+
+    // ══════════════════════════════════════════════
+    // PAINEL DOCENTES — visão coletiva semanal/mensal
+    // ══════════════════════════════════════════════
+    let painelView = 'semanal';
+    let painelSemanaAtual = null; // Date (Monday of current week)
+    let painelMesAtual = null;    // { ano, mes }
+
+    function painelGetMonday(d) {
+      const dt = new Date(d);
+      dt.setHours(12, 0, 0, 0);
+      const day = dt.getDay();
+      dt.setDate(dt.getDate() + (day === 0 ? -6 : 1 - day));
+      return dt;
+    }
+
+    function painelFmtDate(d) {
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+
+    function painelFmtDDMM(d) {
+      return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
+    }
+
+    window.painelNavAnterior = function() {
+      if (painelView === 'semanal') {
+        painelSemanaAtual.setDate(painelSemanaAtual.getDate() - 7);
+      } else {
+        painelMesAtual.mes--;
+        if (painelMesAtual.mes < 0) { painelMesAtual.mes = 11; painelMesAtual.ano--; }
+      }
+      renderPainelDocentes();
+    };
+
+    window.painelNavProximo = function() {
+      if (painelView === 'semanal') {
+        painelSemanaAtual.setDate(painelSemanaAtual.getDate() + 7);
+      } else {
+        painelMesAtual.mes++;
+        if (painelMesAtual.mes > 11) { painelMesAtual.mes = 0; painelMesAtual.ano++; }
+      }
+      renderPainelDocentes();
+    };
+
+    window.painelSetView = function(view) {
+      painelView = view;
+      const active   = 'px-4 py-2 rounded-lg text-sm font-semibold border-2 transition-all border-[#004587] bg-[#004587]/10 text-[#004587]';
+      const inactive = 'px-4 py-2 rounded-lg text-sm font-semibold border-2 transition-all border-gray-200 text-gray-500';
+      const btnSem = document.getElementById('painel-btn-sem');
+      const btnMes = document.getElementById('painel-btn-mes');
+      if (btnSem) btnSem.className = view === 'semanal' ? active : inactive;
+      if (btnMes) btnMes.className = view === 'mensal'  ? active : inactive;
+      renderPainelDocentes();
+    };
+
+    async function renderPainelDocentes() {
+      const container = document.getElementById('painel-container');
+      if (!container) return;
+      container.innerHTML = '<p class="text-gray-400 text-center py-6 text-sm">Carregando...</p>';
+      try {
+        if (allTeachers.length === 0) allTeachers = await carregarDaAba('Docentes');
+        if (allAlocacoes.length === 0) allAlocacoes = await carregarDaAba('Alocacoes');
+      } catch(e) { /* continua com o que tiver */ }
+
+      const docentes = allTeachers
+        .filter(d => d.nome_completo)
+        .sort((a, b) => (a.nome_completo || '').localeCompare(b.nome_completo || '', 'pt-BR'));
+
+      if (docentes.length === 0) {
+        container.innerHTML = '<p class="text-gray-400 text-center py-6">Nenhum docente cadastrado.</p>';
+        return;
+      }
+
+      if (painelView === 'semanal') {
+        renderPainelSemanal(container, docentes);
+      } else {
+        renderPainelMensal(container, docentes);
+      }
+    }
+
+    // Gera o HTML de uma célula (um dia para um docente)
+    function painelCelulaAloc(nomeDoc, dateStr) {
+      const alocs = allAlocacoes.filter(a => a.docente_nome === nomeDoc && normData(a.data) === dateStr);
+      if (alocs.length === 0) {
+        return `<td class="px-2 py-2 text-center align-middle border-r border-gray-50"><span class="text-[9px] text-green-500 font-semibold">Disponível</span></td>`;
+      }
+      const pills = alocs.map(a => {
+        const isParc = a.tipo_aula === 'parceiro';
+        const isEad  = a.tipo_aula === 'ead';
+        const cor = isParc ? 'bg-purple-100 text-purple-700' : isEad ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700';
+        const h   = parseFloat(a.horas) || 0;
+        // Abreviação: primeiras 3 palavras do nome
+        const abrev = (a.nome_curso || '').split(' ').slice(0, 3).join(' ');
+        return `<div class="mb-0.5"><span class="inline-block px-1.5 py-0.5 rounded text-[9px] font-semibold ${cor}" title="${(a.nome_curso||'')} — ${(a.uc_nome||'')} — ${h}h">${abrev} · ${h}h</span></div>`;
+      }).join('');
+      return `<td class="px-2 py-1.5 align-top border-r border-gray-50">${pills}</td>`;
+    }
+
+    function painelTabelaHTML(dias, docentes, mesFiltro) {
+      // mesFiltro: null (não filtra) ou número do mês (0-11)
+      const DIAS_PT = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+      const hoje    = painelFmtDate(new Date());
+
+      const theadCols = dias.map((d, i) => {
+        const ds       = painelFmtDate(d);
+        const isHoje   = ds === hoje;
+        const outMonth = mesFiltro !== null && d.getMonth() !== mesFiltro;
+        return `<th class="px-2 py-1.5 text-center min-w-[110px] text-[10px] font-bold ${isHoje ? 'bg-[#F7941D]' : outMonth ? 'opacity-40' : ''}">
+          <div>${DIAS_PT[i]}</div>
+          <div class="font-normal opacity-80">${painelFmtDDMM(d)}</div>
+        </th>`;
+      }).join('');
+
+      const tbodyRows = docentes.map(doc => {
+        const nome = doc.nome_completo;
+        const celulas = dias.map((d, i) => {
+          if (mesFiltro !== null && d.getMonth() !== mesFiltro) {
+            return `<td class="px-2 py-1 bg-gray-50/40 border-r border-gray-50"></td>`;
+          }
+          return painelCelulaAloc(nome, painelFmtDate(d));
+        }).join('');
+        return `<tr class="border-b border-gray-100 hover:bg-blue-50/20">
+          <td class="px-3 py-1.5 font-semibold text-[#004587] text-[10px] sticky left-0 bg-white border-r border-gray-100 min-w-[130px]">${nome}</td>
+          ${celulas}
+        </tr>`;
+      }).join('');
+
+      return `<div class="overflow-x-auto rounded-xl border border-gray-100 shadow-sm">
+        <table class="w-full text-xs border-collapse">
+          <thead>
+            <tr class="bg-[#004587] text-white">
+              <th class="px-3 py-1.5 text-left sticky left-0 bg-[#004587] min-w-[130px] text-[10px]">Docente</th>
+              ${theadCols}
+            </tr>
+          </thead>
+          <tbody>${tbodyRows}</tbody>
+        </table>
+      </div>`;
+    }
+
+    function renderPainelSemanal(container, docentes) {
+      const dias = [];
+      for (let i = 0; i < 6; i++) {
+        const d = new Date(painelSemanaAtual);
+        d.setDate(d.getDate() + i);
+        dias.push(d);
+      }
+      const label = document.getElementById('painel-nav-label');
+      if (label) label.textContent = `${painelFmtDDMM(dias[0])} a ${painelFmtDDMM(dias[5])}/${dias[5].getFullYear()}`;
+      container.innerHTML = painelTabelaHTML(dias, docentes, null);
+    }
+
+    function renderPainelMensal(container, docentes) {
+      const { ano, mes } = painelMesAtual;
+      const label = document.getElementById('painel-nav-label');
+      if (label) label.textContent = `${MESES_NOMES[mes]} ${ano}`;
+
+      // Coleta todas as semanas (seg→sáb) que se sobreponham ao mês
+      const semanas = [];
+      let monday = painelGetMonday(new Date(ano, mes, 1, 12));
+      const ultimoDia = new Date(ano, mes + 1, 0, 12);
+      while (monday <= ultimoDia && semanas.length < 6) {
+        const dias = [];
+        for (let d = 0; d < 6; d++) {
+          const day = new Date(monday); day.setDate(day.getDate() + d);
+          dias.push(day);
+        }
+        semanas.push(dias);
+        monday = new Date(monday);
+        monday.setDate(monday.getDate() + 7);
+      }
+
+      const html = semanas.map(dias =>
+        `<div class="mb-4">${painelTabelaHTML(dias, docentes, mes)}</div>`
+      ).join('');
+      container.innerHTML = html || '<p class="text-gray-400 text-center py-6">Sem dados para este mês.</p>';
+    }
 
     // Fecha pickers ao clicar fora
     document.addEventListener('click', function(e) {
