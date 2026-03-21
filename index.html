@@ -1067,13 +1067,20 @@
      </div>
      <!-- Aba % Docentes -->
      <div id="tab-perc-docentes" class="tab-content" style="display:none">
-      <div class="no-print flex items-center justify-between mb-6">
+      <div class="no-print flex flex-wrap items-center justify-between gap-4 mb-6">
        <div class="flex items-center gap-3">
         <button onclick="percNavMes(-1)" class="w-9 h-9 flex items-center justify-center rounded-full bg-white border-2 border-[#004587]/20 hover:border-[#004587] text-[#004587] font-bold text-lg transition-all">&#8249;</button>
         <span id="perc-mes-label" class="font-bold text-[#004587] text-lg min-w-[160px] text-center"></span>
         <button onclick="percNavMes(1)" class="w-9 h-9 flex items-center justify-center rounded-full bg-white border-2 border-[#004587]/20 hover:border-[#004587] text-[#004587] font-bold text-lg transition-all">&#8250;</button>
        </div>
-       <p class="text-xs text-gray-400">Clique em &#9999;&#65039; para editar CH e horas de parceiros por docente.</p>
+       <div class="flex items-center gap-3">
+        <div class="relative">
+         <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+         <input type="text" id="perc-busca-docente" placeholder="Buscar docente..." oninput="percFiltrarDocentes(this.value)"
+           class="pl-9 pr-4 py-2 border-2 border-gray-200 rounded-xl text-sm focus:border-[#004587] focus:outline-none w-52 transition-all">
+        </div>
+        <p class="text-xs text-gray-400 hidden sm:block">Clique em &#9999;&#65039; para editar CH.</p>
+       </div>
       </div>
       <div id="perc-table-container"></div>
      </div>
@@ -3735,7 +3742,17 @@
       percMesAtual.mes += delta;
       if (percMesAtual.mes > 11) { percMesAtual.mes = 0; percMesAtual.ano++; }
       if (percMesAtual.mes < 0)  { percMesAtual.mes = 11; percMesAtual.ano--; }
+      const busca = document.getElementById('perc-busca-docente');
+      if (busca) busca.value = '';
       renderPercDocentes();
+    };
+
+    window.percFiltrarDocentes = function(termo) {
+      const q = (termo || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      document.querySelectorAll('#perc-table-container .perc-docente-card').forEach(card => {
+        const nome = (card.dataset.nome || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        card.style.display = nome.includes(q) ? '' : 'none';
+      });
     };
 
     // localStorage helpers por docente
@@ -3808,7 +3825,7 @@
           const idSafe    = 'doc_' + btoa(unescape(encodeURIComponent(nome))).replace(/[^a-zA-Z0-9]/g,'');
 
           return `
-            <div class="bg-white rounded-2xl border border-gray-100 p-4 mb-3 shadow-sm">
+            <div class="perc-docente-card bg-white rounded-2xl border border-gray-100 p-4 mb-3 shadow-sm" data-nome="${nome.replace(/"/g,'&quot;')}">
               <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
                 <p class="font-bold text-[#004587] text-sm">${nome}</p>
                 <button onclick="percEditarDocente('${idSafe}','${nome.replace(/'/g,"\\'")}',${chMensal},${hParcSem},${hReunPed})"
