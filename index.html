@@ -188,7 +188,12 @@
     #painel-print-area tr { page-break-inside: avoid; }
   }
   </style>
-  <style>body { box-sizing: border-box; }</style>
+  <style>body { box-sizing: border-box; }
+  .ms-nav-tab { transition: all 0.2s; }
+  .ms-nav-tab.active { background: rgba(255,255,255,0.2) !important; color: white !important; }
+  .ms-nav-tab:not(.active) { color: rgba(255,255,255,0.7); }
+  .ms-dia-btn.active, .ms-per-btn.active { background: #004587 !important; color: white !important; }
+  </style>
   <script>
   window.dataSdk = {
     create: async function(data) {
@@ -231,6 +236,8 @@
          <button onclick="navigateToPage('eventos')" class="relative px-1 py-2 text-white font-semibold text-sm group transition-all duration-300 hover:text-[#F7941D] bg-none border-none cursor-pointer" aria-label="Ir para Eventos"><span class="relative z-10">Eventos</span>
          <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-[#F7941D] to-transparent group-hover:w-full transition-all duration-300"></div></button>
          <button onclick="navigateToPage('quadros')" class="relative px-1 py-2 text-white font-semibold text-sm group transition-all duration-300 hover:text-[#F7941D] bg-none border-none cursor-pointer" aria-label="Ir para Quadros"><span class="relative z-10">Quadros</span>
+         <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-[#F7941D] to-transparent group-hover:w-full transition-all duration-300"></div></button>
+         <button onclick="navigateToPage('mapa-salas')" class="relative px-1 py-2 text-white font-semibold text-sm group transition-all duration-300 hover:text-[#F7941D] bg-none border-none cursor-pointer" aria-label="Ir para Mapa de Salas"><span class="relative z-10">Mapa de Salas</span>
          <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-[#F7941D] to-transparent group-hover:w-full transition-all duration-300"></div></button>
          <button onclick="scrollToFooter()" class="relative px-1 py-2 text-white font-semibold text-sm group transition-all duration-300 hover:text-[#F7941D] bg-none border-none cursor-pointer" aria-label="Ir para Contato"><span class="relative z-10">Contato</span>
          <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-[#F7941D] to-transparent group-hover:w-full transition-all duration-300"></div></button>
@@ -340,7 +347,7 @@
        <p class="text-gray-600 max-w-2xl mx-auto">Plataforma para cadastro, consulta e gerenciamento de documentos pedagógicos.</p>
        <div class="w-24 h-1 bg-[#F7941D] mx-auto mt-6 rounded-full"></div>
       </div>
-      <div class="grid md:grid-cols-2 gap-8">
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
        <div class="card-scan bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-8 shadow-lg border-2 border-[#004587]/20 cursor-pointer" onclick="navigateToPage('cadastro')">
         <div class="w-16 h-16 bg-gradient-to-br from-[#004587] to-[#003366] rounded-2xl flex items-center justify-center mb-6 mx-auto">
          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
@@ -366,6 +373,19 @@
          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
          </svg> Acessar Consulta </button>
+       </div>
+       <div class="card-scan bg-gradient-to-br from-[#003366]/5 to-[#004587]/10 rounded-2xl p-8 shadow-lg border-2 border-[#003366]/20 cursor-pointer" onclick="navigateToPage('mapa-salas')">
+        <div class="w-16 h-16 bg-gradient-to-br from-[#003366] to-[#004587] rounded-2xl flex items-center justify-center mb-6 mx-auto">
+         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="7" height="7" rx="1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+         </svg>
+        </div>
+        <h3 class="text-2xl font-bold text-[#004587] mb-3 text-center">Mapa de Salas</h3>
+        <p class="text-gray-500 text-sm text-center mb-6">Gerencie e aloque as 20 salas da unidade. Visualize disponibilidade e exiba no totem corporativo.</p>
+        <button class="w-full btn-primary btn-glow py-3 rounded-xl text-white font-semibold flex items-center justify-center gap-2 hover:scale-105 transition-transform" onclick="navigateToPage('mapa-salas')">
+         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+         </svg> Acessar Mapa de Salas </button>
        </div>
       </div>
      </div>
@@ -1501,6 +1521,254 @@
       </div>
      </div>
     </div>
+   </div><!-- PÁGINA MAPA DE SALAS -->
+   <div id="mapa-salas-page" class="page-container bg-gray-50 min-h-full">
+    <!-- Cabeçalho com abas -->
+    <div class="bg-[#004587] text-white shadow-lg sticky top-0 z-30">
+     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-wrap items-center justify-between py-3 gap-3">
+       <div class="flex items-center gap-3">
+        <button onclick="navigateToPage('home')" class="flex items-center gap-1.5 text-white/80 hover:text-white transition-colors text-sm font-semibold">
+         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>Voltar
+        </button>
+        <div class="h-5 w-px bg-white/20"></div>
+        <div class="flex items-center gap-2">
+         <div class="w-7 h-7 bg-[#F7941D] rounded-lg flex items-center justify-center">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="2"/></svg>
+         </div>
+         <span class="font-bold text-base">Mapa de Salas</span>
+        </div>
+       </div>
+       <div class="flex gap-1 flex-wrap">
+        <button onclick="msAbrirTab('painel')" data-ms-tab="painel" class="ms-nav-tab active px-4 py-1.5 rounded-lg text-sm font-semibold">Painel</button>
+        <button onclick="msAbrirTab('agendar')" data-ms-tab="agendar" class="ms-nav-tab px-4 py-1.5 rounded-lg text-sm font-semibold">Agendar</button>
+        <button onclick="msAbrirTab('alocacoes')" data-ms-tab="alocacoes" class="ms-nav-tab px-4 py-1.5 rounded-lg text-sm font-semibold">Alocações</button>
+        <button onclick="msAbrirTab('totem')" data-ms-tab="totem" class="ms-nav-tab px-4 py-1.5 rounded-lg text-sm font-semibold flex items-center gap-1.5">
+         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>TV Totem
+        </button>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+     <!-- TAB: PAINEL -->
+     <div id="ms-tab-painel">
+      <div class="flex flex-wrap items-center gap-3 mb-5">
+       <div class="flex rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-white">
+        <button onclick="msFiltrarDia('segunda')" data-ms-dia="segunda" class="ms-dia-btn active px-3 py-2 text-xs font-bold transition-all">Seg</button>
+        <button onclick="msFiltrarDia('terca')" data-ms-dia="terca" class="ms-dia-btn px-3 py-2 text-xs font-bold transition-all text-gray-600 hover:bg-gray-50">Ter</button>
+        <button onclick="msFiltrarDia('quarta')" data-ms-dia="quarta" class="ms-dia-btn px-3 py-2 text-xs font-bold transition-all text-gray-600 hover:bg-gray-50">Qua</button>
+        <button onclick="msFiltrarDia('quinta')" data-ms-dia="quinta" class="ms-dia-btn px-3 py-2 text-xs font-bold transition-all text-gray-600 hover:bg-gray-50">Qui</button>
+        <button onclick="msFiltrarDia('sexta')" data-ms-dia="sexta" class="ms-dia-btn px-3 py-2 text-xs font-bold transition-all text-gray-600 hover:bg-gray-50">Sex</button>
+        <button onclick="msFiltrarDia('sabado')" data-ms-dia="sabado" class="ms-dia-btn px-3 py-2 text-xs font-bold transition-all text-gray-600 hover:bg-gray-50">Sáb</button>
+       </div>
+       <div class="flex rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-white">
+        <button onclick="msFiltrarPer('manha')" data-ms-per="manha" class="ms-per-btn px-4 py-2 text-xs font-bold transition-all text-gray-600 hover:bg-gray-50">☀ Manhã</button>
+        <button onclick="msFiltrarPer('tarde')" data-ms-per="tarde" class="ms-per-btn active px-4 py-2 text-xs font-bold transition-all">⛅ Tarde</button>
+        <button onclick="msFiltrarPer('noite')" data-ms-per="noite" class="ms-per-btn px-4 py-2 text-xs font-bold transition-all text-gray-600 hover:bg-gray-50">🌙 Noite</button>
+       </div>
+       <button onclick="msCarregar().then(msRenderPainel)" class="ml-auto flex items-center gap-1.5 text-xs text-gray-500 hover:text-[#004587] font-semibold px-3 py-2 bg-white rounded-xl border border-gray-200 shadow-sm transition-all">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>Atualizar
+       </button>
+       <div class="flex gap-3">
+        <div class="flex items-center gap-1.5 bg-white rounded-lg px-3 py-2 shadow-sm border border-gray-100 text-xs font-semibold text-gray-600">
+         <div class="w-2.5 h-2.5 rounded-full bg-[#F7941D]"></div>Ocupadas: <span id="ms-stat-ocup" class="text-[#F7941D]">0</span>
+        </div>
+        <div class="flex items-center gap-1.5 bg-white rounded-lg px-3 py-2 shadow-sm border border-gray-100 text-xs font-semibold text-gray-600">
+         <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>Disponíveis: <span id="ms-stat-disp" class="text-green-600">0</span>
+        </div>
+       </div>
+      </div>
+      <div id="ms-grid-painel" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
+     </div>
+     <!-- TAB: AGENDAR -->
+     <div id="ms-tab-agendar" class="hidden">
+      <div class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h3 class="text-base font-bold text-[#004587] mb-4 flex items-center gap-2">
+         <svg class="w-5 h-5 text-[#F7941D]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+         Agendamento Manual
+        </h3>
+        <form id="ms-form-manual" class="space-y-3">
+         <div class="grid grid-cols-2 gap-3">
+          <div>
+           <label class="block text-xs font-semibold text-gray-600 mb-1">Sala</label>
+           <select id="ms-sel-sala" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none"><option value="">Selecione...</option></select>
+          </div>
+          <div>
+           <label class="block text-xs font-semibold text-gray-600 mb-1">Período</label>
+           <select id="ms-sel-periodo" onchange="msAutoHoras()" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none">
+            <option value="manha">Manhã (07:30-11:30)</option>
+            <option value="tarde" selected>Tarde (13:00-17:00)</option>
+            <option value="noite">Noite (18:30-22:30)</option>
+           </select>
+          </div>
+         </div>
+         <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Dia da Semana</label>
+          <select id="ms-sel-dia" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none">
+           <option value="segunda">Segunda-feira</option><option value="terca">Terça-feira</option><option value="quarta">Quarta-feira</option><option value="quinta">Quinta-feira</option><option value="sexta">Sexta-feira</option><option value="sabado">Sábado</option>
+          </select>
+         </div>
+         <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Curso / Turma</label>
+          <input type="text" id="ms-inp-curso" placeholder="Ex: Técnico em Logística" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none">
+         </div>
+         <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Docente</label>
+          <input type="text" id="ms-inp-docente" placeholder="Nome do docente" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none">
+         </div>
+         <div class="grid grid-cols-2 gap-3">
+          <div><label class="block text-xs font-semibold text-gray-600 mb-1">Início</label><input type="time" id="ms-inp-inicio" value="13:00" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none"></div>
+          <div><label class="block text-xs font-semibold text-gray-600 mb-1">Fim</label><input type="time" id="ms-inp-fim" value="17:00" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none"></div>
+         </div>
+         <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-gray-600">
+          <input type="checkbox" id="ms-chk-fixo" class="w-4 h-4 accent-[#004587] rounded">
+          🔒 Sala Fixa (não pode ser substituída por alocação automática)
+         </label>
+         <button type="submit" id="ms-btn-manual" class="w-full bg-[#004587] hover:bg-[#003366] text-white font-semibold py-2.5 rounded-xl text-sm transition-all flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>Agendar Sala
+         </button>
+        </form>
+       </div>
+       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h3 class="text-base font-bold text-[#004587] mb-1 flex items-center gap-2">
+         <svg class="w-5 h-5 text-[#F7941D]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>Alocação Automática
+        </h3>
+        <p class="text-xs text-gray-500 mb-4">Aloca automaticamente uma sala disponível para cada dia selecionado. Salas fixas não são substituídas.</p>
+        <form id="ms-form-auto" class="space-y-3">
+         <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Curso / Turma</label>
+          <input type="text" id="ms-auto-curso" placeholder="Ex: Técnico em Marketing" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none">
+         </div>
+         <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Docente</label>
+          <input type="text" id="ms-auto-docente" placeholder="Nome do docente" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none">
+         </div>
+         <div class="grid grid-cols-2 gap-3">
+          <div>
+           <label class="block text-xs font-semibold text-gray-600 mb-1">Período</label>
+           <select id="ms-auto-periodo" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none">
+            <option value="manha">Manhã</option><option value="tarde" selected>Tarde</option><option value="noite">Noite</option>
+           </select>
+          </div>
+          <div>
+           <label class="block text-xs font-semibold text-gray-600 mb-1">Tipo de Sala</label>
+           <select id="ms-auto-tipo" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none">
+            <option value="">Qualquer</option><option value="Convencional">Convencional</option><option value="Lab. Informática">Lab. Informática</option><option value="Lab. Enfermagem">Lab. Enfermagem</option><option value="Lab. Estética">Lab. Estética</option><option value="Lab. Gastronomia">Lab. Gastronomia</option><option value="Auditório">Auditório</option>
+           </select>
+          </div>
+         </div>
+         <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-2">Dias da Semana</label>
+          <div class="flex flex-wrap gap-2">
+           <label class="flex items-center gap-1.5 text-xs font-semibold cursor-pointer bg-gray-50 rounded-lg px-3 py-1.5"><input type="checkbox" value="segunda" class="ms-auto-dia accent-[#004587]" checked>Seg</label>
+           <label class="flex items-center gap-1.5 text-xs font-semibold cursor-pointer bg-gray-50 rounded-lg px-3 py-1.5"><input type="checkbox" value="terca" class="ms-auto-dia accent-[#004587]" checked>Ter</label>
+           <label class="flex items-center gap-1.5 text-xs font-semibold cursor-pointer bg-gray-50 rounded-lg px-3 py-1.5"><input type="checkbox" value="quarta" class="ms-auto-dia accent-[#004587]" checked>Qua</label>
+           <label class="flex items-center gap-1.5 text-xs font-semibold cursor-pointer bg-gray-50 rounded-lg px-3 py-1.5"><input type="checkbox" value="quinta" class="ms-auto-dia accent-[#004587]" checked>Qui</label>
+           <label class="flex items-center gap-1.5 text-xs font-semibold cursor-pointer bg-gray-50 rounded-lg px-3 py-1.5"><input type="checkbox" value="sexta" class="ms-auto-dia accent-[#004587]" checked>Sex</label>
+           <label class="flex items-center gap-1.5 text-xs font-semibold cursor-pointer bg-gray-50 rounded-lg px-3 py-1.5"><input type="checkbox" value="sabado" class="ms-auto-dia accent-[#004587]">Sáb</label>
+          </div>
+         </div>
+         <button type="submit" id="ms-btn-auto" class="w-full bg-[#F7941D] hover:bg-[#E8850D] text-white font-semibold py-2.5 rounded-xl text-sm transition-all flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>Alocar Automaticamente
+         </button>
+        </form>
+        <div id="ms-auto-resultado" class="mt-4 hidden"></div>
+       </div>
+      </div>
+     </div>
+     <!-- TAB: ALOCAÇÕES -->
+     <div id="ms-tab-alocacoes" class="hidden">
+      <div class="flex flex-wrap items-center gap-3 mb-5">
+       <select id="ms-fil-dia" onchange="msRenderAlocacoes()" class="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none bg-white">
+        <option value="">Todos os dias</option><option value="segunda">Segunda</option><option value="terca">Terça</option><option value="quarta">Quarta</option><option value="quinta">Quinta</option><option value="sexta">Sexta</option><option value="sabado">Sábado</option>
+       </select>
+       <select id="ms-fil-per" onchange="msRenderAlocacoes()" class="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none bg-white">
+        <option value="">Todos os períodos</option><option value="manha">Manhã</option><option value="tarde">Tarde</option><option value="noite">Noite</option>
+       </select>
+       <div class="relative">
+        <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input type="text" id="ms-fil-busca" placeholder="Buscar curso ou docente..." oninput="msRenderAlocacoes()" class="pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-[#004587] focus:outline-none w-52 bg-white">
+       </div>
+       <div id="ms-aloc-total" class="ml-auto text-xs text-gray-500 font-semibold"></div>
+      </div>
+      <div id="ms-lista-alocs" class="space-y-2"></div>
+      <p id="ms-no-alocs" class="hidden text-center text-gray-400 py-12 text-sm">Nenhuma alocação encontrada.</p>
+     </div>
+     <!-- TAB: TV TOTEM -->
+     <div id="ms-tab-totem" class="hidden">
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6 flex flex-wrap items-start justify-between gap-4">
+       <div>
+        <h3 class="font-bold text-[#004587] mb-1">TV Totem — Painel Corporativo</h3>
+        <p class="text-sm text-gray-500 max-w-md">Exibe o mapa completo das 20 salas em formato 9:16 (portrait) para totens e TVs corporativas. Clique em Tela Cheia para usar no totem.</p>
+        <div class="mt-3 p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-700">
+         <strong>⚠ Nota:</strong> Os dados são salvos na aba <code class="bg-amber-100 px-1 rounded">MapaSalas</code> da planilha Google Sheets. Crie essa aba se ainda não existir.
+        </div>
+       </div>
+       <div class="flex gap-2 flex-wrap items-end">
+        <div class="flex flex-col gap-1">
+         <label class="text-xs font-semibold text-gray-500">Dia</label>
+         <select id="ms-totem-dia" class="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none bg-white">
+          <option value="segunda">Segunda</option><option value="terca">Terça</option><option value="quarta">Quarta</option><option value="quinta">Quinta</option><option value="sexta">Sexta</option><option value="sabado">Sábado</option>
+         </select>
+        </div>
+        <div class="flex flex-col gap-1">
+         <label class="text-xs font-semibold text-gray-500">Período</label>
+         <select id="ms-totem-per" class="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none bg-white">
+          <option value="manha">Manhã</option><option value="tarde">Tarde</option><option value="noite">Noite</option>
+         </select>
+        </div>
+        <button onclick="msAbrirTotemFS()" class="bg-[#004587] hover:bg-[#003366] text-white font-bold px-5 py-2 rounded-xl text-sm flex items-center gap-2 transition-all shadow-md">
+         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+         Abrir em Tela Cheia
+        </button>
+       </div>
+      </div>
+      <div class="bg-[#0a1628] rounded-2xl p-6 flex items-center justify-center min-h-[300px]">
+       <div id="ms-totem-preview" class="text-center"></div>
+      </div>
+     </div>
+    </div>
+   </div><!-- FIM MAPA DE SALAS -->
+   <!-- TOTEM FULLSCREEN -->
+   <div id="ms-totem-overlay" class="fixed inset-0 z-[9999] hidden overflow-hidden" style="background:#0a1628;">
+    <div id="ms-totem-scaler" style="position:absolute;width:1080px;height:1920px;transform-origin:top left;">
+     <!-- Header -->
+     <div style="height:155px;background:linear-gradient(135deg,#003b71,#004587);border-bottom:3px solid #F7941D;display:flex;align-items:center;justify-content:space-between;padding:0 28px;">
+      <div style="display:flex;align-items:center;gap:16px;">
+       <div style="width:52px;height:52px;background:#F7941D;border-radius:14px;display:flex;align-items:center;justify-content:center;">
+        <svg width="30" height="30" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+       </div>
+       <div>
+        <div style="font-size:20px;font-weight:800;color:white;">Senac Araçatuba</div>
+        <div style="font-size:11px;font-weight:700;color:#F7941D;letter-spacing:3px;text-transform:uppercase;margin-top:2px;">Mapa de Salas</div>
+       </div>
+      </div>
+      <div style="text-align:right;">
+       <div id="ms-t-clock" style="font-size:38px;font-weight:900;color:#F7941D;font-family:monospace;line-height:1;"></div>
+       <div id="ms-t-info" style="font-size:12px;color:#94a3b8;margin-top:4px;"></div>
+      </div>
+     </div>
+     <!-- Controls bar -->
+     <div style="background:#002d5c;padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <div id="ms-t-dias" style="display:flex;gap:6px;"></div>
+      <div style="width:1px;height:22px;background:#ffffff15;"></div>
+      <div id="ms-t-pers" style="display:flex;gap:6px;"></div>
+      <div style="margin-left:auto;display:flex;gap:14px;align-items:center;">
+       <span style="display:flex;align-items:center;gap:5px;font-size:10px;color:#94a3b8;"><span style="width:8px;height:8px;border-radius:50%;background:#F7941D;display:inline-block;"></span>Ocupada</span>
+       <span style="display:flex;align-items:center;gap:5px;font-size:10px;color:#94a3b8;"><span style="width:8px;height:8px;border-radius:50%;background:#22c55e;display:inline-block;"></span>Disponível</span>
+       <span style="display:flex;align-items:center;gap:5px;font-size:10px;color:#94a3b8;"><span style="width:8px;height:8px;border-radius:50%;background:#3b82f6;display:inline-block;"></span>Sala Fixa</span>
+      </div>
+     </div>
+     <!-- Room grid -->
+     <div id="ms-t-grid" style="padding:14px 18px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;height:1660px;align-content:start;overflow:hidden;"></div>
+     <!-- Footer -->
+     <div style="position:absolute;bottom:0;left:0;right:0;height:70px;background:rgba(0,33,68,0.8);border-top:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;padding:0 28px;">
+      <span id="ms-t-date" style="font-size:11px;color:#475569;"></span>
+      <button onclick="msFecharTotemFS()" style="background:#1e293b;border:1px solid #334155;color:#94a3b8;padding:7px 16px;border-radius:8px;font-size:11px;cursor:pointer;font-family:inherit;">✕ Fechar</button>
+     </div>
+    </div>
    </div>
   </div>
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
@@ -1738,6 +2006,9 @@
         if (agendaBtn) agendaBtn.classList.add('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
         await renderCalendar();
         renderEventos();
+      }
+      if (page === 'mapa-salas') {
+        msInit();
       }
     };
 
@@ -4737,6 +5008,464 @@
       ).join('');
       container.innerHTML = html || '<p class="text-gray-400 text-center py-6">Sem dados para este mês.</p>';
     }
+
+    // ==================== MAPA DE SALAS ====================
+    // MapaSalas sheet columns: id | sala_id | dia | periodo | curso | docente | inicio | fim | fixo | status | timestamp
+
+    const MS_SALAS = [
+      { id:'S01', nome:'Sala 01',              tipo:'Convencional',      capacidade:35,  andar:'Térreo'    },
+      { id:'S02', nome:'Sala 02',              tipo:'Convencional',      capacidade:35,  andar:'Térreo'    },
+      { id:'S03', nome:'Sala 03',              tipo:'Convencional',      capacidade:35,  andar:'Térreo'    },
+      { id:'S04', nome:'Sala 04',              tipo:'Convencional',      capacidade:35,  andar:'1º Andar'  },
+      { id:'S05', nome:'Sala 05',              tipo:'Convencional',      capacidade:35,  andar:'1º Andar'  },
+      { id:'S06', nome:'Sala 06',              tipo:'Convencional',      capacidade:35,  andar:'1º Andar'  },
+      { id:'S07', nome:'Sala 07',              tipo:'Convencional',      capacidade:35,  andar:'1º Andar'  },
+      { id:'S08', nome:'Sala 08',              tipo:'Convencional',      capacidade:35,  andar:'2º Andar'  },
+      { id:'S09', nome:'Sala 09',              tipo:'Convencional',      capacidade:35,  andar:'2º Andar'  },
+      { id:'S10', nome:'Sala 10',              tipo:'Convencional',      capacidade:35,  andar:'2º Andar'  },
+      { id:'S11', nome:'Lab. Informática 1',   tipo:'Lab. Informática',  capacidade:30,  andar:'Térreo'    },
+      { id:'S12', nome:'Lab. Informática 2',   tipo:'Lab. Informática',  capacidade:30,  andar:'1º Andar'  },
+      { id:'S13', nome:'Lab. Enfermagem',      tipo:'Lab. Enfermagem',   capacidade:25,  andar:'Térreo'    },
+      { id:'S14', nome:'Lab. Estética',        tipo:'Lab. Estética',     capacidade:20,  andar:'Térreo'    },
+      { id:'S15', nome:'Lab. Gastronomia',     tipo:'Lab. Gastronomia',  capacidade:25,  andar:'Térreo'    },
+      { id:'S16', nome:'Lab. Coz. Industrial', tipo:'Lab. Gastronomia',  capacidade:25,  andar:'Térreo'    },
+      { id:'S17', nome:'Lab. Confeitaria',     tipo:'Lab. Gastronomia',  capacidade:20,  andar:'Térreo'    },
+      { id:'S18', nome:'Lab. Beleza',          tipo:'Lab. Estética',     capacidade:20,  andar:'1º Andar'  },
+      { id:'S19', nome:'Auditório',            tipo:'Auditório',         capacidade:120, andar:'Térreo'    },
+      { id:'S20', nome:'Sala de Reuniões',     tipo:'Convencional',      capacidade:20,  andar:'2º Andar'  },
+    ];
+
+    const MS_PERIODOS = {
+      manha: { nome:'Manhã',  inicio:'07:30', fim:'11:30' },
+      tarde: { nome:'Tarde',  inicio:'13:00', fim:'17:00' },
+      noite: { nome:'Noite',  inicio:'18:30', fim:'22:30' },
+    };
+
+    const MS_DIAS = {
+      segunda:'Segunda-feira', terca:'Terça-feira', quarta:'Quarta-feira',
+      quinta:'Quinta-feira',   sexta:'Sexta-feira',  sabado:'Sábado'
+    };
+
+    let msAlocacoes = [];
+    let msDiaAtivo = 'segunda';
+    let msPeriodoAtivo = 'tarde';
+    let msTotemInterval = null;
+    let msTotemDia = 'segunda';
+    let msTotemPer = 'tarde';
+    let msCarregado = false;
+
+    function msInit() {
+      msPreencharSelects();
+      if (!msCarregado) {
+        msCarregar().then(() => {
+          msRenderPainel();
+          msRenderTotemPreview();
+        });
+      } else {
+        msRenderPainel();
+        msRenderTotemPreview();
+      }
+    }
+
+    async function msCarregar() {
+      const dados = await carregarDaAba('MapaSalas');
+      const cancelados = new Set(dados.filter(r => r.status === 'cancelado').map(r => r.id));
+      // Group by id, keep latest occurrence per id
+      const byId = {};
+      dados.forEach(r => { byId[r.id] = r; });
+      msAlocacoes = Object.values(byId).filter(r => !cancelados.has(r.id) && r.status !== 'cancelado');
+      msCarregado = true;
+      return msAlocacoes;
+    }
+
+    function msPreencharSelects() {
+      const sel = document.getElementById('ms-sel-sala');
+      if (!sel || sel.options.length > 1) return;
+      MS_SALAS.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.id;
+        opt.textContent = `${s.nome} (${s.tipo} — cap. ${s.capacidade})`;
+        sel.appendChild(opt);
+      });
+    }
+
+    window.msAbrirTab = function(tab) {
+      ['painel','agendar','alocacoes','totem'].forEach(t => {
+        const el = document.getElementById(`ms-tab-${t}`);
+        if (el) el.classList.toggle('hidden', t !== tab);
+      });
+      document.querySelectorAll('[data-ms-tab]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.msTab === tab);
+      });
+      if (tab === 'alocacoes') msRenderAlocacoes();
+      if (tab === 'totem') msRenderTotemPreview();
+    };
+
+    window.msFiltrarDia = function(dia) {
+      msDiaAtivo = dia;
+      document.querySelectorAll('[data-ms-dia]').forEach(btn => {
+        const isActive = btn.dataset.msDia === dia;
+        btn.classList.toggle('active', isActive);
+        btn.classList.toggle('text-gray-600', !isActive);
+      });
+      msRenderPainel();
+    };
+
+    window.msFiltrarPer = function(per) {
+      msPeriodoAtivo = per;
+      document.querySelectorAll('[data-ms-per]').forEach(btn => {
+        const isActive = btn.dataset.msPer === per;
+        btn.classList.toggle('active', isActive);
+        btn.classList.toggle('text-gray-600', !isActive);
+      });
+      msRenderPainel();
+    };
+
+    function msGetAloc(salaId, dia, per) {
+      return msAlocacoes.find(a => a.sala_id === salaId && a.dia === dia && a.periodo === per) || null;
+    }
+
+    const MS_TIPO_ICONS = {
+      'Convencional':'🏫','Lab. Informática':'💻','Lab. Enfermagem':'🏥',
+      'Lab. Estética':'💅','Lab. Gastronomia':'🍳','Auditório':'🎭'
+    };
+
+    function msRenderPainel() {
+      const grid = document.getElementById('ms-grid-painel');
+      if (!grid) return;
+      let ocupadas = 0, disponiveis = 0;
+      const cards = MS_SALAS.map(sala => {
+        const aloc = msGetAloc(sala.id, msDiaAtivo, msPeriodoAtivo);
+        if (aloc) ocupadas++; else disponiveis++;
+        const isFixo = aloc && aloc.fixo === 'true';
+        const bgClass = aloc
+          ? (isFixo ? 'bg-[#1e3a6e] border-blue-400/40' : 'bg-gradient-to-br from-[#F7941D]/15 to-[#F7941D]/5 border-[#F7941D]/40')
+          : 'bg-white border-gray-100 hover:border-[#004587]/30';
+        const dotClass = aloc ? (isFixo ? 'bg-blue-400' : 'bg-[#F7941D]') : 'bg-green-400';
+        const icon = MS_TIPO_ICONS[sala.tipo] || '🏫';
+        const nameColor = aloc ? (isFixo ? 'text-blue-200' : 'text-[#F7941D]') : 'text-gray-400';
+        return `<div class="rounded-2xl border-2 ${bgClass} p-4 shadow-sm transition-all cursor-pointer" onclick="msMostrarDetalhe('${sala.id}')">
+          <div class="flex items-start justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 rounded-full ${dotClass} flex-shrink-0 mt-0.5"></div>
+              <span class="text-xs font-bold ${nameColor}">${sala.id}</span>
+            </div>
+            <span class="text-base leading-none">${icon}</span>
+          </div>
+          <div class="font-bold text-sm ${aloc ? 'text-white' : 'text-[#004587]'} leading-tight mb-1">${sala.nome}</div>
+          <div class="text-[10px] ${aloc ? 'text-white/60' : 'text-gray-400'} mb-2">${sala.tipo} · ${sala.capacidade} lug.</div>
+          ${aloc ? `<div class="bg-white/10 rounded-lg p-2">
+            <div class="text-xs font-semibold text-white truncate">${aloc.curso || '—'}</div>
+            <div class="text-[10px] text-white/70 truncate mt-0.5">${aloc.docente || '—'}</div>
+            <div class="text-[10px] text-white/50 mt-1">${aloc.inicio}–${aloc.fim}${isFixo ? ' 🔒' : ''}</div>
+          </div>` : `<div class="text-xs text-green-600 font-semibold">✓ Disponível</div>`}
+        </div>`;
+      }).join('');
+      grid.innerHTML = cards;
+      const oEl = document.getElementById('ms-stat-ocup');
+      const dEl = document.getElementById('ms-stat-disp');
+      if (oEl) oEl.textContent = ocupadas;
+      if (dEl) dEl.textContent = disponiveis;
+    }
+
+    window.msMostrarDetalhe = function(salaId) {
+      const sala = MS_SALAS.find(s => s.id === salaId);
+      if (!sala) return;
+      const aloc = msGetAloc(salaId, msDiaAtivo, msPeriodoAtivo);
+      const diaNome = MS_DIAS[msDiaAtivo] || msDiaAtivo;
+      const perNome = MS_PERIODOS[msPeriodoAtivo]?.nome || msPeriodoAtivo;
+      if (!aloc) {
+        if (confirm(`${sala.nome} está disponível em ${diaNome} (${perNome}).\n\nDeseja agendar esta sala agora?`)) {
+          msAbrirTab('agendar');
+          setTimeout(() => {
+            const selSala = document.getElementById('ms-sel-sala');
+            const selDia  = document.getElementById('ms-sel-dia');
+            const selPer  = document.getElementById('ms-sel-periodo');
+            if (selSala) selSala.value = salaId;
+            if (selDia)  selDia.value  = msDiaAtivo;
+            if (selPer)  { selPer.value = msPeriodoAtivo; msAutoHoras(); }
+          }, 100);
+        }
+        return;
+      }
+      const info = `📍 ${sala.nome} — ${diaNome} / ${perNome}\n\nCurso: ${aloc.curso||'—'}\nDocente: ${aloc.docente||'—'}\nHorário: ${aloc.inicio}–${aloc.fim}${aloc.fixo==='true' ? '\n🔒 Sala Fixa' : ''}\n\nDeseja remover esta alocação?`;
+      if (confirm(info)) msDeletarAlocacao(aloc.id);
+    };
+
+    window.msAutoHoras = function() {
+      const per = document.getElementById('ms-sel-periodo')?.value;
+      const p = MS_PERIODOS[per];
+      if (!p) return;
+      const ini = document.getElementById('ms-inp-inicio');
+      const fim = document.getElementById('ms-inp-fim');
+      if (ini) ini.value = p.inicio;
+      if (fim) fim.value = p.fim;
+    };
+
+    async function msSalvarAlocacao(obj) {
+      const conflito = msGetAloc(obj.sala_id, obj.dia, obj.periodo);
+      if (conflito) {
+        if (conflito.fixo === 'true') {
+          alert('Esta sala está marcada como Fixa e não pode ser substituída automaticamente.');
+          return false;
+        }
+        if (!confirm(`Sala já alocada para "${conflito.curso}" neste dia/período. Substituir?`)) return false;
+        await msDeletarAlocacao(conflito.id);
+      }
+      const id = 'MS_' + Date.now();
+      const ts = new Date().toISOString();
+      await postToSheet('MapaSalas', [id, obj.sala_id, obj.dia, obj.periodo, obj.curso, obj.docente||'', obj.inicio, obj.fim, obj.fixo ? 'true' : 'false', 'ativo', ts]);
+      msAlocacoes.push({ id, sala_id:obj.sala_id, dia:obj.dia, periodo:obj.periodo, curso:obj.curso, docente:obj.docente||'', inicio:obj.inicio, fim:obj.fim, fixo:obj.fixo?'true':'false', status:'ativo', timestamp:ts });
+      return true;
+    }
+
+    async function msDeletarAlocacao(id) {
+      const aloc = msAlocacoes.find(a => a.id === id);
+      if (!aloc) return;
+      const ts = new Date().toISOString();
+      await postToSheet('MapaSalas', [id, aloc.sala_id, aloc.dia, aloc.periodo, aloc.curso, aloc.docente, aloc.inicio, aloc.fim, aloc.fixo, 'cancelado', ts]);
+      msAlocacoes = msAlocacoes.filter(a => a.id !== id);
+      msRenderPainel();
+      msRenderAlocacoes();
+      msRenderTotemPreview();
+    }
+
+    window.msDeletarAlocacaoById = async function(id) {
+      if (!confirm('Remover esta alocação?')) return;
+      await msDeletarAlocacao(id);
+    };
+
+    function msRenderAlocacoes() {
+      const lista   = document.getElementById('ms-lista-alocs');
+      const noAlocs = document.getElementById('ms-no-alocs');
+      const totalEl = document.getElementById('ms-aloc-total');
+      if (!lista) return;
+      const filDia   = document.getElementById('ms-fil-dia')?.value || '';
+      const filPer   = document.getElementById('ms-fil-per')?.value || '';
+      const filBusca = (document.getElementById('ms-fil-busca')?.value || '').toLowerCase().trim();
+      let filtered = msAlocacoes.filter(a => {
+        if (filDia   && a.dia     !== filDia)  return false;
+        if (filPer   && a.periodo !== filPer)  return false;
+        if (filBusca && !a.curso?.toLowerCase().includes(filBusca) && !a.docente?.toLowerCase().includes(filBusca)) return false;
+        return true;
+      });
+      if (totalEl) totalEl.textContent = `${filtered.length} alocação${filtered.length !== 1 ? 'ões' : ''}`;
+      if (!filtered.length) {
+        lista.innerHTML = '';
+        if (noAlocs) noAlocs.classList.remove('hidden');
+        return;
+      }
+      if (noAlocs) noAlocs.classList.add('hidden');
+      const diaOrder = Object.keys(MS_DIAS);
+      const perOrder = ['manha','tarde','noite'];
+      filtered.sort((a,b) => {
+        const di = diaOrder.indexOf(a.dia) - diaOrder.indexOf(b.dia);
+        if (di !== 0) return di;
+        const pi = perOrder.indexOf(a.periodo) - perOrder.indexOf(b.periodo);
+        if (pi !== 0) return pi;
+        return a.sala_id.localeCompare(b.sala_id);
+      });
+      lista.innerHTML = filtered.map(a => {
+        const s = MS_SALAS.find(x => x.id === a.sala_id);
+        const isFixo = a.fixo === 'true';
+        return `<div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex flex-wrap items-center gap-4">
+          <div class="flex items-center gap-3 min-w-0 flex-1">
+            <div class="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center text-white font-bold text-xs ${isFixo ? 'bg-blue-600' : 'bg-[#004587]'}">${a.sala_id}</div>
+            <div class="min-w-0">
+              <div class="font-bold text-[#004587] text-sm">${s?.nome || a.sala_id}${isFixo ? ' 🔒' : ''}</div>
+              <div class="text-xs text-gray-500">${MS_DIAS[a.dia]||a.dia} · ${MS_PERIODOS[a.periodo]?.nome||a.periodo} · ${a.inicio}–${a.fim}</div>
+            </div>
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="font-semibold text-sm text-gray-800 truncate">${a.curso||'—'}</div>
+            <div class="text-xs text-gray-500 truncate">${a.docente||'—'}</div>
+          </div>
+          <button onclick="msDeletarAlocacaoById('${a.id}')" class="flex-shrink-0 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg p-2 transition-all" title="Remover">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          </button>
+        </div>`;
+      }).join('');
+    }
+
+    // ---- TOTEM ----
+    window.msAbrirTotemFS = function() {
+      const overlay = document.getElementById('ms-totem-overlay');
+      if (!overlay) return;
+      msTotemDia = document.getElementById('ms-totem-dia')?.value || 'segunda';
+      msTotemPer = document.getElementById('ms-totem-per')?.value || 'tarde';
+      overlay.classList.remove('hidden');
+      msRenderTotemFS();
+      msScaleTotem();
+      msUpdateTotemClock();
+      if (msTotemInterval) clearInterval(msTotemInterval);
+      msTotemInterval = setInterval(msUpdateTotemClock, 1000);
+      window.addEventListener('resize', msScaleTotem);
+    };
+
+    window.msFecharTotemFS = function() {
+      const overlay = document.getElementById('ms-totem-overlay');
+      if (overlay) overlay.classList.add('hidden');
+      if (msTotemInterval) { clearInterval(msTotemInterval); msTotemInterval = null; }
+      window.removeEventListener('resize', msScaleTotem);
+    };
+
+    function msScaleTotem() {
+      const scaler = document.getElementById('ms-totem-scaler');
+      if (!scaler) return;
+      const scale = Math.min(window.innerWidth / 1080, window.innerHeight / 1920);
+      scaler.style.transform = `scale(${scale})`;
+      scaler.style.left = ((window.innerWidth  - 1080 * scale) / 2) + 'px';
+      scaler.style.top  = ((window.innerHeight - 1920 * scale) / 2) + 'px';
+    }
+
+    function msUpdateTotemClock() {
+      const clock  = document.getElementById('ms-t-clock');
+      const info   = document.getElementById('ms-t-info');
+      const dateEl = document.getElementById('ms-t-date');
+      const now = new Date();
+      if (clock)  clock.textContent  = now.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+      if (info)   info.textContent   = `${MS_DIAS[msTotemDia]||msTotemDia} · ${MS_PERIODOS[msTotemPer]?.nome||msTotemPer}`;
+      if (dateEl) dateEl.textContent = now.toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'long', year:'numeric' });
+    }
+
+    function msRenderTotemFS() {
+      msRenderTotemBtns();
+      const grid = document.getElementById('ms-t-grid');
+      if (!grid) return;
+      grid.innerHTML = MS_SALAS.map(sala => {
+        const aloc = msGetAloc(sala.id, msTotemDia, msTotemPer);
+        const isFixo = aloc && aloc.fixo === 'true';
+        const bg = aloc ? (isFixo ? '#1e3a6e' : 'linear-gradient(135deg,#7c3200,#b35a00)') : 'linear-gradient(135deg,#0d2a1a,#0d3a1a)';
+        const bColor = aloc ? (isFixo ? '#3b82f6' : '#F7941D') : '#22c55e';
+        return `<div style="background:${bg};border:1.5px solid ${bColor};border-radius:12px;padding:12px 10px;min-height:180px;display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:11px;font-weight:800;color:${bColor};">${sala.id}</span>
+            <span style="font-size:16px;">${MS_TIPO_ICONS[sala.tipo]||'🏫'}</span>
+          </div>
+          <div style="font-size:12px;font-weight:700;color:white;line-height:1.2;">${sala.nome}</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.5);">${sala.tipo}</div>
+          ${aloc ? `<div style="flex:1;background:rgba(255,255,255,0.08);border-radius:8px;padding:8px;margin-top:4px;">
+            <div style="font-size:11px;font-weight:700;color:white;line-height:1.3;">${aloc.curso||'—'}</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.6);margin-top:3px;">${aloc.docente||'—'}</div>
+            <div style="font-size:9px;color:rgba(255,255,255,0.4);margin-top:4px;">${aloc.inicio}–${aloc.fim}${isFixo?' 🔒':''}</div>
+          </div>` : `<div style="flex:1;display:flex;align-items:center;justify-content:center;"><span style="font-size:13px;font-weight:700;color:#22c55e;">✓ Disponível</span></div>`}
+        </div>`;
+      }).join('');
+    }
+
+    function msRenderTotemBtns() {
+      const diasEl = document.getElementById('ms-t-dias');
+      const persEl = document.getElementById('ms-t-pers');
+      if (diasEl) diasEl.innerHTML = Object.entries(MS_DIAS).map(([k,v]) =>
+        `<button onclick="msTotemSetDia('${k}')" style="padding:5px 10px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid;${msTotemDia===k?'background:#004587;color:white;border-color:#004587;':'background:transparent;color:#94a3b8;border-color:#334155;'}">${v.split('-')[0]}</button>`
+      ).join('');
+      if (persEl) persEl.innerHTML = Object.entries(MS_PERIODOS).map(([k,v]) =>
+        `<button onclick="msTotemSetPer('${k}')" style="padding:5px 10px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid;${msTotemPer===k?'background:#F7941D;color:white;border-color:#F7941D;':'background:transparent;color:#94a3b8;border-color:#334155;'}">${v.nome}</button>`
+      ).join('');
+    }
+
+    window.msTotemSetDia = function(dia) { msTotemDia = dia; msRenderTotemFS(); msUpdateTotemClock(); };
+    window.msTotemSetPer = function(per) { msTotemPer = per; msRenderTotemFS(); msUpdateTotemClock(); };
+
+    function msRenderTotemPreview() {
+      const prev = document.getElementById('ms-totem-preview');
+      if (!prev) return;
+      const dia = document.getElementById('ms-totem-dia')?.value || 'segunda';
+      const per = document.getElementById('ms-totem-per')?.value || 'tarde';
+      const ocupadas    = MS_SALAS.filter(s => msGetAloc(s.id, dia, per)).length;
+      const disponiveis = MS_SALAS.length - ocupadas;
+      prev.innerHTML = `<div class="text-white text-center">
+        <div class="text-3xl font-black text-[#F7941D] mb-3">${MS_SALAS.length} Salas</div>
+        <div class="flex gap-8 justify-center mb-4">
+          <div class="text-center"><div class="text-2xl font-black text-[#F7941D]">${ocupadas}</div><div class="text-xs text-gray-400 mt-1">Ocupadas</div></div>
+          <div class="w-px bg-gray-700"></div>
+          <div class="text-center"><div class="text-2xl font-black text-green-400">${disponiveis}</div><div class="text-xs text-gray-400 mt-1">Disponíveis</div></div>
+        </div>
+        <div class="text-xs text-gray-500">${MS_DIAS[dia]||dia} · ${MS_PERIODOS[per]?.nome||per}</div>
+        <div class="text-xs text-gray-600 mt-1">Clique em "Abrir em Tela Cheia" para exibir no totem</div>
+      </div>`;
+    }
+
+    // ---- FORM HANDLERS (mapa de salas) ----
+    document.addEventListener('DOMContentLoaded', function() {
+      const formManual = document.getElementById('ms-form-manual');
+      if (formManual) formManual.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const sala    = document.getElementById('ms-sel-sala')?.value;
+        const dia     = document.getElementById('ms-sel-dia')?.value;
+        const periodo = document.getElementById('ms-sel-periodo')?.value;
+        const curso   = document.getElementById('ms-inp-curso')?.value.trim();
+        const docente = document.getElementById('ms-inp-docente')?.value.trim();
+        const inicio  = document.getElementById('ms-inp-inicio')?.value;
+        const fim     = document.getElementById('ms-inp-fim')?.value;
+        const fixo    = document.getElementById('ms-chk-fixo')?.checked;
+        if (!sala || !dia || !periodo || !curso) { alert('Preencha Sala, Dia, Período e Curso.'); return; }
+        const btn = document.getElementById('ms-btn-manual');
+        if (btn) { btn.disabled = true; btn.textContent = 'Salvando...'; }
+        const ok = await msSalvarAlocacao({ sala_id:sala, dia, periodo, curso, docente, inicio, fim, fixo });
+        if (ok) {
+          formManual.reset();
+          const iniEl = document.getElementById('ms-inp-inicio');
+          const fimEl = document.getElementById('ms-inp-fim');
+          if (iniEl) iniEl.value = '13:00';
+          if (fimEl) fimEl.value = '17:00';
+          msRenderPainel();
+          msRenderTotemPreview();
+          alert('✓ Sala agendada com sucesso!');
+        }
+        if (btn) { btn.disabled = false; btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>Agendar Sala'; }
+      });
+
+      const formAuto = document.getElementById('ms-form-auto');
+      if (formAuto) formAuto.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const curso      = document.getElementById('ms-auto-curso')?.value.trim();
+        const docente    = document.getElementById('ms-auto-docente')?.value.trim();
+        const periodo    = document.getElementById('ms-auto-periodo')?.value;
+        const tipoFiltro = document.getElementById('ms-auto-tipo')?.value;
+        const diasChecked = [...document.querySelectorAll('.ms-auto-dia:checked')].map(c => c.value);
+        if (!curso || !diasChecked.length) { alert('Informe o Curso e ao menos um dia da semana.'); return; }
+        const btn = document.getElementById('ms-btn-auto');
+        if (btn) { btn.disabled = true; btn.textContent = 'Alocando...'; }
+        const resultados = [];
+        for (const dia of diasChecked) {
+          const disponiveis = MS_SALAS.filter(s => {
+            if (tipoFiltro && s.tipo !== tipoFiltro) return false;
+            const aloc = msGetAloc(s.id, dia, periodo);
+            return !aloc || aloc.fixo !== 'true';
+          }).filter(s => !msGetAloc(s.id, dia, periodo));
+          if (!disponiveis.length) { resultados.push({ dia, ok:false, msg:'Nenhuma sala disponível' }); continue; }
+          const sala = disponiveis[0];
+          const p = MS_PERIODOS[periodo];
+          await msSalvarAlocacao({ sala_id:sala.id, dia, periodo, curso, docente, inicio:p.inicio, fim:p.fim, fixo:false });
+          resultados.push({ dia, ok:true, sala:sala.nome });
+        }
+        const resDiv = document.getElementById('ms-auto-resultado');
+        if (resDiv) {
+          resDiv.classList.remove('hidden');
+          resDiv.innerHTML = resultados.map(r =>
+            `<div class="text-xs py-1 flex items-center gap-2">${r.ok?'✅':'❌'} <strong>${MS_DIAS[r.dia]||r.dia}:</strong> ${r.ok ? r.sala : r.msg}</div>`
+          ).join('');
+        }
+        msRenderPainel();
+        msRenderTotemPreview();
+        if (btn) { btn.disabled = false; btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>Alocar Automaticamente'; }
+      });
+
+      const totemDiaSel = document.getElementById('ms-totem-dia');
+      const totemPerSel = document.getElementById('ms-totem-per');
+      if (totemDiaSel) totemDiaSel.addEventListener('change', msRenderTotemPreview);
+      if (totemPerSel) totemPerSel.addEventListener('change', msRenderTotemPreview);
+    });
+
+    // Fecha totem ao pressionar Escape
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        const overlay = document.getElementById('ms-totem-overlay');
+        if (overlay && !overlay.classList.contains('hidden')) msFecharTotemFS();
+      }
+    });
+    // ==================== FIM MAPA DE SALAS ====================
 
     // Fecha pickers ao clicar fora
     document.addEventListener('click', function(e) {
