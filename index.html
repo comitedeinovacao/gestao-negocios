@@ -1739,8 +1739,8 @@
       if (viewId === 'representantes-filter') { filterRepresentantes(); loadRepresentantes(); }
       if (viewId === 'cursos-tecnicos-list') { renderCursosLista('tecnicos'); }
       if (viewId === 'cursos-livres-list') { renderCursosLista('livres'); }
-      if (viewId === 'turmas-list') { renderTurmasConsulta(); }
-      if (viewId === 'parceiros-list') { renderParceirosConsulta(); }
+      if (viewId === 'turmas-list') { window.renderTurmasConsulta(); }
+      if (viewId === 'parceiros-list') { window.renderParceirosConsulta(); }
     };
 
     // Voltar para os cards principais
@@ -1750,44 +1750,54 @@
 
     let cursoDetalheModalidade = 'tecnicos';
 
-    // ── Consulta Turmas ──
+    // ── Consulta Turmas / Parceiros ──
     let _turmasConsultaCache = null;
 
     function _turmaRow(t, isParc) {
       const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
       const cor = isParc ? 'border-purple-100 bg-purple-50' : 'border-gray-100 bg-white';
       const badge = isParc
-        ? `<span class="text-xs font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">${t.nome_curso}</span>`
+        ? `<span class="text-xs font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">${t.nome_curso || ''}</span>`
         : `<span class="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">${periodoLabel[t.periodo] || t.periodo || '-'}</span>`;
       return `<div class="flex items-center justify-between ${cor} border-2 rounded-xl px-4 py-3">
         <div>
           <p class="font-semibold text-sm text-gray-800">${t.nome_curso || '—'} <span class="text-xs text-gray-400 font-normal">· ${t.codigo_oferta || ''}</span></p>
-          <p class="text-xs text-gray-500 mt-0.5">${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)} &nbsp;·&nbsp; Versão: ${t.versao_plano || '-'}</p>
+          <p class="text-xs text-gray-500 mt-0.5">${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)}&nbsp;·&nbsp;Versão: ${t.versao_plano || '-'}</p>
         </div>
         ${badge}
       </div>`;
     }
 
-    async function renderTurmasConsulta() {
+    // Carrega turmas do servidor e armazena no cache
+    function _carregarTurmasCache() {
+      return carregarDaAba('Turmas').then(data => {
+        _turmasConsultaCache = Array.isArray(data) ? data : [];
+        return _turmasConsultaCache;
+      }).catch(() => { _turmasConsultaCache = []; return []; });
+    }
+
+    window.renderTurmasConsulta = function() {
       const grid = document.getElementById('turmas-consulta-grid');
       if (!grid) return;
       grid.innerHTML = '<p class="text-gray-400 text-center py-4 text-sm">Carregando...</p>';
-      _turmasConsultaCache = await carregarDaAba('Turmas');
-      filtrarTurmasConsulta();
-    }
+      _carregarTurmasCache().then(() => {
+        try { window.filtrarTurmasConsulta(); }
+        catch(e) { grid.innerHTML = '<p class="text-red-400 text-center py-4 text-sm">Erro ao carregar turmas.</p>'; console.error(e); }
+      });
+    };
 
     window.filtrarTurmasConsulta = function() {
       const grid = document.getElementById('turmas-consulta-grid');
-      if (!grid || !_turmasConsultaCache) return;
-      const nome = (document.getElementById('turmas-search-nome')?.value || '').toLowerCase();
+      if (!grid) return;
+      if (!Array.isArray(_turmasConsultaCache)) { window.renderTurmasConsulta(); return; }
+      const nome   = (document.getElementById('turmas-search-nome')?.value || '').toLowerCase();
       const periodo = document.getElementById('turmas-search-periodo')?.value || '';
-      const codigo = (document.getElementById('turmas-search-codigo')?.value || '').toLowerCase();
-      const turmas = _turmasConsultaCache.filter(t => {
-        const isParc = isParceiro(t);
-        if (isParc) return false; // exclui parceiros da view de turmas
-        const nomeMatch = !nome || (t.nome_curso || '').toLowerCase().includes(nome);
+      const codigo  = (document.getElementById('turmas-search-codigo')?.value || '').toLowerCase();
+      const turmas  = _turmasConsultaCache.filter(t => {
+        if (isParceiro(t)) return false;
+        const nomeMatch = !nome   || (t.nome_curso    || '').toLowerCase().includes(nome);
         const perMatch  = !periodo || t.periodo === periodo;
-        const codMatch  = !codigo || (t.codigo_oferta || '').toLowerCase().includes(codigo);
+        const codMatch  = !codigo  || (t.codigo_oferta || '').toLowerCase().includes(codigo);
         return nomeMatch && perMatch && codMatch;
       });
       grid.innerHTML = turmas.length === 0
@@ -1795,24 +1805,27 @@
         : turmas.map(t => _turmaRow(t, false)).join('');
     };
 
-    async function renderParceirosConsulta() {
+    window.renderParceirosConsulta = function() {
       const grid = document.getElementById('parceiros-consulta-grid');
       if (!grid) return;
       grid.innerHTML = '<p class="text-gray-400 text-center py-4 text-sm">Carregando...</p>';
-      _turmasConsultaCache = await carregarDaAba('Turmas');
-      filtrarParceirosConsulta();
-    }
+      _carregarTurmasCache().then(() => {
+        try { window.filtrarParceirosConsulta(); }
+        catch(e) { grid.innerHTML = '<p class="text-red-400 text-center py-4 text-sm">Erro ao carregar parceiros.</p>'; console.error(e); }
+      });
+    };
 
     window.filtrarParceirosConsulta = function() {
       const grid = document.getElementById('parceiros-consulta-grid');
-      if (!grid || !_turmasConsultaCache) return;
+      if (!grid) return;
+      if (!Array.isArray(_turmasConsultaCache)) { window.renderParceirosConsulta(); return; }
       const termo = (document.getElementById('parceiros-search')?.value || '').toLowerCase();
       const parceiros = _turmasConsultaCache.filter(t => {
         if (!isParceiro(t)) return false;
         return !termo || (t.nome_curso || '').toLowerCase().includes(termo) || (t.codigo_oferta || '').toLowerCase().includes(termo);
       });
       grid.innerHTML = parceiros.length === 0
-        ? '<p class="text-gray-400 text-center py-6 text-sm">Nenhum parceiro cadastrado.</p>'
+        ? '<p class="text-gray-400 text-center py-6 text-sm">Nenhum parceiro cadastrado.<br><span class="text-xs text-gray-300">Cadastre em Cadastro → Turmas → Parceiros</span></p>'
         : parceiros.map(t => _turmaRow(t, true)).join('');
     };
 
@@ -1823,8 +1836,12 @@
       const open  = panel.style.display === 'none';
       panel.style.display = open ? 'block' : 'none';
       if (chev) chev.style.transform = open ? 'rotate(180deg)' : '';
-      if (open && !_turmasConsultaCache) {
-        carregarDaAba('Turmas').then(data => { _turmasConsultaCache = data; cadBuscarTurmas(''); });
+      if (open) {
+        if (!Array.isArray(_turmasConsultaCache)) {
+          _carregarTurmasCache().then(() => cadBuscarTurmas(''));
+        } else {
+          cadBuscarTurmas('');
+        }
       }
     };
 
@@ -1833,9 +1850,9 @@
       const q = (termo || '').toLowerCase();
       const div = document.getElementById('cad-busca-turma-resultado');
       if (!div) return;
-      if (!_turmasConsultaCache) {
+      if (!Array.isArray(_turmasConsultaCache)) {
         div.innerHTML = '<p class="text-xs text-gray-400 text-center py-3">Carregando...</p>';
-        carregarDaAba('Turmas').then(data => { _turmasConsultaCache = data; cadBuscarTurmas(termo); });
+        _carregarTurmasCache().then(() => cadBuscarTurmas(termo));
         return;
       }
       const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
@@ -3312,7 +3329,8 @@
         const container = document.getElementById('qs-turmas-lista');
         container.style.display = 'block';
         container.innerHTML = '<p class="text-gray-400 text-center py-3 text-sm">Carregando parceiros...</p>';
-        const turmas = await carregarDaAba('Turmas');
+        const turmas = (await carregarDaAba('Turmas').catch(() => [])) || [];
+        _turmasConsultaCache = turmas; // compartilha o cache
         const parceiras = turmas.filter(t => {
           const cod = t.codigo_oferta || '';
           const nome = t.nome_curso || '';
