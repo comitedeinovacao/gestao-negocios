@@ -178,6 +178,14 @@
     /* Quebra de página antes da tabela se necessário */
     #q-weekly-grid { page-break-inside: auto; }
     #q-weekly-grid tr { page-break-inside: avoid; }
+
+    /* Painel Docentes — impressão de selecionados */
+    .printing-painel #painel-container { display: none !important; }
+    .printing-painel #painel-print-area { display: block !important; }
+    #painel-print-area table { width: 100% !important; border-collapse: collapse !important; font-size: 8pt !important; }
+    #painel-print-area th, #painel-print-area td { padding: 3pt 4pt !important; border: 0.5pt solid #cbd5e1 !important; }
+    #painel-print-area th { background: #004587 !important; color: white !important; }
+    #painel-print-area tr { page-break-inside: avoid; }
   }
   </style>
   <style>body { box-sizing: border-box; }</style>
@@ -1163,19 +1171,17 @@
      </div>
      <!-- Aba Painel Docentes -->
      <div id="tab-painel-docentes" class="tab-content" style="display:none">
-      <div class="no-print flex flex-wrap items-center justify-between gap-3 mb-5">
-       <!-- Navegação -->
+      <!-- Linha 1: Navegação + Visão + Legenda -->
+      <div class="no-print flex flex-wrap items-center justify-between gap-3 mb-3">
        <div class="flex items-center gap-3">
         <button onclick="painelNavAnterior()" class="w-9 h-9 flex items-center justify-center rounded-full bg-white border-2 border-[#004587]/20 hover:border-[#004587] text-[#004587] font-bold text-lg transition-all">&#8249;</button>
         <span id="painel-nav-label" class="font-bold text-[#004587] text-base min-w-[210px] text-center"></span>
         <button onclick="painelNavProximo()" class="w-9 h-9 flex items-center justify-center rounded-full bg-white border-2 border-[#004587]/20 hover:border-[#004587] text-[#004587] font-bold text-lg transition-all">&#8250;</button>
        </div>
-       <!-- Alternar visão -->
        <div class="flex gap-2">
         <button id="painel-btn-sem" onclick="painelSetView('semanal')" class="px-4 py-2 rounded-lg text-sm font-semibold border-2 transition-all border-[#004587] bg-[#004587]/10 text-[#004587]">Semanal</button>
         <button id="painel-btn-mes" onclick="painelSetView('mensal')" class="px-4 py-2 rounded-lg text-sm font-semibold border-2 transition-all border-gray-200 text-gray-500">Mensal</button>
        </div>
-       <!-- Legenda -->
        <div class="flex gap-4 text-[11px] text-gray-500 flex-wrap">
         <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-blue-400 inline-block"></span>Presencial</span>
         <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-amber-400 inline-block"></span>EAD</span>
@@ -1183,7 +1189,30 @@
         <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-green-300 inline-block"></span>Disponível</span>
        </div>
       </div>
+      <!-- Linha 2: Busca + Seleção para impressão -->
+      <div class="no-print flex flex-wrap items-start gap-3 mb-4">
+       <div class="relative">
+        <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input type="text" id="painel-busca" placeholder="Filtrar docente..." oninput="painelBuscarDocente(this.value)"
+         class="pl-9 pr-4 py-2 border-2 border-gray-200 rounded-xl text-sm focus:border-[#004587] focus:outline-none w-52 transition-all">
+       </div>
+       <div class="flex-1 min-w-0 bg-gray-50 rounded-xl p-3 border border-gray-100">
+        <div class="flex flex-wrap items-center gap-2 mb-2">
+         <p class="text-xs font-semibold text-gray-600">Selecionar para impressão:</p>
+         <button onclick="painelSelectAll(true)" class="text-xs px-2 py-1 rounded-lg bg-white border border-gray-200 hover:border-[#004587] text-gray-600 transition-all">Todos</button>
+         <button onclick="painelSelectAll(false)" class="text-xs px-2 py-1 rounded-lg bg-white border border-gray-200 hover:border-red-400 text-gray-600 transition-all">Nenhum</button>
+         <button onclick="painelImprimir()" class="text-xs px-3 py-1 rounded-lg bg-[#004587] text-white font-semibold hover:bg-[#003366] transition-all flex items-center gap-1">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          Imprimir selecionados
+         </button>
+        </div>
+        <div id="painel-checkboxes" class="flex flex-wrap gap-1.5"></div>
+       </div>
+      </div>
+      <!-- Grid -->
       <div id="painel-container"></div>
+      <!-- Área exclusiva para impressão -->
+      <div id="painel-print-area" class="print-only" style="display:none"></div>
      </div>
     </div>
     <!-- Modal Editar em Lote -->
@@ -4137,11 +4166,12 @@
       return cod.startsWith('PARC-') || ['GEP/GD','Sebrae'].includes(nome) || nome.startsWith('Evento —');
     }
 
-    // Conta horas em sala de um docente num mês (de allAlocacoes global)
+    // Conta horas em sala (não-parceiro) de um docente num mês
     function percHorasSala(nomeDocente, ano, mes) {
       const prefixo = `${ano}-${String(mes+1).padStart(2,'0')}`;
       return allAlocacoes
-        .filter(a => a.docente_nome === nomeDocente && normData(a.data).startsWith(prefixo))
+        .filter(a => a.docente_nome === nomeDocente && normData(a.data).startsWith(prefixo)
+          && !isParceiro({ nome_curso: a.nome_curso, codigo_oferta: a.turma_codigo }))
         .reduce((s, a) => s + (parseFloat(a.horas) || 0), 0);
     }
 
@@ -4175,10 +4205,10 @@
           const hParcSem  = dcfgGet(nome, 'parc_semanal', 0); // fallback manual
           const hReunPed  = dcfgGet(nome, 'reuniao_mensal', 0);
           const hSala     = percHorasSala(nome, ano, mes);
-          // hParc: from real parceiro allocations in this month
+          // hParc: horas em turmas parceiras (pelo nome/código da turma, independente do campo tipo_aula)
           const mesStr = `${ano}-${String(mes + 1).padStart(2,'0')}`;
           const hParcReal = allAlocacoes
-            .filter(a => a.docente_nome === nome && (a.tipo_aula === 'parceiro') && normData(a.data).startsWith(mesStr))
+            .filter(a => a.docente_nome === nome && isParceiro({ nome_curso: a.nome_curso, codigo_oferta: a.turma_codigo }) && normData(a.data).startsWith(mesStr))
             .reduce((s, a) => s + (parseFloat(a.horas) || 0), 0);
           const hParc = hParcReal > 0 ? Math.round(hParcReal * 10) / 10 : Math.round(hParcSem * semanas * 10) / 10;
           const hReun     = hReunPed;
@@ -4282,8 +4312,8 @@
       const alocs = allAlocacoes.filter(a => a.docente_nome === nome && normData(a.data).startsWith(mesStr) && (parseFloat(a.horas) || 0) > 0);
       alocs.sort((a, b) => normData(a.data).localeCompare(normData(b.data)));
 
-      const alocsAula  = alocs.filter(a => (a.tipo_aula || '') !== 'parceiro');
-      const alocsParc  = alocs.filter(a => a.tipo_aula === 'parceiro');
+      const alocsAula  = alocs.filter(a => !isParceiro({ nome_curso: a.nome_curso, codigo_oferta: a.turma_codigo }));
+      const alocsParc  = alocs.filter(a => isParceiro({ nome_curso: a.nome_curso, codigo_oferta: a.turma_codigo }));
       const totalSala  = alocsAula.reduce((s, a) => s + (parseFloat(a.horas) || 0), 0);
       const totalParc  = alocsParc.reduce((s, a) => s + (parseFloat(a.horas) || 0), 0);
       const numAulas   = alocsAula.length;
@@ -4297,7 +4327,7 @@
         ? '<p class="text-gray-400 text-center py-6 text-sm">Nenhuma alocação neste mês.</p>'
         : alocs.map(a => {
             const [y,m,d] = normData(a.data).split('-');
-            const isParc = a.tipo_aula === 'parceiro';
+            const isParc = isParceiro({ nome_curso: a.nome_curso, codigo_oferta: a.turma_codigo });
             return `<tr class="${isParc ? 'bg-purple-50' : 'bg-white'} border-b border-gray-100">
               <td class="px-3 py-2 text-xs font-semibold text-gray-700">${d}/${m}/${y}</td>
               <td class="px-3 py-2 text-xs text-gray-600">${a.nome_curso || ''}</td>
@@ -4427,6 +4457,8 @@
     let painelView = 'semanal';
     let painelSemanaAtual = null; // Date (Monday of current week)
     let painelMesAtual = null;    // { ano, mes }
+    let painelFiltroNome = '';    // texto de busca (filtra grid)
+    let painelSelecionados = new Set(); // nomes selecionados p/ impressão
 
     function painelGetMonday(d) {
       const dt = new Date(d);
@@ -4484,12 +4516,25 @@
         if (allAlocacoes.length === 0) allAlocacoes = await carregarDaAba('Alocacoes');
       } catch(e) { /* continua com o que tiver */ }
 
-      const docentes = allTeachers
+      const todos = allTeachers
         .filter(d => d.nome_completo)
         .sort((a, b) => (a.nome_completo || '').localeCompare(b.nome_completo || '', 'pt-BR'));
 
-      if (docentes.length === 0) {
+      if (todos.length === 0) {
         container.innerHTML = '<p class="text-gray-400 text-center py-6">Nenhum docente cadastrado.</p>';
+        return;
+      }
+
+      painelRenderCheckboxes(todos);
+
+      // Aplica filtro de texto para o grid
+      const normQ = painelFiltroNome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const docentes = normQ
+        ? todos.filter(d => (d.nome_completo||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(normQ))
+        : todos;
+
+      if (docentes.length === 0) {
+        container.innerHTML = '<p class="text-gray-400 text-center py-6 text-sm">Nenhum docente encontrado.</p>';
         return;
       }
 
@@ -4502,6 +4547,74 @@
 
     // Gera o HTML de uma célula (um dia/turno para um docente)
     // schedHasThisPeriod: true se o docente tem escala neste turno neste dia
+    window.painelBuscarDocente = function(termo) {
+      painelFiltroNome = termo || '';
+      renderPainelDocentes();
+    };
+
+    function painelRenderCheckboxes(todos) {
+      const wrap = document.getElementById('painel-checkboxes');
+      if (!wrap) return;
+      // Inicializa com todos selecionados na primeira vez
+      if (painelSelecionados.size === 0) todos.forEach(d => painelSelecionados.add(d.nome_completo));
+      wrap.innerHTML = todos.map(d => {
+        const chk = painelSelecionados.has(d.nome_completo) ? 'checked' : '';
+        const esc = (d.nome_completo || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        return `<label class="flex items-center gap-1.5 text-[11px] cursor-pointer bg-white border border-gray-200 rounded-lg px-2 py-1 hover:border-[#004587] transition-all select-none">
+          <input type="checkbox" ${chk} onchange="painelToggleDocente('${esc}',this.checked)" class="w-3 h-3 accent-[#004587]">
+          <span class="text-gray-700">${d.nome_completo}</span>
+        </label>`;
+      }).join('');
+    }
+
+    window.painelToggleDocente = function(nome, checked) {
+      if (checked) painelSelecionados.add(nome); else painelSelecionados.delete(nome);
+    };
+
+    window.painelSelectAll = function(todos) {
+      document.querySelectorAll('#painel-checkboxes input[type="checkbox"]').forEach(cb => {
+        cb.checked = todos;
+        const span = cb.closest('label')?.querySelector('span');
+        if (span) { if (todos) painelSelecionados.add(span.textContent); else painelSelecionados.delete(span.textContent); }
+      });
+    };
+
+    window.painelImprimir = function() {
+      const todos = allTeachers.filter(d => d.nome_completo)
+        .sort((a, b) => (a.nome_completo||'').localeCompare(b.nome_completo||'','pt-BR'));
+      const docentes = painelSelecionados.size > 0
+        ? todos.filter(d => painelSelecionados.has(d.nome_completo))
+        : todos;
+      if (docentes.length === 0) { showErrorMessage('❌ Selecione ao menos um docente.'); return; }
+
+      const label = document.getElementById('painel-nav-label')?.textContent || '';
+      const area  = document.getElementById('painel-print-area');
+      if (!area) return;
+
+      let tabelaHTML;
+      if (painelView === 'semanal') {
+        const dias = [];
+        for (let i = 0; i < 6; i++) { const d = new Date(painelSemanaAtual); d.setDate(d.getDate() + i); dias.push(d); }
+        tabelaHTML = painelTabelaHTML(dias, docentes, null);
+      } else {
+        const { ano, mes } = painelMesAtual;
+        const semanas = [];
+        let monday = painelGetMonday(new Date(ano, mes, 1, 12));
+        const ultimoDia = new Date(ano, mes + 1, 0, 12);
+        while (monday <= ultimoDia && semanas.length < 6) {
+          const dias = []; for (let d = 0; d < 6; d++) { const day = new Date(monday); day.setDate(day.getDate() + d); dias.push(day); }
+          semanas.push(dias); monday = new Date(monday); monday.setDate(monday.getDate() + 7);
+        }
+        tabelaHTML = semanas.map(dias => `<div style="margin-bottom:16pt">${painelTabelaHTML(dias, docentes, mes)}</div>`).join('');
+      }
+
+      area.innerHTML = `<h2 style="font-weight:bold;color:#004587;font-size:13pt;margin-bottom:8pt">Painel Docentes — ${label}</h2>${tabelaHTML}`;
+      document.body.classList.add('printing-painel');
+      window.print();
+      document.body.classList.remove('printing-painel');
+      area.innerHTML = '';
+    };
+
     function painelCelulaAloc(nomeDoc, dateStr, periodo, schedHasThisPeriod) {
       const alocs = allAlocacoes.filter(a =>
         a.docente_nome === nomeDoc &&
