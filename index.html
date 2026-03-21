@@ -1018,6 +1018,9 @@
          <button onclick="qAbrirModalLote()" class="px-4 py-2 bg-orange-50 text-orange-700 hover:bg-orange-100 rounded-lg font-semibold text-sm flex items-center gap-2 border border-orange-200">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg> Lançar em Lote
          </button>
+         <button onclick="qAbrirModalEditarLote()" class="px-4 py-2 bg-purple-50 text-purple-700 hover:bg-purple-100 rounded-lg font-semibold text-sm flex items-center gap-2 border border-purple-200">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg> Editar em Lote
+         </button>
          <button onclick="imprimirCalendario()" class="px-4 py-2 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg font-semibold text-sm flex items-center gap-2 border border-green-200">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg> Imprimir
          </button>
@@ -1038,6 +1041,89 @@
       </div>
      </div>
     </div>
+    <!-- Modal Editar em Lote -->
+    <div id="modal-editar-lote" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+     <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div class="p-6 border-b border-gray-200">
+       <div class="flex justify-between items-center">
+        <h3 class="text-xl font-bold text-[#004587]">Editar em Lote</h3>
+        <button onclick="fecharModalEditarLote()" class="text-gray-400 hover:text-gray-600">
+         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+       </div>
+       <p class="text-sm text-gray-500 mt-1">Filtre as alocações existentes e defina o que substituir.</p>
+      </div>
+      <div class="p-6 space-y-5">
+
+       <!-- FILTROS -->
+       <div class="bg-blue-50 rounded-xl p-4 space-y-3">
+        <p class="font-bold text-[#004587] text-sm">1. Filtrar alocações</p>
+        <div>
+         <label class="block text-xs font-semibold text-gray-600 mb-1">UC (deixe vazio para todas)</label>
+         <select id="el-filtro-uc" onchange="qAtualizarPreviewEditarLote()" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm">
+          <option value="">— Todas as UCs —</option>
+         </select>
+        </div>
+        <div>
+         <label class="block text-xs font-semibold text-gray-600 mb-1">Docente atual (deixe vazio para todos)</label>
+         <select id="el-filtro-docente" onchange="qAtualizarPreviewEditarLote()" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm">
+          <option value="">— Todos os docentes —</option>
+         </select>
+        </div>
+        <div class="flex gap-3">
+         <div class="flex-1">
+          <label class="block text-xs font-semibold text-gray-600 mb-1">De</label>
+          <input id="el-filtro-de" type="date" onchange="qAtualizarPreviewEditarLote()" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm">
+         </div>
+         <div class="flex-1">
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Até</label>
+          <input id="el-filtro-ate" type="date" onchange="qAtualizarPreviewEditarLote()" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm">
+         </div>
+        </div>
+       </div>
+
+       <!-- SUBSTITUIÇÕES -->
+       <div class="bg-orange-50 rounded-xl p-4 space-y-3">
+        <p class="font-bold text-orange-700 text-sm">2. Substituir por (deixe vazio para não alterar)</p>
+        <div>
+         <label class="block text-xs font-semibold text-gray-600 mb-1">Novo docente</label>
+         <select id="el-novo-docente" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm">
+          <option value="">— Manter atual —</option>
+         </select>
+        </div>
+        <div>
+         <label class="block text-xs font-semibold text-gray-600 mb-1">Nova UC</label>
+         <select id="el-nova-uc" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm">
+          <option value="">— Manter atual —</option>
+         </select>
+        </div>
+        <div class="flex gap-3">
+         <div class="flex-1">
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Novo tipo</label>
+          <select id="el-novo-tipo" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm">
+           <option value="">— Manter atual —</option>
+           <option value="presencial">Presencial</option>
+           <option value="ead">EAD</option>
+          </select>
+         </div>
+         <div class="flex-1">
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Novas horas</label>
+          <input id="el-novas-horas" type="number" step="0.5" min="0.5" max="8" placeholder="— Manter —" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm">
+         </div>
+        </div>
+       </div>
+
+       <!-- PREVIEW -->
+       <div id="el-preview" class="bg-gray-50 rounded-xl p-4 text-sm hidden"></div>
+
+       <!-- BOTÃO -->
+       <button id="el-btn-salvar" onclick="qSalvarEditarLote()" class="w-full bg-purple-700 text-white font-bold py-3 rounded-xl hover:bg-purple-800 transition-colors hidden">
+        Aplicar alterações
+       </button>
+      </div>
+     </div>
+    </div>
+
     <!-- Modal Lançamento em Lote -->
     <div id="modal-lote" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
      <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
@@ -3272,6 +3358,149 @@
       fecharModalLote();
       qRenderMonthlyGrid(quadroTurmaAtual);
       showSuccessMessage(`✅ ${datas.length} encontros lançados com sucesso!`);
+    };
+
+    // ══════════════════════════════════════════════
+    // EDITAR EM LOTE
+    // ══════════════════════════════════════════════
+    window.qAbrirModalEditarLote = async function() {
+      if (!quadroTurmaAtual) return;
+      const modal = document.getElementById('modal-editar-lote');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+
+      // UCs únicas desta turma em allAlocacoes
+      const turmaAloc = allAlocacoes.filter(a => a.turma_codigo === quadroTurmaAtual.codigo_oferta);
+      const ucsUnicas = [...new Set(turmaAloc.map(a => a.uc_nome).filter(Boolean))].sort();
+      const docentesUnicos = [...new Set(turmaAloc.map(a => a.docente_nome).filter(Boolean))].sort();
+
+      document.getElementById('el-filtro-uc').innerHTML =
+        '<option value="">— Todas as UCs —</option>' + ucsUnicas.map(u => `<option value="${u}">${u}</option>`).join('');
+      document.getElementById('el-filtro-docente').innerHTML =
+        '<option value="">— Todos os docentes —</option>' + docentesUnicos.map(d => `<option value="${d}">${d}</option>`).join('');
+
+      // Popula selects de substituição
+      if (allUCs.length === 0) await loadUCs();
+      const norm = s => (s||'').toLowerCase().normalize('NFC').trim();
+      const dadosCursos = await carregarDadosCursos();
+      const todosCursos = [...(dadosCursos.cursos_tecnicos||[]), ...(dadosCursos.cursos_livres||[])];
+      const cursoEncontrado = todosCursos.find(c => norm(c.nome) === norm(quadroTurmaAtual.nome_curso));
+      const versaoTurma = quadroTurmaAtual.versao_plano || '';
+      const ucsDisponiveis = allUCs.filter(u => {
+        const match = cursoEncontrado ? u.curso_id === cursoEncontrado.id : norm(u.curso_nome) === norm(quadroTurmaAtual.nome_curso);
+        return match && (!versaoTurma || String(u.versao) === String(versaoTurma));
+      });
+      document.getElementById('el-nova-uc').innerHTML =
+        '<option value="">— Manter atual —</option>' + ucsDisponiveis.map(u => `<option value="${u.uc_nome}">${u.uc_nome}</option>`).join('');
+
+      if (allTeachers.length === 0) allTeachers = await carregarDaAba('Docentes');
+      const sorted = [...allTeachers].filter(d => d.nome_completo).sort((a,b) => (a.nome_completo||'').localeCompare(b.nome_completo||'','pt-BR'));
+      document.getElementById('el-novo-docente').innerHTML =
+        '<option value="">— Manter atual —</option>' + sorted.map(d => `<option value="${d.nome_completo}">${d.nome_completo}</option>`).join('');
+
+      document.getElementById('el-preview').classList.add('hidden');
+      document.getElementById('el-btn-salvar').classList.add('hidden');
+      qAtualizarPreviewEditarLote();
+    };
+
+    window.fecharModalEditarLote = function() {
+      document.getElementById('modal-editar-lote').classList.add('hidden');
+      document.getElementById('modal-editar-lote').classList.remove('flex');
+    };
+
+    window.qAtualizarPreviewEditarLote = function() {
+      if (!quadroTurmaAtual) return;
+      const filtroUC      = document.getElementById('el-filtro-uc')?.value || '';
+      const filtroDocente = document.getElementById('el-filtro-docente')?.value || '';
+      const filtroDe      = document.getElementById('el-filtro-de')?.value || '';
+      const filtroAte     = document.getElementById('el-filtro-ate')?.value || '';
+
+      const afetadas = allAlocacoes.filter(a => {
+        if (a.turma_codigo !== quadroTurmaAtual.codigo_oferta) return false;
+        if (filtroUC && a.uc_nome !== filtroUC) return false;
+        if (filtroDocente && a.docente_nome !== filtroDocente) return false;
+        const d = normData(a.data);
+        if (filtroDe && d < filtroDe) return false;
+        if (filtroAte && d > filtroAte) return false;
+        return true;
+      });
+
+      const preview = document.getElementById('el-preview');
+      const btn = document.getElementById('el-btn-salvar');
+
+      if (afetadas.length === 0) {
+        preview.innerHTML = '<p class="text-gray-500 text-center">Nenhuma alocação encontrada com esses filtros.</p>';
+        preview.classList.remove('hidden');
+        btn.classList.add('hidden');
+        return;
+      }
+
+      const NOMES_DIA = { segunda:'Seg', terca:'Ter', quarta:'Qua', quinta:'Qui', sexta:'Sex', sabado:'Sáb' };
+      preview.innerHTML = `
+        <p class="font-bold text-purple-700 mb-2">${afetadas.length} alocação(ões) serão alteradas:</p>
+        <div class="space-y-1 max-h-36 overflow-y-auto">
+          ${afetadas.map(a => {
+            const d = normData(a.data); const [y,m,dd] = d.split('-');
+            return `<div class="flex justify-between text-xs bg-white rounded px-2 py-1 border border-purple-100">
+              <span class="font-semibold text-[#004587]">${dd}/${m}/${y} (${NOMES_DIA[a.dia_semana]||a.dia_semana})</span>
+              <span class="text-gray-500 truncate ml-2">${a.uc_nome} · ${a.docente_nome}</span>
+            </div>`;
+          }).join('')}
+        </div>`;
+      preview.classList.remove('hidden');
+      btn.textContent = `Aplicar em ${afetadas.length} alocação(ões)`;
+      btn.classList.remove('hidden');
+    };
+
+    window.qSalvarEditarLote = async function() {
+      if (!quadroTurmaAtual) return;
+      const filtroUC      = document.getElementById('el-filtro-uc').value;
+      const filtroDocente = document.getElementById('el-filtro-docente').value;
+      const filtroDe      = document.getElementById('el-filtro-de').value;
+      const filtroAte     = document.getElementById('el-filtro-ate').value;
+      const novoDocente   = document.getElementById('el-novo-docente').value;
+      const novaUC        = document.getElementById('el-nova-uc').value;
+      const novoTipo      = document.getElementById('el-novo-tipo').value;
+      const novasHoras    = document.getElementById('el-novas-horas').value;
+
+      if (!novoDocente && !novaUC && !novoTipo && !novasHoras) {
+        showErrorMessage('❌ Defina ao menos uma substituição.'); return;
+      }
+
+      const afetadas = allAlocacoes.filter(a => {
+        if (a.turma_codigo !== quadroTurmaAtual.codigo_oferta) return false;
+        if (filtroUC && a.uc_nome !== filtroUC) return false;
+        if (filtroDocente && a.docente_nome !== filtroDocente) return false;
+        const d = normData(a.data);
+        if (filtroDe && d < filtroDe) return false;
+        if (filtroAte && d > filtroAte) return false;
+        return true;
+      });
+
+      const btn = document.getElementById('el-btn-salvar');
+      btn.disabled = true;
+
+      for (let i = 0; i < afetadas.length; i++) {
+        btn.textContent = `Atualizando ${i+1}/${afetadas.length}...`;
+        const a = afetadas[i];
+        // Deleta o antigo
+        await deleteFromSheet('Alocacoes', 'aloc_id', a.aloc_id);
+        // Monta o novo registro
+        const novoId = 'aloc_' + Date.now() + '_' + Math.floor(Math.random()*1e6);
+        const ucFinal      = novaUC      || a.uc_nome;
+        const docenteFinal = novoDocente || a.docente_nome;
+        const tipoFinal    = novoTipo    || a.tipo_aula;
+        const horasFinal   = novasHoras  ? parseFloat(novasHoras) : (parseFloat(a.horas) || 3.5);
+        await postToSheet('Alocacoes', [novoId, a.turma_codigo, a.nome_curso, normData(a.data), a.dia_semana, ucFinal, docenteFinal, a.periodo, tipoFinal, horasFinal]);
+        // Atualiza em memória
+        const idx = allAlocacoes.findIndex(x => x.aloc_id === a.aloc_id);
+        if (idx >= 0) allAlocacoes[idx] = { ...a, aloc_id: novoId, uc_nome: ucFinal, docente_nome: docenteFinal, tipo_aula: tipoFinal, horas: horasFinal };
+      }
+
+      btn.disabled = false;
+      fecharModalEditarLote();
+      qRenderMonthlyGrid(quadroTurmaAtual);
+      showSuccessMessage(`✅ ${afetadas.length} alocação(ões) atualizadas com sucesso!`);
     };
 
     async function qPopularDocentesDisponiveis(dia) {
