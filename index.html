@@ -1104,6 +1104,7 @@
     let eventosStale = true; // força recarga na próxima renderização
 
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyujbQCQ4OKMiLXNl4Q3aOMCQp65ifsjXp8ZQbutBsJwoSfGMlDe9DCok1XKt_qc389hg/exec';
+    const APPS_SECRET_KEY = 'SenacArc@2026!'; // chave secreta — deve ser idêntica à do Apps Script
 
     function carregarDaAba(aba) {
       return new Promise((resolve) => {
@@ -1129,7 +1130,7 @@
 
         const script = document.createElement('script');
         script.id = scriptId;
-        script.src = APPS_SCRIPT_URL + '?aba=' + encodeURIComponent(aba) + '&callback=' + cbName + '&t=' + Date.now() + '&r=' + Math.floor(Math.random() * 1e9);
+        script.src = APPS_SCRIPT_URL + '?aba=' + encodeURIComponent(aba) + '&callback=' + cbName + '&key=' + encodeURIComponent(APPS_SECRET_KEY) + '&t=' + Date.now() + '&r=' + Math.floor(Math.random() * 1e9);
         document.head.appendChild(script);
       });
     }
@@ -1648,7 +1649,7 @@
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({ action: 'delete', aba, keyCol, keyVal })
+        body: JSON.stringify({ action: 'delete', aba, keyCol, keyVal, key: APPS_SECRET_KEY })
       });
     }
 
@@ -2528,12 +2529,11 @@
     }
 
     async function postToSheet(aba, linha) {
-      const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyujbQCQ4OKMiLXNl4Q3aOMCQp65ifsjXp8ZQbutBsJwoSfGMlDe9DCok1XKt_qc389hg/exec';
-      await fetch(SCRIPT_URL, {
+      await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({ aba, linha })
+        body: JSON.stringify({ aba, linha, key: APPS_SECRET_KEY })
       });
     }
 
