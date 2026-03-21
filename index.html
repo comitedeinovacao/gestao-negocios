@@ -467,7 +467,7 @@
         <!-- Seleção de Modalidade e Curso -->
         <div>
   <label class="block text-[#004587] font-semibold mb-3">Modalidade do Curso</label>
-  <div class="grid grid-cols-2 gap-3 mb-3">
+  <div class="grid grid-cols-3 gap-3 mb-3">
     <button type="button" id="btn-picker-tec" onclick="filtrarCursosPicker('tecnicos')"
       class="px-4 py-3 rounded-xl border-2 border-gray-200 font-semibold text-gray-700 hover:border-[#004587] hover:text-[#004587] transition-all">
       Técnico
@@ -476,6 +476,27 @@
       class="px-4 py-3 rounded-xl border-2 border-gray-200 font-semibold text-gray-700 hover:border-[#F7941D] hover:text-[#F7941D] transition-all">
       Livre / Qualificação
     </button>
+    <button type="button" id="btn-picker-parc" onclick="filtrarCursosPicker('parceiros')"
+      class="px-4 py-3 rounded-xl border-2 border-gray-200 font-semibold text-gray-700 hover:border-purple-500 hover:text-purple-600 transition-all">
+      Parceiros
+    </button>
+  </div>
+  <!-- Parceiro sub-form -->
+  <div id="parceiro-sub-form" style="display:none" class="bg-purple-50 border-2 border-purple-200 rounded-xl p-4 mb-3 space-y-3">
+    <p class="text-sm font-semibold text-purple-700">Tipo de Parceiro</p>
+    <div class="grid grid-cols-3 gap-2">
+      <button type="button" onclick="selecionarTipoParceiro('GEP/GD')" id="btn-parc-gep"
+        class="px-3 py-2 rounded-xl border-2 border-gray-200 font-semibold text-sm text-gray-700 hover:border-purple-400 hover:text-purple-600 transition-all">GEP/GD</button>
+      <button type="button" onclick="selecionarTipoParceiro('Sebrae')" id="btn-parc-seb"
+        class="px-3 py-2 rounded-xl border-2 border-gray-200 font-semibold text-sm text-gray-700 hover:border-purple-400 hover:text-purple-600 transition-all">Sebrae</button>
+      <button type="button" onclick="selecionarTipoParceiro('Evento')" id="btn-parc-evt"
+        class="px-3 py-2 rounded-xl border-2 border-gray-200 font-semibold text-sm text-gray-700 hover:border-purple-400 hover:text-purple-600 transition-all">Evento</button>
+    </div>
+    <div id="parceiro-nome-div" style="display:none">
+      <label class="block text-xs font-semibold text-gray-600 mb-1">Nome do evento / programa</label>
+      <input type="text" id="parceiro-nome-input" placeholder="Ex: Workshop Empreendedorismo" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:outline-none text-sm">
+    </div>
+    <input type="hidden" id="parceiro-tipo-hidden" value="">
   </div>
   <div id="curso-picker-lista" style="display:none"
     class="max-h-52 overflow-y-auto border-2 border-gray-200 rounded-xl bg-white divide-y divide-gray-100">
@@ -495,7 +516,7 @@
        </div>
        <div class="grid md:grid-cols-2 gap-6">
         <div><label class="block text-[#004587] font-semibold mb-3">Versão do Plano de Curso</label>
-         <input type="text" placeholder="Ex: 2025, 2026..." name="versao_plano" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+         <input type="text" placeholder="Ex: 2025, 2026..." name="versao_plano" id="versao-plano-input" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
          <p class="text-xs text-gray-400 mt-1">Identifica qual plano de curso a turma segue.</p>
         </div>
         <div><label class="block text-[#004587] font-semibold mb-3">Período</label> <select name="periodo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required> <option value="">Selecione</option> <option value="manha">Manhã</option> <option value="tarde">Tarde</option> <option value="noite">Noite</option> </select>
@@ -996,9 +1017,10 @@
       <!-- Step 1: Seleção de turma -->
       <div id="q-step-selecao">
        <h3 class="text-xl font-bold text-[#004587] mb-4">Selecione o Curso e a Turma</h3>
-       <div class="grid grid-cols-2 gap-3 mb-3 max-w-sm">
+       <div class="grid grid-cols-3 gap-3 mb-3 max-w-lg">
         <button type="button" id="qs-btn-tec" onclick="qsFiltrarCursos('tecnicos')" class="px-4 py-3 rounded-xl border-2 border-gray-200 font-semibold text-sm text-gray-700 hover:border-[#004587] hover:text-[#004587] transition-all">Técnico</button>
         <button type="button" id="qs-btn-liv" onclick="qsFiltrarCursos('livres')" class="px-4 py-3 rounded-xl border-2 border-gray-200 font-semibold text-sm text-gray-700 hover:border-[#F7941D] hover:text-[#F7941D] transition-all">Livre / Qualificação</button>
+        <button type="button" id="qs-btn-parc" onclick="qsFiltrarCursos('parceiros')" class="px-4 py-3 rounded-xl border-2 border-gray-200 font-semibold text-sm text-gray-700 hover:border-purple-500 hover:text-purple-600 transition-all">Parceiros</button>
        </div>
        <div id="qs-curso-lista" style="display:none" class="max-w-lg max-h-52 overflow-y-auto border-2 border-gray-200 rounded-xl bg-white divide-y divide-gray-100 mb-4"></div>
        <div id="qs-turmas-lista" style="display:none" class="max-w-lg space-y-2"></div>
@@ -1208,6 +1230,51 @@
        </button>
       </div>
      </div>
+    </div>
+
+    <!-- Modal Relatório por Docente -->
+    <div id="modal-relatorio-docente" class="hidden fixed inset-0 bg-black/50 z-50 items-start justify-center pt-8 px-4 overflow-y-auto">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl mx-auto mb-8">
+        <div class="no-print flex items-center justify-between p-6 border-b border-gray-200">
+          <div>
+            <h3 class="text-xl font-bold text-[#004587]" id="rel-doc-titulo">Docente</h3>
+            <p class="text-sm text-gray-500" id="rel-doc-mes"></p>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="imprimirRelatorioDocente()" class="px-4 py-2 bg-[#004587] text-white rounded-xl text-sm font-semibold flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+              Imprimir
+            </button>
+            <button onclick="fecharRelatorioDocente()" class="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl text-sm font-semibold">Fechar</button>
+          </div>
+        </div>
+        <div class="p-6">
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="bg-blue-50 rounded-xl p-4 text-center">
+              <p class="text-xs text-blue-600 font-semibold uppercase mb-1">Total Em Sala</p>
+              <p class="text-2xl font-bold text-blue-700" id="rel-doc-total-sala">0h</p>
+            </div>
+            <div class="bg-purple-50 rounded-xl p-4 text-center">
+              <p class="text-xs text-purple-600 font-semibold uppercase mb-1">Total Parceiros</p>
+              <p class="text-2xl font-bold text-purple-700" id="rel-doc-total-parc">0h</p>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="bg-gray-50 text-gray-600 text-xs uppercase">
+                  <th class="px-3 py-2 text-left font-semibold">Data</th>
+                  <th class="px-3 py-2 text-left font-semibold">Turma / Parceiro</th>
+                  <th class="px-3 py-2 text-left font-semibold">UC / Atividade</th>
+                  <th class="px-3 py-2 text-center font-semibold">Tipo</th>
+                  <th class="px-3 py-2 text-right font-semibold">Horas</th>
+                </tr>
+              </thead>
+              <tbody id="rel-doc-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Modal de Alocação -->
@@ -1670,11 +1737,31 @@
     }
 
     window.filtrarCursosPicker = async function(modalidade) {
+      // Reset parceiro sub-form
+      const parcSub = document.getElementById('parceiro-sub-form');
+      if (modalidade === 'parceiros') {
+        if (parcSub) parcSub.style.display = 'block';
+        document.getElementById('curso-picker-lista').style.display = 'none';
+        document.getElementById('curso-picker-selecionado').style.display = 'none';
+        document.getElementById('nome_do_curso_hidden').value = '__parceiro__';
+        // Update button styles
+        document.getElementById('btn-picker-tec').className = 'px-4 py-3 rounded-xl border-2 font-semibold transition-all border-gray-200 text-gray-700 hover:border-[#004587] hover:text-[#004587]';
+        document.getElementById('btn-picker-liv').className = 'px-4 py-3 rounded-xl border-2 font-semibold transition-all border-gray-200 text-gray-700 hover:border-[#F7941D] hover:text-[#F7941D]';
+        const parcBtn = document.getElementById('btn-picker-parc');
+        if (parcBtn) parcBtn.className = 'px-4 py-3 rounded-xl border-2 font-semibold transition-all border-purple-500 bg-purple-50 text-purple-600';
+        return;
+      } else {
+        if (parcSub) parcSub.style.display = 'none';
+        document.getElementById('parceiro-tipo-hidden').value = '';
+      }
+
       // Destaque no botão ativo
       document.getElementById('btn-picker-tec').className = 'px-4 py-3 rounded-xl border-2 font-semibold transition-all ' +
         (modalidade === 'tecnicos' ? 'border-[#004587] bg-[#004587]/10 text-[#004587]' : 'border-gray-200 text-gray-700 hover:border-[#004587] hover:text-[#004587]');
       document.getElementById('btn-picker-liv').className = 'px-4 py-3 rounded-xl border-2 font-semibold transition-all ' +
         (modalidade === 'livres' ? 'border-[#F7941D] bg-[#F7941D]/10 text-[#F7941D]' : 'border-gray-200 text-gray-700 hover:border-[#F7941D] hover:text-[#F7941D]');
+      const parcBtn = document.getElementById('btn-picker-parc');
+      if (parcBtn) parcBtn.className = 'px-4 py-3 rounded-xl border-2 font-semibold transition-all border-gray-200 text-gray-700 hover:border-purple-500 hover:text-purple-600';
 
       const lista = document.getElementById('curso-picker-lista');
       const selecionado = document.getElementById('curso-picker-selecionado');
@@ -1701,6 +1788,18 @@
         const btn = e.target.closest('.curso-picker-item');
         if (btn) selecionarCursoPicker(btn.dataset.nome);
       };
+    };
+
+    window.selecionarTipoParceiro = function(tipo) {
+      document.getElementById('parceiro-tipo-hidden').value = tipo;
+      const base = 'px-3 py-2 rounded-xl border-2 font-semibold text-sm transition-all';
+      ['gep','seb','evt'].forEach(k => {
+        const map = { gep: 'GEP/GD', seb: 'Sebrae', evt: 'Evento' };
+        const btn = document.getElementById('btn-parc-' + k);
+        if (btn) btn.className = base + (map[k] === tipo ? ' border-purple-500 bg-purple-100 text-purple-700' : ' border-gray-200 text-gray-700');
+      });
+      const nomeDiv = document.getElementById('parceiro-nome-div');
+      if (nomeDiv) nomeDiv.style.display = tipo === 'Evento' ? 'block' : 'none';
     };
 
     window.selecionarCursoPicker = function(nome) {
@@ -2038,21 +2137,30 @@
     document.getElementById('turmas-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
       const form = e.target;
-      const nome_curso = form.nome_do_curso.value.trim();
-      const codigo_oferta = form.codigo_da_oferta.value.trim();
-      const versao_plano = form.versao_plano.value.trim();
+      const hiddenNome = form.nome_do_curso.value.trim();
+      const isParcForm = hiddenNome === '__parceiro__';
+      let nome_curso, codigo_oferta, versao_plano;
+
+      if (isParcForm) {
+        const tipoParceiro = document.getElementById('parceiro-tipo-hidden').value;
+        const nomeEvento = (document.getElementById('parceiro-nome-input')?.value || '').trim();
+        if (!tipoParceiro) { showErrorMessage('❌ Selecione o tipo de parceiro (GEP/GD, Sebrae ou Evento)'); return; }
+        if (tipoParceiro === 'Evento' && !nomeEvento) { showErrorMessage('❌ Informe o nome do evento'); return; }
+        nome_curso = tipoParceiro === 'Evento' ? `Evento — ${nomeEvento}` : tipoParceiro;
+        const suffix = Date.now().toString().slice(-6);
+        const typeCode = tipoParceiro === 'GEP/GD' ? 'GEP' : tipoParceiro === 'Sebrae' ? 'SEB' : 'EVT';
+        codigo_oferta = form.codigo_da_oferta.value.trim() || `PARC-${typeCode}-${suffix}`;
+        versao_plano = form.versao_plano.value.trim() || tipoParceiro;
+      } else {
+        nome_curso = hiddenNome;
+        codigo_oferta = form.codigo_da_oferta.value.trim();
+        versao_plano = form.versao_plano.value.trim();
+        if (!nome_curso) { showErrorMessage('❌ Selecione o curso'); return; }
+        if (!codigo_oferta || !versao_plano) { showErrorMessage('❌ Preencha todos os campos obrigatórios'); return; }
+      }
       const data_inicio = form.data_de_inicio.value;
       const data_termino = form.data_de_termino.value;
       const periodo = form.periodo.value;
-
-      if (!nome_curso) {
-        showErrorMessage('❌ Selecione o curso');
-        return;
-      }
-      if (!codigo_oferta || !versao_plano) {
-        showErrorMessage('❌ Preencha todos os campos obrigatórios');
-        return;
-      }
 
       const btn = form.querySelector('button');
       const originalBtnHtml = btn.innerHTML;
@@ -2067,6 +2175,15 @@
         if (pickerSel) pickerSel.style.display = 'none';
         const pickerLista = document.getElementById('curso-picker-lista');
         if (pickerLista) pickerLista.style.display = 'none';
+        const parcSub = document.getElementById('parceiro-sub-form');
+        if (parcSub) parcSub.style.display = 'none';
+        document.getElementById('parceiro-tipo-hidden').value = '';
+        const nomeInput = document.getElementById('parceiro-nome-input');
+        if (nomeInput) nomeInput.value = '';
+        ['gep','seb','evt'].forEach(k => {
+          const b = document.getElementById('btn-parc-' + k);
+          if (b) b.className = 'px-3 py-2 rounded-xl border-2 border-gray-200 font-semibold text-sm text-gray-700 hover:border-purple-400 hover:text-purple-600 transition-all';
+        });
         showSuccessMessage('✅ Enviado com sucesso!');
       } catch (err) {
         showErrorMessage('❌ Erro ao enviar: ' + err.message);
@@ -2970,6 +3087,42 @@
       const base = 'px-4 py-3 rounded-xl border-2 font-semibold text-sm transition-all';
       document.getElementById('qs-btn-tec').className = base + (modalidade === 'tecnicos' ? ' border-[#004587] bg-[#004587]/10 text-[#004587]' : ' border-gray-200 text-gray-700');
       document.getElementById('qs-btn-liv').className = base + (modalidade === 'livres' ? ' border-[#F7941D] bg-[#F7941D]/10 text-[#F7941D]' : ' border-gray-200 text-gray-700');
+      const parcBtn = document.getElementById('qs-btn-parc');
+      if (parcBtn) parcBtn.className = base + (modalidade === 'parceiros' ? ' border-purple-500 bg-purple-50 text-purple-600' : ' border-gray-200 text-gray-700');
+
+      if (modalidade === 'parceiros') {
+        document.getElementById('qs-curso-lista').style.display = 'none';
+        const container = document.getElementById('qs-turmas-lista');
+        container.style.display = 'block';
+        container.innerHTML = '<p class="text-gray-400 text-center py-3 text-sm">Carregando parceiros...</p>';
+        const turmas = await carregarDaAba('Turmas');
+        const parceiras = turmas.filter(t => {
+          const cod = t.codigo_oferta || '';
+          const nome = t.nome_curso || '';
+          return cod.startsWith('PARC-') || ['GEP/GD','Sebrae'].includes(nome) || nome.startsWith('Evento —');
+        });
+        const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
+        const tipoIcon = { 'GEP/GD': '🤝', 'Sebrae': '🏢' };
+        if (parceiras.length === 0) {
+          container.innerHTML = '<p class="text-gray-500 text-center py-6 text-sm">Nenhuma turma parceira cadastrada.<br><span class="text-xs text-gray-400">Cadastre em Cadastro → Turmas → Parceiros</span></p>';
+          return;
+        }
+        container.innerHTML = '<p class="font-semibold text-gray-700 text-sm mb-3">Selecione a atividade parceira:</p>';
+        parceiras.forEach(t => {
+          const div = document.createElement('div');
+          div.className = 'cursor-pointer flex items-center justify-between bg-purple-50 border-2 border-purple-100 hover:border-purple-400 rounded-xl px-5 py-4 transition-all mb-2';
+          const icone = tipoIcon[(t.nome_curso||'')] || '📋';
+          div.innerHTML = `<div>
+            <p class="font-bold text-purple-700 text-sm">${icone} ${t.nome_curso} — ${t.codigo_oferta || ''}</p>
+            <p class="text-xs text-gray-500">${periodoLabel[t.periodo] || t.periodo || '-'} · ${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)}</p>
+          </div>
+          <svg class="w-5 h-5 text-purple-400 flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>`;
+          div.onclick = () => qsAbrirQuadro(t);
+          container.appendChild(div);
+        });
+        return;
+      }
+
       const lista = document.getElementById('qs-curso-lista');
       lista.style.display = 'block';
       lista.innerHTML = '<p class="text-gray-400 text-center py-3 text-sm">Carregando...</p>';
@@ -3219,7 +3372,21 @@
       }
       // UCs do curso — filtra por curso_id (via data.json) ou fallback por curso_nome
       const ucSelect = document.getElementById('modal-uc-select');
-      if (allUCs.length === 0) await loadUCs();
+
+      // Modo parceiro: sem UC, apenas docente + horas
+      const isParc = isParceiro(quadroTurmaAtual);
+      const ucRow = ucSelect?.closest?.('div.space-y-5 > div') || ucSelect?.parentElement;
+      if (isParc) {
+        ucSelect.innerHTML = `<option value="${quadroTurmaAtual.nome_curso}" selected>${quadroTurmaAtual.nome_curso}</option>`;
+        if (ucRow) ucRow.style.display = 'none';
+        document.getElementById('modal-tipo-container')?.classList.add('hidden');
+        document.getElementById('modal-saldo')?.classList?.add?.('hidden');
+      } else {
+        if (ucRow) ucRow.style.display = '';
+        if (allUCs.length === 0) await loadUCs();
+      }
+
+      if (!isParc) {
       const versaoTurma = quadroTurmaAtual.versao_plano || '';
       // Tenta encontrar o curso_id a partir do nome do curso salvo na turma
       const norm = s => (s||'').toLowerCase().normalize('NFC').trim();
@@ -3233,14 +3400,15 @@
         const mesmaVersao = !versaoTurma || String(u.versao) === String(versaoTurma);
         return mesmoNome && mesmaVersao;
       });
-      ucSelect.innerHTML = '<option value="">Selecione a UC...</option>' +
-        ucsDisponiveis.map(u => {
-          const pres  = u.ch_presencial || u.carga_horaria || 0;
-          const total = u.carga_horaria_total || u.carga_horaria || 0;
-          const ead   = u.ch_ead || 0;
-          const label = ead ? `${u.uc_nome} (${pres}h pres. + ${ead}h EAD = ${total}h)` : `${u.uc_nome} (${pres}h)`;
-          return `<option value="${u.uc_nome}" data-presencial="${pres}" data-ead="${ead}" data-total="${total}">${label}</option>`;
-        }).join('');
+        ucSelect.innerHTML = '<option value="">Selecione a UC...</option>' +
+          ucsDisponiveis.map(u => {
+            const pres  = u.ch_presencial || u.carga_horaria || 0;
+            const total = u.carga_horaria_total || u.carga_horaria || 0;
+            const ead   = u.ch_ead || 0;
+            const label = ead ? `${u.uc_nome} (${pres}h pres. + ${ead}h EAD = ${total}h)` : `${u.uc_nome} (${pres}h)`;
+            return `<option value="${u.uc_nome}" data-presencial="${pres}" data-ead="${ead}" data-total="${total}">${label}</option>`;
+          }).join('');
+      }
       // Define horas padrão com base no período da turma
       const hDefault = quadroTurmaAtual.periodo === 'noite' ? 3.5 : 4;
       document.getElementById('modal-horas').value = hDefault;
@@ -3557,6 +3725,13 @@
       localStorage.setItem('dc_' + btoa(unescape(encodeURIComponent(nome))) + '_' + field, String(val));
     }
 
+    function isParceiro(turma) {
+      if (!turma) return false;
+      const cod = (turma.codigo_oferta || turma.turma_codigo || '');
+      const nome = (turma.nome_curso || '');
+      return cod.startsWith('PARC-') || ['GEP/GD','Sebrae'].includes(nome) || nome.startsWith('Evento —');
+    }
+
     // Conta horas em sala de um docente num mês (de allAlocacoes global)
     function percHorasSala(nomeDocente, ano, mes) {
       const prefixo = `${ano}-${String(mes+1).padStart(2,'0')}`;
@@ -3592,10 +3767,15 @@
         .map(d => {
           const nome = d.nome_completo;
           const chMensal  = dcfgGet(nome, 'ch_mensal', 160);
-          const hParcSem  = dcfgGet(nome, 'parc_semanal', 0);
+          const hParcSem  = dcfgGet(nome, 'parc_semanal', 0); // fallback manual
           const hReunPed  = dcfgGet(nome, 'reuniao_mensal', 0);
           const hSala     = percHorasSala(nome, ano, mes);
-          const hParc     = Math.round(hParcSem * semanas * 10) / 10;
+          // hParc: from real parceiro allocations in this month
+          const mesStr = `${ano}-${String(mes + 1).padStart(2,'0')}`;
+          const hParcReal = allAlocacoes
+            .filter(a => a.docente_nome === nome && (a.tipo_aula === 'parceiro') && normData(a.data).startsWith(mesStr))
+            .reduce((s, a) => s + (parseFloat(a.horas) || 0), 0);
+          const hParc = hParcReal > 0 ? Math.round(hParcReal * 10) / 10 : Math.round(hParcSem * semanas * 10) / 10;
           const hReun     = hReunPed;
           const hTotal    = hSala + hParc + hReun;
           const hPlan     = Math.max(0, chMensal - hTotal);
@@ -3661,9 +3841,13 @@
                 <div class="h-full bg-purple-400 transition-all" style="width:${pReun}%" title="Reuniões ${pReun}%"></div>
                 <div class="h-full bg-green-300 transition-all" style="width:${pPlan}%" title="Planejamento ${pPlan}%"></div>
               </div>
-              <div class="flex gap-3 mt-1 text-[10px] text-gray-500">
-                <span>CH contratada: <strong>${chMensal}h/mês</strong></span>
-                <span>Total lecionadas: <strong>${hTotal.toFixed(1)}h</strong></span>
+              <div class="flex items-center justify-between mt-1">
+                <div class="flex gap-3 text-[10px] text-gray-500">
+                  <span>CH contratada: <strong>${chMensal}h/mês</strong></span>
+                  <span>Total lecionadas: <strong>${hTotal.toFixed(1)}h</strong></span>
+                </div>
+                <button onclick="mostrarRelatorioDocente('${nome.replace(/'/g,"\\'")}',${ano},${mes})"
+                  class="text-[10px] text-[#004587] hover:text-blue-800 font-semibold underline no-print">Ver Relatório</button>
               </div>
             </div>`;
         });
@@ -3685,6 +3869,51 @@
       dcfgSet(nome, 'parc_semanal', parc);
       dcfgSet(nome, 'reuniao_mensal', reun);
       document.getElementById('perc-edit-' + idSafe)?.classList.add('hidden');
+    };
+
+    window.mostrarRelatorioDocente = function(nome, ano, mes) {
+      const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+      const mesStr = `${ano}-${String(mes + 1).padStart(2,'0')}`;
+      const alocs = allAlocacoes.filter(a => a.docente_nome === nome && normData(a.data).startsWith(mesStr));
+      alocs.sort((a, b) => normData(a.data).localeCompare(normData(b.data)));
+
+      const totalSala = alocs.filter(a => (a.tipo_aula || '') !== 'parceiro').reduce((s, a) => s + (parseFloat(a.horas) || 0), 0);
+      const totalParc = alocs.filter(a => a.tipo_aula === 'parceiro').reduce((s, a) => s + (parseFloat(a.horas) || 0), 0);
+
+      const rows = alocs.length === 0
+        ? '<p class="text-gray-400 text-center py-6 text-sm">Nenhuma alocação neste mês.</p>'
+        : alocs.map(a => {
+            const [y,m,d] = normData(a.data).split('-');
+            const isParc = a.tipo_aula === 'parceiro';
+            return `<tr class="${isParc ? 'bg-purple-50' : 'bg-white'} border-b border-gray-100">
+              <td class="px-3 py-2 text-xs font-semibold text-gray-700">${d}/${m}/${y}</td>
+              <td class="px-3 py-2 text-xs text-gray-600">${a.nome_curso || ''}</td>
+              <td class="px-3 py-2 text-xs text-gray-600">${a.uc_nome || ''}</td>
+              <td class="px-3 py-2 text-center">
+                <span class="text-xs font-bold px-2 py-0.5 rounded-full ${isParc ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}">${isParc ? 'Parceiro' : (a.tipo_aula || 'Presencial')}</span>
+              </td>
+              <td class="px-3 py-2 text-xs text-right font-bold text-[#004587]">${parseFloat(a.horas) || 0}h</td>
+            </tr>`;
+          }).join('');
+
+      const modal = document.getElementById('modal-relatorio-docente');
+      if (!modal) return;
+      document.getElementById('rel-doc-titulo').textContent = nome;
+      document.getElementById('rel-doc-mes').textContent = `${MESES[mes]} ${ano}`;
+      document.getElementById('rel-doc-total-sala').textContent = totalSala.toFixed(1) + 'h';
+      document.getElementById('rel-doc-total-parc').textContent = totalParc.toFixed(1) + 'h';
+      document.getElementById('rel-doc-body').innerHTML = rows;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    };
+
+    window.fecharRelatorioDocente = function() {
+      document.getElementById('modal-relatorio-docente')?.classList.add('hidden');
+      document.getElementById('modal-relatorio-docente')?.classList.remove('flex');
+    };
+
+    window.imprimirRelatorioDocente = function() {
+      window.print();
     };
 
     async function qPopularDocentesDisponiveis(dia) {
@@ -3739,7 +3968,9 @@
     window.salvarAlocacao = async function() {
       const ucNome = document.getElementById('modal-uc-select').value;
       const docenteNome = document.getElementById('modal-docente-select').value;
-      if (!ucNome || !docenteNome) { showErrorMessage('❌ Selecione UC e Docente'); return; }
+      const isParc = isParceiro(quadroTurmaAtual);
+      if ((!ucNome && !isParc) || !docenteNome) { showErrorMessage('❌ Selecione ' + (isParc ? '' : 'UC e ') + 'Docente'); return; }
+      const ucNomeFinal = isParc ? (quadroTurmaAtual.nome_curso) : ucNome;
       if (!quadroTurmaAtual || !modalAlocacaoData) return;
       const btn = document.querySelector('#modal-alocacao button[onclick="salvarAlocacao()"]');
       btn.disabled = true; btn.textContent = '⏳ Salvando...';
@@ -3752,8 +3983,9 @@
       const [y,m,d] = modalAlocacaoData.split('-').map(Number);
       const diaSemana = DIAS_ID[new Date(y, m-1, d).getDay()];
       try {
-        await postToSheet('Alocacoes', [alocId, quadroTurmaAtual.codigo_oferta, quadroTurmaAtual.nome_curso, modalAlocacaoData, diaSemana, ucNome, docenteNome, quadroTurmaAtual.periodo, tipoAula, horas]);
-        allAlocacoes.push({ aloc_id: alocId, turma_codigo: quadroTurmaAtual.codigo_oferta, nome_curso: quadroTurmaAtual.nome_curso, data: modalAlocacaoData, dia_semana: diaSemana, uc_nome: ucNome, docente_nome: docenteNome, periodo: quadroTurmaAtual.periodo, tipo_aula: tipoAula, horas });
+        const tipoAulaFinal = isParc ? 'parceiro' : tipoAula;
+        await postToSheet('Alocacoes', [alocId, quadroTurmaAtual.codigo_oferta, quadroTurmaAtual.nome_curso, modalAlocacaoData, diaSemana, ucNomeFinal, docenteNome, quadroTurmaAtual.periodo, tipoAulaFinal, horas]);
+        allAlocacoes.push({ aloc_id: alocId, turma_codigo: quadroTurmaAtual.codigo_oferta, nome_curso: quadroTurmaAtual.nome_curso, data: modalAlocacaoData, dia_semana: diaSemana, uc_nome: ucNomeFinal, docente_nome: docenteNome, periodo: quadroTurmaAtual.periodo, tipo_aula: tipoAulaFinal, horas });
         fecharModalAlocacao();
         qRenderMonthlyGrid(quadroTurmaAtual);
         showSuccessMessage('✅ Docente alocado com sucesso!');
