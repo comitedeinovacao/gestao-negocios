@@ -1620,13 +1620,30 @@
           <label class="block text-xs font-semibold text-gray-600 mb-1">Data</label>
           <input type="date" id="ms-inp-data" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none">
          </div>
-         <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Curso / Turma</label>
-          <input type="text" id="ms-inp-curso" placeholder="Ex: Técnico em Logística" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none">
+         <!-- Busca de turma cadastrada -->
+         <div class="relative">
+          <label class="block text-xs font-semibold text-[#004587] mb-1 flex items-center gap-1">
+           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+           Buscar Turma Cadastrada
+          </label>
+          <input type="text" id="ms-busca-turma" placeholder="Digite nome ou código da turma..." autocomplete="off"
+           oninput="msBuscarTurmaDropdown(this.value,'ms-turma-lista','manual')"
+           onfocus="msBuscarTurmaDropdown(this.value,'ms-turma-lista','manual')"
+           class="w-full border-2 border-[#004587]/30 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none bg-[#004587]/5">
+          <div id="ms-turma-lista" class="hidden absolute z-50 w-full bg-white border border-gray-200 rounded-xl shadow-xl max-h-52 overflow-y-auto mt-1"></div>
          </div>
-         <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Docente</label>
-          <input type="text" id="ms-inp-docente" placeholder="Nome do docente" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none">
+         <div class="border-t border-dashed border-gray-200 pt-2">
+          <p class="text-[10px] text-gray-400 mb-2 font-semibold uppercase tracking-wide">Ou preencha manualmente:</p>
+          <div class="space-y-3">
+           <div>
+            <label class="block text-xs font-semibold text-gray-600 mb-1">Curso / Turma</label>
+            <input type="text" id="ms-inp-curso" placeholder="Ex: Técnico em Logística" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none">
+           </div>
+           <div>
+            <label class="block text-xs font-semibold text-gray-600 mb-1">Docente</label>
+            <input type="text" id="ms-inp-docente" placeholder="Nome do docente" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none">
+           </div>
+          </div>
          </div>
          <div class="grid grid-cols-2 gap-3">
           <div><label class="block text-xs font-semibold text-gray-600 mb-1">Início</label><input type="time" id="ms-inp-inicio" value="13:00" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none"></div>
@@ -1647,13 +1664,30 @@
         </h3>
         <p class="text-xs text-gray-500 mb-4">Aloca automaticamente uma sala para cada data dentro do período selecionado. Salas fixas não são substituídas.</p>
         <form id="ms-form-auto" class="space-y-3">
-         <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Curso / Turma</label>
-          <input type="text" id="ms-auto-curso" placeholder="Ex: Técnico em Marketing" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none">
+         <!-- Busca de turma cadastrada (auto) -->
+         <div class="relative">
+          <label class="block text-xs font-semibold text-[#F7941D] mb-1 flex items-center gap-1">
+           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+           Buscar Turma Cadastrada
+          </label>
+          <input type="text" id="ms-busca-turma-auto" placeholder="Digite nome ou código da turma..." autocomplete="off"
+           oninput="msBuscarTurmaDropdown(this.value,'ms-turma-lista-auto','auto')"
+           onfocus="msBuscarTurmaDropdown(this.value,'ms-turma-lista-auto','auto')"
+           class="w-full border-2 border-[#F7941D]/30 rounded-lg px-3 py-2 text-sm focus:border-[#F7941D] focus:outline-none bg-[#F7941D]/5">
+          <div id="ms-turma-lista-auto" class="hidden absolute z-50 w-full bg-white border border-gray-200 rounded-xl shadow-xl max-h-52 overflow-y-auto mt-1"></div>
          </div>
-         <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Docente</label>
-          <input type="text" id="ms-auto-docente" placeholder="Nome do docente" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none">
+         <div class="border-t border-dashed border-gray-200 pt-2">
+          <p class="text-[10px] text-gray-400 mb-2 font-semibold uppercase tracking-wide">Ou preencha manualmente:</p>
+          <div class="space-y-3">
+           <div>
+            <label class="block text-xs font-semibold text-gray-600 mb-1">Curso / Turma</label>
+            <input type="text" id="ms-auto-curso" placeholder="Ex: Técnico em Marketing" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none">
+           </div>
+           <div>
+            <label class="block text-xs font-semibold text-gray-600 mb-1">Docente</label>
+            <input type="text" id="ms-auto-docente" placeholder="Nome do docente" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none">
+           </div>
+          </div>
          </div>
          <div class="grid grid-cols-2 gap-3">
           <div>
@@ -5095,13 +5129,16 @@
     };
 
     let msAlocacoes  = [];
-    let msDataAtiva  = '';       // 'YYYY-MM-DD'
+    let msDataAtiva  = '';
     let msPeriodoAtivo = 'tarde';
-    let msSemanaAtual  = null;   // Date: Monday of current week
+    let msSemanaAtual  = null;
     let msTotemInterval = null;
+    let msTotemRefreshInterval = null;
+    let msPainelRefreshInterval = null;
     let msTotemData  = '';
     let msTotemPer   = 'tarde';
     let msCarregado  = false;
+    let msTurmaSearchResults = [];
 
     // ---- Date helpers ----
     function msHoje() {
@@ -5136,15 +5173,29 @@
       return msStrToDate(dateStr).toLocaleDateString('pt-BR', { weekday:'long' });
     }
 
+    // ---- Period detection ----
+    function msGetCurrentPeriod() {
+      const min = new Date().getHours() * 60 + new Date().getMinutes();
+      if (min >= 360  && min <= 720)  return 'manha'; // 06:00–12:00
+      if (min >= 721  && min <= 1080) return 'tarde'; // 12:01–18:00
+      if (min >= 1081 && min <= 1320) return 'noite'; // 18:01–22:00
+      return null;
+    }
+
     // ---- Init ----
     function msInit() {
       const hoje = msHoje();
       if (!msDataAtiva) msDataAtiva = hoje;
       if (!msTotemData) msTotemData = hoje;
       if (!msSemanaAtual) msSemanaAtual = msGetMonday(msStrToDate(hoje));
+      // Auto-set period from current time
+      const autoPer = msGetCurrentPeriod();
+      if (autoPer) {
+        msPeriodoAtivo = autoPer;
+        msFiltrarPer(autoPer);
+      }
       msPreencharSelects();
       msRenderSemanaLabels();
-      // Set today's date in form inputs
       const iniDataEl = document.getElementById('ms-inp-data');
       if (iniDataEl && !iniDataEl.value) iniDataEl.value = hoje;
       const totemDiaEl = document.getElementById('ms-totem-dia');
@@ -5153,6 +5204,17 @@
         msCarregar().then(() => { msRenderPainel(); msRenderTotemPreview(); });
       } else {
         msRenderPainel(); msRenderTotemPreview();
+      }
+      // Polling: re-read sheet every 3 min while page is open
+      if (!msPainelRefreshInterval) {
+        msPainelRefreshInterval = setInterval(async () => {
+          const pg = document.getElementById('mapa-salas-page');
+          if (pg && pg.classList.contains('active')) {
+            await msCarregar();
+            msRenderPainel();
+            msRenderTotemPreview();
+          }
+        }, 3 * 60 * 1000);
       }
     }
 
@@ -5418,13 +5480,26 @@
       const overlay = document.getElementById('ms-totem-overlay');
       if (!overlay) return;
       msTotemData = document.getElementById('ms-totem-dia')?.value || msHoje();
-      msTotemPer  = document.getElementById('ms-totem-per')?.value || 'tarde';
+      // Auto-set period from current time
+      const autoPer = msGetCurrentPeriod();
+      msTotemPer = autoPer || document.getElementById('ms-totem-per')?.value || 'tarde';
       overlay.classList.remove('hidden');
       msRenderTotemFS();
       msScaleTotem();
       msUpdateTotemClock();
+      // Clock tick — also auto-switches period when time crosses boundary
       if (msTotemInterval) clearInterval(msTotemInterval);
-      msTotemInterval = setInterval(msUpdateTotemClock, 1000);
+      msTotemInterval = setInterval(() => {
+        msUpdateTotemClock();
+        const p = msGetCurrentPeriod();
+        if (p && p !== msTotemPer) { msTotemPer = p; msRenderTotemFS(); }
+      }, 1000);
+      // Data refresh from sheet every 2 minutes
+      if (msTotemRefreshInterval) clearInterval(msTotemRefreshInterval);
+      msTotemRefreshInterval = setInterval(async () => {
+        await msCarregar();
+        msRenderTotemFS();
+      }, 2 * 60 * 1000);
       window.addEventListener('resize', msScaleTotem);
     };
 
@@ -5432,6 +5507,7 @@
       const overlay = document.getElementById('ms-totem-overlay');
       if (overlay) overlay.classList.add('hidden');
       if (msTotemInterval) { clearInterval(msTotemInterval); msTotemInterval = null; }
+      if (msTotemRefreshInterval) { clearInterval(msTotemRefreshInterval); msTotemRefreshInterval = null; }
       window.removeEventListener('resize', msScaleTotem);
     };
 
@@ -5540,6 +5616,66 @@
         <div class="text-xs text-gray-400">Clique em "Abrir em Tela Cheia" para exibir no totem</div>
       </div>`;
     }
+
+    // ---- TURMA SEARCH ----
+    window.msBuscarTurmaDropdown = function(termo, listaId, modo) {
+      const lista = document.getElementById(listaId);
+      if (!lista) return;
+      const t = (termo || '').toLowerCase().trim();
+      const resultados = allTurmas.filter(x =>
+        x.nome_curso?.toLowerCase().includes(t) ||
+        String(x.codigo_oferta||'').toLowerCase().includes(t)
+      ).slice(0, 25);
+      msTurmaSearchResults = resultados;
+      if (!resultados.length) { lista.classList.add('hidden'); return; }
+      const perLabel = { manha:'Manhã', tarde:'Tarde', noite:'Noite', integral:'Integral', sabado:'Sábado' };
+      lista.classList.remove('hidden');
+      lista.innerHTML = resultados.map((x, i) => {
+        const per = perLabel[x.periodo] || x.periodo || '';
+        const ini = x.data_de_inicio ? (x.data_de_inicio.substring(0,10).split('-').reverse().join('/')) : '';
+        const fim = x.data_de_termino ? (x.data_de_termino.substring(0,10).split('-').reverse().join('/')) : '';
+        return `<div class="px-3 py-2.5 hover:bg-[#004587]/5 cursor-pointer border-b border-gray-50 last:border-0" onclick="msSelectTurmaIdx(${i},'${modo}','${listaId}')">
+          <div class="font-semibold text-sm text-gray-800 leading-tight">${x.nome_curso||'—'}</div>
+          <div class="text-xs text-gray-400 mt-0.5">${x.codigo_oferta||''} · ${per}${ini?' · '+ini+(fim?' → '+fim:''):''}</div>
+        </div>`;
+      }).join('');
+    };
+
+    window.msSelectTurmaIdx = function(idx, modo, listaId) {
+      const turma = msTurmaSearchResults[idx];
+      if (!turma) return;
+      // Find most-used docente for this turma from existing allocations
+      const docs = allAlocacoes.filter(a => a.turma_codigo === String(turma.codigo_oferta));
+      const cnt = {}; docs.forEach(a => { if (a.docente_nome) cnt[a.docente_nome] = (cnt[a.docente_nome]||0)+1; });
+      const docente = Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0]?.[0] || '';
+      if (modo === 'manual') {
+        const c = document.getElementById('ms-inp-curso');
+        const d = document.getElementById('ms-inp-docente');
+        const b = document.getElementById('ms-busca-turma');
+        if (c) c.value = turma.nome_curso || '';
+        if (d) d.value = docente;
+        if (b) b.value = '';
+      } else {
+        const c = document.getElementById('ms-auto-curso');
+        const d = document.getElementById('ms-auto-docente');
+        const b = document.getElementById('ms-busca-turma-auto');
+        if (c) c.value = turma.nome_curso || '';
+        if (d) d.value = docente;
+        if (b) b.value = '';
+      }
+      document.getElementById(listaId)?.classList.add('hidden');
+    };
+
+    // Close turma dropdowns on outside click
+    document.addEventListener('click', function(e) {
+      ['ms-turma-lista','ms-turma-lista-auto'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && !el.classList.contains('hidden')) {
+          const input = document.getElementById(id === 'ms-turma-lista' ? 'ms-busca-turma' : 'ms-busca-turma-auto');
+          if (!el.contains(e.target) && e.target !== input) el.classList.add('hidden');
+        }
+      });
+    });
 
     // ---- FORM HANDLERS ----
     document.addEventListener('DOMContentLoaded', function() {
