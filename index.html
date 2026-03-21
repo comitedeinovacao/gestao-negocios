@@ -461,7 +461,32 @@
       </form>
      </div><!-- Turmas -->
      <div id="tab-turmas" class="tab-content bg-gray-50 rounded-2xl p-8" style="display:none">
-      <h3 class="text-2xl font-bold text-[#004587] mb-8">Cadastro de Turmas</h3>
+      <h3 class="text-2xl font-bold text-[#004587] mb-6">Cadastro de Turmas</h3>
+      <!-- Busca rápida antes de cadastrar -->
+      <div class="mb-8 border-2 border-dashed border-gray-300 rounded-2xl overflow-hidden">
+       <button type="button" onclick="toggleBuscaTurmas()" class="w-full flex items-center justify-between px-5 py-4 bg-white hover:bg-gray-50 transition-colors text-left">
+        <span class="flex items-center gap-2 font-semibold text-gray-700 text-sm">
+         <svg class="w-4 h-4 text-[#004587]" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+         Verificar turmas já cadastradas antes de registrar
+        </span>
+        <svg id="busca-turmas-chevron" class="w-4 h-4 text-gray-400 transition-transform" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+       </button>
+       <div id="busca-turmas-panel" style="display:none" class="px-5 pb-5 bg-white border-t border-gray-100">
+        <div class="flex gap-2 mt-4 mb-3">
+         <input type="text" id="cad-busca-turma-input" placeholder="Buscar por nome do curso ou código..." oninput="cadBuscarTurmas(this.value)"
+           class="flex-1 px-3 py-2 border-2 border-gray-200 rounded-xl text-sm focus:border-[#004587] focus:outline-none">
+         <select id="cad-busca-turma-tipo" onchange="cadBuscarTurmas(document.getElementById('cad-busca-turma-input').value)"
+           class="px-3 py-2 border-2 border-gray-200 rounded-xl text-sm focus:border-[#004587] focus:outline-none">
+          <option value="">Todos os tipos</option>
+          <option value="regular">Técnico / Livre</option>
+          <option value="parceiro">Parceiros</option>
+         </select>
+        </div>
+        <div id="cad-busca-turma-resultado" class="max-h-56 overflow-y-auto space-y-1 text-sm text-gray-500">
+         <p class="text-xs text-gray-400 text-center py-3">Digite para buscar turmas cadastradas.</p>
+        </div>
+       </div>
+      </div>
       <form id="turmas-form" class="space-y-6">
        <div class="grid md:grid-cols-2 gap-6">
         <!-- Seleção de Modalidade e Curso -->
@@ -662,6 +687,20 @@
        <h4 class="text-lg font-bold text-[#004587] text-center mb-2">PITD</h4>
        <p class="text-gray-600 text-sm text-center">Plano Individual de Trabalho Docente</p>
       </div>
+      <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-6 shadow-lg border-2 border-[#004587]/20 cursor-pointer hover:border-[#004587] hover:shadow-xl transition-all" onclick="openConsultaView('turmas-list')">
+       <div class="w-14 h-14 bg-gradient-to-br from-[#004587] to-[#003366] rounded-xl flex items-center justify-center mb-4 mx-auto">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+       </div>
+       <h4 class="text-lg font-bold text-[#004587] text-center mb-2">Turmas</h4>
+       <p class="text-gray-600 text-sm text-center">Consulte turmas técnicas e livres cadastradas</p>
+      </div>
+      <div class="eco-card bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-2xl p-6 shadow-lg border-2 border-purple-200 cursor-pointer hover:border-purple-400 hover:shadow-xl transition-all" onclick="openConsultaView('parceiros-list')">
+       <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-700 rounded-xl flex items-center justify-center mb-4 mx-auto">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+       </div>
+       <h4 class="text-lg font-bold text-purple-700 text-center mb-2">Parceiros</h4>
+       <p class="text-gray-600 text-sm text-center">GEP/GD, Sebrae e eventos cadastrados</p>
+      </div>
      </div><!-- Modal de Seleção de Cursos -->
      <div id="modal-cursos" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
       <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[80vh] overflow-y-auto">
@@ -806,6 +845,40 @@
   </button>
   <h3 class="text-xl font-bold text-[#004587] mb-6">Cursos Livres / Qualificação</h3>
   <div id="cursos-livres-grid" class="grid gap-3"></div>
+</div>
+
+<!-- Consulta Turmas -->
+<div id="turmas-list" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200" style="display:none">
+  <button onclick="closeConsultaView()" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Voltar
+  </button>
+  <h3 class="text-xl font-bold text-[#004587] mb-4">Turmas Cadastradas</h3>
+  <div class="grid md:grid-cols-3 gap-3 mb-5 bg-blue-50 p-4 rounded-xl">
+    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nome do curso</label>
+      <input type="text" id="turmas-search-nome" placeholder="Ex: Administração..." oninput="filtrarTurmasConsulta()" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+    </div>
+    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Período</label>
+      <select id="turmas-search-periodo" onchange="filtrarTurmasConsulta()" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+        <option value="">Todos</option><option value="manha">Manhã</option><option value="tarde">Tarde</option><option value="noite">Noite</option>
+      </select>
+    </div>
+    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Código da oferta</label>
+      <input type="text" id="turmas-search-codigo" placeholder="Ex: 2026-001..." oninput="filtrarTurmasConsulta()" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+    </div>
+  </div>
+  <div id="turmas-consulta-grid" class="space-y-2"></div>
+</div>
+
+<!-- Consulta Parceiros -->
+<div id="parceiros-list" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200" style="display:none">
+  <button onclick="closeConsultaView()" class="mb-6 px-4 py-2 bg-purple-50 text-purple-600 hover:bg-purple-100 rounded-lg font-semibold flex items-center gap-2">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Voltar
+  </button>
+  <h3 class="text-xl font-bold text-purple-700 mb-4">Parceiros Cadastrados</h3>
+  <div class="mb-4">
+    <input type="text" id="parceiros-search" placeholder="Buscar por nome do parceiro ou evento..." oninput="filtrarParceirosConsulta()" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:outline-none text-sm">
+  </div>
+  <div id="parceiros-consulta-grid" class="space-y-2"></div>
 </div>
 
 <!-- Detalhe do Curso -->
@@ -1642,7 +1715,7 @@
     }
 
     // IDs de todas as seções dentro de consulta-page
-    const CONSULTA_SECOES = ['consulta-cards','docentes-list','docente-detail','pctd-list','pitd-list','representantes-filter','cursos-tecnicos-list','cursos-livres-list','curso-detail'];
+    const CONSULTA_SECOES = ['consulta-cards','docentes-list','docente-detail','pctd-list','pitd-list','representantes-filter','cursos-tecnicos-list','cursos-livres-list','curso-detail','turmas-list','parceiros-list'];
 
     // Função central: esconde tudo e mostra só a seção desejada
     function renderConsultaView(viewId) {
@@ -1666,6 +1739,8 @@
       if (viewId === 'representantes-filter') { filterRepresentantes(); loadRepresentantes(); }
       if (viewId === 'cursos-tecnicos-list') { renderCursosLista('tecnicos'); }
       if (viewId === 'cursos-livres-list') { renderCursosLista('livres'); }
+      if (viewId === 'turmas-list') { renderTurmasConsulta(); }
+      if (viewId === 'parceiros-list') { renderParceirosConsulta(); }
     };
 
     // Voltar para os cards principais
@@ -1674,6 +1749,119 @@
     };
 
     let cursoDetalheModalidade = 'tecnicos';
+
+    // ── Consulta Turmas ──
+    let _turmasConsultaCache = null;
+
+    function _turmaRow(t, isParc) {
+      const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
+      const cor = isParc ? 'border-purple-100 bg-purple-50' : 'border-gray-100 bg-white';
+      const badge = isParc
+        ? `<span class="text-xs font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">${t.nome_curso}</span>`
+        : `<span class="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">${periodoLabel[t.periodo] || t.periodo || '-'}</span>`;
+      return `<div class="flex items-center justify-between ${cor} border-2 rounded-xl px-4 py-3">
+        <div>
+          <p class="font-semibold text-sm text-gray-800">${t.nome_curso || '—'} <span class="text-xs text-gray-400 font-normal">· ${t.codigo_oferta || ''}</span></p>
+          <p class="text-xs text-gray-500 mt-0.5">${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)} &nbsp;·&nbsp; Versão: ${t.versao_plano || '-'}</p>
+        </div>
+        ${badge}
+      </div>`;
+    }
+
+    async function renderTurmasConsulta() {
+      const grid = document.getElementById('turmas-consulta-grid');
+      if (!grid) return;
+      grid.innerHTML = '<p class="text-gray-400 text-center py-4 text-sm">Carregando...</p>';
+      _turmasConsultaCache = await carregarDaAba('Turmas');
+      filtrarTurmasConsulta();
+    }
+
+    window.filtrarTurmasConsulta = function() {
+      const grid = document.getElementById('turmas-consulta-grid');
+      if (!grid || !_turmasConsultaCache) return;
+      const nome = (document.getElementById('turmas-search-nome')?.value || '').toLowerCase();
+      const periodo = document.getElementById('turmas-search-periodo')?.value || '';
+      const codigo = (document.getElementById('turmas-search-codigo')?.value || '').toLowerCase();
+      const turmas = _turmasConsultaCache.filter(t => {
+        const isParc = isParceiro(t);
+        if (isParc) return false; // exclui parceiros da view de turmas
+        const nomeMatch = !nome || (t.nome_curso || '').toLowerCase().includes(nome);
+        const perMatch  = !periodo || t.periodo === periodo;
+        const codMatch  = !codigo || (t.codigo_oferta || '').toLowerCase().includes(codigo);
+        return nomeMatch && perMatch && codMatch;
+      });
+      grid.innerHTML = turmas.length === 0
+        ? '<p class="text-gray-400 text-center py-6 text-sm">Nenhuma turma encontrada.</p>'
+        : turmas.map(t => _turmaRow(t, false)).join('');
+    };
+
+    async function renderParceirosConsulta() {
+      const grid = document.getElementById('parceiros-consulta-grid');
+      if (!grid) return;
+      grid.innerHTML = '<p class="text-gray-400 text-center py-4 text-sm">Carregando...</p>';
+      _turmasConsultaCache = await carregarDaAba('Turmas');
+      filtrarParceirosConsulta();
+    }
+
+    window.filtrarParceirosConsulta = function() {
+      const grid = document.getElementById('parceiros-consulta-grid');
+      if (!grid || !_turmasConsultaCache) return;
+      const termo = (document.getElementById('parceiros-search')?.value || '').toLowerCase();
+      const parceiros = _turmasConsultaCache.filter(t => {
+        if (!isParceiro(t)) return false;
+        return !termo || (t.nome_curso || '').toLowerCase().includes(termo) || (t.codigo_oferta || '').toLowerCase().includes(termo);
+      });
+      grid.innerHTML = parceiros.length === 0
+        ? '<p class="text-gray-400 text-center py-6 text-sm">Nenhum parceiro cadastrado.</p>'
+        : parceiros.map(t => _turmaRow(t, true)).join('');
+    };
+
+    // ── Busca rápida no Cadastro de Turmas ──
+    window.toggleBuscaTurmas = function() {
+      const panel = document.getElementById('busca-turmas-panel');
+      const chev  = document.getElementById('busca-turmas-chevron');
+      const open  = panel.style.display === 'none';
+      panel.style.display = open ? 'block' : 'none';
+      if (chev) chev.style.transform = open ? 'rotate(180deg)' : '';
+      if (open && !_turmasConsultaCache) {
+        carregarDaAba('Turmas').then(data => { _turmasConsultaCache = data; cadBuscarTurmas(''); });
+      }
+    };
+
+    window.cadBuscarTurmas = function(termo) {
+      const tipo = document.getElementById('cad-busca-turma-tipo')?.value || '';
+      const q = (termo || '').toLowerCase();
+      const div = document.getElementById('cad-busca-turma-resultado');
+      if (!div) return;
+      if (!_turmasConsultaCache) {
+        div.innerHTML = '<p class="text-xs text-gray-400 text-center py-3">Carregando...</p>';
+        carregarDaAba('Turmas').then(data => { _turmasConsultaCache = data; cadBuscarTurmas(termo); });
+        return;
+      }
+      const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
+      const filtered = _turmasConsultaCache.filter(t => {
+        const isParc = isParceiro(t);
+        if (tipo === 'regular' && isParc) return false;
+        if (tipo === 'parceiro' && !isParc) return false;
+        return !q || (t.nome_curso || '').toLowerCase().includes(q) || (t.codigo_oferta || '').toLowerCase().includes(q);
+      });
+      div.innerHTML = filtered.length === 0
+        ? '<p class="text-xs text-gray-400 text-center py-3">Nenhuma turma encontrada.</p>'
+        : filtered.map(t => {
+            const isParc = isParceiro(t);
+            const cor = isParc ? 'bg-purple-50 border-purple-100' : 'bg-gray-50 border-gray-100';
+            const tag = isParc
+              ? `<span class="text-[10px] font-bold text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full">Parceiro</span>`
+              : `<span class="text-[10px] font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">${periodoLabel[t.periodo] || t.periodo || '-'}</span>`;
+            return `<div class="flex items-center justify-between ${cor} border rounded-xl px-3 py-2">
+              <div>
+                <p class="text-xs font-semibold text-gray-800">${t.nome_curso || '—'} <span class="text-gray-400 font-normal">· ${t.codigo_oferta || ''}</span></p>
+                <p class="text-[10px] text-gray-400">${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)}</p>
+              </div>
+              ${tag}
+            </div>`;
+          }).join('');
+    };
 
     // Renderiza lista de cursos na Consulta
     async function renderCursosLista(modalidade) {
