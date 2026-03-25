@@ -200,10 +200,10 @@
   .ms-cat-btn { padding:3px 10px; border-radius:20px; font-size:10px; font-weight:700; border:1.5px solid #e2e8f0; background:white; color:#64748b; cursor:pointer; transition:all 0.15s; }
   .ms-cat-btn:hover { border-color:#004587; color:#004587; }
   .ms-cat-btn.active { background:#004587; color:white; border-color:#004587; }
-  @keyframes ms-slide { 0%{background-position:0% 0%} 100%{background-position:200% 0%} }
-  @keyframes ms-glow-orange { 0%,100%{box-shadow:0 2px 14px rgba(247,148,29,0.12)} 50%{box-shadow:0 4px 32px rgba(247,148,29,0.38),0 0 0 1px rgba(247,148,29,0.1)} }
-  @keyframes ms-glow-blue   { 0%,100%{box-shadow:0 2px 14px rgba(0,69,135,0.1)}   50%{box-shadow:0 4px 32px rgba(0,69,135,0.32),0 0 0 1px rgba(0,69,135,0.08)} }
-  @keyframes ms-shimmer     { 0%{opacity:0.6} 50%{opacity:1} 100%{opacity:0.6} }
+  @keyframes ms-slide       { 0%{background-position:0% 0%} 100%{background-position:200% 0%} }
+  @keyframes ms-glow-orange { 0%,100%{box-shadow:0 2px 14px rgba(247,148,29,0.10),0 1px 3px rgba(0,0,0,0.04)} 50%{box-shadow:0 4px 28px rgba(247,148,29,0.32),0 0 0 1px rgba(247,148,29,0.09)} }
+  @keyframes ms-glow-blue   { 0%,100%{box-shadow:0 2px 14px rgba(0,69,135,0.09),0 1px 3px rgba(0,0,0,0.04)}   50%{box-shadow:0 4px 28px rgba(0,69,135,0.28),0 0 0 1px rgba(0,69,135,0.07)} }
+  @keyframes ms-scan        { 0%{transform:translateY(-100%)} 100%{transform:translateY(100vh)} }
   </style>
   <script>
   window.dataSdk = {
@@ -1869,7 +1869,7 @@
        <span style="width:10px;height:10px;border-radius:3px;background:#F7941D;display:inline-block;"></span>Ocupadas: <span id="ms-t-stat-ocup" style="color:#F7941D;font-weight:900;">0</span>
       </span>
       <span style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:#64748b;">
-       <span style="width:10px;height:10px;border-radius:3px;background:#10b981;display:inline-block;"></span>Disponíveis: <span id="ms-t-stat-disp" style="color:#10b981;font-weight:900;">0</span>
+       <span style="width:10px;height:10px;border-radius:3px;background:#94a3b8;display:inline-block;"></span>Disponíveis: <span id="ms-t-stat-disp" style="color:#64748b;font-weight:900;">0</span>
       </span>
       <span style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:#64748b;">
        <span style="width:10px;height:10px;border-radius:3px;background:#004587;display:inline-block;"></span>Fixas: <span id="ms-t-stat-fix" style="color:#004587;font-weight:900;">0</span>
@@ -1882,7 +1882,7 @@
      <div style="position:absolute;bottom:0;left:0;right:0;height:82px;background:white;border-top:1px solid #e2e8f0;box-shadow:0 -2px 24px rgba(0,69,135,0.06);display:flex;align-items:center;justify-content:space-between;padding:0 36px;">
       <div style="display:flex;gap:22px;align-items:center;">
        <span style="display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;color:#64748b;"><span style="width:12px;height:4px;border-radius:2px;background:#F7941D;display:inline-block;"></span>Ocupada</span>
-       <span style="display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;color:#64748b;"><span style="width:12px;height:4px;border-radius:2px;background:#10b981;display:inline-block;"></span>Disponível</span>
+       <span style="display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;color:#64748b;"><span style="width:12px;height:4px;border-radius:2px;background:#dde8ff;border:1px solid #b0c4d8;display:inline-block;"></span>Disponível</span>
        <span style="display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;color:#64748b;"><span style="width:12px;height:4px;border-radius:2px;background:#004587;display:inline-block;"></span>Sala Fixa</span>
       </div>
       <button onclick="msFecharTotemFS()" style="background:#f0f4ff;border:1.5px solid #dde8ff;color:#004587;padding:10px 24px;border-radius:12px;font-size:12px;cursor:pointer;font-weight:700;font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">✕ FECHAR</button>
@@ -5784,26 +5784,25 @@
         if (aloc && isFixo) tFix++;
         else if (aloc) tOcup++;
         else tDisp++;
-        const bColor  = aloc ? (isFixo ? '#004587' : '#F7941D') : '#10b981';
-        const bgCard  = aloc ? (isFixo ? 'linear-gradient(135deg,#eef2ff,#e8f0fe)' : 'linear-gradient(135deg,#fff8f0,#fff3e0)') : 'white';
+        const bColor  = aloc ? (isFixo ? '#004587' : '#F7941D') : '#dde8ff';
+        const bgCard  = aloc ? (isFixo ? 'linear-gradient(135deg,#eef2ff 0%,#e8f0fe 100%)' : 'white') : '#f6f8fd';
         const animSt  = aloc ? (isFixo ? 'animation:ms-glow-blue 3.5s ease-in-out infinite;' : 'animation:ms-glow-orange 3s ease-in-out infinite;') : '';
-        const icon    = MS_TIPO_ICONS[sala.tipo] || '🏫';
-        return `<div style="background:${bgCard};border-radius:16px;border-left:7px solid ${bColor};box-shadow:0 2px 16px rgba(0,0,0,0.07);${animSt}display:flex;flex-direction:row;align-items:stretch;overflow:hidden;">
-          <div style="width:42%;padding:16px 18px;display:flex;flex-direction:column;justify-content:center;gap:5px;border-right:1px solid rgba(0,0,0,0.05);">
-            <div style="display:flex;align-items:center;gap:7px;">
-              <span style="font-size:11px;font-weight:900;color:${bColor};font-family:'Montserrat',sans-serif;background:${bColor}20;border-radius:6px;padding:2px 8px;letter-spacing:0.5px;">${sala.id}</span>
-              <span style="font-size:16px;line-height:1;">${icon}</span>
-            </div>
-            <div style="font-size:22px;font-weight:900;color:#004587;line-height:1.15;font-family:'Montserrat',sans-serif;">${sala.nome}</div>
-            <div style="font-size:11px;color:#94a3b8;font-weight:600;font-family:'Montserrat',sans-serif;">${sala.tipo} · ${sala.capacidade} lug.</div>
+        const numColor = aloc ? (isFixo ? '#004587' : '#F7941D') : 'rgba(0,69,135,0.22)';
+        const nomeColor = aloc ? '#004587' : 'rgba(0,69,135,0.28)';
+        const tipoColor = aloc ? '#94a3b8' : '#c8d4e0';
+        return `<div style="background:${bgCard};border-radius:14px;border-left:6px solid ${bColor};box-shadow:${aloc?'0 2px 14px rgba(0,0,0,0.07)':'0 1px 4px rgba(0,69,135,0.04)'};${animSt}display:flex;flex-direction:row;align-items:stretch;overflow:hidden;">
+          <div style="width:38%;padding:13px 15px;display:flex;flex-direction:column;justify-content:center;gap:3px;background:${aloc?'rgba(0,69,135,0.03)':'transparent'};border-right:1px solid ${aloc?'rgba(0,69,135,0.07)':'rgba(0,69,135,0.04)'};">
+            <span style="font-size:26px;font-weight:900;color:${numColor};font-family:'Montserrat',sans-serif;line-height:1;letter-spacing:-0.5px;">${sala.nome.replace('Sala ','')}</span>
+            <div style="font-size:12px;font-weight:800;color:${nomeColor};font-family:'Montserrat',sans-serif;line-height:1.1;">${sala.nome}</div>
+            <div style="font-size:9px;color:${tipoColor};font-weight:600;font-family:'Montserrat',sans-serif;margin-top:1px;">${sala.tipo} · ${sala.capacidade} lug.</div>
           </div>
-          <div style="width:58%;padding:16px 20px;display:flex;flex-direction:column;justify-content:center;gap:5px;">
+          <div style="width:62%;padding:13px 16px;display:flex;flex-direction:column;justify-content:center;gap:4px;">
             ${aloc
-              ? `<div style="font-size:20px;font-weight:900;color:#1e293b;line-height:1.2;font-family:'Montserrat',sans-serif;">${aloc.curso||'—'}</div>
-                 <div style="font-size:13px;color:#64748b;font-weight:600;font-family:'Montserrat',sans-serif;">${aloc.docente||'—'}</div>
-                 <div style="font-size:11px;color:#94a3b8;font-weight:600;font-family:'Montserrat',sans-serif;margin-top:2px;">⏰ ${aloc.inicio}–${aloc.fim}${isFixo?' &nbsp;🔒':''}</div>`
-              : `<div style="font-size:22px;font-weight:900;color:#10b981;font-family:'Montserrat',sans-serif;animation:ms-shimmer 2.5s ease-in-out infinite;">✓ Disponível</div>
-                 <div style="font-size:11px;color:#b0bec5;font-weight:600;font-family:'Montserrat',sans-serif;">Sem alocação neste período</div>`}
+              ? `<div style="font-size:19px;font-weight:900;color:#0f172a;line-height:1.15;font-family:'Montserrat',sans-serif;">${aloc.curso||'—'}</div>
+                 <div style="font-size:12px;color:#64748b;font-weight:600;font-family:'Montserrat',sans-serif;">${aloc.docente||'—'}</div>
+                 <div style="font-size:10px;color:#94a3b8;font-weight:500;font-family:'Montserrat',sans-serif;">${aloc.inicio}–${aloc.fim}${isFixo?' · 🔒 Fixa':''}</div>`
+              : `<div style="font-size:13px;font-weight:700;color:#94a3b8;font-family:'Montserrat',sans-serif;letter-spacing:0.3px;">Disponível</div>
+                 <div style="font-size:10px;color:#b0bec5;font-weight:500;font-family:'Montserrat',sans-serif;">Sem alocação neste período</div>`}
           </div>
         </div>`;
       }).join('');
