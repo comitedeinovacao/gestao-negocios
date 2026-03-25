@@ -2428,8 +2428,7 @@
         const div = document.getElementById('cad-busca-turma-resultado');
         if (div) div.innerHTML = '<p class="text-xs text-gray-400 text-center py-3">Carregando turmas...</p>';
         try {
-          const data = await carregarDaAba('Turmas').catch(() => []);
-          _turmasConsultaCache = Array.isArray(data) ? data : [];
+          _turmasConsultaCache = await loadTurmasDeduped();
           window.cadBuscarTurmas(document.getElementById('cad-busca-turma-input')?.value || '');
         } catch(e) {
           console.error('toggleBuscaTurmas erro:', e);
@@ -2449,6 +2448,7 @@
       }
       const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
       const filtered = _turmasConsultaCache.filter(t => {
+        if (t.nome_curso === '__DELETED__') return false;
         const isParc = isParceiro(t);
         if (tipo === 'regular' && isParc) return false;
         if (tipo === 'parceiro' && !isParc) return false;
