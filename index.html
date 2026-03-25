@@ -914,6 +914,43 @@
   <div id="turmas-consulta-grid" class="space-y-2"></div>
 </div>
 
+<!-- Modal Editar Turma -->
+<div id="modal-editar-turma" class="hidden fixed inset-0 z-[9000] flex items-center justify-center" style="background:rgba(0,0,0,0.45);backdrop-filter:blur(4px)">
+ <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4">
+  <div class="flex items-start justify-between mb-4">
+   <div>
+    <h3 class="font-bold text-[#004587] text-lg">Editar Turma</h3>
+    <p id="modal-editar-turma-nome" class="text-xs text-gray-500 mt-0.5"></p>
+   </div>
+   <button onclick="fecharEditarTurma()" class="text-gray-400 hover:text-gray-600 text-xl leading-none">✕</button>
+  </div>
+  <div class="space-y-3">
+   <div>
+    <label class="block text-xs font-semibold text-gray-600 mb-1">Período</label>
+    <select id="editar-turma-periodo" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+     <option value="manha">Manhã</option><option value="tarde">Tarde</option>
+     <option value="noite">Noite</option><option value="integral">Integral</option><option value="sabado">Sábado</option>
+    </select>
+   </div>
+   <div class="grid grid-cols-2 gap-3">
+    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Data de Início</label>
+     <input type="date" id="editar-turma-inicio" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+    </div>
+    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Data de Término</label>
+     <input type="date" id="editar-turma-termino" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+    </div>
+   </div>
+   <div><label class="block text-xs font-semibold text-gray-600 mb-1">Versão do Plano</label>
+    <input type="text" id="editar-turma-versao" placeholder="Ex: 2026" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+   </div>
+  </div>
+  <div class="flex gap-3 mt-5">
+   <button onclick="fecharEditarTurma()" class="flex-1 px-4 py-2.5 rounded-xl border-2 border-gray-200 font-semibold text-sm text-gray-600 hover:bg-gray-50 transition-all">Cancelar</button>
+   <button id="btn-salvar-edicao-turma" onclick="salvarEdicaoTurma()" class="flex-1 px-4 py-2.5 rounded-xl bg-[#004587] text-white font-bold text-sm hover:bg-[#003366] transition-all">Salvar alterações</button>
+  </div>
+ </div>
+</div>
+
 <!-- Consulta Parceiros -->
 <div id="parceiros-list" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200" style="display:none">
   <button onclick="closeConsultaView()" class="mb-6 px-4 py-2 bg-purple-50 text-purple-600 hover:bg-purple-100 rounded-lg font-semibold flex items-center gap-2">
@@ -2209,29 +2246,122 @@
 
     // ── Consulta Turmas / Parceiros ──
     let _turmasConsultaCache = null;
+    let _turmasDisplayCache = []; // lista renderizada atual (filtrada)
 
-    function _turmaRow(t, isParc) {
-      const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
+    // Carrega turmas com deduplicação (última linha vence) e remove excluídas
+    async function loadTurmasDeduped() {
+      const raw = await carregarDaAba('Turmas').catch(() => []);
+      const byCode = {};
+      raw.forEach(t => { if (t.codigo_oferta) byCode[t.codigo_oferta] = t; });
+      return Object.values(byCode).filter(t => t.nome_curso !== '__DELETED__');
+    }
+
+    function _normDateForInput(v) {
+      if (!v) return '';
+      const s = String(v);
+      const m = s.match(/(\d{4})-(\d{2})-(\d{2})/);
+      if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+      if (s.includes('T')) { const d = new Date(s); const yr = d.getFullYear(); if (yr > 1970) return `${yr}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+      return s;
+    }
+
+    function _turmaRow(t, isParc, idx) {
+      const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite', integral: 'Integral', sabado: 'Sábado' };
       const cor = isParc ? 'border-purple-100 bg-purple-50' : 'border-gray-100 bg-white';
       const badge = isParc
-        ? `<span class="text-xs font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">${t.nome_curso || ''}</span>`
+        ? `<span class="text-xs font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">Parceiro</span>`
         : `<span class="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">${periodoLabel[t.periodo] || t.periodo || '-'}</span>`;
-      return `<div class="flex items-center justify-between ${cor} border-2 rounded-xl px-4 py-3">
-        <div>
-          <p class="font-semibold text-sm text-gray-800">${t.nome_curso || '—'} <span class="text-xs text-gray-400 font-normal">· ${t.codigo_oferta || ''}</span></p>
+      const actionBtns = idx !== undefined ? `
+        <button onclick="abrirEditarTurma(${idx})" title="Editar"
+          class="p-1.5 rounded-lg hover:bg-blue-50 text-gray-300 hover:text-[#004587] transition-colors flex-shrink-0">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+        </button>
+        <button onclick="confirmarExcluirTurma(${idx})" title="Excluir"
+          class="p-1.5 rounded-lg hover:bg-red-50 text-gray-300 hover:text-red-500 transition-colors flex-shrink-0">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+        </button>` : '';
+      return `<div class="flex items-center gap-2 ${cor} border-2 rounded-xl px-4 py-3">
+        <div class="flex-1 min-w-0">
+          <p class="font-semibold text-sm text-gray-800 truncate">${t.nome_curso || '—'} <span class="text-xs text-gray-400 font-normal">· ${t.codigo_oferta || ''}</span></p>
           <p class="text-xs text-gray-500 mt-0.5">${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)}&nbsp;·&nbsp;Versão: ${t.versao_plano || '-'}</p>
         </div>
-        ${badge}
+        ${badge}${actionBtns}
       </div>`;
     }
+
+    // ── Editar / Excluir Turma ──
+    let _turmaEditandoIdx = null;
+
+    window.abrirEditarTurma = function(idx) {
+      const t = _turmasDisplayCache[idx];
+      if (!t) return;
+      _turmaEditandoIdx = idx;
+      document.getElementById('modal-editar-turma-nome').textContent = `${t.nome_curso || '—'} · ${t.codigo_oferta || ''}`;
+      document.getElementById('editar-turma-periodo').value = t.periodo || 'noite';
+      document.getElementById('editar-turma-inicio').value = _normDateForInput(t.data_de_inicio);
+      document.getElementById('editar-turma-termino').value = _normDateForInput(t.data_de_termino);
+      document.getElementById('editar-turma-versao').value = t.versao_plano || '';
+      document.getElementById('modal-editar-turma').classList.remove('hidden');
+    };
+
+    window.fecharEditarTurma = function() {
+      document.getElementById('modal-editar-turma').classList.add('hidden');
+      _turmaEditandoIdx = null;
+    };
+
+    window.salvarEdicaoTurma = async function() {
+      const t = _turmasDisplayCache[_turmaEditandoIdx];
+      if (!t) return;
+      const periodo = document.getElementById('editar-turma-periodo').value;
+      const inicio  = document.getElementById('editar-turma-inicio').value;
+      const termino = document.getElementById('editar-turma-termino').value;
+      const versao  = document.getElementById('editar-turma-versao').value.trim();
+      const btn = document.getElementById('btn-salvar-edicao-turma');
+      const orig = btn.textContent;
+      btn.disabled = true; btn.textContent = '⏳ Salvando...';
+      try {
+        await postToSheet('Turmas', [t.codigo_oferta, t.nome_curso, versao, periodo, inicio, termino]);
+        fecharEditarTurma();
+        _turmasConsultaCache = null;
+        allTurmas = allTurmas.filter(x => x.codigo_oferta !== t.codigo_oferta);
+        showSuccessMessage('✅ Turma atualizada com sucesso!');
+        // Re-renderiza a lista ativa
+        const gridT = document.getElementById('turmas-consulta-grid');
+        const gridP = document.getElementById('parceiros-consulta-grid');
+        if (gridT && gridT.closest('#turmas-list')?.style.display !== 'none') window.renderTurmasConsulta();
+        else if (gridP) window.renderParceirosConsulta();
+      } catch(e) { showErrorMessage('❌ Erro ao salvar: ' + (e.message || e)); }
+      finally { btn.disabled = false; btn.textContent = orig; }
+    };
+
+    window.confirmarExcluirTurma = function(idx) {
+      const t = _turmasDisplayCache[idx];
+      if (!t) return;
+      if (!confirm(`Excluir "${t.nome_curso}" (${t.codigo_oferta})?\n\nEsta ação não pode ser desfeita.`)) return;
+      window.excluirTurma(idx);
+    };
+
+    window.excluirTurma = async function(idx) {
+      const t = _turmasDisplayCache[idx];
+      if (!t) return;
+      try {
+        await postToSheet('Turmas', [t.codigo_oferta, '__DELETED__', '', '', '', '']);
+        _turmasConsultaCache = null;
+        allTurmas = allTurmas.filter(x => x.codigo_oferta !== t.codigo_oferta);
+        showSuccessMessage('✅ Turma removida com sucesso!');
+        const gridT = document.getElementById('turmas-consulta-grid');
+        const gridP = document.getElementById('parceiros-consulta-grid');
+        if (gridT && gridT.closest('#turmas-list')?.style.display !== 'none') window.renderTurmasConsulta();
+        else window.renderParceirosConsulta();
+      } catch(e) { showErrorMessage('❌ Erro ao excluir: ' + (e.message || e)); }
+    };
 
     window.renderTurmasConsulta = async function() {
       const grid = document.getElementById('turmas-consulta-grid');
       if (!grid) return;
       grid.innerHTML = '<p class="text-gray-400 text-center py-4 text-sm">Carregando...</p>';
       try {
-        const data = await carregarDaAba('Turmas').catch(() => []);
-        _turmasConsultaCache = Array.isArray(data) ? data : [];
+        _turmasConsultaCache = await loadTurmasDeduped();
         window.filtrarTurmasConsulta();
       } catch(e) {
         console.error('renderTurmasConsulta erro:', e);
@@ -2253,9 +2383,10 @@
         const codMatch  = !codigo  || (t.codigo_oferta || '').toLowerCase().includes(codigo);
         return nomeMatch && perMatch && codMatch;
       });
+      _turmasDisplayCache = turmas;
       grid.innerHTML = turmas.length === 0
         ? '<p class="text-gray-400 text-center py-6 text-sm">Nenhuma turma encontrada.</p>'
-        : turmas.map(t => _turmaRow(t, false)).join('');
+        : turmas.map((t, i) => _turmaRow(t, false, i)).join('');
     };
 
     window.renderParceirosConsulta = async function() {
@@ -2263,8 +2394,7 @@
       if (!grid) return;
       grid.innerHTML = '<p class="text-gray-400 text-center py-4 text-sm">Carregando...</p>';
       try {
-        const data = await carregarDaAba('Turmas').catch(() => []);
-        _turmasConsultaCache = Array.isArray(data) ? data : [];
+        _turmasConsultaCache = await loadTurmasDeduped();
         window.filtrarParceirosConsulta();
       } catch(e) {
         console.error('renderParceirosConsulta erro:', e);
@@ -2281,9 +2411,10 @@
         if (!isParceiro(t)) return false;
         return !termo || (t.nome_curso || '').toLowerCase().includes(termo) || (t.codigo_oferta || '').toLowerCase().includes(termo);
       });
+      _turmasDisplayCache = parceiros;
       grid.innerHTML = parceiros.length === 0
         ? '<p class="text-gray-400 text-center py-6 text-sm">Nenhum parceiro cadastrado.<br><span class="text-xs text-gray-300">Cadastre em Cadastro → Turmas → Parceiros</span></p>'
-        : parceiros.map(t => _turmaRow(t, true)).join('');
+        : parceiros.map((t, i) => _turmaRow(t, true, i)).join('');
     };
 
     // ── Busca rápida no Cadastro de Turmas ──
