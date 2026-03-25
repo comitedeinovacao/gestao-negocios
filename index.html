@@ -5405,7 +5405,7 @@
       }
       // Carrega turmas e quadro horário para o picker e sidebar
       const _loadTurmas = !allTurmas.length
-        ? carregarDaAba('Turmas').then(data => { if (data.length && !allTurmas.length) allTurmas = data; })
+        ? loadTurmasDeduped().then(data => { if (data.length && !allTurmas.length) allTurmas = data; })
         : Promise.resolve();
       const _loadAlocs = !allAlocacoes.length
         ? carregarDaAba('Alocacoes').then(data => { if (data.length) allAlocacoes = data; })
@@ -6006,7 +6006,7 @@
     // ---- TURMA PICKER (Curso → Turma) ----
     function msPickerGetSource(modo) {
       const cat = modo === 'manual' ? msTurmaCategoria : msTurmaCategoriaAuto;
-      let src = allTurmas;
+      let src = allTurmas.filter(x => x.nome_curso !== '__DELETED__');
       if (cat === 'parceiros') {
         src = src.filter(x => isParceiro(x));
       } else if (cat === 'tecnicos') {
