@@ -3774,7 +3774,15 @@
 
     function qRenderUCsLista(cursoId, versao) {
       const lista = document.getElementById('q-ucs-lista');
-      const ucs = allUCs.filter(u => u.curso_id === cursoId && String(u.versao) === String(versao));
+      const nomeRef = (quadroCursoAtual?.nome || '').trim().toLowerCase();
+      const ucs = allUCs.filter(u => {
+        const idMatch = u.curso_id === cursoId;
+        const nomeMatch = nomeRef && (
+          (u.curso_nome || '').trim().toLowerCase() === nomeRef ||
+          (u.nome_curso  || '').trim().toLowerCase() === nomeRef
+        );
+        return (idMatch || nomeMatch) && String(u.versao) === String(versao);
+      });
       if (ucs.length === 0) {
         lista.innerHTML = `<p class="text-gray-400 text-center py-6 text-sm">Nenhuma UC cadastrada para este curso na versão ${versao}. Adicione a primeira UC ao lado.</p>`;
         return;
@@ -3810,11 +3818,17 @@
       if (!nome) { showErrorMessage('❌ Preencha o nome da ' + (isParc ? 'competência/atividade' : 'UC')); return; }
       if (!isParc && !pres) { showErrorMessage('❌ Preencha o nome e CH Presencial da UC'); return; }
       // Impede UC duplicada no mesmo curso/versão
-      const jaExiste = allUCs.some(u =>
-        u.curso_id === quadroCursoAtual.id &&
-        String(u.versao) === String(versao) &&
-        (u.uc_nome || '').toLowerCase() === nome.toLowerCase()
-      );
+      const nomeRefAdd = (quadroCursoAtual.nome || '').trim().toLowerCase();
+      const jaExiste = allUCs.some(u => {
+        const idMatch = u.curso_id === quadroCursoAtual.id;
+        const nomeMatch = nomeRefAdd && (
+          (u.curso_nome || '').trim().toLowerCase() === nomeRefAdd ||
+          (u.nome_curso  || '').trim().toLowerCase() === nomeRefAdd
+        );
+        return (idMatch || nomeMatch) &&
+          String(u.versao) === String(versao) &&
+          (u.uc_nome || '').toLowerCase() === nome.toLowerCase();
+      });
       if (jaExiste) { showErrorMessage('❌ Esta UC já está cadastrada para este curso/versão'); return; }
       const btn = document.querySelector('#q-add-uc-form button[onclick="qAdicionarUC()"]');
       btn.disabled = true; btn.textContent = '⏳ Salvando...';
