@@ -5816,12 +5816,12 @@
             </div>
             <span class="text-base leading-none">${icon}</span>
           </div>
-          <div class="font-bold text-sm ${aloc ? 'text-white' : 'text-[#004587]'} leading-tight mb-1">${sala.nome}</div>
-          <div class="text-[10px] ${aloc ? 'text-white/60' : 'text-gray-400'} mb-2">${sala.tipo} · ${sala.capacidade} lug.</div>
-          ${aloc ? `<div class="bg-white/10 rounded-lg p-2">
-            <div class="text-xs font-semibold text-white truncate">${aloc.curso || '—'}</div>
-            <div class="text-[10px] text-white/70 truncate mt-0.5">${aloc.docente || '—'}</div>
-            <div class="text-[10px] text-white/50 mt-1">${aloc.inicio}–${aloc.fim}${isFixo?' 🔒':''}</div>
+          <div class="font-bold text-sm ${aloc ? (isFixo ? 'text-white' : 'text-gray-800') : 'text-[#004587]'} leading-tight mb-1">${sala.nome}</div>
+          <div class="text-[10px] ${aloc ? (isFixo ? 'text-white/60' : 'text-gray-500') : 'text-gray-400'} mb-2">${sala.tipo} · ${sala.capacidade} lug.</div>
+          ${aloc ? `<div class="${isFixo ? 'bg-white/10' : 'bg-white/60'} rounded-lg p-2">
+            <div class="text-xs font-semibold ${isFixo ? 'text-white' : 'text-gray-800'} truncate">${aloc.curso || '—'}</div>
+            <div class="text-[10px] ${isFixo ? 'text-white/70' : 'text-gray-600'} truncate mt-0.5">${aloc.docente || '—'}</div>
+            <div class="text-[10px] ${isFixo ? 'text-white/50' : 'text-gray-500'} mt-1">${aloc.inicio}–${aloc.fim}${isFixo?' 🔒':''}</div>
           </div>` : `<div class="text-xs text-green-600 font-semibold">✓ Disponível</div>`}
         </div>`;
       }).join('');
