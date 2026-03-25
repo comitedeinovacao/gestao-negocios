@@ -4277,11 +4277,18 @@
       if (ferInfo && ferAviso) {
         const ferCorMap = { feriado: 'bg-red-50 border-red-200 text-red-700', suspensao: 'bg-amber-50 border-amber-200 text-amber-700', compensacao: 'bg-yellow-50 border-yellow-200 text-yellow-700', suspensao_meio: 'bg-amber-50 border-amber-200 text-amber-700', feriado_municipal: 'bg-pink-50 border-pink-200 text-pink-700' };
         ferAviso.className = `text-sm font-semibold p-3 rounded-xl border mb-4 ${ferCorMap[ferInfo.tipo] || 'bg-gray-50 border-gray-200 text-gray-600'}`;
-        ferAviso.textContent = `🚫 ${ferInfo.nome} — Esta data está bloqueada para alocação de aulas.`;
+        const bloqueada = isDataBloqueada(dataStr);
+        ferAviso.textContent = bloqueada
+          ? `🚫 ${ferInfo.nome} — Esta data está bloqueada para alocação de aulas.`
+          : `ℹ️ ${ferInfo.nome} — Meio expediente: cursos da tarde reduzem 30 min; cursos da noite são normais.`;
         ferAviso.classList.remove('hidden');
-        // Desabilita o botão salvar nesta data
+        // Desabilita o botão salvar apenas em datas realmente bloqueadas
         const btnSalvar = document.querySelector('#modal-alocacao button[onclick="salvarAlocacao()"]');
-        if (btnSalvar) { btnSalvar.disabled = true; btnSalvar.classList.add('opacity-50', 'cursor-not-allowed'); }
+        if (btnSalvar) {
+          btnSalvar.disabled = bloqueada;
+          btnSalvar.classList.toggle('opacity-50', bloqueada);
+          btnSalvar.classList.toggle('cursor-not-allowed', bloqueada);
+        }
       } else if (ferAviso) {
         ferAviso.classList.add('hidden');
         const btnSalvar = document.querySelector('#modal-alocacao button[onclick="salvarAlocacao()"]');
@@ -4427,6 +4434,13 @@
       document.getElementById('modal-lote').classList.remove('flex');
     };
 
+    // suspensao_meio = meio expediente (ex: Cinzas): aulas da noite são normais,
+    // tarde reduz 30 min. NÃO bloqueia alocação.
+    function isDataBloqueada(dateStr) {
+      const f = FERIADOS_SENAC_2026[dateStr];
+      return !!(f && f.tipo !== 'suspensao_meio');
+    }
+
     function gerarDatasLote(diasSemana, qtd, dataInicio) {
       // diasSemana: array de índices JS (1=Seg,2=Ter,...,6=Sáb)
       // Retorna { datas: [...YYYY-MM-DD], puladas: [{dateStr, nome, tipo}] }
@@ -4441,8 +4455,8 @@
           const m = String(data.getMonth()+1).padStart(2,'0');
           const d = String(data.getDate()).padStart(2,'0');
           const dateStr = `${y}-${m}-${d}`;
-          const ferInfo = FERIADOS_SENAC_2026[dateStr];
-          if (ferInfo) {
+          if (isDataBloqueada(dateStr)) {
+            const ferInfo = FERIADOS_SENAC_2026[dateStr];
             puladas.push({ dateStr, nome: ferInfo.nome, tipo: ferInfo.tipo });
           } else {
             datas.push(dateStr);
@@ -4995,9 +5009,10 @@
       const docenteNome = document.getElementById('modal-docente-select').value;
       const isParc = isParceiro(quadroTurmaAtual);
       if ((!ucNome && !isParc) || !docenteNome) { showErrorMessage('❌ Selecione ' + (isParc ? '' : 'UC e ') + 'Docente'); return; }
-      // Bloqueia alocação em feriados, pontes e suspensões
-      const ferBloq = FERIADOS_SENAC_2026[modalAlocacaoData];
-      if (ferBloq) { showErrorMessage(`🚫 Data bloqueada: ${ferBloq.nome}`); return; }
+      // Bloqueia alocação em feriados, pontes e suspensões (suspensao_meio permite)
+      if (isDataBloqueada(modalAlocacaoData)) {
+        showErrorMessage(`🚫 Data bloqueada: ${FERIADOS_SENAC_2026[modalAlocacaoData].nome}`); return;
+      }
       const ucNomeFinal = isParc ? (ucNome || quadroTurmaAtual.nome_curso) : ucNome;
       if (!quadroTurmaAtual || !modalAlocacaoData) return;
       const btn = document.querySelector('#modal-alocacao button[onclick="salvarAlocacao()"]');
