@@ -4277,10 +4277,15 @@
       if (ferInfo && ferAviso) {
         const ferCorMap = { feriado: 'bg-red-50 border-red-200 text-red-700', suspensao: 'bg-amber-50 border-amber-200 text-amber-700', compensacao: 'bg-yellow-50 border-yellow-200 text-yellow-700', suspensao_meio: 'bg-amber-50 border-amber-200 text-amber-700', feriado_municipal: 'bg-pink-50 border-pink-200 text-pink-700' };
         ferAviso.className = `text-sm font-semibold p-3 rounded-xl border mb-4 ${ferCorMap[ferInfo.tipo] || 'bg-gray-50 border-gray-200 text-gray-600'}`;
-        ferAviso.textContent = `⚠️ ${ferInfo.nome} — Alocação possível mas verifique necessidade.`;
+        ferAviso.textContent = `🚫 ${ferInfo.nome} — Esta data está bloqueada para alocação de aulas.`;
         ferAviso.classList.remove('hidden');
+        // Desabilita o botão salvar nesta data
+        const btnSalvar = document.querySelector('#modal-alocacao button[onclick="salvarAlocacao()"]');
+        if (btnSalvar) { btnSalvar.disabled = true; btnSalvar.classList.add('opacity-50', 'cursor-not-allowed'); }
       } else if (ferAviso) {
         ferAviso.classList.add('hidden');
+        const btnSalvar = document.querySelector('#modal-alocacao button[onclick="salvarAlocacao()"]');
+        if (btnSalvar) { btnSalvar.disabled = false; btnSalvar.classList.remove('opacity-50', 'cursor-not-allowed'); }
       }
       // UCs do curso — filtra por curso_id (via data.json) ou fallback por curso_nome
       const ucSelect = document.getElementById('modal-uc-select');
@@ -4424,7 +4429,9 @@
 
     function gerarDatasLote(diasSemana, qtd, dataInicio) {
       // diasSemana: array de índices JS (1=Seg,2=Ter,...,6=Sáb)
+      // Retorna { datas: [...YYYY-MM-DD], puladas: [{dateStr, nome, tipo}] }
       const datas = [];
+      const puladas = [];
       const data = new Date(dataInicio + 'T12:00:00');
       let seguranca = 0;
       while (datas.length < qtd && seguranca < 3000) {
@@ -4433,11 +4440,17 @@
           const y = data.getFullYear();
           const m = String(data.getMonth()+1).padStart(2,'0');
           const d = String(data.getDate()).padStart(2,'0');
-          datas.push(`${y}-${m}-${d}`);
+          const dateStr = `${y}-${m}-${d}`;
+          const ferInfo = FERIADOS_SENAC_2026[dateStr];
+          if (ferInfo) {
+            puladas.push({ dateStr, nome: ferInfo.nome, tipo: ferInfo.tipo });
+          } else {
+            datas.push(dateStr);
+          }
         }
         data.setDate(data.getDate() + 1);
       }
-      return datas;
+      return { datas, puladas };
     }
 
     window.qAtualizarPreviewLote = function() {
@@ -4454,9 +4467,19 @@
         return;
       }
 
-      const datas = gerarDatasLote(diasChecked, qtd, dataInicio);
+      const { datas, puladas } = gerarDatasLote(diasChecked, qtd, dataInicio);
       const totalH = (qtd * horas).toFixed(1).replace('.0','');
       const NOMES_DIA = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+
+      const puladasHtml = puladas.length
+        ? `<div class="mt-2 p-2 bg-amber-50 border border-amber-200 rounded-lg">
+            <p class="text-xs font-bold text-amber-700 mb-1">⚠️ ${puladas.length} data(s) pulada(s) por feriado/ponte:</p>
+            ${puladas.map(p => {
+              const [y,mo,dia] = p.dateStr.split('-').map(Number);
+              return `<div class="text-xs text-amber-600">🚫 ${dia.toString().padStart(2,'0')}/${mo.toString().padStart(2,'0')}/${y} — ${p.nome}</div>`;
+            }).join('')}
+           </div>`
+        : '';
 
       preview.innerHTML = `
         <p class="font-bold text-[#004587] mb-2">${qtd} encontros × ${horas}h = <span class="text-orange-600">${totalH}h total</span></p>
@@ -4469,7 +4492,8 @@
               <span class="text-gray-500 ml-1">${dia.toString().padStart(2,'0')}/${mo.toString().padStart(2,'0')}/${y} (${nomeDia})</span>
             </div>`;
           }).join('')}
-        </div>`;
+        </div>
+        ${puladasHtml}`;
       preview.classList.remove('hidden');
       btn.textContent = `Lançar ${qtd} encontros`;
       btn.classList.remove('hidden');
@@ -4489,7 +4513,7 @@
       if (!docente)   { showErrorMessage('❌ Selecione o docente');  return; }
       if (!diasChecked.length) { showErrorMessage('❌ Selecione ao menos um dia da semana'); return; }
 
-      const datas = gerarDatasLote(diasChecked, qtd, dataInicio);
+      const { datas } = gerarDatasLote(diasChecked, qtd, dataInicio);
       const btn = document.getElementById('lote-btn-salvar');
       const DIAS_ID = ['domingo','segunda','terca','quarta','quinta','sexta','sabado'];
 
@@ -4971,6 +4995,9 @@
       const docenteNome = document.getElementById('modal-docente-select').value;
       const isParc = isParceiro(quadroTurmaAtual);
       if ((!ucNome && !isParc) || !docenteNome) { showErrorMessage('❌ Selecione ' + (isParc ? '' : 'UC e ') + 'Docente'); return; }
+      // Bloqueia alocação em feriados, pontes e suspensões
+      const ferBloq = FERIADOS_SENAC_2026[modalAlocacaoData];
+      if (ferBloq) { showErrorMessage(`🚫 Data bloqueada: ${ferBloq.nome}`); return; }
       const ucNomeFinal = isParc ? (ucNome || quadroTurmaAtual.nome_curso) : ucNome;
       if (!quadroTurmaAtual || !modalAlocacaoData) return;
       const btn = document.querySelector('#modal-alocacao button[onclick="salvarAlocacao()"]');
