@@ -62,7 +62,7 @@
     { "id": "ast_pes", "nome": "ASSISTENTE DE PESSOAL", "codigo_ficha": "13557", "subarea": "GESTÃO DE PESSOAS E LIDERANÇA" },
     { "id": "asst_plan", "nome": "ASSISTENTE DE PLANEJAMENTO FINANCEIRO", "codigo_ficha": "25629", "subarea": "FINANÇAS E CONTABILIDADE" },
     { "id": "ast_rh", "nome": "ASSISTENTE DE RECURSOS HUMANOS", "codigo_ficha": "13554", "subarea": "GESTÃO DE PESSOAS E LIDERANÇA" },
-    { "id": "vendedo", "nome": "VENDEDOR", "codigo_ficha": "19271", "subarea": "VENDAS" },
+    { "id": "vendedo", "nome": "VENDEDOR", "codigo_ficha": "13943", "subarea": "VENDAS" },
     { "id": "asst_comext", "nome": "ASSISTENTE DE SERVIÇOS EM COMÉRCIO EXTERIOR", "codigo_ficha": "24460", "subarea": "COMÉRCIO EXTERIOR" },
     { "id": "asst_fin", "nome": "ASSISTENTE FINANCEIRO", "codigo_ficha": "17851", "subarea": "FINANÇAS E CONTABILIDADE" },
     { "id": "aux_adm", "nome": "AUXILIAR ADMINISTRATIVO - PROA - PSG", "codigo_ficha": "21093", "subarea": "ADMINISTRAÇÃO GERAL" },
