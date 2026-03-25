@@ -1642,9 +1642,10 @@
           <input type="date" id="ms-inp-data" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none">
          </div>
          <!-- Busca de turma cadastrada -->
-         <div class="flex gap-1 mb-2" id="ms-cat-btns-manual">
+         <div class="flex gap-1 mb-2 flex-wrap" id="ms-cat-btns-manual">
           <button type="button" class="ms-cat-btn active" onclick="msSetTurmaCategoria('todos','manual')">Todos</button>
-          <button type="button" class="ms-cat-btn" onclick="msSetTurmaCategoria('regular','manual')">Técnicos e Livres</button>
+          <button type="button" class="ms-cat-btn" onclick="msSetTurmaCategoria('tecnicos','manual')">Técnicos</button>
+          <button type="button" class="ms-cat-btn" onclick="msSetTurmaCategoria('livres','manual')">Livres</button>
           <button type="button" class="ms-cat-btn" onclick="msSetTurmaCategoria('parceiros','manual')">Parceiros</button>
          </div>
          <div class="relative">
@@ -1691,9 +1692,10 @@
         <p class="text-xs text-gray-500 mb-4">Aloca automaticamente uma sala para cada data dentro do período selecionado. Salas fixas não são substituídas.</p>
         <form id="ms-form-auto" class="space-y-3">
          <!-- Busca de turma cadastrada (auto) -->
-         <div class="flex gap-1 mb-2" id="ms-cat-btns-auto">
+         <div class="flex gap-1 mb-2 flex-wrap" id="ms-cat-btns-auto">
           <button type="button" class="ms-cat-btn active" onclick="msSetTurmaCategoria('todos','auto')">Todos</button>
-          <button type="button" class="ms-cat-btn" onclick="msSetTurmaCategoria('regular','auto')">Técnicos e Livres</button>
+          <button type="button" class="ms-cat-btn" onclick="msSetTurmaCategoria('tecnicos','auto')">Técnicos</button>
+          <button type="button" class="ms-cat-btn" onclick="msSetTurmaCategoria('livres','auto')">Livres</button>
           <button type="button" class="ms-cat-btn" onclick="msSetTurmaCategoria('parceiros','auto')">Parceiros</button>
          </div>
          <div class="relative">
@@ -4562,6 +4564,14 @@
       return cod.startsWith('PARC-') || ['GEP/GD','Sebrae'].includes(nome) || nome.startsWith('Evento —');
     }
 
+    // Retorna 'tecnico', 'livre' ou '' baseado na coluna "tipo" da aba UCs
+    function getTipoCurso(nomeCurso) {
+      if (!nomeCurso || isParceiro({ nome_curso: nomeCurso })) return 'parceiro';
+      const norm = s => (s || '').trim().toLowerCase();
+      const uc = allUCs.find(u => norm(u.curso_nome) === norm(nomeCurso) || norm(u.nome_curso) === norm(nomeCurso));
+      return uc?.tipo || 'tecnico'; // padrão: técnico se não encontrado
+    }
+
     // Conta horas em sala (não-parceiro) de um docente num mês
     function percHorasSala(nomeDocente, ano, mes) {
       const prefixo = `${ano}-${String(mes+1).padStart(2,'0')}`;
@@ -5255,7 +5265,8 @@
       const _loadAlocs = !allAlocacoes.length
         ? carregarDaAba('Alocacoes').then(data => { if (data.length) allAlocacoes = data; })
         : Promise.resolve();
-      Promise.all([_loadTurmas, _loadAlocs]).then(() => msRenderTurmasParaAlocar());
+      const _loadUCs = !allUCs.length ? loadUCs() : Promise.resolve();
+      Promise.all([_loadTurmas, _loadAlocs, _loadUCs]).then(() => msRenderTurmasParaAlocar());
       // Polling: re-read sheet every 3 min while page is open
       if (!msPainelRefreshInterval) {
         msPainelRefreshInterval = setInterval(async () => {
@@ -5851,8 +5862,15 @@
     function msPickerGetSource(modo) {
       const cat = modo === 'manual' ? msTurmaCategoria : msTurmaCategoriaAuto;
       let src = allTurmas;
-      if (cat === 'regular') src = src.filter(x => !isParceiro(x));
-      else if (cat === 'parceiros') src = src.filter(x => isParceiro(x));
+      if (cat === 'parceiros') {
+        src = src.filter(x => isParceiro(x));
+      } else if (cat === 'tecnicos') {
+        src = src.filter(x => !isParceiro(x) && getTipoCurso(x.nome_curso) === 'tecnico');
+      } else if (cat === 'livres') {
+        src = src.filter(x => !isParceiro(x) && getTipoCurso(x.nome_curso) === 'livre');
+      } else if (cat === 'regular') {
+        src = src.filter(x => !isParceiro(x)); // compatibilidade com valor antigo
+      }
       return src;
     }
 
