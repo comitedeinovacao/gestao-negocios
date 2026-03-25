@@ -5935,7 +5935,17 @@
       const grid = document.getElementById('ms-t-grid');
       if (!grid) return;
       let tOcup = 0, tDisp = 0, tFix = 0;
-      grid.innerHTML = MS_SALAS.map(sala => {
+      // Ordena cada coluna: ocupadas primeiro, disponíveis depois (preserva ordem relativa)
+      const sortCol = salas => {
+        const occ  = salas.filter(s =>  msGetAloc(s.id, msTotemData, msTotemPer));
+        const free = salas.filter(s => !msGetAloc(s.id, msTotemData, msTotemPer));
+        return [...occ, ...free];
+      };
+      const salasOrdenadas = [
+        ...sortCol(MS_SALAS.slice(0, 10)),   // coluna esquerda: S01–S10
+        ...sortCol(MS_SALAS.slice(10, 20)),  // coluna direita:  S11–S20
+      ];
+      grid.innerHTML = salasOrdenadas.map(sala => {
         const aloc = msGetAloc(sala.id, msTotemData, msTotemPer);
         const isFixo = aloc && aloc.fixo === 'true';
         if (aloc && isFixo) tFix++;
