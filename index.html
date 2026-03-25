@@ -4006,7 +4006,7 @@
         container.style.display = 'block';
         container.innerHTML = '<p class="text-gray-400 text-center py-3 text-sm">Carregando parceiros...</p>';
         try {
-          const turmas = (await carregarDaAba('Turmas').catch(() => [])) || [];
+          const turmas = await loadTurmasDeduped().catch(() => []);
           _turmasConsultaCache = turmas;
           const parceiras = turmas.filter(t => isParceiro(t));
           const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
@@ -5431,14 +5431,22 @@
       if (!val) return '';
       const s = String(val).trim();
       if (!s) return '';
-      if (s.includes('T')) {
-        const year = parseInt(s.substring(0, 4));
-        if (year < 1970) return ''; // serial de tempo do Sheets, não é uma data real
-        const d = new Date(s);
-        return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+      // Extrai YYYY-MM-DD diretamente por regex (sem new Date() — evita erro de fuso horário UTC vs local)
+      const isoM = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (isoM) {
+        if (parseInt(isoM[1]) < 1970) return ''; // serial de tempo do Sheets (1899-12-30), não é data real
+        return `${isoM[1]}-${isoM[2]}-${isoM[3]}`;
       }
-      const m = s.match(/(\d{4})-(\d{2})-(\d{2})/);
-      return m ? `${m[1]}-${m[2]}-${m[3]}` : s;
+      // Formato brasileiro DD/MM/YYYY
+      const brM = s.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+      if (brM) return `${brM[3]}-${brM[2]}-${brM[1]}`;
+      // Fallback: tenta new Date() com UTC para strings de data longas (ex: Apps Script locale)
+      if (s.length > 10) {
+        const d = new Date(s);
+        if (!isNaN(d) && d.getUTCFullYear() >= 1970)
+          return d.getUTCFullYear() + '-' + String(d.getUTCMonth()+1).padStart(2,'0') + '-' + String(d.getUTCDate()).padStart(2,'0');
+      }
+      return '';
     }
     function msNormHora(val) {
       if (!val) return '';
@@ -5781,6 +5789,7 @@
 
     async function msSalvarAlocacao(obj) {
       // obj: { sala_id, data, periodo, curso, docente, inicio, fim, fixo }
+      if (!obj.data) { alert('Erro: data da alocação está vazia. Selecione uma data antes de agendar.'); return false; }
       const conflito = msGetAloc(obj.sala_id, obj.data, obj.periodo);
       if (conflito) {
         if (conflito.fixo === 'true') { alert('Esta sala está marcada como Fixa e não pode ser substituída.'); return false; }
@@ -6022,7 +6031,10 @@
     // ---- TURMA PICKER (Curso → Turma) ----
     function msPickerGetSource(modo) {
       const cat = modo === 'manual' ? msTurmaCategoria : msTurmaCategoriaAuto;
-      let src = allTurmas.filter(x => x.nome_curso !== '__DELETED__');
+      // Deduplica por código (última linha vence, então marcador __DELETED__ prevalece)
+      const byCode = {};
+      allTurmas.forEach(t => { if (t.codigo_oferta) byCode[t.codigo_oferta] = t; });
+      let src = Object.values(byCode).filter(x => x.nome_curso !== '__DELETED__');
       if (cat === 'parceiros') {
         src = src.filter(x => isParceiro(x));
       } else if (cat === 'tecnicos') {
@@ -6070,7 +6082,7 @@
       }
       const source = msPickerGetSource(modo);
       if (!source.length) {
-        lista.innerHTML = '<div class="px-3 py-4 text-xs text-gray-400 text-center">Carregando cursos... <button type="button" onclick="carregarDaAba(\'Turmas\').then(d=>{if(d.length)allTurmas=d;msBuscarTurmaDropdown(\'\',\''+listaId+'\',\''+modo+'\');})" class="text-[#004587] font-bold underline ml-1">Recarregar</button></div>';
+        lista.innerHTML = '<div class="px-3 py-4 text-xs text-gray-400 text-center">Carregando cursos... <button type="button" onclick="loadTurmasDeduped().then(d=>{if(d.length)allTurmas=d;msBuscarTurmaDropdown(\'\',\''+listaId+'\',\''+modo+'\');})" class="text-[#004587] font-bold underline ml-1">Recarregar</button></div>';
         lista.classList.remove('hidden');
         return;
       }
