@@ -559,6 +559,25 @@
        </div>
        <div><label class="block text-[#004587] font-semibold mb-3">Minidescrição/Minicurrículo</label> <textarea placeholder="Descreva seu perfil profissional, experiências e especialidades..." name="mini_curriculo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none h-32" required></textarea>
        </div>
+       <!-- Áreas de Atuação -->
+       <div class="border-t-2 border-gray-200 pt-6">
+        <h4 class="text-lg font-bold text-[#004587] mb-1">Áreas de Atuação</h4>
+        <p class="text-sm text-gray-500 mb-3">Selecione as áreas em que este docente atua.</p>
+        <div id="docente-areas-container" class="flex flex-wrap gap-2">
+         <button type="button" data-area="Gestão e Negócios" onclick="toggleAreaDocente(this)" class="docente-area-btn px-3 py-1.5 rounded-full border-2 border-gray-200 text-xs font-semibold text-gray-600 hover:border-[#005692] hover:text-[#005692] transition-all">Gestão e Negócios</button>
+         <button type="button" data-area="Saúde" onclick="toggleAreaDocente(this)" class="docente-area-btn px-3 py-1.5 rounded-full border-2 border-gray-200 text-xs font-semibold text-gray-600 hover:border-[#A3D9CC] hover:text-[#A3D9CC] transition-all">Saúde</button>
+         <button type="button" data-area="Tecnologia da Informação" onclick="toggleAreaDocente(this)" class="docente-area-btn px-3 py-1.5 rounded-full border-2 border-gray-200 text-xs font-semibold text-gray-600 hover:border-[#0F8BAF] hover:text-[#0F8BAF] transition-all">Tecnologia da Informação</button>
+         <button type="button" data-area="Gastronomia e Alimentação" onclick="toggleAreaDocente(this)" class="docente-area-btn px-3 py-1.5 rounded-full border-2 border-gray-200 text-xs font-semibold text-gray-600 hover:border-[#ED686A] hover:text-[#ED686A] transition-all">Gastronomia e Alimentação</button>
+         <button type="button" data-area="Moda" onclick="toggleAreaDocente(this)" class="docente-area-btn px-3 py-1.5 rounded-full border-2 border-gray-200 text-xs font-semibold text-gray-600 hover:border-[#A79DC7] hover:text-[#A79DC7] transition-all">Moda</button>
+         <button type="button" data-area="Design, Artes e Arquitetura" onclick="toggleAreaDocente(this)" class="docente-area-btn px-3 py-1.5 rounded-full border-2 border-gray-200 text-xs font-semibold text-gray-600 hover:border-[#5892C0] hover:text-[#5892C0] transition-all">Design, Artes e Arquitetura</button>
+         <button type="button" data-area="Educação" onclick="toggleAreaDocente(this)" class="docente-area-btn px-3 py-1.5 rounded-full border-2 border-gray-200 text-xs font-semibold text-gray-600 hover:border-[#117271] hover:text-[#117271] transition-all">Educação</button>
+         <button type="button" data-area="Beleza e Estética" onclick="toggleAreaDocente(this)" class="docente-area-btn px-3 py-1.5 rounded-full border-2 border-gray-200 text-xs font-semibold text-gray-600 hover:border-[#4D2F40] hover:text-[#4D2F40] transition-all">Beleza e Estética</button>
+         <button type="button" data-area="Comunicação e Marketing" onclick="toggleAreaDocente(this)" class="docente-area-btn px-3 py-1.5 rounded-full border-2 border-gray-200 text-xs font-semibold text-gray-600 hover:border-[#F15830] hover:text-[#F15830] transition-all">Comunicação e Marketing</button>
+         <button type="button" data-area="Turismo e Hospitalidade" onclick="toggleAreaDocente(this)" class="docente-area-btn px-3 py-1.5 rounded-full border-2 border-gray-200 text-xs font-semibold text-gray-600 hover:border-[#C79327] hover:text-[#C79327] transition-all">Turismo e Hospitalidade</button>
+         <button type="button" data-area="Desenvolvimento Social" onclick="toggleAreaDocente(this)" class="docente-area-btn px-3 py-1.5 rounded-full border-2 border-gray-200 text-xs font-semibold text-gray-600 hover:border-[#F26A21] hover:text-[#F26A21] transition-all">Desenvolvimento Social</button>
+         <button type="button" data-area="Meio Ambiente, Segurança e Saúde no Trabalho" onclick="toggleAreaDocente(this)" class="docente-area-btn px-3 py-1.5 rounded-full border-2 border-gray-200 text-xs font-semibold text-gray-600 hover:border-[#C7834C] hover:text-[#C7834C] transition-all">Meio Ambiente, Seg. e Saúde</button>
+        </div>
+       </div>
        <!-- Escala de Trabalho Semanal -->
        <div class="border-t-2 border-gray-200 pt-6">
         <h4 class="text-lg font-bold text-[#004587] mb-1">Escala de Trabalho Semanal</h4>
@@ -1486,7 +1505,13 @@
        </div>
        <!-- Docente -->
        <div>
-        <label class="block text-[#004587] font-semibold mb-2">Docente</label>
+        <div class="flex items-center justify-between mb-2">
+         <label class="text-[#004587] font-semibold">Docente</label>
+         <label class="flex items-center gap-1.5 cursor-pointer text-xs text-gray-500">
+          <input type="checkbox" id="lote-todos-docentes" onchange="qAtualizarDocentesLote()">
+          Incluir outras áreas
+         </label>
+        </div>
         <select id="lote-docente" class="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-[#004587] outline-none">
          <option value="">Selecione o docente...</option>
         </select>
@@ -1671,11 +1696,17 @@
         </div>
        </div>
        <div>
-        <label class="block text-[#004587] font-semibold mb-2">Docente Disponível</label>
+        <div class="flex items-center justify-between mb-2">
+         <label class="text-[#004587] font-semibold">Docente Disponível</label>
+         <label class="flex items-center gap-1.5 cursor-pointer text-xs text-gray-500">
+          <input type="checkbox" id="modal-todos-docentes" onchange="qAtualizarDocentesModal()">
+          Incluir outras áreas
+         </label>
+        </div>
         <select id="modal-docente-select" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
          <option value="">Selecione o docente...</option>
         </select>
-        <p id="modal-docente-hint" class="text-xs text-gray-400 mt-1">Todos os docentes disponíveis. Aulas EAD não bloqueiam disponibilidade em outras turmas.</p>
+        <p id="modal-docente-hint" class="text-xs text-gray-400 mt-1">Docentes da área ativa. Marque "Incluir outras áreas" para ver todos da unidade.</p>
        </div>
       </div>
       <div class="px-6 pb-6">
@@ -2129,6 +2160,7 @@
       if (!lista) return;
       let docs = allTeachers;
       if (query) docs = docs.filter(d => (d.nome_completo||'').toLowerCase().includes(query.toLowerCase()));
+      docs = _filtrarDocentesArea(docs);
       if (docs.length === 0) {
         lista.innerHTML = `<p class="text-gray-400 text-sm text-center py-4">${allTeachers.length === 0 ? 'Nenhum docente cadastrado ainda.' : 'Nenhum resultado para "'+query+'".'}</p>`;
         return;
@@ -2164,6 +2196,7 @@
       form.linkedin.value     = d.linkedin     || '';
       form.mini_curriculo.value = d.mini_curriculo || '';
       try { renderEscalaContainer(d.escala_semanal ? JSON.parse(d.escala_semanal) : null); } catch(e) { renderEscalaContainer(); }
+      preencherAreasDocente(d.areas || '');
       form.dataset.editingNome = d.nome_completo;
       document.getElementById('docentes-form-titulo').textContent = `Editando: ${d.nome_completo}`;
       document.getElementById('docentes-form-limpar').style.display = 'flex';
@@ -2176,6 +2209,7 @@
       form.reset();
       delete form.dataset.editingNome;
       renderEscalaContainer();
+      limparAreasDocente();
       document.getElementById('docentes-form-titulo').textContent = 'Novo Cadastro';
       document.getElementById('docentes-form-limpar').style.display = 'none';
       document.getElementById('busca-docente-cad').value = '';
@@ -2533,6 +2567,10 @@
         if (isParceiro(t)) return false;
         if (status === 'ativas' && isTurmaFinalizada(t)) return false;
         if (status === 'finalizadas' && !isTurmaFinalizada(t)) return false;
+        if (areaAtiva) {
+          const area = _getCourseArea(t.nome_curso);
+          if (area && area !== areaAtiva.nome) return false;
+        }
         const nomeMatch = !nome   || (t.nome_curso    || '').toLowerCase().includes(nome);
         const perMatch  = !periodo || t.periodo === periodo;
         const codMatch  = !codigo  || (t.codigo_oferta || '').toLowerCase().includes(codigo);
@@ -2607,6 +2645,10 @@
         const isParc = isParceiro(t);
         if (tipo === 'regular' && isParc) return false;
         if (tipo === 'parceiro' && !isParc) return false;
+        if (areaAtiva && !isParc) {
+          const area = _getCourseArea(t.nome_curso);
+          if (area && area !== areaAtiva.nome) return false;
+        }
         return !q || (t.nome_curso || '').toLowerCase().includes(q) || (t.codigo_oferta || '').toLowerCase().includes(q);
       });
       div.innerHTML = filtered.length === 0
@@ -2715,6 +2757,24 @@
       const resp = await fetch('./data.json');
       cursosPickerData = await resp.json();
       return cursosPickerData;
+    }
+
+    // Retorna a área de um curso pelo nome (case-insensitive). Retorna null se não encontrado.
+    function _getCourseArea(nomeCurso) {
+      if (!cursosPickerData || !nomeCurso) return null;
+      const norm = nomeCurso.trim().toLowerCase();
+      const all = [...(cursosPickerData.cursos_tecnicos || []), ...(cursosPickerData.cursos_livres || [])];
+      const found = all.find(c => c.nome.toLowerCase() === norm);
+      return found ? (found.area || 'Gestão e Negócios') : null;
+    }
+
+    // Filtra lista de docentes pela área ativa (docentes sem areas definidas passam por padrão)
+    function _filtrarDocentesArea(teachers) {
+      if (!areaAtiva) return teachers;
+      return teachers.filter(d => {
+        if (!d.areas) return true;
+        return d.areas.split(',').map(s => s.trim()).includes(areaAtiva.nome);
+      });
     }
 
     window.filtrarCursosPicker = async function(modalidade) {
@@ -2827,9 +2887,13 @@
       const sorted = [...allTeachers].sort((a, b) =>
         (a.nome_completo || '').localeCompare(b.nome_completo || '', 'pt-BR')
       );
-      const filtrados = sorted.filter(t =>
-        !search || (t.nome_completo || '').toLowerCase().includes(search)
-      );
+      const filtrados = sorted.filter(t => {
+        if (search && !(t.nome_completo || '').toLowerCase().includes(search)) return false;
+        if (areaAtiva && t.areas) {
+          return t.areas.split(',').map(s => s.trim()).includes(areaAtiva.nome);
+        }
+        return true;
+      });
       grid.innerHTML = filtrados.length > 0
         ? filtrados.map(teacher => {
             const idx = allTeachers.indexOf(teacher);
@@ -2962,6 +3026,10 @@
         (a.nome_curso || '').localeCompare(b.nome_curso || '', 'pt-BR')
       );
       const filtrados = sorted.filter(p => {
+        if (areaAtiva) {
+          const area = _getCourseArea(p.nome_curso);
+          if (area && area !== areaAtiva.nome) return false;
+        }
         const matchCurso = !curso || (p.nome_curso || '').toLowerCase().includes(curso) || (p.codigo_oferta || '').toLowerCase().includes(curso);
         const matchPeriodo = !periodo || (p.periodo || '') === periodo;
         return matchCurso && matchPeriodo;
@@ -2999,6 +3067,12 @@
         (a.docente || '').localeCompare(b.docente || '', 'pt-BR')
       );
       const filtrados = sorted.filter(p => {
+        if (areaAtiva) {
+          const doc = allTeachers.find(d => (d.nome_completo||'').toLowerCase() === (p.docente||'').toLowerCase());
+          if (doc && doc.areas) {
+            if (!doc.areas.split(',').map(s => s.trim()).includes(areaAtiva.nome)) return false;
+          }
+        }
         const matchDocente = !docente || (p.docente || '').toLowerCase().includes(docente);
         const matchUC = !uc || (p.unidade_curricular || '').toLowerCase().includes(uc);
         return matchDocente && matchUC;
@@ -3032,6 +3106,7 @@
         (a.turma_curso || '').localeCompare(b.turma_curso || '', 'pt-BR')
       );
       const filtrados = sorted.filter(rep => {
+        if (areaAtiva && rep.area && rep.area !== areaAtiva.nome) return false;
         const matchNome = !nome || (rep.representante || '').toLowerCase().includes(nome) || (rep.vice_representante || '').toLowerCase().includes(nome);
         const matchCurso = !curso || (rep.turma_curso || '').toLowerCase().includes(curso);
         return matchNome && matchCurso;
@@ -3092,15 +3167,16 @@
 
       try {
         const escala = JSON.stringify(coletarEscala());
+        const areas = coletarAreasDocente();
         const editandoNome = form.dataset.editingNome || null;
         if (editandoNome) {
           await deleteFromSheet('Docentes', 'nome_completo', editandoNome);
         }
-        await postToSheet('Docentes', [nome_completo, telefone, instagram, facebook, linkedin, mini_curriculo, escala]);
+        await postToSheet('Docentes', [nome_completo, telefone, instagram, facebook, linkedin, mini_curriculo, escala, areas]);
 
         // Atualiza allTeachers em memória imediatamente (sem esperar round-trip)
         allTeachersVersion++; // protege contra sobrescrita por loadDocentes() pendente
-        const novoDocente = { nome_completo, telefone, instagram, facebook, linkedin, mini_curriculo, escala_semanal: escala };
+        const novoDocente = { nome_completo, telefone, instagram, facebook, linkedin, mini_curriculo, escala_semanal: escala, areas };
         if (editandoNome) {
           const idx = allTeachers.findIndex(t => t.nome_completo === editandoNome);
           if (idx >= 0) allTeachers[idx] = novoDocente; else allTeachers.push(novoDocente);
@@ -3110,6 +3186,7 @@
         delete form.dataset.editingNome;
 
         form.reset();
+        limparAreasDocente();
         renderEscalaContainer();
         document.getElementById('docentes-form-titulo').textContent = 'Novo Cadastro';
         document.getElementById('docentes-form-limpar').style.display = 'none';
@@ -3727,7 +3804,7 @@
       btn.innerHTML = '⏳ Salvando...';
 
       try {
-        await postToSheet('Representantes', [turma_id, nome_representante, telefone_representante, nome_vice, telefone_vice]);
+        await postToSheet('Representantes', [turma_id, nome_representante, telefone_representante, nome_vice, telefone_vice, areaAtiva?.nome || '']);
         form.reset();
         showSuccessMessage('✅ Enviado com sucesso!');
         await loadRepresentantes();
@@ -3902,6 +3979,50 @@
       return escala;
     }
 
+    // ── Áreas do Docente ──
+    window.toggleAreaDocente = function(btn) {
+      const ativo = btn.classList.contains('area-ativa');
+      if (ativo) {
+        btn.classList.remove('area-ativa');
+        btn.style.background = '';
+        btn.style.borderColor = '';
+        btn.style.color = '';
+      } else {
+        btn.classList.add('area-ativa');
+        btn.style.background = 'rgba(0,69,135,0.1)';
+        btn.style.borderColor = '#004587';
+        btn.style.color = '#004587';
+      }
+    };
+
+    function coletarAreasDocente() {
+      const btns = document.querySelectorAll('#docente-areas-container .docente-area-btn.area-ativa');
+      return [...btns].map(b => b.dataset.area).join(',');
+    }
+
+    function preencherAreasDocente(areasStr) {
+      limparAreasDocente();
+      if (!areasStr) return;
+      const lista = areasStr.split(',').map(s => s.trim()).filter(Boolean);
+      document.querySelectorAll('#docente-areas-container .docente-area-btn').forEach(btn => {
+        if (lista.includes(btn.dataset.area)) {
+          btn.classList.add('area-ativa');
+          btn.style.background = 'rgba(0,69,135,0.1)';
+          btn.style.borderColor = '#004587';
+          btn.style.color = '#004587';
+        }
+      });
+    }
+
+    function limparAreasDocente() {
+      document.querySelectorAll('#docente-areas-container .docente-area-btn').forEach(btn => {
+        btn.classList.remove('area-ativa');
+        btn.style.background = '';
+        btn.style.borderColor = '';
+        btn.style.color = '';
+      });
+    }
+
     // ═══════════════════════════════════════════════════
     // QUADROS — Estado global
     // ═══════════════════════════════════════════════════
@@ -3986,7 +4107,15 @@
       lista.style.display = 'block';
       lista.innerHTML = '<p class="text-gray-400 text-center py-3 text-sm">Carregando...</p>';
       const data = await carregarDadosCursos();
-      const cursos = modalidade === 'tecnicos' ? data.cursos_tecnicos : data.cursos_livres;
+      let cursos = modalidade === 'tecnicos' ? data.cursos_tecnicos : data.cursos_livres;
+      if (areaAtiva) {
+        cursos = cursos.filter(c => (c.area || 'Gestão e Negócios') === areaAtiva.nome);
+      }
+      if (!cursos.length) {
+        lista.innerHTML = `<p class="text-center py-4 text-sm text-gray-400 px-4">Nenhum curso cadastrado para a área <strong>${areaAtiva?.nome || ''}</strong>.</p>`;
+        lista.onclick = null;
+        return;
+      }
       lista.innerHTML = cursos.map(c => `
         <button type="button" data-id="${c.id}" data-nome="${c.nome.replace(/"/g,'&quot;')}" data-modalidade="${modalidade}"
           class="q-curso-item w-full text-left px-4 py-3 hover:bg-blue-50 transition-colors">
@@ -4591,8 +4720,13 @@
       // Popula docentes
       if (allTeachers.length === 0) allTeachers = await carregarDaAba('Docentes');
       const docSel = document.getElementById('lote-docente');
-      const sorted = [...allTeachers].filter(d => d.nome_completo).sort((a,b) => (a.nome_completo||'').localeCompare(b.nome_completo||'','pt-BR'));
-      docSel.innerHTML = '<option value="">Selecione o docente...</option>' + sorted.map(d => `<option value="${d.nome_completo}">${d.nome_completo}</option>`).join('');
+      if (docSel) {
+        const todosCheck = document.getElementById('lote-todos-docentes');
+        if (todosCheck) todosCheck.checked = false;
+        const base = _filtrarDocentesArea(allTeachers).filter(d => d.nome_completo);
+        const sorted = [...base].sort((a,b) => (a.nome_completo||'').localeCompare(b.nome_completo||'','pt-BR'));
+        docSel.innerHTML = '<option value="">Selecione o docente...</option>' + sorted.map(d => `<option value="${d.nome_completo}">${d.nome_completo}</option>`).join('');
+      }
 
       // Horas padrão por período
       const hDefault = quadroTurmaAtual.periodo === 'noite' ? 3.5 : 4;
@@ -5295,14 +5429,37 @@
         return;
       }
       allTeachers = teachers;
-      const sorted = [...teachers]
-        .filter(d => d.nome_completo)
-        .sort((a, b) => (a.nome_completo || '').localeCompare(b.nome_completo || '', 'pt-BR'));
+      const todosCheck = document.getElementById('modal-todos-docentes');
+      if (todosCheck) todosCheck.checked = false;
+      const filtrados = _filtrarDocentesArea(teachers).filter(d => d.nome_completo);
+      const sorted = [...filtrados].sort((a, b) => (a.nome_completo || '').localeCompare(b.nome_completo || '', 'pt-BR'));
       select.innerHTML = sorted.length === 0
-        ? '<option value="">Nenhum docente com nome_completo cadastrado</option>'
+        ? '<option value="">Nenhum docente desta área cadastrado</option>'
         : '<option value="">Selecione o docente...</option>' +
           sorted.map(d => `<option value="${d.nome_completo}">${d.nome_completo}</option>`).join('');
     }
+
+    window.qAtualizarDocentesLote = function() {
+      const todosChecked = document.getElementById('lote-todos-docentes')?.checked;
+      const docSel = document.getElementById('lote-docente');
+      if (!docSel) return;
+      const current = docSel.value;
+      const base = (todosChecked ? allTeachers : _filtrarDocentesArea(allTeachers)).filter(d => d.nome_completo);
+      const sorted = [...base].sort((a,b) => (a.nome_completo||'').localeCompare(b.nome_completo||'','pt-BR'));
+      docSel.innerHTML = '<option value="">Selecione o docente...</option>' +
+        sorted.map(d => `<option value="${d.nome_completo}"${d.nome_completo === current ? ' selected' : ''}>${d.nome_completo}</option>`).join('');
+    };
+
+    window.qAtualizarDocentesModal = function() {
+      const todosChecked = document.getElementById('modal-todos-docentes')?.checked;
+      const select = document.getElementById('modal-docente-select');
+      if (!select) return;
+      const current = select.value;
+      const base = (todosChecked ? allTeachers : _filtrarDocentesArea(allTeachers)).filter(d => d.nome_completo);
+      const sorted = [...base].sort((a,b) => (a.nome_completo||'').localeCompare(b.nome_completo||'','pt-BR'));
+      select.innerHTML = '<option value="">Selecione o docente...</option>' +
+        sorted.map(d => `<option value="${d.nome_completo}"${d.nome_completo === current ? ' selected' : ''}>${d.nome_completo}</option>`).join('');
+    };
 
     window.calcularSaldoUC = function() {
       const opt = document.getElementById('modal-uc-select').selectedOptions[0];
@@ -6751,6 +6908,22 @@
       if (pickerSel) pickerSel.style.display = 'none';
       const pickerLista = document.getElementById('curso-picker-lista');
       if (pickerLista) pickerLista.style.display = 'none';
+
+      // 6. Atualiza listas que dependem da área
+      renderDocentes();
+      renderDocentesCadLista();
+      if (Array.isArray(_turmasConsultaCache) && _turmasConsultaCache.length > 0) {
+        if (window.filtrarTurmasConsulta) window.filtrarTurmasConsulta();
+        if (window.cadBuscarTurmas) {
+          const inp = document.getElementById('cad-busca-turma-input');
+          if (inp && document.getElementById('busca-turmas-panel')?.style.display !== 'none') {
+            window.cadBuscarTurmas(inp.value || '');
+          }
+        }
+      }
+      if (Array.isArray(allPCTD) && allPCTD.length > 0 && window.filterPCTD) window.filterPCTD();
+      if (Array.isArray(allPITD) && allPITD.length > 0 && window.filterPITD) window.filterPITD();
+      if (Array.isArray(allRepresentantes) && allRepresentantes.length > 0 && window.filterRepresentantes) window.filterRepresentantes();
     };
     // ==================== FIM SELETOR DE ÁREA ====================
 
