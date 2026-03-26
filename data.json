@@ -1,76 +1,111 @@
 {
   "cursos_tecnicos": [
-    {
-      "id": "adm",
-      "nome": "TÉCNICO EM ADMINISTRAÇÃO",
-      "codigo_ficha": "13935",
-      "modalidade": "Presencial + EAD",
-      "subarea": "ADMINISTRAÇÃO GERAL"
-    },
-    {
-      "id": "comext",
-      "nome": "TÉCNICO EM COMÉRCIO EXTERIOR",
-      "codigo_ficha": "23513",
-      "modalidade": "Presencial",
-      "subarea": "COMÉRCIO EXTERIOR"
-    },
-    {
-      "id": "cont",
-      "nome": "TÉCNICO EM CONTABILIDADE",
-      "codigo_ficha": "25366",
-      "modalidade": "Presencial + EAD",
-      "subarea": "FINANÇAS E CONTABILIDADE"
-    },
-    {
-      "id": "fin",
-      "nome": "TÉCNICO EM FINANÇAS",
-      "codigo_ficha": "17458",
-      "modalidade": "Presencial",
-      "subarea": "FINANÇAS E CONTABILIDADE"
-    },
-    {
-      "id": "log",
-      "nome": "TÉCNICO EM LOGÍSTICA",
-      "codigo_ficha": "12985",
-      "modalidade": "Presencial + EAD",
-      "subarea": "LOGÍSTICA"
-    },
-    {
-      "id": "mkt",
-      "nome": "TÉCNICO EM MARKETING",
-      "codigo_ficha": "26861",
-      "modalidade": "Presencial + EAD",
-      "subarea": "MARKETING"
-    },
-    {
-      "id": "rh",
-      "nome": "TÉCNICO EM RECURSOS HUMANOS",
-      "codigo_ficha": "15065",
-      "modalidade": "Presencial + EAD",
-      "subarea": "GESTÃO DE PESSOAS E LIDERANÇA"
-    }
+    { "id": "adm",      "nome": "TÉCNICO EM ADMINISTRAÇÃO",          "codigo_ficha": "13935", "modalidade": "Presencial + EAD", "subarea": "ADMINISTRAÇÃO GERAL",            "area": "Gestão e Negócios" },
+    { "id": "comext",   "nome": "TÉCNICO EM COMÉRCIO EXTERIOR",       "codigo_ficha": "23513", "modalidade": "Presencial",       "subarea": "COMÉRCIO EXTERIOR",              "area": "Gestão e Negócios" },
+    { "id": "cont",     "nome": "TÉCNICO EM CONTABILIDADE",           "codigo_ficha": "25366", "modalidade": "Presencial + EAD", "subarea": "FINANÇAS E CONTABILIDADE",       "area": "Gestão e Negócios" },
+    { "id": "fin",      "nome": "TÉCNICO EM FINANÇAS",                "codigo_ficha": "17458", "modalidade": "Presencial",       "subarea": "FINANÇAS E CONTABILIDADE",       "area": "Gestão e Negócios" },
+    { "id": "log",      "nome": "TÉCNICO EM LOGÍSTICA",               "codigo_ficha": "12985", "modalidade": "Presencial + EAD", "subarea": "LOGÍSTICA",                      "area": "Gestão e Negócios" },
+    { "id": "mkt",      "nome": "TÉCNICO EM MARKETING",               "codigo_ficha": "26861", "modalidade": "Presencial + EAD", "subarea": "MARKETING",                      "area": "Gestão e Negócios" },
+    { "id": "rh",       "nome": "TÉCNICO EM RECURSOS HUMANOS",        "codigo_ficha": "15065", "modalidade": "Presencial + EAD", "subarea": "GESTÃO DE PESSOAS E LIDERANÇA",  "area": "Gestão e Negócios" },
+
+    { "id": "enf",      "nome": "TÉCNICO EM ENFERMAGEM",              "codigo_ficha": "12935", "modalidade": "Presencial",       "subarea": "CUIDADOS DE SAÚDE",              "area": "Saúde" },
+    { "id": "nutri",    "nome": "TÉCNICO EM NUTRIÇÃO E DIETÉTICA",    "codigo_ficha": "13538", "modalidade": "Presencial",       "subarea": "ALIMENTAÇÃO E NUTRIÇÃO",         "area": "Saúde" },
+    { "id": "farm",     "nome": "TÉCNICO EM FARMÁCIA",                "codigo_ficha": "13515", "modalidade": "Presencial",       "subarea": "FARMÁCIA E MANIPULAÇÃO",         "area": "Saúde" },
+
+    { "id": "dsist",    "nome": "TÉCNICO EM DESENVOLVIMENTO DE SISTEMAS","codigo_ficha": "18035","modalidade": "Presencial + EAD","subarea": "PROGRAMAÇÃO E SISTEMAS",         "area": "Tecnologia da Informação" },
+    { "id": "redes",    "nome": "TÉCNICO EM REDES DE COMPUTADORES",   "codigo_ficha": "18026", "modalidade": "Presencial",       "subarea": "INFRAESTRUTURA DE TI",           "area": "Tecnologia da Informação" },
+
+    { "id": "coz",      "nome": "TÉCNICO EM COZINHA",                 "codigo_ficha": "14953", "modalidade": "Presencial",       "subarea": "COZINHA E GASTRONOMIA",          "area": "Gastronomia e Alimentação" },
+
+    { "id": "moda",     "nome": "TÉCNICO EM MODA",                    "codigo_ficha": "18580", "modalidade": "Presencial",       "subarea": "CRIAÇÃO E ESTILO",               "area": "Moda" },
+
+    { "id": "multim",   "nome": "TÉCNICO EM MULTIMÍDIA",              "codigo_ficha": "13953", "modalidade": "Presencial",       "subarea": "DESIGN DIGITAL",                 "area": "Design, Artes e Arquitetura" },
+    { "id": "intdes",   "nome": "TÉCNICO EM DESIGN DE INTERIORES",    "codigo_ficha": "14962", "modalidade": "Presencial",       "subarea": "DESIGN DE AMBIENTES",            "area": "Design, Artes e Arquitetura" },
+
+    { "id": "desenv",   "nome": "TÉCNICO EM DESENVOLVIMENTO INFANTIL","codigo_ficha": "18127", "modalidade": "Presencial",       "subarea": "EDUCAÇÃO INFANTIL",              "area": "Educação" },
+
+    { "id": "estetica", "nome": "TÉCNICO EM ESTÉTICA",                "codigo_ficha": "18048", "modalidade": "Presencial",       "subarea": "ESTÉTICA CORPORAL E FACIAL",     "area": "Beleza e Estética" },
+
+    { "id": "comvis",   "nome": "TÉCNICO EM COMUNICAÇÃO VISUAL",      "codigo_ficha": "13952", "modalidade": "Presencial",       "subarea": "PUBLICIDADE E PROPAGANDA",       "area": "Comunicação e Marketing" },
+
+    { "id": "hosp",     "nome": "TÉCNICO EM HOSPEDAGEM",              "codigo_ficha": "13508", "modalidade": "Presencial",       "subarea": "MEIOS DE HOSPEDAGEM",            "area": "Turismo e Hospitalidade" },
+    { "id": "guia",     "nome": "TÉCNICO EM GUIA DE TURISMO",         "codigo_ficha": "13507", "modalidade": "Presencial",       "subarea": "TURISMO E LAZER",                "area": "Turismo e Hospitalidade" },
+
+    { "id": "segtrab",  "nome": "TÉCNICO EM SEGURANÇA DO TRABALHO",   "codigo_ficha": "13510", "modalidade": "Presencial",       "subarea": "SEGURANÇA E SAÚDE NO TRABALHO",  "area": "Meio Ambiente, Segurança e Saúde no Trabalho" }
   ],
   "cursos_livres": [
-    { "id": "almox", "nome": "ALMOXARIFE", "codigo_ficha": "14941", "subarea": "LOGÍSTICA" },
-    { "id": "asst_adm", "nome": "ASSISTENTE ADMINISTRATIVO", "codigo_ficha": "13938", "subarea": "ADMINISTRAÇÃO GERAL" },
-    { "id": "asst_bra", "nome": "ASSISTENTE DE BRANDING E INOVAÇÃO", "codigo_ficha": "30563", "subarea": "MARKETING" },
-    { "id": "asst_eco", "nome": "ASSISTENTE DE E-COMMERCE", "codigo_ficha": "30562", "subarea": "MARKETING" },
-    { "id": "asst_cx", "nome": "ASSISTENTE DE EXPERIÊNCIA DO CLIENTE", "codigo_ficha": "30564", "subarea": "MARKETING" },
-    { "id": "asst_log", "nome": "ASSISTENTE DE LOGÍSTICA", "codigo_ficha": "17548", "subarea": "LOGÍSTICA" },
-    { "id": "asst_mktdig", "nome": "ASSISTENTE DE MARKETING DIGITAL", "codigo_ficha": "30560", "subarea": "MARKETING" },
-    { "id": "asst_mktvnd", "nome": "ASSISTENTE DE MARKETING E VENDAS", "codigo_ficha": "23596", "subarea": "VENDAS" },
-    { "id": "ast_pes", "nome": "ASSISTENTE DE PESSOAL", "codigo_ficha": "13557", "subarea": "GESTÃO DE PESSOAS E LIDERANÇA" },
-    { "id": "asst_plan", "nome": "ASSISTENTE DE PLANEJAMENTO FINANCEIRO", "codigo_ficha": "25629", "subarea": "FINANÇAS E CONTABILIDADE" },
-    { "id": "ast_rh", "nome": "ASSISTENTE DE RECURSOS HUMANOS", "codigo_ficha": "13554", "subarea": "GESTÃO DE PESSOAS E LIDERANÇA" },
-    { "id": "vendedo", "nome": "VENDEDOR", "codigo_ficha": "13943", "subarea": "VENDAS" },
-    { "id": "asst_comext", "nome": "ASSISTENTE DE SERVIÇOS EM COMÉRCIO EXTERIOR", "codigo_ficha": "24460", "subarea": "COMÉRCIO EXTERIOR" },
-    { "id": "asst_fin", "nome": "ASSISTENTE FINANCEIRO", "codigo_ficha": "17851", "subarea": "FINANÇAS E CONTABILIDADE" },
-    { "id": "aux_adm", "nome": "AUXILIAR ADMINISTRATIVO - PROA - PSG", "codigo_ficha": "21093", "subarea": "ADMINISTRAÇÃO GERAL" },
-    { "id": "aux_fat", "nome": "AUXILIAR DE FATURAMENTO", "codigo_ficha": "27214", "subarea": "FINANÇAS E CONTABILIDADE" },
-    { "id": "aux_oplog", "nome": "AUXILIAR DE OPERAÇÕES LOGÍSTICAS", "codigo_ficha": "24609", "subarea": "LOGÍSTICA" },
-    { "id": "aux_cont", "nome": "AUXILIAR DE SERVIÇOS CONTÁBEIS", "codigo_ficha": "27211", "subarea": "FINANÇAS E CONTABILIDADE" },
-    { "id": "empreend", "nome": "EMPREENDEDOR EM PEQUENOS NEGÓCIOS", "codigo_ficha": "25744", "subarea": "ADMINISTRAÇÃO GERAL" },
-    { "id": "op_caixa", "nome": "OPERADOR DE CAIXA", "codigo_ficha": "22135", "subarea": "VENDAS" }
+    { "id": "almox",        "nome": "ALMOXARIFE",                                    "codigo_ficha": "14941", "subarea": "LOGÍSTICA",                       "area": "Gestão e Negócios" },
+    { "id": "asst_adm",     "nome": "ASSISTENTE ADMINISTRATIVO",                     "codigo_ficha": "13938", "subarea": "ADMINISTRAÇÃO GERAL",             "area": "Gestão e Negócios" },
+    { "id": "asst_bra",     "nome": "ASSISTENTE DE BRANDING E INOVAÇÃO",             "codigo_ficha": "30563", "subarea": "MARKETING",                       "area": "Gestão e Negócios" },
+    { "id": "asst_eco",     "nome": "ASSISTENTE DE E-COMMERCE",                      "codigo_ficha": "30562", "subarea": "MARKETING",                       "area": "Gestão e Negócios" },
+    { "id": "asst_cx",      "nome": "ASSISTENTE DE EXPERIÊNCIA DO CLIENTE",          "codigo_ficha": "30564", "subarea": "MARKETING",                       "area": "Gestão e Negócios" },
+    { "id": "asst_log",     "nome": "ASSISTENTE DE LOGÍSTICA",                       "codigo_ficha": "17548", "subarea": "LOGÍSTICA",                       "area": "Gestão e Negócios" },
+    { "id": "asst_mktdig",  "nome": "ASSISTENTE DE MARKETING DIGITAL",               "codigo_ficha": "30560", "subarea": "MARKETING",                       "area": "Gestão e Negócios" },
+    { "id": "asst_mktvnd",  "nome": "ASSISTENTE DE MARKETING E VENDAS",              "codigo_ficha": "23596", "subarea": "VENDAS",                          "area": "Gestão e Negócios" },
+    { "id": "ast_pes",      "nome": "ASSISTENTE DE PESSOAL",                         "codigo_ficha": "13557", "subarea": "GESTÃO DE PESSOAS E LIDERANÇA",   "area": "Gestão e Negócios" },
+    { "id": "asst_plan",    "nome": "ASSISTENTE DE PLANEJAMENTO FINANCEIRO",         "codigo_ficha": "25629", "subarea": "FINANÇAS E CONTABILIDADE",         "area": "Gestão e Negócios" },
+    { "id": "ast_rh",       "nome": "ASSISTENTE DE RECURSOS HUMANOS",                "codigo_ficha": "13554", "subarea": "GESTÃO DE PESSOAS E LIDERANÇA",   "area": "Gestão e Negócios" },
+    { "id": "vendedo",      "nome": "VENDEDOR",                                      "codigo_ficha": "13943", "subarea": "VENDAS",                          "area": "Gestão e Negócios" },
+    { "id": "asst_comext",  "nome": "ASSISTENTE DE SERVIÇOS EM COMÉRCIO EXTERIOR",   "codigo_ficha": "24460", "subarea": "COMÉRCIO EXTERIOR",               "area": "Gestão e Negócios" },
+    { "id": "asst_fin",     "nome": "ASSISTENTE FINANCEIRO",                         "codigo_ficha": "17851", "subarea": "FINANÇAS E CONTABILIDADE",         "area": "Gestão e Negócios" },
+    { "id": "aux_adm",      "nome": "AUXILIAR ADMINISTRATIVO - PROA - PSG",          "codigo_ficha": "21093", "subarea": "ADMINISTRAÇÃO GERAL",             "area": "Gestão e Negócios" },
+    { "id": "aux_fat",      "nome": "AUXILIAR DE FATURAMENTO",                       "codigo_ficha": "27214", "subarea": "FINANÇAS E CONTABILIDADE",         "area": "Gestão e Negócios" },
+    { "id": "aux_oplog",    "nome": "AUXILIAR DE OPERAÇÕES LOGÍSTICAS",              "codigo_ficha": "24609", "subarea": "LOGÍSTICA",                       "area": "Gestão e Negócios" },
+    { "id": "aux_cont",     "nome": "AUXILIAR DE SERVIÇOS CONTÁBEIS",                "codigo_ficha": "27211", "subarea": "FINANÇAS E CONTABILIDADE",         "area": "Gestão e Negócios" },
+    { "id": "empreend",     "nome": "EMPREENDEDOR EM PEQUENOS NEGÓCIOS",             "codigo_ficha": "25744", "subarea": "ADMINISTRAÇÃO GERAL",             "area": "Gestão e Negócios" },
+    { "id": "op_caixa",     "nome": "OPERADOR DE CAIXA",                             "codigo_ficha": "22135", "subarea": "VENDAS",                          "area": "Gestão e Negócios" },
+
+    { "id": "cuid_ido",     "nome": "CUIDADOR DE IDOSOS",                            "codigo_ficha": "14922", "subarea": "CUIDADOS DE SAÚDE",               "area": "Saúde" },
+    { "id": "aux_sb",       "nome": "AUXILIAR DE SAÚDE BUCAL",                       "codigo_ficha": "13590", "subarea": "ODONTOLOGIA",                     "area": "Saúde" },
+    { "id": "aux_enf",      "nome": "AUXILIAR DE ENFERMAGEM",                        "codigo_ficha": "13519", "subarea": "CUIDADOS DE SAÚDE",               "area": "Saúde" },
+    { "id": "primsc",       "nome": "PRIMEIROS SOCORROS",                            "codigo_ficha": "14911", "subarea": "SEGURANÇA E SAÚDE",               "area": "Saúde" },
+
+    { "id": "progweb",      "nome": "PROGRAMADOR WEB",                               "codigo_ficha": "27197", "subarea": "PROGRAMAÇÃO E SISTEMAS",          "area": "Tecnologia da Informação" },
+    { "id": "suporte_ti",   "nome": "TÉCNICO DE SUPORTE EM INFORMÁTICA",             "codigo_ficha": "13527", "subarea": "INFRAESTRUTURA DE TI",            "area": "Tecnologia da Informação" },
+    { "id": "ux",           "nome": "UX DESIGN",                                     "codigo_ficha": "30572", "subarea": "DESIGN DIGITAL",                  "area": "Tecnologia da Informação" },
+    { "id": "seginfo",      "nome": "SEGURANÇA DA INFORMAÇÃO",                       "codigo_ficha": "30575", "subarea": "INFRAESTRUTURA DE TI",            "area": "Tecnologia da Informação" },
+
+    { "id": "confeite",     "nome": "CONFEITEIRO",                                   "codigo_ficha": "13539", "subarea": "CONFEITARIA E PANIFICAÇÃO",        "area": "Gastronomia e Alimentação" },
+    { "id": "padeiro",      "nome": "PADEIRO",                                       "codigo_ficha": "13541", "subarea": "CONFEITARIA E PANIFICAÇÃO",        "area": "Gastronomia e Alimentação" },
+    { "id": "barista",      "nome": "BARISTA",                                       "codigo_ficha": "27189", "subarea": "BEBIDAS E CAFETERIA",             "area": "Gastronomia e Alimentação" },
+    { "id": "garcom",       "nome": "GARÇOM",                                        "codigo_ficha": "13546", "subarea": "SERVIÇO DE ALIMENTAÇÃO",          "area": "Gastronomia e Alimentação" },
+    { "id": "coz_livre",    "nome": "COZINHEIRO",                                    "codigo_ficha": "13545", "subarea": "COZINHA E GASTRONOMIA",           "area": "Gastronomia e Alimentação" },
+
+    { "id": "model_cos",    "nome": "MODELAGEM E COSTURA INDUSTRIAL",                "codigo_ficha": "13544", "subarea": "PRODUÇÃO TÊXTIL",                 "area": "Moda" },
+    { "id": "costur",       "nome": "COSTUREIRO",                                    "codigo_ficha": "13543", "subarea": "PRODUÇÃO TÊXTIL",                 "area": "Moda" },
+    { "id": "stylist",      "nome": "ESTILISTA DE MODA",                             "codigo_ficha": "23571", "subarea": "CRIAÇÃO E ESTILO",                "area": "Moda" },
+
+    { "id": "webdes",       "nome": "WEB DESIGNER",                                  "codigo_ficha": "15003", "subarea": "DESIGN DIGITAL",                  "area": "Design, Artes e Arquitetura" },
+    { "id": "design_grf",   "nome": "DESIGNER GRÁFICO",                              "codigo_ficha": "13950", "subarea": "COMUNICAÇÃO VISUAL",              "area": "Design, Artes e Arquitetura" },
+    { "id": "fotog",        "nome": "FOTÓGRAFO",                                     "codigo_ficha": "14965", "subarea": "FOTOGRAFIA E AUDIOVISUAL",         "area": "Design, Artes e Arquitetura" },
+
+    { "id": "aux_ed_inf",   "nome": "AUXILIAR DE EDUCAÇÃO INFANTIL",                 "codigo_ficha": "13935", "subarea": "EDUCAÇÃO INFANTIL",               "area": "Educação" },
+    { "id": "monitor_rec",  "nome": "MONITOR DE RECREAÇÃO",                          "codigo_ficha": "14918", "subarea": "LAZER E RECREAÇÃO",               "area": "Educação" },
+    { "id": "apoio_ped",    "nome": "APOIO PEDAGÓGICO",                              "codigo_ficha": "14917", "subarea": "EDUCAÇÃO BÁSICA",                 "area": "Educação" },
+
+    { "id": "cabel",        "nome": "CABELEIREIRO",                                  "codigo_ficha": "14932", "subarea": "CABELO E PENTEADOS",              "area": "Beleza e Estética" },
+    { "id": "maquiad",      "nome": "MAQUIADOR",                                     "codigo_ficha": "13561", "subarea": "MAQUIAGEM E CARACTERIZAÇÃO",       "area": "Beleza e Estética" },
+    { "id": "manic_ped",    "nome": "MANICURE E PEDICURE",                           "codigo_ficha": "13560", "subarea": "MÃOS E PÉS",                      "area": "Beleza e Estética" },
+    { "id": "depil",        "nome": "DEPILADOR",                                     "codigo_ficha": "22141", "subarea": "ESTÉTICA CORPORAL",               "area": "Beleza e Estética" },
+    { "id": "estetica_fac", "nome": "ESTETICISTA FACIAL",                            "codigo_ficha": "14934", "subarea": "ESTÉTICA CORPORAL E FACIAL",       "area": "Beleza e Estética" },
+
+    { "id": "social_media", "nome": "SOCIAL MEDIA",                                  "codigo_ficha": "30561", "subarea": "MARKETING DIGITAL",               "area": "Comunicação e Marketing" },
+    { "id": "prod_cont",    "nome": "PRODUTOR DE CONTEÚDO DIGITAL",                  "codigo_ficha": "30565", "subarea": "COMUNICAÇÃO DIGITAL",             "area": "Comunicação e Marketing" },
+    { "id": "redator",      "nome": "REDATOR PUBLICITÁRIO",                          "codigo_ficha": "14970", "subarea": "PUBLICIDADE E PROPAGANDA",         "area": "Comunicação e Marketing" },
+    { "id": "video",        "nome": "PRODUTOR AUDIOVISUAL",                          "codigo_ficha": "23581", "subarea": "FOTOGRAFIA E AUDIOVISUAL",         "area": "Comunicação e Marketing" },
+
+    { "id": "recep",        "nome": "RECEPCIONISTA",                                 "codigo_ficha": "13559", "subarea": "ATENDIMENTO E RECEPÇÃO",          "area": "Turismo e Hospitalidade" },
+    { "id": "camar",        "nome": "CAMAREIRA",                                     "codigo_ficha": "14945", "subarea": "MEIOS DE HOSPEDAGEM",             "area": "Turismo e Hospitalidade" },
+    { "id": "org_eventos",  "nome": "ORGANIZADOR DE EVENTOS",                        "codigo_ficha": "13556", "subarea": "ORGANIZAÇÃO DE EVENTOS",          "area": "Turismo e Hospitalidade" },
+
+    { "id": "lid_social",   "nome": "LIDERANÇA E DESENVOLVIMENTO SOCIAL",            "codigo_ficha": "25748", "subarea": "DESENVOLVIMENTO COMUNITÁRIO",      "area": "Desenvolvimento Social" },
+    { "id": "gestor_ong",   "nome": "GESTÃO DE ORGANIZAÇÕES DO TERCEIRO SETOR",      "codigo_ficha": "25750", "subarea": "GESTÃO SOCIAL",                   "area": "Desenvolvimento Social" },
+    { "id": "inclus_dig",   "nome": "INCLUSÃO DIGITAL",                              "codigo_ficha": "13528", "subarea": "CIDADANIA DIGITAL",               "area": "Desenvolvimento Social" },
+
+    { "id": "seg_trab",     "nome": "AGENTE DE SEGURANÇA DO TRABALHO",               "codigo_ficha": "14908", "subarea": "SEGURANÇA E SAÚDE NO TRABALHO",   "area": "Meio Ambiente, Segurança e Saúde no Trabalho" },
+    { "id": "gest_amb",     "nome": "GESTÃO AMBIENTAL",                              "codigo_ficha": "14905", "subarea": "MEIO AMBIENTE",                   "area": "Meio Ambiente, Segurança e Saúde no Trabalho" },
+    { "id": "nr35",         "nome": "NR-35 — TRABALHO EM ALTURA",                    "codigo_ficha": "22148", "subarea": "SEGURANÇA DO TRABALHO",           "area": "Meio Ambiente, Segurança e Saúde no Trabalho" },
+    { "id": "primsc_ma",    "nome": "PRIMEIROS SOCORROS APLICADOS AO TRABALHO",      "codigo_ficha": "22147", "subarea": "SEGURANÇA E SAÚDE",               "area": "Meio Ambiente, Segurança e Saúde no Trabalho" }
   ],
   "docentes": [],
   "turmas": [],
