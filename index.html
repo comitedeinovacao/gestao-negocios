@@ -2217,7 +2217,7 @@
     };
 
     async function loadPCTD() {
-      allPCTD = await carregarDaAba('PCTD');
+      [allPCTD] = await Promise.all([carregarDaAba('PCTD'), carregarDadosCursos()]);
       renderPCTD();
     }
 
@@ -2547,7 +2547,7 @@
       if (!grid) return;
       grid.innerHTML = '<p class="text-gray-400 text-center py-4 text-sm">Carregando...</p>';
       try {
-        _turmasConsultaCache = await loadTurmasDeduped();
+        [_turmasConsultaCache] = await Promise.all([loadTurmasDeduped(), carregarDadosCursos()]);
         window.filtrarTurmasConsulta();
       } catch(e) {
         console.error('renderTurmasConsulta erro:', e);
@@ -2569,7 +2569,7 @@
         if (status === 'finalizadas' && !isTurmaFinalizada(t)) return false;
         if (areaAtiva) {
           const area = _getCourseArea(t.nome_curso);
-          if (area && area !== areaAtiva.nome) return false;
+          if (area !== null && area !== areaAtiva.nome) return false;
         }
         const nomeMatch = !nome   || (t.nome_curso    || '').toLowerCase().includes(nome);
         const perMatch  = !periodo || t.periodo === periodo;
@@ -2621,7 +2621,7 @@
         const div = document.getElementById('cad-busca-turma-resultado');
         if (div) div.innerHTML = '<p class="text-xs text-gray-400 text-center py-3">Carregando turmas...</p>';
         try {
-          _turmasConsultaCache = await loadTurmasDeduped();
+          [_turmasConsultaCache] = await Promise.all([loadTurmasDeduped(), carregarDadosCursos()]);
           window.cadBuscarTurmas(document.getElementById('cad-busca-turma-input')?.value || '');
         } catch(e) {
           console.error('toggleBuscaTurmas erro:', e);
@@ -2647,7 +2647,7 @@
         if (tipo === 'parceiro' && !isParc) return false;
         if (areaAtiva && !isParc) {
           const area = _getCourseArea(t.nome_curso);
-          if (area && area !== areaAtiva.nome) return false;
+          if (area !== null && area !== areaAtiva.nome) return false;
         }
         return !q || (t.nome_curso || '').toLowerCase().includes(q) || (t.codigo_oferta || '').toLowerCase().includes(q);
       });
@@ -2759,21 +2759,22 @@
       return cursosPickerData;
     }
 
-    // Retorna a área de um curso pelo nome (case-insensitive). Retorna null se não encontrado.
+    // Retorna a área de um curso pelo nome (case-insensitive). Retorna 'Gestão e Negócios' se não encontrado.
     function _getCourseArea(nomeCurso) {
-      if (!cursosPickerData || !nomeCurso) return null;
+      if (!nomeCurso) return 'Gestão e Negócios';
+      if (!cursosPickerData) return null; // dados ainda não carregados — não filtrar ainda
       const norm = nomeCurso.trim().toLowerCase();
       const all = [...(cursosPickerData.cursos_tecnicos || []), ...(cursosPickerData.cursos_livres || [])];
       const found = all.find(c => c.nome.toLowerCase() === norm);
-      return found ? (found.area || 'Gestão e Negócios') : null;
+      return found ? (found.area || 'Gestão e Negócios') : 'Gestão e Negócios';
     }
 
-    // Filtra lista de docentes pela área ativa (docentes sem areas definidas passam por padrão)
+    // Filtra lista de docentes pela área ativa. Docentes sem areas assumem "Gestão e Negócios".
     function _filtrarDocentesArea(teachers) {
       if (!areaAtiva) return teachers;
       return teachers.filter(d => {
-        if (!d.areas) return true;
-        return d.areas.split(',').map(s => s.trim()).includes(areaAtiva.nome);
+        const docAreas = d.areas ? d.areas.split(',').map(s => s.trim()) : ['Gestão e Negócios'];
+        return docAreas.includes(areaAtiva.nome);
       });
     }
 
@@ -2889,8 +2890,9 @@
       );
       const filtrados = sorted.filter(t => {
         if (search && !(t.nome_completo || '').toLowerCase().includes(search)) return false;
-        if (areaAtiva && t.areas) {
-          return t.areas.split(',').map(s => s.trim()).includes(areaAtiva.nome);
+        if (areaAtiva) {
+          const docAreas = t.areas ? t.areas.split(',').map(s => s.trim()) : ['Gestão e Negócios'];
+          return docAreas.includes(areaAtiva.nome);
         }
         return true;
       });
@@ -3028,7 +3030,7 @@
       const filtrados = sorted.filter(p => {
         if (areaAtiva) {
           const area = _getCourseArea(p.nome_curso);
-          if (area && area !== areaAtiva.nome) return false;
+          if (area !== null && area !== areaAtiva.nome) return false;
         }
         const matchCurso = !curso || (p.nome_curso || '').toLowerCase().includes(curso) || (p.codigo_oferta || '').toLowerCase().includes(curso);
         const matchPeriodo = !periodo || (p.periodo || '') === periodo;
@@ -3069,8 +3071,9 @@
       const filtrados = sorted.filter(p => {
         if (areaAtiva) {
           const doc = allTeachers.find(d => (d.nome_completo||'').toLowerCase() === (p.docente||'').toLowerCase());
-          if (doc && doc.areas) {
-            if (!doc.areas.split(',').map(s => s.trim()).includes(areaAtiva.nome)) return false;
+          if (doc) {
+            const docAreas = doc.areas ? doc.areas.split(',').map(s => s.trim()) : ['Gestão e Negócios'];
+            if (!docAreas.includes(areaAtiva.nome)) return false;
           }
         }
         const matchDocente = !docente || (p.docente || '').toLowerCase().includes(docente);
@@ -3364,7 +3367,7 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
       // Pré-carrega dados em paralelo (sem bloquear a UI)
-      Promise.all([loadDocentes(), loadPCTD(), loadPITD(), loadRepresentantes(), loadUCs()]).catch(() => {});
+      Promise.all([loadDocentes(), loadPCTD(), loadPITD(), loadRepresentantes(), loadUCs(), carregarDadosCursos()]).catch(() => {});
       // Renderiza a grade de escala semanal no form de docentes
       renderEscalaContainer();
 
