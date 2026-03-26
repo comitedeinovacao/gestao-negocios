@@ -281,10 +281,10 @@
      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
       <div class="grid lg:grid-cols-2 gap-12 items-center">
        <div class="space-y-8">
-        <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-gradient-to-r from-[#F7941D]/20 to-[#F7941D]/5 border border-[#F7941D]/30 backdrop-blur-sm w-fit fade-up"><span class="text-sm font-semibold text-[#F7941D] tracking-wider">HUB GESTÃO E NEGÓCIOS</span>
+        <div id="hero-badge-pill" class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-gradient-to-r from-[#F7941D]/20 to-[#F7941D]/5 border border-[#F7941D]/30 backdrop-blur-sm w-fit fade-up"><span id="hero-badge-text" class="text-sm font-semibold text-[#F7941D] tracking-wider">HUB SENAC ARAÇATUBA</span>
         </div>
         <div class="fade-up delay-100">
-         <h1 id="hero-title" class="text-5xl sm:text-6xl lg:text-7xl font-black leading-tight mb-4 relative"><span class="gradient-text">GESTÃO E NEGÓCIOS</span></h1>
+         <h1 id="hero-title" class="text-5xl sm:text-6xl lg:text-7xl font-black leading-tight mb-4 relative"><span id="hero-title-text" class="gradient-text">HUB SENAC ARAÇATUBA</span></h1>
         </div>
         <p id="hero-subtitle" class="text-lg sm:text-xl text-gray-300 leading-relaxed max-w-xl fade-up delay-200">Central de recursos pedagógicos e diretrizes estratégicas para todas as áreas do Senac Araçatuba.</p>
         <!-- Seletor de Área -->
@@ -485,7 +485,10 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
        </svg> Voltar </button>
      </div><!-- Abas -->
-     <div class="flex flex-wrap gap-2 mb-10 border-b border-gray-200 pb-6 overflow-x-auto"><button class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="cad-docentes" onclick="switchCadastroTab(this)">
+     <div class="flex flex-wrap items-center gap-2 mb-10 border-b border-gray-200 pb-6 overflow-x-auto">
+      <button id="cadastro-tab-back-btn" onclick="voltarTabAnterior('cadastro')" style="display:none" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-500 hover:text-[#004587] hover:bg-blue-50 rounded-lg border border-gray-200 transition-all mr-1 flex-shrink-0">
+       <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>Anterior
+      </button><button class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="cad-docentes" onclick="switchCadastroTab(this)">
        <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
        </svg>Docentes </button> <button class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="turmas" onclick="switchCadastroTab(this)">
@@ -1043,7 +1046,10 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
        </svg> Voltar </button>
      </div><!-- Abas de Eventos -->
-     <div class="flex flex-wrap gap-2 mb-10 border-b border-gray-200 pb-6 overflow-x-auto"><button class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap bg-[#004587]/10 text-[#004587] border-b-4 border-[#F7941D]" data-tab="agenda-eventos" onclick="switchEventosTab(this)">
+     <div class="flex flex-wrap items-center gap-2 mb-10 border-b border-gray-200 pb-6 overflow-x-auto">
+      <button id="eventos-tab-back-btn" onclick="voltarTabAnterior('eventos')" style="display:none" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-500 hover:text-[#004587] hover:bg-blue-50 rounded-lg border border-gray-200 transition-all mr-1 flex-shrink-0">
+       <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>Anterior
+      </button><button class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap bg-[#004587]/10 text-[#004587] border-b-4 border-[#F7941D]" data-tab="agenda-eventos" onclick="switchEventosTab(this)">
        <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
        </svg>Agenda </button> <button class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="criar-evento" onclick="switchEventosTab(this)">
@@ -1155,7 +1161,10 @@
       </button>
      </div>
      <!-- Abas Quadros -->
-     <div class="flex flex-wrap gap-2 mb-10 border-b border-gray-200 pb-6 overflow-x-auto">
+     <div class="flex flex-wrap items-center gap-2 mb-10 border-b border-gray-200 pb-6 overflow-x-auto">
+      <button id="quadros-tab-back-btn" onclick="voltarTabAnterior('quadros')" style="display:none" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-500 hover:text-[#004587] hover:bg-blue-50 rounded-lg border border-gray-200 transition-all mr-1 flex-shrink-0">
+       <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>Anterior
+      </button>
       <button class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="quadro-ucs" onclick="switchQuadrosTab(this)">
        <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>UCs por Curso
       </button>
@@ -2282,6 +2291,7 @@
 
     window.switchCadastroTab = (btn) => {
       const tabName = btn.getAttribute('data-tab');
+      _registrarTabAnterior('cadastro', '#cadastro-page');
       document.querySelectorAll('#cadastro-page .tab-btn').forEach(b => b.classList.remove('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]'));
       document.querySelectorAll('#cadastro-page .tab-content').forEach(c => { c.style.display = 'none'; });
       btn.classList.add('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
@@ -2732,7 +2742,16 @@
       lista.innerHTML = '<p class="text-gray-400 text-center py-3 text-sm">Carregando...</p>';
 
       const data = await carregarDadosCursos();
-      const cursos = modalidade === 'tecnicos' ? data.cursos_tecnicos : data.cursos_livres;
+      let cursos = modalidade === 'tecnicos' ? data.cursos_tecnicos : data.cursos_livres;
+      // Filtra pela área ativa (cursos sem campo area assumem "Gestão e Negócios")
+      if (areaAtiva) {
+        cursos = cursos.filter(c => (c.area || 'Gestão e Negócios') === areaAtiva.nome);
+      }
+      if (!cursos.length) {
+        lista.innerHTML = `<p class="text-center py-4 text-sm text-gray-400 px-4">Nenhum curso cadastrado para a área <strong>${areaAtiva?.nome || ''}</strong>.</p>`;
+        lista.onclick = null;
+        return;
+      }
       lista.innerHTML = cursos.map(c => `
         <button type="button" data-nome="${c.nome.replace(/"/g,'&quot;')}"
           class="curso-picker-item w-full text-left px-4 py-3 hover:bg-blue-50 transition-colors">
@@ -3232,6 +3251,7 @@
 
     window.switchEventosTab = async (btn) => {
       const tabName = btn.getAttribute('data-tab');
+      _registrarTabAnterior('eventos', '#eventos-page');
       document.querySelectorAll('.tab-btn').forEach(b => {
         if (b.closest('#eventos-page')) {
           b.classList.remove('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
@@ -3886,6 +3906,7 @@
 
     window.switchQuadrosTab = function(btn) {
       const tabName = btn.getAttribute('data-tab');
+      _registrarTabAnterior('quadros', '#quadros-page');
       document.querySelectorAll('#quadros-page .tab-btn').forEach(b => b.classList.remove('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]'));
       document.querySelectorAll('#quadros-page .tab-content').forEach(c => { c.style.display = 'none'; });
       btn.classList.add('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
@@ -6688,17 +6709,68 @@
         b.classList.toggle('ativa', isAtivo);
       });
 
-      // 3. Atualiza cor do gradient-text no hero
+      // 3. Atualiza cor do gradient-text no hero + título
       document.querySelectorAll('.gradient-text').forEach(el => {
         el.style.backgroundImage = `linear-gradient(135deg, #ffffff 0%, ${cor} 70%)`;
       });
+      const heroTitleText = document.getElementById('hero-title-text');
+      if (heroTitleText) heroTitleText.textContent = nome.toUpperCase();
+      const heroBadgeText = document.getElementById('hero-badge-text');
+      if (heroBadgeText) heroBadgeText.textContent = nome.toUpperCase();
+      const heroBadgePill = document.getElementById('hero-badge-pill');
+      if (heroBadgePill) {
+        heroBadgePill.style.background = `linear-gradient(to right, ${cor}33, ${cor}10)`;
+        heroBadgePill.style.borderColor = `${cor}50`;
+      }
 
       // 4. Atualiza cor dos botões primários
       document.querySelectorAll('.btn-primary').forEach(el => {
         el.style.background = `linear-gradient(135deg, ${cor} 0%, ${_darken(cor,18)} 100%)`;
       });
+
+      // 5. Reseta picker de curso (área mudou, seleção anterior pode estar inválida)
+      const hidden = document.getElementById('nome_do_curso_hidden');
+      if (hidden) hidden.value = '';
+      const pickerSel = document.getElementById('curso-picker-selecionado');
+      if (pickerSel) pickerSel.style.display = 'none';
+      const pickerLista = document.getElementById('curso-picker-lista');
+      if (pickerLista) pickerLista.style.display = 'none';
     };
     // ==================== FIM SELETOR DE ÁREA ====================
+
+    // ==================== NAVEGAÇÃO DE ABAS (HISTÓRICO) ====================
+    const _prevTabData = {};   // { cadastro: {btn, tabId}, quadros: {...}, eventos: {...} }
+
+    function _registrarTabAnterior(page, pageSelector) {
+      const activeBtn = document.querySelector(`${pageSelector} .tab-btn.bg-\\[\\#004587\\]\\/10`);
+      if (activeBtn) {
+        _prevTabData[page] = { btn: activeBtn, tabId: activeBtn.getAttribute('data-tab') };
+      } else {
+        _prevTabData[page] = null;
+      }
+      const backBtn = document.getElementById(`${page}-tab-back-btn`);
+      if (backBtn) backBtn.style.display = activeBtn ? 'inline-flex' : 'none';
+    }
+
+    window.voltarTabAnterior = function(page) {
+      const prev = _prevTabData[page];
+      if (!prev) return;
+      // Clear history so "anterior" button hides after going back
+      _prevTabData[page] = null;
+      const backBtn = document.getElementById(`${page}-tab-back-btn`);
+      if (backBtn) backBtn.style.display = 'none';
+      // Re-activate the previous tab directly (bypass history tracking)
+      const { btn } = prev;
+      if (!btn) return;
+      const pageSelector = `#${page}-page`;
+      document.querySelectorAll(`${pageSelector} .tab-btn`).forEach(b => b.classList.remove('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]'));
+      document.querySelectorAll(`${pageSelector} .tab-content`).forEach(c => { c.style.display = 'none'; });
+      btn.classList.add('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
+      const tabId = btn.getAttribute('data-tab');
+      const tabEl = document.getElementById('tab-' + tabId);
+      if (tabEl) tabEl.style.display = 'block';
+    };
+    // ==================== FIM NAVEGAÇÃO DE ABAS ====================
   </script>
  </body>
 </html>
