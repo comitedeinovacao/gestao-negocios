@@ -899,7 +899,7 @@
     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Voltar
   </button>
   <h3 class="text-xl font-bold text-[#004587] mb-4">Turmas Cadastradas</h3>
-  <div class="grid md:grid-cols-3 gap-3 mb-5 bg-blue-50 p-4 rounded-xl">
+  <div class="grid md:grid-cols-4 gap-3 mb-5 bg-blue-50 p-4 rounded-xl">
     <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nome do curso</label>
       <input type="text" id="turmas-search-nome" placeholder="Ex: Administração..." oninput="filtrarTurmasConsulta()" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
     </div>
@@ -910,6 +910,13 @@
     </div>
     <div><label class="block text-xs font-semibold text-gray-600 mb-1">Código da oferta</label>
       <input type="text" id="turmas-search-codigo" placeholder="Ex: 2026-001..." oninput="filtrarTurmasConsulta()" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+    </div>
+    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Status</label>
+      <select id="turmas-search-status" onchange="filtrarTurmasConsulta()" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+        <option value="ativas">Em andamento</option>
+        <option value="finalizadas">Finalizadas</option>
+        <option value="">Todas</option>
+      </select>
     </div>
   </div>
   <div id="turmas-consulta-grid" class="space-y-2"></div>
@@ -945,8 +952,9 @@
     <input type="text" id="editar-turma-versao" placeholder="Ex: 2026" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
    </div>
   </div>
-  <div class="flex gap-3 mt-5">
-   <button onclick="fecharEditarTurma()" class="flex-1 px-4 py-2.5 rounded-xl border-2 border-gray-200 font-semibold text-sm text-gray-600 hover:bg-gray-50 transition-all">Cancelar</button>
+  <div class="flex gap-2 mt-5 flex-wrap">
+   <button onclick="fecharEditarTurma()" class="px-4 py-2.5 rounded-xl border-2 border-gray-200 font-semibold text-sm text-gray-600 hover:bg-gray-50 transition-all">Cancelar</button>
+   <button id="btn-finalizar-turma" onclick="toggleFinalizarTurma()" class="px-4 py-2.5 rounded-xl border-2 border-orange-200 text-orange-600 font-semibold text-sm hover:bg-orange-50 transition-all">Finalizar turma</button>
    <button id="btn-salvar-edicao-turma" onclick="salvarEdicaoTurma()" class="flex-1 px-4 py-2.5 rounded-xl bg-[#004587] text-white font-bold text-sm hover:bg-[#003366] transition-all">Salvar alterações</button>
   </div>
  </div>
@@ -2302,10 +2310,16 @@
 
     function _turmaRow(t, isParc, idx) {
       const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite', integral: 'Integral', sabado: 'Sábado' };
-      const cor = isParc ? 'border-purple-100 bg-purple-50' : 'border-gray-100 bg-white';
+      const finalizada = isTurmaFinalizada(t);
+      const cor = finalizada
+        ? 'border-gray-200 bg-gray-50 opacity-80'
+        : (isParc ? 'border-purple-100 bg-purple-50' : 'border-gray-100 bg-white');
       const badge = isParc
         ? `<span class="text-xs font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">Parceiro</span>`
         : `<span class="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">${periodoLabel[t.periodo] || t.periodo || '-'}</span>`;
+      const finBadge = finalizada
+        ? `<span class="text-xs font-bold px-2 py-0.5 rounded-full bg-gray-200 text-gray-500">Finalizada</span>`
+        : '';
       const actionBtns = idx !== undefined ? `
         <button onclick="abrirEditarTurma(${idx})" title="Editar"
           class="p-1.5 rounded-lg hover:bg-blue-50 text-gray-300 hover:text-[#004587] transition-colors flex-shrink-0">
@@ -2317,10 +2331,10 @@
         </button>` : '';
       return `<div class="flex items-center gap-2 ${cor} border-2 rounded-xl px-4 py-3">
         <div class="flex-1 min-w-0">
-          <p class="font-semibold text-sm text-gray-800 truncate">${t.nome_curso || '—'} <span class="text-xs text-gray-400 font-normal">· ${t.codigo_oferta || ''}</span></p>
+          <p class="font-semibold text-sm ${finalizada ? 'text-gray-500' : 'text-gray-800'} truncate">${t.nome_curso || '—'} <span class="text-xs text-gray-400 font-normal">· ${t.codigo_oferta || ''}</span></p>
           <p class="text-xs text-gray-500 mt-0.5">${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)}&nbsp;·&nbsp;Versão: ${t.versao_plano || '-'}</p>
         </div>
-        ${badge}${actionBtns}
+        ${badge}${finBadge}${actionBtns}
       </div>`;
     }
 
@@ -2336,6 +2350,14 @@
       document.getElementById('editar-turma-inicio').value = _normDateForInput(t.data_de_inicio);
       document.getElementById('editar-turma-termino').value = _normDateForInput(t.data_de_termino);
       document.getElementById('editar-turma-versao').value = t.versao_plano || '';
+      const btnFin = document.getElementById('btn-finalizar-turma');
+      if (btnFin) {
+        const fin = isTurmaFinalizada(t);
+        btnFin.textContent = fin ? 'Reativar turma' : 'Finalizar turma';
+        btnFin.className = fin
+          ? 'px-4 py-2.5 rounded-xl border-2 border-green-300 text-green-700 font-semibold text-sm hover:bg-green-50 transition-all'
+          : 'px-4 py-2.5 rounded-xl border-2 border-orange-200 text-orange-600 font-semibold text-sm hover:bg-orange-50 transition-all';
+      }
       document.getElementById('modal-editar-turma').classList.remove('hidden');
     };
 
@@ -2355,7 +2377,7 @@
       const orig = btn.textContent;
       btn.disabled = true; btn.textContent = '⏳ Salvando...';
       try {
-        await postToSheet('Turmas', [t.codigo_oferta, t.nome_curso, versao, periodo, inicio, termino]);
+        await postToSheet('Turmas', [t.codigo_oferta, t.nome_curso, versao, periodo, inicio, termino, t.status_turma || '']);
         fecharEditarTurma();
         _turmasConsultaCache = null;
         allTurmas = allTurmas.filter(x => x.codigo_oferta !== t.codigo_oferta);
@@ -2369,6 +2391,27 @@
       finally { btn.disabled = false; btn.textContent = orig; }
     };
 
+    window.toggleFinalizarTurma = async function() {
+      const t = _turmasDisplayCache[_turmaEditandoIdx];
+      if (!t) return;
+      const fin = isTurmaFinalizada(t);
+      const novoStatus = fin ? 'ativa' : 'finalizada';
+      const btnFin = document.getElementById('btn-finalizar-turma');
+      if (btnFin) { btnFin.disabled = true; btnFin.textContent = '⏳...'; }
+      try {
+        await postToSheet('Turmas', [t.codigo_oferta, t.nome_curso, t.versao_plano || '', t.periodo || '', t.data_de_inicio || '', t.data_de_termino || '', novoStatus]);
+        fecharEditarTurma();
+        _turmasConsultaCache = null;
+        allTurmas = allTurmas.filter(x => x.codigo_oferta !== t.codigo_oferta);
+        showSuccessMessage(novoStatus === 'finalizada' ? '✅ Turma finalizada!' : '✅ Turma reativada!');
+        const gridT = document.getElementById('turmas-consulta-grid');
+        const gridP = document.getElementById('parceiros-consulta-grid');
+        if (gridT && gridT.closest('#turmas-list')?.style.display !== 'none') window.renderTurmasConsulta();
+        else if (gridP) window.renderParceirosConsulta();
+      } catch(e) { showErrorMessage('❌ Erro: ' + (e.message || e)); }
+      finally { if (btnFin) btnFin.disabled = false; }
+    };
+
     window.confirmarExcluirTurma = function(idx) {
       const t = _turmasDisplayCache[idx];
       if (!t) return;
@@ -2380,7 +2423,7 @@
       const t = _turmasDisplayCache[idx];
       if (!t) return;
       try {
-        await postToSheet('Turmas', [t.codigo_oferta, '__DELETED__', '', '', '', '']);
+        await postToSheet('Turmas', [t.codigo_oferta, '__DELETED__', '', '', '', '', '']);
         _turmasConsultaCache = null;
         allTurmas = allTurmas.filter(x => x.codigo_oferta !== t.codigo_oferta);
         showSuccessMessage('✅ Turma removida com sucesso!');
@@ -2411,8 +2454,11 @@
       const nome   = (document.getElementById('turmas-search-nome')?.value || '').toLowerCase();
       const periodo = document.getElementById('turmas-search-periodo')?.value || '';
       const codigo  = (document.getElementById('turmas-search-codigo')?.value || '').toLowerCase();
+      const status  = document.getElementById('turmas-search-status')?.value ?? 'ativas';
       const turmas  = _turmasConsultaCache.filter(t => {
         if (isParceiro(t)) return false;
+        if (status === 'ativas' && isTurmaFinalizada(t)) return false;
+        if (status === 'finalizadas' && !isTurmaFinalizada(t)) return false;
         const nomeMatch = !nome   || (t.nome_curso    || '').toLowerCase().includes(nome);
         const perMatch  = !periodo || t.periodo === periodo;
         const codMatch  = !codigo  || (t.codigo_oferta || '').toLowerCase().includes(codigo);
@@ -3029,7 +3075,7 @@
       btn.innerHTML = '⏳ Salvando...';
 
       try {
-        await postToSheet('Turmas', [codigo_oferta, nome_curso, versao_plano, periodo, data_inicio, data_termino]);
+        await postToSheet('Turmas', [codigo_oferta, nome_curso, versao_plano, periodo, data_inicio, data_termino, '']);
         form.reset();
         // Reset picker UI
         const pickerSel = document.getElementById('curso-picker-selecionado');
@@ -4929,6 +4975,23 @@
       return cod.startsWith('PARC-') || ['GEP/GD','Sebrae'].includes(nome) || nome.startsWith('Evento —');
     }
 
+    // Retorna true se a turma está finalizada (explicitamente ou por regra dos 15 dias)
+    function isTurmaFinalizada(t) {
+      if (!t) return false;
+      if (t.status_turma === 'finalizada') return true;
+      if (t.status_turma === 'ativa') return false; // explicitamente ativa — ignora regra de data
+      if (t.data_de_termino) {
+        const m = String(t.data_de_termino).match(/(\d{4})-(\d{2})-(\d{2})/);
+        if (m) {
+          const termino = new Date(parseInt(m[1]), parseInt(m[2])-1, parseInt(m[3]));
+          const limite = new Date(termino);
+          limite.setDate(limite.getDate() + 15);
+          if (limite < new Date()) return true;
+        }
+      }
+      return false;
+    }
+
     // Retorna 'tecnico', 'livre' ou '' baseado na coluna "tipo" da aba UCs
     function getTipoCurso(nomeCurso) {
       if (!nomeCurso || isParceiro({ nome_curso: nomeCurso })) return 'parceiro';
@@ -5977,9 +6040,10 @@
           .filter(a => normData(a.data) === msDataAtiva)
           .map(a => String(a.turma_codigo))
       );
-      // Match with allTurmas, filter by period (integral always included)
+      // Match with allTurmas, filter by period (integral always included), exclude finalizadas
       const turmasHoje = allTurmas.filter(t => {
         if (!turmaCodesHoje.has(String(t.codigo_oferta))) return false;
+        if (isTurmaFinalizada(t)) return false;
         if (t.periodo && t.periodo !== msPeriodoAtivo && t.periodo !== 'integral') return false;
         return true;
       });
@@ -6261,7 +6325,7 @@
       // Deduplica por código (última linha vence, então marcador __DELETED__ prevalece)
       const byCode = {};
       allTurmas.forEach(t => { if (t.codigo_oferta) byCode[t.codigo_oferta] = t; });
-      let src = Object.values(byCode).filter(x => x.nome_curso !== '__DELETED__');
+      let src = Object.values(byCode).filter(x => x.nome_curso !== '__DELETED__' && !isTurmaFinalizada(x));
       if (cat === 'parceiros') {
         src = src.filter(x => isParceiro(x));
       } else if (cat === 'tecnicos') {
