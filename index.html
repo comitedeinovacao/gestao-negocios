@@ -235,6 +235,10 @@
   }
   .area-card:hover { transform:scale(1.04); }
   .area-card.ativa { transform:scale(1.06); }
+  /* Guarda de Navegação */
+  #main-nav.nav-locked { pointer-events:none; opacity:0.35; filter:grayscale(0.4); }
+  #nav-lock-hint { display:none; }
+  #main-nav.nav-locked ~ #nav-lock-hint { display:flex; }
  </style>
  </head>
  <body class="h-full bg-gradient-to-b from-[#0a1628] via-[#0f2847] to-[#1a1a2e] overflow-auto">
@@ -252,7 +256,7 @@
         </text>
        </svg>
       </div>
-       <nav class="hidden md:flex items-center gap-6" aria-label="Menu principal">
+       <nav id="main-nav" class="hidden md:flex items-center gap-6 nav-locked" aria-label="Menu principal" title="Selecione uma área na home para liberar o menu">
          <a href="#gestao" class="relative px-1 py-2 text-white font-semibold text-sm group transition-all duration-300 hover:text-[#F7941D] bg-none border-none cursor-pointer" aria-label="Ir para Gestão"><span class="relative z-10">Gestão</span>
          <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-[#F7941D] to-transparent group-hover:w-full transition-all duration-300"></div></a>
          <button onclick="navigateToPage('eventos')" class="relative px-1 py-2 text-white font-semibold text-sm group transition-all duration-300 hover:text-[#F7941D] bg-none border-none cursor-pointer" aria-label="Ir para Eventos"><span class="relative z-10">Eventos</span>
@@ -264,6 +268,10 @@
          <button onclick="scrollToFooter()" class="relative px-1 py-2 text-white font-semibold text-sm group transition-all duration-300 hover:text-[#F7941D] bg-none border-none cursor-pointer" aria-label="Ir para Contato"><span class="relative z-10">Contato</span>
          <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-[#F7941D] to-transparent group-hover:w-full transition-all duration-300"></div></button>
        </nav>
+       <div id="nav-lock-hint" class="hidden items-center gap-1.5 text-xs text-white/50 font-medium">
+         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+         Selecione uma área
+       </div>
       </div>
      </div>
     </header>
@@ -1738,6 +1746,9 @@
         <button onclick="msAbrirTab('painel')" data-ms-tab="painel" class="ms-nav-tab active px-4 py-1.5 rounded-lg text-sm font-semibold">Painel</button>
         <button onclick="msAbrirTab('agendar')" data-ms-tab="agendar" class="ms-nav-tab px-4 py-1.5 rounded-lg text-sm font-semibold">Agendar</button>
         <button onclick="msAbrirTab('alocacoes')" data-ms-tab="alocacoes" class="ms-nav-tab px-4 py-1.5 rounded-lg text-sm font-semibold">Alocações</button>
+        <button onclick="msAbrirTab('pendente')" data-ms-tab="pendente" class="ms-nav-tab px-4 py-1.5 rounded-lg text-sm font-semibold flex items-center gap-1.5">
+         Sem Sala <span id="ms-pendente-badge" class="hidden bg-amber-400 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none">0</span>
+        </button>
         <button onclick="msAbrirTab('totem')" data-ms-tab="totem" class="ms-nav-tab px-4 py-1.5 rounded-lg text-sm font-semibold flex items-center gap-1.5">
          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>TV Totem
         </button>
@@ -1976,6 +1987,19 @@
       </div>
       <div id="ms-lista-alocs" class="space-y-2"></div>
       <p id="ms-no-alocs" class="hidden text-center text-gray-400 py-12 text-sm">Nenhuma alocação encontrada.</p>
+     </div>
+     <!-- TAB: SEM SALA (PENDENTE) -->
+     <div id="ms-tab-pendente" class="hidden">
+      <div class="flex items-center justify-between mb-5">
+       <div>
+        <h3 class="font-bold text-[#004587] text-lg">Aulas sem sala atribuída</h3>
+        <p class="text-sm text-gray-500 mt-0.5">Turmas com docente alocado no Quadro mas sem sala confirmada no Mapa. Próximos 30 dias.</p>
+       </div>
+       <button onclick="msRenderPendente()" class="flex items-center gap-1.5 text-xs text-gray-500 hover:text-[#004587] font-semibold px-3 py-2 bg-white rounded-xl border border-gray-200 shadow-sm transition-all">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>Atualizar
+       </button>
+      </div>
+      <div id="ms-pendente-lista" class="space-y-3"></div>
      </div>
      <!-- TAB: TV TOTEM -->
      <div id="ms-tab-totem" class="hidden">
@@ -2277,6 +2301,13 @@
 
     // Navegação
     window.navigateToPage = async (page) => {
+      // Guarda de rota: exige área ativa para páginas internas (exceto home)
+      if (page !== 'home' && !areaAtiva) {
+        showErrorMessage('⚠️ Selecione uma área na tela inicial antes de continuar.');
+        const heroCards = document.getElementById('area-selector');
+        if (heroCards) heroCards.scrollIntoView({ behavior:'smooth', block:'center' });
+        return;
+      }
       document.querySelectorAll('.page-container').forEach(p => p.classList.remove('active'));
       document.getElementById(page + '-page').classList.add('active');
       window.scrollTo(0, 0);
@@ -3366,6 +3397,16 @@
     window.currentYear  = new Date().getFullYear();
 
     document.addEventListener('DOMContentLoaded', async () => {
+      // Restaura área ativa do localStorage (se existir)
+      try {
+        const _savedArea = localStorage.getItem('senac_area_ativa');
+        if (_savedArea) {
+          const _pa = JSON.parse(_savedArea);
+          const _btn = [...document.querySelectorAll('.area-card')].find(b => b.dataset.nome === _pa.nome);
+          if (_btn) { window.setAreaAtiva(_btn); }
+        }
+      } catch(e) {}
+
       // Pré-carrega dados em paralelo (sem bloquear a UI)
       Promise.all([loadDocentes(), loadPCTD(), loadPITD(), loadRepresentantes(), loadUCs(), carregarDadosCursos()]).catch(() => {});
       // Renderiza a grade de escala semanal no form de docentes
@@ -5460,8 +5501,27 @@
       const current = select.value;
       const base = (todosChecked ? allTeachers : _filtrarDocentesArea(allTeachers)).filter(d => d.nome_completo);
       const sorted = [...base].sort((a,b) => (a.nome_completo||'').localeCompare(b.nome_completo||'','pt-BR'));
-      select.innerHTML = '<option value="">Selecione o docente...</option>' +
-        sorted.map(d => `<option value="${d.nome_completo}"${d.nome_completo === current ? ' selected' : ''}>${d.nome_completo}</option>`).join('');
+      if (todosChecked && modalAlocacaoData && quadroTurmaAtual) {
+        // Cross-check: marca docentes com conflito neste dia/período
+        const periodo = quadroTurmaAtual.periodo;
+        const disponiveis = [], ocupados = [];
+        sorted.forEach(d => {
+          const temConflito = allAlocacoes.some(a =>
+            a.docente_nome === d.nome_completo &&
+            normData(a.data) === modalAlocacaoData &&
+            a.periodo === periodo
+          );
+          if (temConflito) ocupados.push(d); else disponiveis.push(d);
+        });
+        const mkOpt = (d, busy) =>
+          `<option value="${d.nome_completo}"${d.nome_completo === current ? ' selected' : ''}>${busy ? '⚠️ ' : '✓ '}${d.nome_completo}${busy ? ' (ocupado)' : ''}</option>`;
+        select.innerHTML = '<option value="">Selecione o docente...</option>' +
+          (disponiveis.length ? `<optgroup label="✓ Disponíveis (${disponiveis.length})">${disponiveis.map(d => mkOpt(d,false)).join('')}</optgroup>` : '') +
+          (ocupados.length ? `<optgroup label="⚠️ Ocupados neste período (${ocupados.length})">${ocupados.map(d => mkOpt(d,true)).join('')}</optgroup>` : '');
+      } else {
+        select.innerHTML = '<option value="">Selecione o docente...</option>' +
+          sorted.map(d => `<option value="${d.nome_completo}"${d.nome_completo === current ? ' selected' : ''}>${d.nome_completo}</option>`).join('');
+      }
     };
 
     window.calcularSaldoUC = function() {
@@ -5947,7 +6007,12 @@
         ? carregarDaAba('Alocacoes').then(data => { if (data.length) allAlocacoes = data; })
         : Promise.resolve();
       const _loadUCs = !allUCs.length ? loadUCs() : Promise.resolve();
-      Promise.all([_loadTurmas, _loadAlocs, _loadUCs]).then(() => msRenderTurmasParaAlocar());
+      Promise.all([_loadTurmas, _loadAlocs, _loadUCs]).then(() => {
+        msRenderTurmasParaAlocar();
+        // Atualiza badge de pendentes sem abrir a aba
+        const _badge = document.getElementById('ms-pendente-badge');
+        if (_badge) window.msRenderPendente && msRenderPendente();
+      });
       // Polling: re-read sheet every 3 min while page is open
       if (!msPainelRefreshInterval) {
         msPainelRefreshInterval = setInterval(async () => {
@@ -6062,7 +6127,7 @@
     };
 
     window.msAbrirTab = function(tab) {
-      ['painel','agendar','alocacoes','totem'].forEach(t => {
+      ['painel','agendar','alocacoes','pendente','totem'].forEach(t => {
         const el = document.getElementById(`ms-tab-${t}`);
         if (el) el.classList.toggle('hidden', t !== tab);
       });
@@ -6071,6 +6136,7 @@
       });
       if (tab === 'alocacoes') msRenderAlocacoes();
       if (tab === 'totem') msRenderTotemPreview();
+      if (tab === 'pendente') msRenderPendente();
     };
 
     window.msFiltrarPer = function(per) {
@@ -6322,6 +6388,74 @@
         </div>`;
       }).join('');
     }
+
+    // ── Painel "Sem Sala" (pendentes) ──
+    window.msRenderPendente = function() {
+      const lista = document.getElementById('ms-pendente-lista');
+      const badge = document.getElementById('ms-pendente-badge');
+      if (!lista) return;
+      if (!allAlocacoes.length) {
+        lista.innerHTML = '<p class="text-gray-400 text-center py-8 text-sm">Carregue o Quadro Semanal primeiro para ver as aulas pendentes.</p>';
+        return;
+      }
+      const hoje = msHoje();
+      const limite = new Date(); limite.setDate(limite.getDate() + 30);
+      const limiteStr = msDateToStr(limite);
+      // Agrupa allAlocacoes por data+periodo
+      const grupos = {};
+      allAlocacoes.forEach(a => {
+        const data = normData(a.data);
+        if (!data || data < hoje || data > limiteStr) return;
+        const key = `${data}_${a.periodo || 'tarde'}`;
+        if (!grupos[key]) grupos[key] = { data, periodo: a.periodo || 'tarde', cursos: new Set() };
+        if (a.nome_curso) grupos[key].cursos.add(a.nome_curso);
+      });
+      // Filtra grupos onde ao menos 1 curso não tem sala
+      const pendentes = Object.values(grupos).filter(g => {
+        const comSala = new Set(
+          msAlocacoes.filter(ms => ms.data === g.data && ms.periodo === g.periodo).map(ms => ms.curso)
+        );
+        return [...g.cursos].some(c => !comSala.has(c));
+      }).sort((a, b) => a.data.localeCompare(b.data));
+      if (badge) { badge.textContent = pendentes.length; badge.classList.toggle('hidden', pendentes.length === 0); }
+      if (!pendentes.length) {
+        lista.innerHTML = '<div class="text-center py-8 text-green-600 font-semibold text-sm flex flex-col items-center gap-2"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Nenhuma aula pendente nos próximos 30 dias.</div>';
+        return;
+      }
+      lista.innerHTML = pendentes.map(g => {
+        const comSala = new Set(msAlocacoes.filter(ms => ms.data === g.data && ms.periodo === g.periodo).map(ms => ms.curso));
+        const semSala = [...g.cursos].filter(c => !comSala.has(c));
+        const perLabel = MS_PERIODOS[g.periodo]?.nome || g.periodo;
+        return `<div class="bg-amber-50 border border-amber-200 rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <span class="font-bold text-amber-800 text-sm">${msFmtData(g.data)}</span>
+              <span class="text-xs text-amber-600 ml-2 px-2 py-0.5 bg-amber-100 rounded-full font-semibold">${perLabel}</span>
+            </div>
+            <button onclick="msNavegar('${g.data}','${g.periodo}')"
+              class="text-xs bg-[#004587] text-white px-3 py-1.5 rounded-lg font-semibold hover:bg-[#003366] transition-all flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              Atribuir Sala
+            </button>
+          </div>
+          <div class="space-y-1.5">
+            ${semSala.map(c => `<div class="flex items-center gap-2 text-xs text-gray-700 bg-white rounded-lg px-3 py-1.5 border border-amber-100">
+              <div class="w-2 h-2 rounded-full bg-amber-400 flex-shrink-0"></div>
+              <span class="truncate font-medium">${c}</span>
+            </div>`).join('')}
+          </div>
+        </div>`;
+      }).join('');
+    };
+
+    window.msNavegar = function(data, periodo) {
+      msSemanaAtual = msGetMonday(msStrToDate(data));
+      msRenderSemanaLabels();
+      msDataAtiva = data;
+      msPeriodoAtivo = periodo;
+      msFiltrarPer(periodo);
+      msAbrirTab('painel');
+    };
 
     async function msSalvarAlocacao(obj) {
       // obj: { sala_id, data, periodo, curso, docente, inicio, fim, fixo }
@@ -6912,7 +7046,14 @@
       const pickerLista = document.getElementById('curso-picker-lista');
       if (pickerLista) pickerLista.style.display = 'none';
 
-      // 6. Atualiza listas que dependem da área
+      // 6. Persiste área no localStorage + desbloqueia navegação
+      try { localStorage.setItem('senac_area_ativa', JSON.stringify({ nome, cor })); } catch(e) {}
+      const mainNav = document.getElementById('main-nav');
+      const navHint = document.getElementById('nav-lock-hint');
+      if (mainNav) mainNav.classList.remove('nav-locked');
+      if (navHint) navHint.style.display = 'none';
+
+      // 7. Atualiza listas que dependem da área
       renderDocentes();
       renderDocentesCadLista();
       if (Array.isArray(_turmasConsultaCache) && _turmasConsultaCache.length > 0) {
