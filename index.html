@@ -542,8 +542,11 @@
      <div id="tab-cad-docentes" class="tab-content bg-gray-50 rounded-2xl p-8">
       <!-- Painel: docentes já cadastrados -->
       <div class="mb-8 bg-white rounded-2xl border-2 border-gray-200 p-5">
-       <div class="flex items-center justify-between mb-4">
-        <h4 class="font-bold text-[#004587] text-lg">Docentes Cadastrados</h4>
+       <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+        <div class="flex items-center gap-2 flex-wrap">
+          <h4 class="font-bold text-[#004587] text-lg">Docentes Cadastrados</h4>
+          <span id="cad-docentes-area-badge" class="px-2 py-0.5 bg-[#004587]/10 text-[#004587] text-xs font-bold rounded-full"></span>
+        </div>
         <button type="button" onclick="novoDocente()" class="px-4 py-2 bg-[#F7941D] text-white rounded-xl font-semibold text-sm hover:bg-[#E8850D] transition-all flex items-center gap-2">
          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Novo Docente
         </button>
@@ -894,7 +897,10 @@
       <button onclick="closeConsultaView('docentes-list')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
       </button>
-      <h3 class="text-xl font-bold text-[#004587] mb-4">Docentes Cadastrados</h3>
+      <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+        <h3 class="text-xl font-bold text-[#004587]">Docentes Cadastrados</h3>
+        <span id="docentes-area-badge" class="px-3 py-1 bg-[#004587]/10 text-[#004587] text-xs font-bold rounded-full" style="display:none"></span>
+      </div>
       <div class="mb-6">
        <input type="text" id="docentes-search" placeholder="Buscar por nome do docente..." oninput="filterDocentes()" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" />
       </div>
@@ -2192,11 +2198,20 @@
     function renderDocentesCadLista(query) {
       const lista = document.getElementById('docentes-cad-lista');
       if (!lista) return;
+      const cadBadge = document.getElementById('cad-docentes-area-badge');
+      if (cadBadge) cadBadge.textContent = areaAtiva ? areaAtiva.nome : '';
       let docs = allTeachers;
       if (query) docs = docs.filter(d => (d.nome_completo||'').toLowerCase().includes(query.toLowerCase()));
+      const docsAntesArea = docs.length;
       docs = _filtrarDocentesArea(docs);
       if (docs.length === 0) {
-        lista.innerHTML = `<p class="text-gray-400 text-sm text-center py-4">${allTeachers.length === 0 ? 'Nenhum docente cadastrado ainda.' : 'Nenhum resultado para "'+query+'".'}</p>`;
+        if (allTeachers.length === 0) {
+          lista.innerHTML = `<p class="text-gray-400 text-sm text-center py-4">Nenhum docente cadastrado ainda.</p>`;
+        } else if (areaAtiva && docsAntesArea > 0) {
+          lista.innerHTML = `<div class="text-center py-4"><p class="text-amber-600 text-sm font-semibold">Nenhum docente da área <strong>${areaAtiva.nome}</strong>.</p><p class="text-gray-400 text-xs mt-1">Edite cada docente e selecione a área de atuação.</p></div>`;
+        } else {
+          lista.innerHTML = `<p class="text-gray-400 text-sm text-center py-4">Nenhum resultado${query ? ' para "'+query+'"' : ''}.</p>`;
+        }
         return;
       }
       lista.innerHTML = docs.map(d => {
@@ -2244,6 +2259,11 @@
       delete form.dataset.editingNome;
       renderEscalaContainer();
       limparAreasDocente();
+      // Pré-seleciona a área ativa no formulário
+      if (areaAtiva) {
+        const btn = document.querySelector(`#docente-areas-container .docente-area-btn[data-area="${areaAtiva.nome}"]`);
+        if (btn) { btn.classList.add('area-ativa'); btn.style.background='rgba(0,69,135,0.1)'; btn.style.borderColor='#004587'; btn.style.color='#004587'; }
+      }
       document.getElementById('docentes-form-titulo').textContent = 'Novo Cadastro';
       document.getElementById('docentes-form-limpar').style.display = 'none';
       document.getElementById('busca-docente-cad').value = '';
@@ -2926,6 +2946,12 @@
       const grid = document.getElementById('docentes-grid');
       if (!grid) return;
       const search = (document.getElementById('docentes-search')?.value || '').toLowerCase();
+      // Badge de área ativa
+      const badge = document.getElementById('docentes-area-badge');
+      if (badge) {
+        badge.textContent = areaAtiva ? `Área: ${areaAtiva.nome}` : 'Todas as áreas';
+        badge.style.display = 'inline-block';
+      }
       const sorted = [...allTeachers].sort((a, b) =>
         (a.nome_completo || '').localeCompare(b.nome_completo || '', 'pt-BR')
       );
@@ -2937,18 +2963,27 @@
         }
         return true;
       });
-      grid.innerHTML = filtrados.length > 0
-        ? filtrados.map(teacher => {
-            const idx = allTeachers.indexOf(teacher);
-            return `
-              <div onclick="verDocente(${idx})" class="cursor-pointer bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 p-5 rounded-xl border-2 border-[#004587]/20 hover:border-[#004587] hover:shadow-md transition-all">
-                <p class="font-bold text-[#004587] text-lg">${teacher.nome_completo || 'Sem nome'}</p>
-                <p class="text-sm text-gray-600 mt-1">${teacher.telefone || 'Telefone não informado'}</p>
-                <p class="text-sm text-gray-500 mt-2 line-clamp-2">${teacher.mini_curriculo ? teacher.mini_curriculo.substring(0, 120) + '...' : 'Sem descrição'}</p>
-                <p class="text-xs text-[#004587] font-semibold mt-3">Clique para ver detalhes e editar →</p>
-              </div>`;
-          }).join('')
-        : '<p class="text-gray-500 text-center py-8 col-span-2">Nenhum docente encontrado</p>';
+      if (filtrados.length > 0) {
+        grid.innerHTML = filtrados.map(teacher => {
+          const idx = allTeachers.indexOf(teacher);
+          const areasLabel = teacher.areas ? teacher.areas : 'Gestão e Negócios';
+          return `
+            <div onclick="verDocente(${idx})" class="cursor-pointer bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 p-5 rounded-xl border-2 border-[#004587]/20 hover:border-[#004587] hover:shadow-md transition-all">
+              <p class="font-bold text-[#004587] text-lg">${teacher.nome_completo || 'Sem nome'}</p>
+              <p class="text-sm text-gray-600 mt-1">${teacher.telefone || 'Telefone não informado'}</p>
+              <p class="text-sm text-gray-500 mt-2 line-clamp-2">${teacher.mini_curriculo ? teacher.mini_curriculo.substring(0, 120) + '...' : 'Sem descrição'}</p>
+              <p class="text-xs text-[#004587]/60 mt-2">📌 ${areasLabel}</p>
+              <p class="text-xs text-[#004587] font-semibold mt-1">Clique para ver detalhes e editar →</p>
+            </div>`;
+        }).join('');
+      } else if (areaAtiva && allTeachers.length > 0) {
+        grid.innerHTML = `<div class="col-span-2 text-center py-10">
+          <p class="text-amber-600 font-semibold text-lg">Nenhum docente da área <strong>${areaAtiva.nome}</strong></p>
+          <p class="text-gray-400 text-sm mt-2">Abra o cadastro de cada docente e selecione a área de atuação nos botões "Áreas de Atuação".</p>
+        </div>`;
+      } else {
+        grid.innerHTML = '<p class="text-gray-500 text-center py-8 col-span-2">Nenhum docente encontrado</p>';
+      }
     }
 
     window.filterDocentes = function() { renderDocentes(); };
