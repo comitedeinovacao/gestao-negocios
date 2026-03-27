@@ -239,6 +239,9 @@
   #main-nav.nav-locked { pointer-events:none; opacity:0.35; filter:grayscale(0.4); }
   #nav-lock-hint { display:none; }
   #main-nav.nav-locked ~ #nav-lock-hint { display:flex; }
+  /* Overlay de bloqueio da seção Gestão */
+  #gestao-lock-overlay { position:absolute; inset:0; background:rgba(255,255,255,0.82); backdrop-filter:blur(3px); border-radius:1rem; z-index:10; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; pointer-events:all; }
+  #gestao-lock-overlay.desbloqueado { display:none; }
  </style>
  </head>
  <body class="h-full bg-gradient-to-b from-[#0a1628] via-[#0f2847] to-[#1a1a2e] overflow-auto">
@@ -247,7 +250,7 @@
     <header class="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 py-4 bg-gradient-to-b from-[#0a1628]/40 via-[#0f2847]/20 to-transparent backdrop-blur-sm">
      <div class="max-w-7xl mx-auto">
       <div class="relative flex justify-between items-center">
-      <div class="flex items-center gap-3 group cursor-pointer" aria-label="Logo Hub Senac Araçatuba">
+      <div class="flex items-center gap-3 group cursor-pointer" onclick="scrollToGestao()" aria-label="Logo Hub Senac Araçatuba">
        <svg viewbox="0 0 200 50" class="h-10 w-auto transition-transform duration-300 group-hover:scale-110" role="img" aria-label="Logo Hub Senac Araçatuba">
         <rect x="0" y="8" width="24" height="24" fill="#F7941D" /> <rect x="4" y="12" width="8" height="8" fill="white" /> <rect x="12" y="20" width="8" height="8" fill="white" /> <text x="32" y="26" font-family="Montserrat" font-weight="700" font-size="16" fill="white">
          HUB SENAC
@@ -268,7 +271,7 @@
          <button onclick="scrollToFooter()" class="relative px-1 py-2 text-white font-semibold text-sm group transition-all duration-300 hover:text-[#F7941D] bg-none border-none cursor-pointer" aria-label="Ir para Contato"><span class="relative z-10">Contato</span>
          <div class="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-[#F7941D] to-transparent group-hover:w-full transition-all duration-300"></div></button>
        </nav>
-       <div id="nav-lock-hint" class="hidden items-center gap-1.5 text-xs text-white/50 font-medium">
+       <div id="nav-lock-hint" class="flex items-center gap-1.5 text-xs text-white/50 font-medium">
          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
          Selecione uma área
        </div>
@@ -431,7 +434,13 @@
        <p class="text-gray-600 max-w-2xl mx-auto">Plataforma para cadastro, consulta e gerenciamento de documentos pedagógicos.</p>
        <div class="w-24 h-1 bg-[#F7941D] mx-auto mt-6 rounded-full"></div>
       </div>
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="relative">
+       <div id="gestao-lock-overlay">
+        <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        <p class="text-gray-500 font-semibold text-base">Selecione uma área acima para continuar</p>
+        <button onclick="document.getElementById('area-selector').scrollIntoView({behavior:'smooth',block:'center'})" class="mt-1 px-5 py-2 bg-[#004587] text-white text-sm font-semibold rounded-xl hover:bg-[#003366] transition-colors">Selecionar Área</button>
+       </div>
+       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
        <div class="card-scan bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-8 shadow-lg border-2 border-[#004587]/20 cursor-pointer" onclick="navigateToPage('cadastro')">
         <div class="w-16 h-16 bg-gradient-to-br from-[#004587] to-[#003366] rounded-2xl flex items-center justify-center mb-6 mx-auto">
          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
@@ -471,6 +480,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
          </svg> Acessar Mapa de Salas </button>
        </div>
+      </div>
       </div>
      </div>
     </section><!-- Footer -->
@@ -7052,6 +7062,8 @@
       const navHint = document.getElementById('nav-lock-hint');
       if (mainNav) mainNav.classList.remove('nav-locked');
       if (navHint) navHint.style.display = 'none';
+      const gestaoOverlay = document.getElementById('gestao-lock-overlay');
+      if (gestaoOverlay) gestaoOverlay.classList.add('desbloqueado');
 
       // 7. Atualiza listas que dependem da área
       renderDocentes();
