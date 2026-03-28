@@ -78,6 +78,7 @@
     { "id": "med_conflitos", "nome": "MEDIAÇÃO DE CONFLITOS",                             "codigo_ficha": "13694", "subarea": "DESENVOLVIMENTO COMUNITÁRIO",  "area": "Desenvolvimento Social" },
     { "id": "diversidade",   "nome": "DIVERSIDADE E INCLUSÃO NAS ORGANIZAÇÕES",           "codigo_ficha": "14600", "subarea": "DIVERSIDADE",                  "area": "Desenvolvimento Social" },
     { "id": "apz_comercio",  "nome": "APRENDIZAGEM PROFISSIONAL DE QUALIFICAÇÃO EM COMÉRCIO DE BENS, SERVIÇOS E TURISMO", "codigo_ficha": "18984", "subarea": "QUALIFICAÇÃO PROFISSIONAL", "area": "Desenvolvimento Social" },
+    { "id": "coord_proj_soc","nome": "COORDENADOR DE PROJETOS SOCIAIS",                    "codigo_ficha": "25446", "subarea": "PROJETOS SOCIAIS",             "area": "Desenvolvimento Social" },
     { "id": "lider_social",  "nome": "LIDERANÇA SOCIAL",                                  "codigo_ficha": "25763", "subarea": "LIDERANÇA",                    "area": "Desenvolvimento Social" },
     { "id": "fut_trab",      "nome": "FUTURO DO TRABALHO: COMUNICAÇÃO PROFISSIONAL EM AMBIENTES DIGITAIS", "codigo_ficha": "30844", "subarea": "DESENVOLVIMENTO PROFISSIONAL", "area": "Desenvolvimento Social" },
 
