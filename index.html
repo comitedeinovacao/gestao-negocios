@@ -4458,28 +4458,70 @@
         <button onclick="qsVoltarCursos('${modalidade}')" class="text-sm text-blue-600 hover:text-blue-800 font-semibold">← Trocar</button>
       </div>
       <p class="text-gray-400 text-sm text-center py-4">Carregando turmas...</p>`;
+
       const turmas = await carregarDaAba('Turmas');
       const filtradas = turmas.filter(t => (t.nome_curso||'').toLowerCase() === cursoNome.toLowerCase());
-      const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
-      const header = `<div class="flex items-center justify-between mb-4 bg-blue-50 rounded-xl px-4 py-3">
+
+      const header = `<div class="flex items-center justify-between mb-5 bg-blue-50 rounded-xl px-4 py-3">
         <div><p class="text-xs text-gray-500 uppercase font-semibold">Curso selecionado</p><p class="font-bold text-[#004587] text-sm">${cursoNome}</p></div>
         <button onclick="qsVoltarCursos('${modalidade}')" class="text-sm text-blue-600 hover:text-blue-800 font-semibold">← Trocar</button>
       </div>`;
+
       if (filtradas.length === 0) {
         container.innerHTML = header + '<p class="text-gray-500 text-center py-6 text-sm">Nenhuma turma cadastrada para este curso.</p>';
         return;
       }
-      container.innerHTML = header + '<p class="font-semibold text-gray-700 text-sm mb-3">Selecione a turma:</p>';
+
+      // Configuração de cor e ícone por período
+      const periodoConfig = {
+        manha:  { label: 'Manhã',  icon: '🌅', bg: 'bg-amber-50',  border: 'border-amber-400',  headerBg: 'bg-amber-100',  headerText: 'text-amber-800',  dot: 'bg-amber-400',  hoverBorder: 'hover:border-amber-400' },
+        tarde:  { label: 'Tarde',  icon: '☀️', bg: 'bg-blue-50',   border: 'border-blue-400',   headerBg: 'bg-blue-100',   headerText: 'text-blue-800',   dot: 'bg-blue-400',   hoverBorder: 'hover:border-blue-400'  },
+        noite:  { label: 'Noite',  icon: '🌙', bg: 'bg-indigo-50', border: 'border-indigo-400', headerBg: 'bg-indigo-100', headerText: 'text-indigo-800', dot: 'bg-indigo-400', hoverBorder: 'hover:border-indigo-400'},
+      };
+      const ordemPeriodos = ['manha', 'tarde', 'noite'];
+
+      // Agrupa por período
+      const grupos = {};
       filtradas.forEach(t => {
-        const div = document.createElement('div');
-        div.className = 'cursor-pointer flex items-center justify-between bg-white border-2 border-gray-100 hover:border-[#004587]/30 rounded-xl px-5 py-4 transition-all mb-2';
-        div.innerHTML = `<div>
-          <p class="font-bold text-[#004587] text-sm">${t.nome_curso} — Turma ${t.codigo_oferta || ''}</p>
-          <p class="text-xs text-gray-500">${periodoLabel[t.periodo] || t.periodo || '-'} · ${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)}</p>
-        </div>
-        <svg class="w-5 h-5 text-[#004587] flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>`;
-        div.onclick = () => qsAbrirQuadro(t);
-        container.appendChild(div);
+        const p = (t.periodo || '').toLowerCase();
+        if (!grupos[p]) grupos[p] = [];
+        grupos[p].push(t);
+      });
+
+      container.innerHTML = header + '<p class="font-semibold text-gray-700 text-sm mb-4">Selecione a turma:</p>';
+
+      // Renderiza na ordem definida + períodos desconhecidos ao final
+      const periodosPresentes = [...ordemPeriodos.filter(p => grupos[p]), ...Object.keys(grupos).filter(p => !ordemPeriodos.includes(p))];
+      periodosPresentes.forEach(periodo => {
+        const cfg = periodoConfig[periodo] || { label: periodo || 'Período', icon: '📅', bg: 'bg-gray-50', border: 'border-gray-300', headerBg: 'bg-gray-100', headerText: 'text-gray-700', dot: 'bg-gray-400', hoverBorder: 'hover:border-gray-400' };
+        const grupo = grupos[periodo];
+
+        // Cabeçalho do período
+        const secHeader = document.createElement('div');
+        secHeader.className = `flex items-center gap-2 px-3 py-2 rounded-lg mb-2 ${cfg.headerBg}`;
+        secHeader.innerHTML = `<span class="text-base">${cfg.icon}</span><span class="font-bold text-sm ${cfg.headerText} uppercase tracking-wide">${cfg.label}</span><span class="text-xs ${cfg.headerText} opacity-60 font-medium">${grupo.length} turma${grupo.length > 1 ? 's' : ''}</span>`;
+        container.appendChild(secHeader);
+
+        // Cards das turmas do período
+        grupo.forEach(t => {
+          const div = document.createElement('div');
+          div.className = `cursor-pointer flex items-center justify-between ${cfg.bg} border-2 ${cfg.border} border-opacity-40 ${cfg.hoverBorder} rounded-xl px-5 py-4 transition-all mb-2`;
+          div.innerHTML = `<div class="flex items-center gap-3">
+            <span class="w-2.5 h-2.5 rounded-full flex-shrink-0 ${cfg.dot}"></span>
+            <div>
+              <p class="font-bold text-[#004587] text-sm">Turma ${t.codigo_oferta || '—'}</p>
+              <p class="text-xs text-gray-500 mt-0.5">${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)}</p>
+            </div>
+          </div>
+          <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>`;
+          div.onclick = () => qsAbrirQuadro(t);
+          container.appendChild(div);
+        });
+
+        // Separador entre períodos
+        const sep = document.createElement('div');
+        sep.className = 'mb-4';
+        container.appendChild(sep);
       });
     }
 
