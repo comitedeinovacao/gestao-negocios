@@ -69,19 +69,19 @@
     { "id": "ast_brand",     "nome": "ASSISTENTE DE BRANDING E INOVAÇÃO",                 "codigo_ficha": "30563", "subarea": "MARKETING",                    "area": "Gestão e Negócios" },
     { "id": "ast_cx",        "nome": "ASSISTENTE DE EXPERIÊNCIA DO CLIENTE",              "codigo_ficha": "30564", "subarea": "MARKETING",                    "area": "Gestão e Negócios" },
     { "id": "aux_oplog",     "nome": "AUXILIAR DE OPERAÇÕES LOGÍSTICAS",                  "codigo_ficha": "24609", "subarea": "LOGÍSTICA",                    "area": "Gestão e Negócios" },
-    { "id": "med_conflitos", "nome": "MEDIAÇÃO DE CONFLITOS",                             "codigo_ficha": "13694", "subarea": "GESTÃO DE PESSOAS",            "area": "Gestão e Negócios" },
-    { "id": "diversidade",   "nome": "DIVERSIDADE E INCLUSÃO NAS ORGANIZAÇÕES",           "codigo_ficha": "14600", "subarea": "GESTÃO DE PESSOAS",            "area": "Gestão e Negócios" },
-    { "id": "empreend_soc",  "nome": "EMPREENDEDORISMO SOCIAL",                           "codigo_ficha": "25446", "subarea": "ADMINISTRAÇÃO GERAL",          "area": "Gestão e Negócios" },
-    { "id": "lider_social",  "nome": "LIDERANÇA SOCIAL",                                  "codigo_ficha": "25763", "subarea": "GESTÃO DE PESSOAS",            "area": "Gestão e Negócios" },
-    { "id": "fut_trab",      "nome": "FUTURO DO TRABALHO: COMUNICAÇÃO PROFISSIONAL EM AMBIENTES DIGITAIS", "codigo_ficha": "30844", "subarea": "DESENVOLVIMENTO PROFISSIONAL", "area": "Gestão e Negócios" },
-
     { "id": "cuid_idoso",    "nome": "CUIDADOR DE IDOSO",                                 "codigo_ficha": "21604", "subarea": "CUIDADOS DE SAÚDE",            "area": "Saúde" },
     { "id": "atend_farm",    "nome": "ATENDENTE DE FARMÁCIA",                             "codigo_ficha": "17185", "subarea": "FARMÁCIA",                     "area": "Saúde" },
     { "id": "cuid_inf",      "nome": "CUIDADOR INFANTIL",                                 "codigo_ficha": "21787", "subarea": "CUIDADOS DE SAÚDE",            "area": "Saúde" },
     { "id": "esp_instcir",   "nome": "ESPECIALIZAÇÃO PROFISSIONAL TÉCNICA EM INSTRUMENTAÇÃO CIRÚRGICA", "codigo_ficha": "21793", "subarea": "CIRURGIA",     "area": "Saúde" },
-    { "id": "ag_proj_soc",   "nome": "AGENTE DE PROJETOS SOCIAIS",                        "codigo_ficha": "13811", "subarea": "SERVIÇO SOCIAL",               "area": "Saúde" },
-    { "id": "educ_social",   "nome": "EDUCADOR SOCIAL",                                   "codigo_ficha": "19195", "subarea": "SERVIÇO SOCIAL",               "area": "Saúde" },
-    { "id": "apz_comercio",  "nome": "APRENDIZAGEM PROFISSIONAL DE QUALIFICAÇÃO EM COMÉRCIO DE BENS, SERVIÇOS E TURISMO", "codigo_ficha": "18984", "subarea": "QUALIFICAÇÃO PROFISSIONAL", "area": "Turismo e Hospitalidade" },
+
+    { "id": "ag_proj_soc",   "nome": "AGENTE DE PROJETOS SOCIAIS",                        "codigo_ficha": "13811", "subarea": "PROJETOS SOCIAIS",             "area": "Desenvolvimento Social" },
+    { "id": "med_conflitos", "nome": "MEDIAÇÃO DE CONFLITOS",                             "codigo_ficha": "13694", "subarea": "DESENVOLVIMENTO COMUNITÁRIO",  "area": "Desenvolvimento Social" },
+    { "id": "diversidade",   "nome": "DIVERSIDADE E INCLUSÃO NAS ORGANIZAÇÕES",           "codigo_ficha": "14600", "subarea": "DIVERSIDADE",                  "area": "Desenvolvimento Social" },
+    { "id": "apz_comercio",  "nome": "APRENDIZAGEM PROFISSIONAL DE QUALIFICAÇÃO EM COMÉRCIO DE BENS, SERVIÇOS E TURISMO", "codigo_ficha": "18984", "subarea": "QUALIFICAÇÃO PROFISSIONAL", "area": "Desenvolvimento Social" },
+    { "id": "lider_social",  "nome": "LIDERANÇA SOCIAL",                                  "codigo_ficha": "25763", "subarea": "LIDERANÇA",                    "area": "Desenvolvimento Social" },
+    { "id": "fut_trab",      "nome": "FUTURO DO TRABALHO: COMUNICAÇÃO PROFISSIONAL EM AMBIENTES DIGITAIS", "codigo_ficha": "30844", "subarea": "DESENVOLVIMENTO PROFISSIONAL", "area": "Desenvolvimento Social" },
+
+    { "id": "educ_social",   "nome": "EDUCADOR SOCIAL",                                   "codigo_ficha": "19195", "subarea": "EDUCAÇÃO SOCIAL",              "area": "Educação" },
 
     { "id": "manic_ped",     "nome": "MANICURE E PEDICURE",                               "codigo_ficha": "14179", "subarea": "MÃOS E PÉS",                   "area": "Beleza e Estética" },
     { "id": "cabel",         "nome": "CABELEIREIRO",                                      "codigo_ficha": "12822", "subarea": "CABELO E PENTEADOS",           "area": "Beleza e Estética" },
