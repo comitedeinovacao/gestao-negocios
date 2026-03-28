@@ -3514,16 +3514,6 @@
     window.currentYear  = new Date().getFullYear();
 
     document.addEventListener('DOMContentLoaded', async () => {
-      // Restaura área ativa do localStorage (se existir)
-      try {
-        const _savedArea = localStorage.getItem('senac_area_ativa');
-        if (_savedArea) {
-          const _pa = JSON.parse(_savedArea);
-          const _btn = [...document.querySelectorAll('.area-card')].find(b => b.dataset.nome === _pa.nome);
-          if (_btn) { window.setAreaAtiva(_btn); }
-        }
-      } catch(e) {}
-
       // Pré-carrega dados em paralelo (sem bloquear a UI)
       Promise.all([loadDocentes(), loadPCTD(), loadPITD(), loadRepresentantes(), loadUCs(), carregarDadosCursos()]).catch(() => {});
       // Renderiza a grade de escala semanal no form de docentes
@@ -7401,8 +7391,7 @@
       const pickerLista = document.getElementById('curso-picker-lista');
       if (pickerLista) pickerLista.style.display = 'none';
 
-      // 6. Persiste área no localStorage + desbloqueia navegação
-      try { localStorage.setItem('senac_area_ativa', JSON.stringify({ nome, cor })); } catch(e) {}
+      // 6. Desbloqueia navegação
       const mainNav = document.getElementById('main-nav');
       const navHint = document.getElementById('nav-lock-hint');
       if (mainNav) mainNav.classList.remove('nav-locked');
