@@ -2368,6 +2368,7 @@
         document.querySelectorAll('#quadros-page .tab-btn').forEach(b => b.classList.remove('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]'));
         const firstQBtn = document.querySelector('#quadros-page .tab-btn[data-tab="quadro-ucs"]');
         if (firstQBtn) firstQBtn.classList.add('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
+        qsResetSeletor(); // garante que Quadro Semanal volta ao seletor ao entrar na página
         loadUCs();
       }
       if (page === 'eventos') {
@@ -4144,6 +4145,28 @@
       allUCs = data;
     }
 
+    // Reseta completamente o estado do Quadro Semanal ao seletor inicial
+    function qsResetSeletor() {
+      quadroTurmaAtual = null;
+      quadroMesAtual   = null;
+      const selecao = document.getElementById('q-step-selecao');
+      const quadro  = document.getElementById('q-step-quadro');
+      const turmasLista  = document.getElementById('qs-turmas-lista');
+      const cursoLista   = document.getElementById('qs-curso-lista');
+      if (selecao)    selecao.style.display    = 'block';
+      if (quadro)     quadro.style.display     = 'none';
+      if (turmasLista) turmasLista.style.display = 'none';
+      if (cursoLista)  cursoLista.style.display  = 'none';
+      // Reseta botões de modalidade para estado neutro
+      const base = 'px-4 py-3 rounded-xl border-2 font-semibold text-sm transition-all';
+      const btnTec  = document.getElementById('qs-btn-tec');
+      const btnLiv  = document.getElementById('qs-btn-liv');
+      const btnParc = document.getElementById('qs-btn-parc');
+      if (btnTec)  btnTec.className  = base + ' border-gray-200 text-gray-700';
+      if (btnLiv)  btnLiv.className  = base + ' border-gray-200 text-gray-700';
+      if (btnParc) btnParc.className = base + ' border-gray-200 text-gray-700';
+    }
+
     window.switchQuadrosTab = function(btn) {
       const tabName = btn.getAttribute('data-tab');
       _registrarTabAnterior('quadros', '#quadros-page');
@@ -4151,6 +4174,10 @@
       document.querySelectorAll('#quadros-page .tab-content').forEach(c => { c.style.display = 'none'; });
       btn.classList.add('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
       document.getElementById('tab-' + tabName).style.display = 'block';
+      // Ao entrar na aba Quadro Semanal sempre começa do seletor (área pode ter mudado)
+      if (tabName === 'quadro-semanal') {
+        qsResetSeletor();
+      }
       if (tabName === 'quadro-ucs') {
         const versaoAtiva = document.getElementById('q-versao')?.value.trim();
         if (quadroCursoAtual && versaoAtiva) qRenderUCsLista(quadroCursoAtual.id, versaoAtiva);
@@ -7166,7 +7193,8 @@
         pill.style.display = 'flex';
       }
 
-      // 7. Atualiza listas que dependem da área
+      // 7. Atualiza listas que dependem da área — e reseta quadro semanal (turma pode ser de outra área)
+      qsResetSeletor();
       renderDocentes();
       renderDocentesCadLista();
       if (Array.isArray(_turmasConsultaCache) && _turmasConsultaCache.length > 0) {
