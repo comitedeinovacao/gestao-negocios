@@ -4520,7 +4520,14 @@
       lista.style.display = 'block';
       lista.innerHTML = '<p class="text-gray-400 text-center py-3 text-sm">Carregando...</p>';
       const data = await carregarDadosCursos();
-      const cursos = modalidade === 'tecnicos' ? data.cursos_tecnicos : data.cursos_livres;
+      const todosOsCursos = modalidade === 'tecnicos' ? data.cursos_tecnicos : data.cursos_livres;
+      const cursos = areaAtiva
+        ? todosOsCursos.filter(c => (c.area || 'Gestão e Negócios') === areaAtiva.nome)
+        : todosOsCursos;
+      if (!cursos.length) {
+        lista.innerHTML = `<p class="text-amber-600 text-center py-6 text-sm font-semibold">Nenhum curso cadastrado para a área <strong>${areaAtiva?.nome}</strong>.</p>`;
+        return;
+      }
       lista.innerHTML = cursos.map(c => `
         <button type="button" data-id="${c.id}" data-nome="${c.nome.replace(/"/g,'&quot;')}" data-modalidade="${modalidade}"
           class="qs-curso-item w-full text-left px-4 py-3 hover:bg-blue-50 transition-colors">
