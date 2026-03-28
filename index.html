@@ -4873,11 +4873,11 @@
       const todosCursos = [...(dadosCursos.cursos_tecnicos||[]), ...(dadosCursos.cursos_livres||[])];
       const cursoEncontrado = todosCursos.find(c => norm(c.nome) === norm(quadroTurmaAtual.nome_curso));
       const ucsDisponiveis = allUCs.filter(u => {
-        const mesmoNome = cursoEncontrado
-          ? u.curso_id === cursoEncontrado.id                          // match por id (confiável)
-          : norm(u.curso_nome) === norm(quadroTurmaAtual.nome_curso);  // fallback por nome normalizado
+        // Match por id OU por nome (tolerante a mudanças de id no data.json)
+        const matchId   = cursoEncontrado && u.curso_id === cursoEncontrado.id;
+        const matchNome = norm(u.curso_nome) === norm(quadroTurmaAtual.nome_curso);
         const mesmaVersao = !versaoTurma || String(u.versao) === String(versaoTurma);
-        return mesmoNome && mesmaVersao;
+        return (matchId || matchNome) && mesmaVersao;
       });
         ucSelect.innerHTML = '<option value="">Selecione a UC...</option>' +
           ucsDisponiveis.map(u => {
