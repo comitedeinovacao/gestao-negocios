@@ -5789,8 +5789,12 @@
       const [y,m,d] = dataStr.split('-');
       if (!confirm(`Remover alocação de "${docenteNome}" — ${ucNome} em ${d}/${m}/${y}?`)) return;
       try {
-        if (alocId) await deleteFromSheet('Alocacoes', 'aloc_id', alocId);
-        allAlocacoes = allAlocacoes.filter(a => !(normData(a.data) === dataStr && a.uc_nome === ucNome && a.docente_nome === docenteNome && a.turma_codigo === turmaCodigo));
+        if (alocId) {
+          await deleteFromSheet('Alocacoes', 'aloc_id', alocId);
+          allAlocacoes = allAlocacoes.filter(a => a.aloc_id !== alocId);
+        } else {
+          allAlocacoes = allAlocacoes.filter(a => !(normData(a.data) === dataStr && a.uc_nome === ucNome && a.docente_nome === docenteNome && a.turma_codigo === turmaCodigo));
+        }
         qRenderMonthlyGrid(quadroTurmaAtual);
         showSuccessMessage('✅ Alocação removida!');
       } catch(err) { showErrorMessage('❌ Erro: ' + err.message); }
