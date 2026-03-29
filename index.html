@@ -6263,9 +6263,9 @@
       const s = String(val).trim();
       if (/^\d{1,2}:\d{2}$/.test(s)) return s.padStart(5,'0'); // já está em HH:MM
       if (s.includes('T')) {
-        // Serial de tempo do Sheets: extrair HH:MM do UTC (Sheets armazena tempo em UTC)
+        // Sheets retorna tempo em UTC; getHours()/getMinutes() converte para fuso local (BRT UTC-3)
         const d = new Date(s);
-        return String(d.getUTCHours()).padStart(2,'0') + ':' + String(d.getUTCMinutes()).padStart(2,'0');
+        return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
       }
       return s;
     }
