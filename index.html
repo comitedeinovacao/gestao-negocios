@@ -2705,7 +2705,7 @@
         if (status === 'finalizadas' && !isTurmaFinalizada(t)) return false;
         if (areaAtiva) {
           const area = _getCourseArea(t.nome_curso);
-          if (area !== null && area !== areaAtiva.nome) return false;
+          if (area !== areaAtiva.nome) return false;
         }
         const nomeMatch = !nome   || (t.nome_curso    || '').toLowerCase().includes(nome);
         const perMatch  = !periodo || t.periodo === periodo;
@@ -2783,7 +2783,7 @@
         if (tipo === 'parceiro' && !isParc) return false;
         if (areaAtiva && !isParc) {
           const area = _getCourseArea(t.nome_curso);
-          if (area !== null && area !== areaAtiva.nome) return false;
+          if (area !== areaAtiva.nome) return false;
         }
         return !q || (t.nome_curso || '').toLowerCase().includes(q) || (t.codigo_oferta || '').toLowerCase().includes(q);
       });
@@ -2814,7 +2814,10 @@
       try {
         const resp = await fetch('./data.json');
         const data = await resp.json();
-        const cursos = modalidade === 'tecnicos' ? data.cursos_tecnicos : data.cursos_livres;
+        const todosCursos = modalidade === 'tecnicos' ? data.cursos_tecnicos : data.cursos_livres;
+        const cursos = areaAtiva
+          ? todosCursos.filter(c => (c.area || 'Gestão e Negócios') === areaAtiva.nome)
+          : todosCursos;
         grid.innerHTML = cursos.map(c => `
           <div onclick="verCurso('${c.id}','${modalidade}',${JSON.stringify(c).replace(/'/g,"\\'")})"
             class="cursor-pointer flex items-center justify-between bg-gradient-to-r from-[#004587]/5 to-transparent hover:from-[#004587]/10 border-2 border-gray-100 hover:border-[#004587]/30 rounded-xl px-5 py-4 transition-all">
@@ -2895,14 +2898,13 @@
       return cursosPickerData;
     }
 
-    // Retorna a área de um curso pelo nome (case-insensitive). Retorna 'Gestão e Negócios' se não encontrado.
+    // Retorna a área de um curso pelo nome (case-insensitive). Retorna null se não encontrado ou dados não carregados.
     function _getCourseArea(nomeCurso) {
-      if (!nomeCurso) return 'Gestão e Negócios';
-      if (!cursosPickerData) return null; // dados ainda não carregados — não filtrar ainda
+      if (!nomeCurso || !cursosPickerData) return null;
       const norm = nomeCurso.trim().toLowerCase();
       const all = [...(cursosPickerData.cursos_tecnicos || []), ...(cursosPickerData.cursos_livres || [])];
       const found = all.find(c => c.nome.toLowerCase() === norm);
-      return found ? (found.area || 'Gestão e Negócios') : 'Gestão e Negócios';
+      return found ? (found.area || 'Gestão e Negócios') : null;
     }
 
     // Filtra lista de docentes pela área ativa. Docentes sem areas assumem "Gestão e Negócios".
@@ -3181,7 +3183,7 @@
       const filtrados = sorted.filter(p => {
         if (areaAtiva) {
           const area = _getCourseArea(p.nome_curso);
-          if (area !== null && area !== areaAtiva.nome) return false;
+          if (area !== areaAtiva.nome) return false;
         }
         const matchCurso = !curso || (p.nome_curso || '').toLowerCase().includes(curso) || (p.codigo_oferta || '').toLowerCase().includes(curso);
         const matchPeriodo = !periodo || (p.periodo || '') === periodo;
