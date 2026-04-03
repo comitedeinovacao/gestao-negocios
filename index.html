@@ -5492,7 +5492,14 @@
       const semanas = percSemanasNoMes(ano, mes);
 
       const rows = allTeachers
-        .filter(d => d.nome_completo)
+        .filter(d => {
+          if (!d.nome_completo) return false;
+          if (areaAtiva) {
+            const docAreas = d.areas ? d.areas.split(',').map(s => s.trim()) : ['Gestão e Negócios'];
+            return docAreas.includes(areaAtiva.nome);
+          }
+          return true;
+        })
         .sort((a, b) => (a.nome_completo||'').localeCompare(b.nome_completo||'', 'pt-BR'))
         .map(d => {
           const nome = d.nome_completo;
@@ -5868,7 +5875,14 @@
       } catch(e) { /* continua com o que tiver */ }
 
       const todos = allTeachers
-        .filter(d => d.nome_completo)
+        .filter(d => {
+          if (!d.nome_completo) return false;
+          if (areaAtiva) {
+            const docAreas = d.areas ? d.areas.split(',').map(s => s.trim()) : ['Gestão e Negócios'];
+            return docAreas.includes(areaAtiva.nome);
+          }
+          return true;
+        })
         .sort((a, b) => (a.nome_completo || '').localeCompare(b.nome_completo || '', 'pt-BR'));
 
       if (todos.length === 0) {
