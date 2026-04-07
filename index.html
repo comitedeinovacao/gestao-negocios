@@ -7325,6 +7325,10 @@
       msTotemPer = autoPer || document.getElementById('ms-totem-per')?.value || 'tarde';
       overlay.classList.remove('hidden');
       msRenderTotemFS();
+      // Solicita fullscreen nativo (esconde barra do browser sem precisar de F11)
+      const el = document.documentElement;
+      if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
+      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
       msScaleTotem();
       msUpdateTotemClock();
       // Clock tick — also auto-switches period when time crosses boundary
@@ -7349,7 +7353,26 @@
       if (msTotemInterval) { clearInterval(msTotemInterval); msTotemInterval = null; }
       if (msTotemRefreshInterval) { clearInterval(msTotemRefreshInterval); msTotemRefreshInterval = null; }
       window.removeEventListener('resize', msScaleTotem);
+      // Sai do fullscreen nativo se estiver ativo
+      if (document.fullscreenElement || document.webkitFullscreenElement) {
+        if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      }
     };
+
+    // Fecha overlay quando usuário sai do fullscreen via Esc ou F11
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement) {
+        const overlay = document.getElementById('ms-totem-overlay');
+        if (overlay && !overlay.classList.contains('hidden')) msFecharTotemFS();
+      }
+    });
+    document.addEventListener('webkitfullscreenchange', () => {
+      if (!document.webkitFullscreenElement) {
+        const overlay = document.getElementById('ms-totem-overlay');
+        if (overlay && !overlay.classList.contains('hidden')) msFecharTotemFS();
+      }
+    });
 
     function msScaleTotem() {
       const scaler = document.getElementById('ms-totem-scaler');
