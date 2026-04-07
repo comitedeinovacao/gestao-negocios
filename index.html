@@ -7314,43 +7314,44 @@
       msRenderTotemBtns();
       const grid = document.getElementById('ms-t-grid');
       if (!grid) return;
-      // Manual mode: render free-text cards
+      // Manual mode: mesma aparência do automático, sala identificada por MS_SALAS[i]
       if (msTotemGetModo() === 'manual') {
-        const list = msTotemGetManualList().filter(v => v);
-        grid.innerHTML = list.length
-          ? list.map(texto => {
-              const parts = texto.split('|').map(s => s.trim());
-              const sal  = parts[0] || '';
-              const cur  = parts[1] || '';
-              const doc  = parts[2] || '';
-              const resto = parts.slice(3).join(' | ');
-              return `<div style="background:white;border-radius:12px;border-left:5px solid #F7941D;box-shadow:0 3px 16px rgba(0,0,0,0.08);animation:ms-glow-orange 3s ease-in-out infinite;display:flex;flex-direction:row;align-items:stretch;overflow:hidden;">
-                <div style="width:27%;padding:9px 11px;display:flex;flex-direction:column;justify-content:center;gap:2px;background:rgba(247,148,29,0.07);border-right:1px solid rgba(247,148,29,0.13);flex-shrink:0;">
-                  <span style="font-size:16px;font-weight:900;color:#F7941D;font-family:'Montserrat',sans-serif;line-height:1;">${sal}</span>
-                </div>
-                <div style="width:73%;padding:9px 13px;display:flex;flex-direction:column;justify-content:center;gap:2px;">
-                  <div style="display:flex;align-items:center;gap:5px;margin-bottom:1px;">
-                    <span style="width:6px;height:6px;border-radius:50%;background:#F7941D;flex-shrink:0;animation:ms-blink 1.8s ease-in-out infinite;"></span>
-                    <span style="font-size:8px;font-weight:800;color:#F7941D;letter-spacing:1.5px;text-transform:uppercase;font-family:'Montserrat',sans-serif;">Em uso</span>
-                  </div>
-                  <div style="font-size:18px;font-weight:900;color:#0a1628;line-height:1.1;font-family:'Montserrat',sans-serif;">${cur}</div>
-                  ${doc ? `<div style="font-size:12px;color:#475569;font-weight:600;font-family:'Montserrat',sans-serif;margin-top:1px;">${doc}</div>` : ''}
-                  ${resto ? `<div style="font-size:10px;color:#94a3b8;font-weight:500;font-family:'Montserrat',sans-serif;">${resto}</div>` : ''}
-                </div>
-              </div>`;
-            }).join('')
-          : `<div style="grid-column:1/-1;display:flex;align-items:center;justify-content:center;height:200px;">
-               <div style="text-align:center;color:rgba(255,255,255,0.4);font-family:'Montserrat',sans-serif;">
-                 <div style="font-size:32px;margin-bottom:12px;">✏</div>
-                 <div style="font-size:14px;font-weight:700;">Modo Manual — nenhum campo preenchido</div>
-                 <div style="font-size:11px;margin-top:6px;">Clique em ⚙ MANUAL para configurar</div>
-               </div>
-             </div>`;
+        const list = msTotemGetManualList(); // array de 20 strings (nome do curso ou '')
+        let tOcupM = 0, tDispM = 0;
+        grid.innerHTML = MS_SALAS.map((sala, i) => {
+          const curso = (list[i] || '').trim();
+          const aloc  = !!curso;
+          if (aloc) tOcupM++; else tDispM++;
+          const acColor  = aloc ? '#F7941D' : 'rgba(0,69,135,0.13)';
+          const bgCard   = aloc ? 'white' : 'rgba(240,245,255,0.7)';
+          const animSt   = aloc ? 'animation:ms-glow-orange 3s ease-in-out infinite;' : '';
+          const numColor  = aloc ? '#F7941D' : 'rgba(0,69,135,0.18)';
+          const nameColor = aloc ? '#004587' : 'rgba(0,69,135,0.22)';
+          const subColor  = aloc ? '#64748b' : '#b8c8d8';
+          const num = sala.nome.replace('Sala ','');
+          return `<div style="background:${bgCard};border-radius:12px;border-left:5px solid ${acColor};box-shadow:${aloc?'0 3px 16px rgba(0,0,0,0.08)':'none'};${animSt}display:flex;flex-direction:row;align-items:stretch;overflow:hidden;">
+            <div style="width:27%;padding:9px 11px;display:flex;flex-direction:column;justify-content:center;gap:2px;background:${aloc?`${acColor}18`:'transparent'};border-right:1px solid ${aloc?`${acColor}22`:'rgba(0,69,135,0.05)'};flex-shrink:0;">
+              <span style="font-size:19px;font-weight:900;color:${numColor};font-family:'Montserrat',sans-serif;line-height:1;letter-spacing:-0.5px;">${num}</span>
+              <div style="font-size:9px;font-weight:800;color:${nameColor};font-family:'Montserrat',sans-serif;line-height:1.25;">${sala.nome}</div>
+              <div style="font-size:8px;color:${subColor};font-weight:600;font-family:'Montserrat',sans-serif;line-height:1.3;">${sala.tipo}</div>
+              <div style="font-size:8px;color:${subColor};font-weight:500;font-family:'Montserrat',sans-serif;">${sala.capacidade} lug.</div>
+            </div>
+            <div style="width:73%;padding:9px 13px;display:flex;flex-direction:column;justify-content:center;gap:2px;">
+              ${aloc
+                ? `<div style="display:flex;align-items:center;gap:5px;margin-bottom:1px;">
+                     <span style="width:6px;height:6px;border-radius:50%;background:#F7941D;flex-shrink:0;animation:ms-blink 1.8s ease-in-out infinite;"></span>
+                     <span style="font-size:8px;font-weight:800;color:#F7941D;letter-spacing:1.5px;text-transform:uppercase;font-family:'Montserrat',sans-serif;">Em uso</span>
+                   </div>
+                   <div style="font-size:22px;font-weight:900;color:#0a1628;line-height:1.1;font-family:'Montserrat',sans-serif;">${curso}</div>`
+                : `<div style="font-size:11px;font-weight:600;color:rgba(0,69,135,0.28);font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">Disponível</div>`}
+            </div>
+          </div>`;
+        }).join('');
         const oEl = document.getElementById('ms-t-stat-ocup');
         const dEl = document.getElementById('ms-t-stat-disp');
         const fEl = document.getElementById('ms-t-stat-fix');
-        if (oEl) oEl.textContent = list.length;
-        if (dEl) dEl.textContent = 20 - list.length;
+        if (oEl) oEl.textContent = tOcupM;
+        if (dEl) dEl.textContent = tDispM;
         if (fEl) fEl.textContent = 0;
         return;
       }
@@ -7441,14 +7442,21 @@
           btnAuto.style.background   = 'rgba(255,255,255,0.08)'; btnAuto.style.color = 'rgba(255,255,255,0.6)'; btnAuto.style.borderColor = 'rgba(255,255,255,0.2)';
         }
       }
-      // render 20 fields
+      // render 20 fields — um por sala, label automático, apenas nome do curso
       const campos = document.getElementById('ms-t-manual-campos');
       if (campos) {
-        campos.innerHTML = Array.from({length: 20}, (_, i) => {
+        campos.innerHTML = MS_SALAS.map((sala, i) => {
           const val = (list[i] || '').replace(/"/g, '&quot;');
-          return `<input id="ms-t-campo-${i}" type="text" value="${val}" maxlength="80"
-            placeholder="Campo ${i+1} — ex: Sala 01 | Curso | Docente"
-            style="width:100%;padding:10px 14px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:white;font-size:12px;font-family:'Montserrat',sans-serif;outline:none;box-sizing:border-box;">`;
+          return `<div style="display:flex;align-items:center;gap:8px;">
+            <div style="width:70px;flex-shrink:0;text-align:center;background:rgba(247,148,29,0.15);border:1.5px solid rgba(247,148,29,0.3);border-radius:8px;padding:8px 4px;">
+              <div style="font-size:9px;font-weight:800;color:#F7941D;letter-spacing:1px;font-family:'Montserrat',sans-serif;">SALA</div>
+              <div style="font-size:16px;font-weight:900;color:white;font-family:'Montserrat',sans-serif;line-height:1;">${String(i+1).padStart(2,'0')}</div>
+              <div style="font-size:8px;color:rgba(255,255,255,0.4);font-family:'Montserrat',sans-serif;margin-top:2px;">${sala.tipo.split(' ')[0]}</div>
+            </div>
+            <input id="ms-t-campo-${i}" type="text" value="${val}" maxlength="80"
+              placeholder="Nome do curso (deixe vazio = Disponível)"
+              style="flex:1;padding:10px 14px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:white;font-size:12px;font-family:'Montserrat',sans-serif;outline:none;box-sizing:border-box;">
+          </div>`;
         }).join('');
       }
     };
