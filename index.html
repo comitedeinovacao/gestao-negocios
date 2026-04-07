@@ -6968,6 +6968,7 @@
               return `<button type="button" onclick="msCardAlocarTurma('${salaId}',${i})" class="flex items-center justify-between gap-2 w-full text-left bg-gray-50 border border-gray-200 rounded-xl p-3 hover:border-[#004587]/40 hover:bg-[#004587]/5 transition-all">
                 <div class="min-w-0 flex-1">
                   <div class="font-semibold text-xs text-gray-800 leading-tight truncate">${t.nome_curso || '—'}</div>
+                  ${t.apelido ? `<div class="text-[10px] font-bold text-[#F7941D] mt-0.5">${t.apelido}</div>` : ''}
                   <div class="text-[10px] text-gray-400 mt-0.5">${t.codigo_oferta || ''}</div>
                 </div>
                 <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full ${tagCl} flex-shrink-0">${tagLbl}</span>
@@ -7099,6 +7100,7 @@
           title="Arraste para uma sala disponível no painel">
           <div class="min-w-0 flex-1 pointer-events-none">
             <div class="font-semibold text-xs text-gray-800 leading-tight">${t.nome_curso || '—'}</div>
+            ${t.apelido ? `<div class="text-[10px] font-bold text-[#F7941D] mt-0.5 leading-tight">${t.apelido}</div>` : ''}
             <div class="text-[10px] text-gray-400 mt-0.5">${t.codigo_oferta || ''}</div>
           </div>
           <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full ${tagCl} flex-shrink-0 pointer-events-none">${tagLbl}</span>
