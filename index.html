@@ -731,6 +731,13 @@
        </div>
        <div>
         <label class="block text-[#004587] font-semibold mb-3 flex items-center gap-2">
+         <svg class="w-4 h-4 text-[#F7941D]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+         Apelido da Turma <span class="text-xs font-normal text-gray-400">(ex: Turma 2026-A — exibido no Totem para identificar turmas do mesmo curso)</span>
+        </label>
+        <input type="text" name="apelido" placeholder="Ex: Turma 2026-A ou Manhã A" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
+       </div>
+       <div>
+        <label class="block text-[#004587] font-semibold mb-3 flex items-center gap-2">
          <svg class="w-4 h-4 text-[#F7941D]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 00-1-1h-2a1 1 0 00-1 1v5m4 0H9"/></svg>
          Sala Fixa <span class="text-xs font-normal text-gray-400">(opcional — a turma ocupará esta sala todos os dias)</span>
         </label>
@@ -1091,6 +1098,9 @@
    </div>
    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Versão do Plano</label>
     <input type="text" id="editar-turma-versao" placeholder="Ex: 2026" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+   </div>
+   <div><label class="block text-xs font-semibold text-gray-600 mb-1">Apelido da Turma <span class="text-gray-400 font-normal">(exibido no Totem)</span></label>
+    <input type="text" id="editar-turma-apelido" placeholder="Ex: Turma 2026-A ou Manhã A" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
    </div>
   </div>
   <div class="flex gap-2 mt-5 flex-wrap">
@@ -1925,7 +1935,7 @@
       </div>
      </div>
     </div>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="w-full px-4 sm:px-6 py-6">
      <!-- TAB: PAINEL -->
      <div id="ms-tab-painel">
       <div class="flex flex-wrap items-center gap-3 mb-4">
@@ -2722,6 +2732,7 @@
       document.getElementById('editar-turma-inicio').value = _normDateForInput(t.data_de_inicio);
       document.getElementById('editar-turma-termino').value = _normDateForInput(t.data_de_termino);
       document.getElementById('editar-turma-versao').value = t.versao_plano || '';
+      document.getElementById('editar-turma-apelido').value = t.apelido || '';
       const btnFin = document.getElementById('btn-finalizar-turma');
       if (btnFin) {
         const fin = isTurmaFinalizada(t);
@@ -2745,11 +2756,12 @@
       const inicio  = document.getElementById('editar-turma-inicio').value;
       const termino = document.getElementById('editar-turma-termino').value;
       const versao  = document.getElementById('editar-turma-versao').value.trim();
+      const apelido = document.getElementById('editar-turma-apelido').value.trim();
       const btn = document.getElementById('btn-salvar-edicao-turma');
       const orig = btn.textContent;
       btn.disabled = true; btn.textContent = '⏳ Salvando...';
       try {
-        await postToSheet('Turmas', [t.codigo_oferta, t.nome_curso, versao, periodo, inicio, termino, t.status_turma || '']);
+        await postToSheet('Turmas', [t.codigo_oferta, t.nome_curso, versao, periodo, inicio, termino, t.status_turma || '', t.sala_fixa || '', apelido]);
         fecharEditarTurma();
         _turmasConsultaCache = null;
         allTurmas = allTurmas.filter(x => x.codigo_oferta !== t.codigo_oferta);
@@ -2771,7 +2783,7 @@
       const btnFin = document.getElementById('btn-finalizar-turma');
       if (btnFin) { btnFin.disabled = true; btnFin.textContent = '⏳...'; }
       try {
-        await postToSheet('Turmas', [t.codigo_oferta, t.nome_curso, t.versao_plano || '', t.periodo || '', t.data_de_inicio || '', t.data_de_termino || '', novoStatus]);
+        await postToSheet('Turmas', [t.codigo_oferta, t.nome_curso, t.versao_plano || '', t.periodo || '', t.data_de_inicio || '', t.data_de_termino || '', novoStatus, t.sala_fixa || '', t.apelido || '']);
         fecharEditarTurma();
         _turmasConsultaCache = null;
         allTurmas = allTurmas.filter(x => x.codigo_oferta !== t.codigo_oferta);
@@ -3520,7 +3532,8 @@
 
       try {
         const sala_fixa = form.sala_fixa?.value || '';
-        await postToSheet('Turmas', [codigo_oferta, nome_curso, versao_plano, periodo, data_inicio, data_termino, '', sala_fixa]);
+        const apelido = form.apelido?.value?.trim() || '';
+        await postToSheet('Turmas', [codigo_oferta, nome_curso, versao_plano, periodo, data_inicio, data_termino, '', sala_fixa, apelido]);
         form.reset();
         // Reset picker UI
         const pickerSel = document.getElementById('curso-picker-selecionado');
@@ -7475,6 +7488,9 @@
       grid.innerHTML = salasOrdenadas.map(sala => {
         const aloc = msGetAloc(sala.id, msTotemData, msTotemPer);
         const isFixo = aloc && aloc.fixo === 'true';
+        // Look up apelido from allTurmas via curso code match
+        const turmaMatch = aloc ? (allTurmas || []).find(t => t.nome_curso === aloc.curso || t.codigo_oferta === aloc.curso) : null;
+        const apelido = turmaMatch?.apelido || '';
         if (aloc && isFixo) tFix++;
         else if (aloc) tOcup++;
         else tDisp++;
@@ -7499,6 +7515,7 @@
                    <span style="font-size:8px;font-weight:800;color:${acColor};letter-spacing:1.5px;text-transform:uppercase;font-family:'Montserrat',sans-serif;">${isFixo?'Sala Fixa':'Em uso'}</span>
                  </div>
                  <div style="font-size:22px;font-weight:900;color:#0a1628;line-height:1.1;font-family:'Montserrat',sans-serif;">${aloc.curso||'—'}</div>
+                 ${apelido ? `<div style="font-size:11px;font-weight:700;color:#F7941D;font-family:'Montserrat',sans-serif;margin-top:1px;letter-spacing:0.3px;">${apelido}</div>` : ''}
                  <div style="font-size:12px;color:#475569;font-weight:600;font-family:'Montserrat',sans-serif;margin-top:1px;">${aloc.docente||'—'}</div>
                  <div style="font-size:10px;color:#94a3b8;font-weight:500;font-family:'Montserrat',sans-serif;">${aloc.inicio}–${aloc.fim}</div>`
               : `<div style="font-size:11px;font-weight:600;color:rgba(0,69,135,0.28);font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">Disponível</div>`}
