@@ -1958,11 +1958,11 @@
        </div>
       </div>
       <div id="ms-data-ativa-label" class="text-xs text-gray-400 font-semibold mb-3 pl-1"></div>
-      <div class="flex gap-4 items-start">
-       <div class="flex-1 min-w-0">
-        <div id="ms-grid-painel" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"></div>
+      <div class="flex flex-col lg:flex-row gap-4 items-start">
+       <div class="flex-1 min-w-0 w-full">
+        <div id="ms-grid-painel" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;"></div>
        </div>
-       <div class="w-64 flex-shrink-0 hidden lg:block">
+       <div class="w-full lg:w-64 lg:flex-shrink-0">
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
          <div class="bg-amber-50 border-b border-amber-100 px-4 py-3 flex items-center justify-between">
           <div class="flex items-center gap-2">
@@ -1971,7 +1971,8 @@
           </div>
           <span id="ms-turmas-count" class="text-xs font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">—</span>
          </div>
-         <div id="ms-turmas-lista" class="p-3 space-y-2 max-h-[600px] overflow-y-auto">
+         <p class="text-[10px] text-gray-400 px-3 pt-2 pb-0 font-semibold">Arraste para uma sala ou para uma sala ocupada (swap)</p>
+         <div id="ms-turmas-lista" class="p-3 space-y-2 max-h-[520px] overflow-y-auto">
           <p class="text-xs text-gray-400 text-center py-4">Carregando quadro horário...</p>
          </div>
         </div>
@@ -6846,8 +6847,10 @@
         const dotClass  = aloc ? (isFixo ? 'bg-blue-400' : 'bg-[#F7941D]') : 'bg-green-400';
         const icon = MS_TIPO_ICONS[sala.tipo] || '🏫';
         const idColor = aloc ? (isFixo ? 'text-blue-200' : 'text-[#F7941D]') : 'text-gray-400';
-        const dropAttrs = !aloc
-          ? `ondragover="msDragOver(event,'${sala.id}')" ondrop="msDrop(event,'${sala.id}')" ondragleave="msDragLeave(event,'${sala.id}')"`
+        // Drop permitido em salas livres e ocupadas (exceto fixas/virtuais)
+        const canDrop = !isFixo && !isVirtual;
+        const dropAttrs = canDrop
+          ? `ondragover="msDragOver(event,'${sala.id}',${!!aloc})" ondrop="msDrop(event,'${sala.id}')" ondragleave="msDragLeave(event,'${sala.id}')"`
           : '';
         return `<div class="rounded-2xl border-2 ${bgClass} p-4 shadow-sm transition-all cursor-pointer" data-sala-id="${sala.id}" onclick="msMostrarDetalhe('${sala.id}')" ${dropAttrs}>
           <div class="flex items-start justify-between mb-2">
@@ -7080,31 +7083,40 @@
       event.dataTransfer.setData('text/plain', String(turmaIdx));
     };
 
-    window.msDragOver = function(event, salaId) {
+    window.msDragOver = function(event, salaId, isOcupada) {
       event.preventDefault();
       event.dataTransfer.dropEffect = 'move';
       const el = document.querySelector(`[data-sala-id="${salaId}"]`);
-      if (el) el.classList.add('drag-over');
+      if (el) {
+        el.classList.add('drag-over');
+        el.style.outline = isOcupada ? '2.5px dashed #F7941D' : '2.5px dashed #004587';
+      }
     };
 
     window.msDragLeave = function(event, salaId) {
       const el = document.querySelector(`[data-sala-id="${salaId}"]`);
-      if (el) el.classList.remove('drag-over');
+      if (el) { el.classList.remove('drag-over'); el.style.outline = ''; }
     };
 
     window.msDrop = async function(event, salaId) {
       event.preventDefault();
       const el = document.querySelector(`[data-sala-id="${salaId}"]`);
-      if (el) el.classList.remove('drag-over');
+      if (el) { el.classList.remove('drag-over'); el.style.outline = ''; }
       if (!msAutenticado) { msMostrarPinModal(null); return; }
       const idx = _msDragTurmaIdx !== null ? _msDragTurmaIdx : parseInt(event.dataTransfer.getData('text/plain'), 10);
       _msDragTurmaIdx = null;
       const turma = (_msTurmasAguardando || [])[idx];
       if (!turma) return;
-      // Confirma que a sala ainda está livre (race condition)
-      if (msGetAlocEfetiva(salaId, msDataAtiva, msPeriodoAtivo)) {
-        alert('Esta sala foi ocupada enquanto você arrastava. Tente outra.');
-        return;
+      const existingAloc = msGetAlocEfetiva(salaId, msDataAtiva, msPeriodoAtivo);
+      if (existingAloc) {
+        // Sala fixa ou virtual: bloqueia swap
+        if (existingAloc._virtual || existingAloc.fixo === 'sala_fixa' || existingAloc.fixo === 'true') {
+          alert('Esta sala tem alocação fixa e não pode ser substituída por arraste.');
+          return;
+        }
+        // Swap: confirma, remove alocação existente (volta para lista)
+        if (!confirm(`Trocar sala?\n\n"${existingAloc.curso}" sairá desta sala e voltará para a lista de turmas a alocar.\n"${turma.nome_curso}" será alocada aqui.`)) return;
+        await msDeletarAlocacao(existingAloc.id);
       }
       const p = MS_PERIODOS[msPeriodoAtivo];
       const docs = allAlocacoes.filter(a => String(a.turma_codigo) === String(turma.codigo_oferta));
