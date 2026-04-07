@@ -2104,19 +2104,9 @@
            </select>
           </div>
           <div>
-           <label class="block text-xs font-semibold text-gray-600 mb-1">Tipo de Sala</label>
-           <select id="ms-auto-tipo" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none">
-            <option value="">Qualquer</option>
-            <option value="Convencional">Convencional</option>
-            <option value="Lab. Informática">Lab. Informática</option>
-            <option value="Lab. de Hardware">Lab. de Hardware</option>
-            <option value="Lab. de Saúde">Lab. de Saúde</option>
-            <option value="Lab. de Estética">Lab. de Estética</option>
-            <option value="Lab. de Beleza">Lab. de Beleza</option>
-            <option value="Sala Experimental">Sala Experimental</option>
-            <option value="Lab. Móvel">Lab. Móvel</option>
-            <option value="Sala de Teatro">Sala de Teatro</option>
-            <option value="Lab. de Moda">Lab. de Moda</option>
+           <label class="block text-xs font-semibold text-gray-600 mb-1">Sala Específica</label>
+           <select id="ms-auto-sala" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none">
+            <option value="">Qualquer disponível</option>
            </select>
           </div>
          </div>
@@ -2141,7 +2131,7 @@
      </div>
      <!-- TAB: ALOCAÇÕES -->
      <div id="ms-tab-alocacoes" class="hidden">
-      <div class="flex flex-wrap items-center gap-3 mb-5">
+      <div class="flex flex-wrap items-center gap-3 mb-4">
        <input type="date" id="ms-fil-data-ini" onchange="msRenderAlocacoes()" class="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none bg-white" title="Data início">
        <span class="text-gray-400 text-xs font-semibold">até</span>
        <input type="date" id="ms-fil-data-fim" onchange="msRenderAlocacoes()" class="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-[#004587] focus:outline-none bg-white" title="Data fim">
@@ -2153,6 +2143,16 @@
         <input type="text" id="ms-fil-busca" placeholder="Buscar curso ou docente..." oninput="msRenderAlocacoes()" class="pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-[#004587] focus:outline-none w-52 bg-white">
        </div>
        <div id="ms-aloc-total" class="ml-auto text-xs text-gray-500 font-semibold"></div>
+      </div>
+      <!-- Toolbar de seleção em lote -->
+      <div id="ms-lote-toolbar" class="hidden flex flex-wrap items-center gap-3 mb-3 bg-red-50 border border-red-200 rounded-xl px-4 py-2.5">
+       <input type="checkbox" id="ms-sel-todos" onchange="msSelecionarTodos(this.checked)" class="w-4 h-4 accent-red-500 cursor-pointer">
+       <label for="ms-sel-todos" class="text-xs font-semibold text-red-700 cursor-pointer">Selecionar todos</label>
+       <span id="ms-sel-count" class="text-xs text-red-600 font-semibold"></span>
+       <button onclick="msExcluirSelecionados()" class="ml-auto flex items-center gap-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-bold px-4 py-2 rounded-lg transition-all">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+        Excluir Selecionados
+       </button>
       </div>
       <div id="ms-lista-alocs" class="space-y-2"></div>
       <p id="ms-no-alocs" class="hidden text-center text-gray-400 py-12 text-sm">Nenhuma alocação encontrada.</p>
@@ -6665,14 +6665,26 @@
     }
 
     function msPreencharSelects() {
+      // Sala selector — manual form
       const sel = document.getElementById('ms-sel-sala');
-      if (!sel || sel.options.length > 1) return;
-      MS_SALAS.forEach(s => {
-        const opt = document.createElement('option');
-        opt.value = s.id;
-        opt.textContent = `${s.nome} (${s.tipo} — cap. ${s.capacidade})`;
-        sel.appendChild(opt);
-      });
+      if (sel && sel.options.length <= 1) {
+        MS_SALAS.forEach(s => {
+          const opt = document.createElement('option');
+          opt.value = s.id;
+          opt.textContent = `${s.nome} — ${s.tipo} (${s.capacidade} lug.)`;
+          sel.appendChild(opt);
+        });
+      }
+      // Sala selector — auto form
+      const selAuto = document.getElementById('ms-auto-sala');
+      if (selAuto && selAuto.options.length <= 1) {
+        MS_SALAS.forEach(s => {
+          const opt = document.createElement('option');
+          opt.value = s.id;
+          opt.textContent = `${s.nome} — ${s.tipo} (${s.capacidade} lug.)`;
+          selAuto.appendChild(opt);
+        });
+      }
     }
 
     // ---- Semana nav ----
@@ -7205,6 +7217,7 @@
       const lista   = document.getElementById('ms-lista-alocs');
       const noAlocs = document.getElementById('ms-no-alocs');
       const totalEl = document.getElementById('ms-aloc-total');
+      const toolbar = document.getElementById('ms-lote-toolbar');
       if (!lista) return;
       const filIni   = document.getElementById('ms-fil-data-ini')?.value || '';
       const filFim   = document.getElementById('ms-fil-data-fim')?.value || '';
@@ -7221,9 +7234,11 @@
       if (!filtered.length) {
         lista.innerHTML = '';
         if (noAlocs) noAlocs.classList.remove('hidden');
+        if (toolbar) toolbar.classList.add('hidden');
         return;
       }
       if (noAlocs) noAlocs.classList.add('hidden');
+      if (toolbar) toolbar.classList.remove('hidden');
       const perOrder = ['manha','tarde','noite'];
       filtered.sort((a,b) => {
         const di = (a.data||'').localeCompare(b.data||'');
@@ -7238,6 +7253,7 @@
         const diaCurto = a.data ? msDiaNomeCurto(a.data) : '';
         const dataFmt  = a.data ? msFmtData(a.data, { day:'2-digit', month:'2-digit', year:'numeric' }) : '—';
         return `<div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex flex-wrap items-center gap-4">
+          <input type="checkbox" class="ms-aloc-chk w-4 h-4 accent-red-500 flex-shrink-0 cursor-pointer" data-id="${a.id}" onchange="msAtualizarSelCount()">
           <div class="flex items-center gap-3 min-w-0 flex-1">
             <div class="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center text-white font-bold text-xs ${isFixo?'bg-blue-600':'bg-[#004587]'}">${a.sala_id}</div>
             <div class="min-w-0">
@@ -7254,7 +7270,31 @@
           </button>
         </div>`;
       }).join('');
+      msAtualizarSelCount();
     }
+
+    window.msAtualizarSelCount = function() {
+      const selecionados = document.querySelectorAll('.ms-aloc-chk:checked').length;
+      const countEl = document.getElementById('ms-sel-count');
+      if (countEl) countEl.textContent = selecionados ? `${selecionados} selecionado${selecionados !== 1 ? 's' : ''}` : '';
+    };
+
+    window.msSelecionarTodos = function(checked) {
+      document.querySelectorAll('.ms-aloc-chk').forEach(chk => { chk.checked = checked; });
+      msAtualizarSelCount();
+    };
+
+    window.msExcluirSelecionados = async function() {
+      const ids = [...document.querySelectorAll('.ms-aloc-chk:checked')].map(chk => chk.dataset.id);
+      if (!ids.length) return;
+      if (!confirm(`Remover ${ids.length} alocação${ids.length !== 1 ? 'ões' : ''} selecionada${ids.length !== 1 ? 's' : ''}?`)) return;
+      const btn = document.querySelector('#ms-lote-toolbar button');
+      if (btn) { btn.disabled = true; btn.textContent = `⏳ Removendo ${ids.length}...`; }
+      for (const id of ids) await msDeletarAlocacao(id);
+      if (btn) { btn.disabled = false; btn.innerHTML = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg> Excluir Selecionados`; }
+      const selTodos = document.getElementById('ms-sel-todos');
+      if (selTodos) selTodos.checked = false;
+    };
 
     // ---- TOTEM ----
     window.msAbrirTotemFS = function() {
@@ -7806,7 +7846,7 @@
         const curso      = document.getElementById('ms-auto-curso')?.value.trim();
         const docente    = document.getElementById('ms-auto-docente')?.value.trim();
         const periodo    = document.getElementById('ms-auto-periodo')?.value;
-        const tipoFiltro = document.getElementById('ms-auto-tipo')?.value;
+        const salaEspecifica = document.getElementById('ms-auto-sala')?.value;
         const iniStr     = document.getElementById('ms-auto-data-ini')?.value;
         const fimStr     = document.getElementById('ms-auto-data-fim')?.value;
         const diasChecked = new Set([...document.querySelectorAll('.ms-auto-dia:checked')].map(c => c.value));
@@ -7828,7 +7868,7 @@
         const p = MS_PERIODOS[periodo];
         for (const data of datasAlvo) {
           const disponiveis = MS_SALAS.filter(s => {
-            if (tipoFiltro && s.tipo !== tipoFiltro) return false;
+            if (salaEspecifica && s.id !== salaEspecifica) return false;
             return !msGetAloc(s.id, data, periodo);
           });
           if (!disponiveis.length) { resultados.push({ data, ok:false, msg:'Sem sala disponível' }); continue; }
