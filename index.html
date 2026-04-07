@@ -7349,13 +7349,13 @@
           const acColor  = aloc ? '#F7941D' : 'rgba(0,69,135,0.13)';
           const bgCard   = aloc ? 'white' : 'rgba(240,245,255,0.7)';
           const animSt   = aloc ? 'animation:ms-glow-orange 3s ease-in-out infinite;' : '';
-          const numColor  = aloc ? '#F7941D' : 'rgba(0,69,135,0.18)';
+          const numColor  = aloc ? '#004587' : 'rgba(0,69,135,0.18)';
           const nameColor = aloc ? '#004587' : 'rgba(0,69,135,0.22)';
           const subColor  = aloc ? '#64748b' : '#b8c8d8';
           const num = sala.nome.replace('Sala ','');
           return `<div style="background:${bgCard};border-radius:12px;border-left:5px solid ${acColor};box-shadow:${aloc?'0 3px 16px rgba(0,0,0,0.08)':'none'};${animSt}display:flex;flex-direction:row;align-items:stretch;overflow:hidden;">
             <div style="width:27%;padding:9px 11px;display:flex;flex-direction:column;justify-content:center;gap:2px;background:${aloc?`${acColor}18`:'transparent'};border-right:1px solid ${aloc?`${acColor}22`:'rgba(0,69,135,0.05)'};flex-shrink:0;">
-              <span style="font-size:19px;font-weight:900;color:${numColor};font-family:'Montserrat',sans-serif;line-height:1;letter-spacing:-0.5px;">${num}</span>
+              <span style="font-size:24px;font-weight:900;color:${numColor};font-family:'Montserrat',sans-serif;line-height:1;letter-spacing:-0.5px;">${num}</span>
               <div style="font-size:9px;font-weight:800;color:${nameColor};font-family:'Montserrat',sans-serif;line-height:1.25;">${sala.nome}</div>
               <div style="font-size:8px;color:${subColor};font-weight:600;font-family:'Montserrat',sans-serif;line-height:1.3;">${sala.tipo}</div>
               <div style="font-size:8px;color:${subColor};font-weight:500;font-family:'Montserrat',sans-serif;">${sala.capacidade} lug.</div>
