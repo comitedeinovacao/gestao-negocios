@@ -3649,14 +3649,13 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
       // Pré-carrega dados em paralelo (sem bloquear a UI)
-      Promise.all([loadDocentes(), loadPCTD(), loadPITD(), loadRepresentantes(), loadUCs(), carregarDadosCursos()]).then(() => {
-        // Atualiza contadores do hero com dados reais do data.json
+      Promise.all([loadDocentes(), loadPCTD(), loadPITD(), loadRepresentantes(), loadUCs()]).catch(() => {});
+      // Contadores do hero — independente dos outros loads
+      carregarDadosCursos().then(data => {
         const tEl = document.getElementById('hero-count-tecnicos');
         const lEl = document.getElementById('hero-count-livres');
-        if (cursosPickerData) {
-          if (tEl) tEl.textContent = (cursosPickerData.cursos_tecnicos || []).length;
-          if (lEl) lEl.textContent = (cursosPickerData.cursos_livres || []).length;
-        }
+        if (tEl) tEl.textContent = (data.cursos_tecnicos || []).length;
+        if (lEl) lEl.textContent = (data.cursos_livres || []).length;
       }).catch(() => {});
       // Renderiza a grade de escala semanal no form de docentes
       renderEscalaContainer();
