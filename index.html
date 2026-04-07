@@ -4679,7 +4679,14 @@
         const planPres  = Number(uc.ch_presencial)||0;
         const planEad   = Number(uc.ch_ead)||0;
         const planTotal = Number(uc.carga_horaria_total||uc.carga_horaria)||(planPres+planEad);
-        const alocUC = alocsTurma.filter(a => norm(a.uc_nome) === norm(uc.uc_nome));
+        const ucNumCat = (uc.uc_nome || '').match(/UC\s*(\d+)/i)?.[1];
+        const alocUC = alocsTurma.filter(a => {
+          if (norm(a.uc_nome) === norm(uc.uc_nome)) return true;
+          // Fallback: mesmo número de UC dentro da mesma turma (cobre renomeações)
+          if (!ucNumCat) return false;
+          const ucNumAloc = (a.uc_nome || '').match(/UC\s*(\d+)/i)?.[1];
+          return ucNumAloc && ucNumAloc === ucNumCat;
+        });
         const realPres  = alocUC.filter(a => (a.tipo_aula||'').toLowerCase() !== 'ead').reduce((s,a) => s+(parseFloat(a.horas)||0), 0);
         const realEad   = alocUC.filter(a => (a.tipo_aula||'').toLowerCase() === 'ead').reduce((s,a) => s+(parseFloat(a.horas)||0), 0);
         const realTotal = realPres + realEad;
