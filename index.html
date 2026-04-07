@@ -2288,13 +2288,26 @@
      <button onclick="msTotemFecharConfig()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;padding:10px 20px;border-radius:10px;font-size:12px;cursor:pointer;font-weight:700;font-family:'Montserrat',sans-serif;">✕ Fechar</button>
     </div>
     <!-- Toggle Modo -->
-    <div style="display:flex;gap:10px;margin-bottom:28px;">
+    <div style="display:flex;gap:10px;margin-bottom:20px;">
      <button id="ms-t-btn-auto" onclick="msTotemSetModoConfig('auto')" style="flex:1;padding:14px;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;border:2px solid #004587;background:#004587;color:white;">▶ Automático (Mapa de Salas)</button>
      <button id="ms-t-btn-manual" onclick="msTotemSetModoConfig('manual')" style="flex:1;padding:14px;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);">✏ Manual (20 campos livres)</button>
     </div>
+    <!-- Seletor de Data e Período -->
+    <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:16px 20px;margin-bottom:20px;">
+     <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+      <button onclick="msTotemConfigNavData(-1)" style="width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;font-size:18px;cursor:pointer;font-family:'Montserrat',sans-serif;display:flex;align-items:center;justify-content:center;">‹</button>
+      <input type="date" id="ms-t-config-data" onchange="msTotemConfigRenderCampos()" style="flex:1;padding:8px 14px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:white;font-size:13px;font-family:'Montserrat',sans-serif;outline:none;color-scheme:dark;">
+      <button onclick="msTotemConfigNavData(1)" style="width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;font-size:18px;cursor:pointer;font-family:'Montserrat',sans-serif;display:flex;align-items:center;justify-content:center;">›</button>
+     </div>
+     <div style="display:flex;gap:8px;">
+      <button id="ms-t-cfg-manha" onclick="msTotemConfigSetPer('manha')" style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);">☀ Manhã</button>
+      <button id="ms-t-cfg-tarde" onclick="msTotemConfigSetPer('tarde')" style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);">🌤 Tarde</button>
+      <button id="ms-t-cfg-noite" onclick="msTotemConfigSetPer('noite')" style="flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);">🌙 Noite</button>
+     </div>
+    </div>
     <!-- 20 campos manuais -->
     <div id="ms-t-manual-campos" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:24px;"></div>
-    <button onclick="msTotemSalvarConfig()" style="width:100%;padding:14px;border-radius:12px;background:#F7941D;border:none;color:white;font-size:14px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">✓ SALVAR E APLICAR</button>
+    <button onclick="msTotemSalvarConfig()" style="width:100%;padding:14px;border-radius:12px;background:#F7941D;border:none;color:white;font-size:14px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">✓ SALVAR PERÍODO E APLICAR</button>
    </div>
   </div>
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
@@ -7316,7 +7329,7 @@
       if (!grid) return;
       // Manual mode: mesma aparência do automático, sala identificada por MS_SALAS[i]
       if (msTotemGetModo() === 'manual') {
-        const list = msTotemGetManualList(); // array de 20 strings (nome do curso ou '')
+        const list = msTotemGetPeriodList(msTotemData, msTotemPer); // lê por data+período
         // Mesma ordenação do modo automático: ocupadas primeiro por coluna
         const sortManual = salas => {
           const occ  = salas.filter(s => (list[MS_SALAS.indexOf(s)] || '').trim());
@@ -7430,46 +7443,105 @@
     // ── Totem Manual Mode helpers ─────────────────────────────────────
     function msTotemGetModo() { return localStorage.getItem('ms_totem_modo') || 'auto'; }
     function msTotemSetModo(m) { localStorage.setItem('ms_totem_modo', m); }
-    function msTotemGetManualList() {
-      try { return JSON.parse(localStorage.getItem('ms_totem_manual_list') || '[]'); } catch { return []; }
+    // Estrutura: { "2026-04-07": { "manha": [...20], "tarde": [...20], "noite": [...20] } }
+    function msTotemGetManualData() {
+      try { return JSON.parse(localStorage.getItem('ms_totem_manual_data') || '{}'); } catch { return {}; }
     }
-    function msTotemSetManualList(arr) { localStorage.setItem('ms_totem_manual_list', JSON.stringify(arr)); }
+    function msTotemSetManualData(obj) { localStorage.setItem('ms_totem_manual_data', JSON.stringify(obj)); }
+    function msTotemGetPeriodList(data, per) {
+      const d = msTotemGetManualData();
+      return (d[data] && d[data][per]) ? d[data][per] : Array(20).fill('');
+    }
+    function msTotemSavePeriodList(data, per, list) {
+      const d = msTotemGetManualData();
+      if (!d[data]) d[data] = {};
+      d[data][per] = list;
+      msTotemSetManualData(d);
+    }
+
+    // período atualmente selecionado na config
+    let _cfgPer = 'manha';
+
+    function _msTotemCfgAtualizaBotoesPer(per) {
+      ['manha','tarde','noite'].forEach(p => {
+        const btn = document.getElementById(`ms-t-cfg-${p}`);
+        if (!btn) return;
+        if (p === per) {
+          btn.style.background = '#F7941D'; btn.style.color = 'white'; btn.style.borderColor = '#F7941D';
+        } else {
+          btn.style.background = 'rgba(255,255,255,0.08)'; btn.style.color = 'rgba(255,255,255,0.6)'; btn.style.borderColor = 'rgba(255,255,255,0.2)';
+        }
+      });
+    }
+
+    function _msTotemCfgAtualizaBotoesMode(modo) {
+      const btnAuto   = document.getElementById('ms-t-btn-auto');
+      const btnManual = document.getElementById('ms-t-btn-manual');
+      if (!btnAuto || !btnManual) return;
+      if (modo === 'auto') {
+        btnAuto.style.background   = '#004587'; btnAuto.style.color = 'white'; btnAuto.style.borderColor = '#004587';
+        btnManual.style.background = 'rgba(255,255,255,0.08)'; btnManual.style.color = 'rgba(255,255,255,0.6)'; btnManual.style.borderColor = 'rgba(255,255,255,0.2)';
+      } else {
+        btnManual.style.background = '#F7941D'; btnManual.style.color = 'white'; btnManual.style.borderColor = '#F7941D';
+        btnAuto.style.background   = 'rgba(255,255,255,0.08)'; btnAuto.style.color = 'rgba(255,255,255,0.6)'; btnAuto.style.borderColor = 'rgba(255,255,255,0.2)';
+      }
+    }
+
+    window.msTotemConfigRenderCampos = function() {
+      const dataEl = document.getElementById('ms-t-config-data');
+      const data = dataEl ? dataEl.value : msHoje();
+      const list = msTotemGetPeriodList(data, _cfgPer);
+      const campos = document.getElementById('ms-t-manual-campos');
+      if (!campos) return;
+      campos.innerHTML = MS_SALAS.map((sala, i) => {
+        const val = (list[i] || '').replace(/"/g, '&quot;');
+        return `<div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:70px;flex-shrink:0;text-align:center;background:rgba(247,148,29,0.15);border:1.5px solid rgba(247,148,29,0.3);border-radius:8px;padding:8px 4px;">
+            <div style="font-size:9px;font-weight:800;color:#F7941D;letter-spacing:1px;font-family:'Montserrat',sans-serif;">SALA</div>
+            <div style="font-size:16px;font-weight:900;color:white;font-family:'Montserrat',sans-serif;line-height:1;">${String(i+1).padStart(2,'0')}</div>
+            <div style="font-size:8px;color:rgba(255,255,255,0.4);font-family:'Montserrat',sans-serif;margin-top:2px;">${sala.tipo.split(' ')[0]}</div>
+          </div>
+          <input id="ms-t-campo-${i}" type="text" value="${val}" maxlength="80"
+            placeholder="Nome do curso (vazio = Disponível)"
+            style="flex:1;padding:10px 14px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:white;font-size:12px;font-family:'Montserrat',sans-serif;outline:none;box-sizing:border-box;">
+        </div>`;
+      }).join('');
+    };
+
+    window.msTotemConfigSetPer = function(per) {
+      // salva campos atuais antes de trocar
+      const dataEl = document.getElementById('ms-t-config-data');
+      const data = dataEl ? dataEl.value : msHoje();
+      const cur = Array.from({length:20}, (_, i) => (document.getElementById(`ms-t-campo-${i}`)?.value || '').trim());
+      msTotemSavePeriodList(data, _cfgPer, cur);
+      _cfgPer = per;
+      _msTotemCfgAtualizaBotoesPer(per);
+      window.msTotemConfigRenderCampos();
+    };
+
+    window.msTotemConfigNavData = function(dir) {
+      const dataEl = document.getElementById('ms-t-config-data');
+      if (!dataEl) return;
+      // salva campos atuais antes de mudar data
+      const cur = Array.from({length:20}, (_, i) => (document.getElementById(`ms-t-campo-${i}`)?.value || '').trim());
+      msTotemSavePeriodList(dataEl.value, _cfgPer, cur);
+      const d = new Date(dataEl.value + 'T12:00:00');
+      d.setDate(d.getDate() + dir);
+      dataEl.value = d.toISOString().slice(0,10);
+      window.msTotemConfigRenderCampos();
+    };
 
     window.msTotemAbrirConfig = function() {
       const overlay = document.getElementById('ms-totem-config');
       if (!overlay) return;
       overlay.style.display = 'block';
-      const modo = msTotemGetModo();
-      const list = msTotemGetManualList();
-      // update toggle buttons style
-      const btnAuto   = document.getElementById('ms-t-btn-auto');
-      const btnManual = document.getElementById('ms-t-btn-manual');
-      if (btnAuto && btnManual) {
-        if (modo === 'auto') {
-          btnAuto.style.background   = '#004587'; btnAuto.style.color   = 'white'; btnAuto.style.borderColor   = '#004587';
-          btnManual.style.background = 'rgba(255,255,255,0.08)'; btnManual.style.color = 'rgba(255,255,255,0.6)'; btnManual.style.borderColor = 'rgba(255,255,255,0.2)';
-        } else {
-          btnManual.style.background = '#F7941D'; btnManual.style.color = 'white'; btnManual.style.borderColor = '#F7941D';
-          btnAuto.style.background   = 'rgba(255,255,255,0.08)'; btnAuto.style.color = 'rgba(255,255,255,0.6)'; btnAuto.style.borderColor = 'rgba(255,255,255,0.2)';
-        }
-      }
-      // render 20 fields — um por sala, label automático, apenas nome do curso
-      const campos = document.getElementById('ms-t-manual-campos');
-      if (campos) {
-        campos.innerHTML = MS_SALAS.map((sala, i) => {
-          const val = (list[i] || '').replace(/"/g, '&quot;');
-          return `<div style="display:flex;align-items:center;gap:8px;">
-            <div style="width:70px;flex-shrink:0;text-align:center;background:rgba(247,148,29,0.15);border:1.5px solid rgba(247,148,29,0.3);border-radius:8px;padding:8px 4px;">
-              <div style="font-size:9px;font-weight:800;color:#F7941D;letter-spacing:1px;font-family:'Montserrat',sans-serif;">SALA</div>
-              <div style="font-size:16px;font-weight:900;color:white;font-family:'Montserrat',sans-serif;line-height:1;">${String(i+1).padStart(2,'0')}</div>
-              <div style="font-size:8px;color:rgba(255,255,255,0.4);font-family:'Montserrat',sans-serif;margin-top:2px;">${sala.tipo.split(' ')[0]}</div>
-            </div>
-            <input id="ms-t-campo-${i}" type="text" value="${val}" maxlength="80"
-              placeholder="Nome do curso (deixe vazio = Disponível)"
-              style="flex:1;padding:10px 14px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:white;font-size:12px;font-family:'Montserrat',sans-serif;outline:none;box-sizing:border-box;">
-          </div>`;
-        }).join('');
-      }
+      _msTotemCfgAtualizaBotoesMode(msTotemGetModo());
+      // inicializa data com hoje e período atual do totem (ou manhã)
+      const dataEl = document.getElementById('ms-t-config-data');
+      if (dataEl) dataEl.value = msTotemData || msHoje();
+      _cfgPer = msTotemPer || 'manha';
+      _msTotemCfgAtualizaBotoesPer(_cfgPer);
+      window.msTotemConfigRenderCampos();
     };
 
     window.msTotemFecharConfig = function() {
@@ -7479,24 +7551,16 @@
 
     window.msTotemSetModoConfig = function(modo) {
       msTotemSetModo(modo);
-      const btnAuto   = document.getElementById('ms-t-btn-auto');
-      const btnManual = document.getElementById('ms-t-btn-manual');
-      if (btnAuto && btnManual) {
-        if (modo === 'auto') {
-          btnAuto.style.background   = '#004587'; btnAuto.style.color   = 'white'; btnAuto.style.borderColor   = '#004587';
-          btnManual.style.background = 'rgba(255,255,255,0.08)'; btnManual.style.color = 'rgba(255,255,255,0.6)'; btnManual.style.borderColor = 'rgba(255,255,255,0.2)';
-        } else {
-          btnManual.style.background = '#F7941D'; btnManual.style.color = 'white'; btnManual.style.borderColor = '#F7941D';
-          btnAuto.style.background   = 'rgba(255,255,255,0.08)'; btnAuto.style.color = 'rgba(255,255,255,0.6)'; btnAuto.style.borderColor = 'rgba(255,255,255,0.2)';
-        }
-      }
+      _msTotemCfgAtualizaBotoesMode(modo);
     };
 
     window.msTotemSalvarConfig = function() {
+      const dataEl = document.getElementById('ms-t-config-data');
+      const data = dataEl ? dataEl.value : msHoje();
       const list = Array.from({length: 20}, (_, i) =>
         (document.getElementById(`ms-t-campo-${i}`)?.value || '').trim()
       );
-      msTotemSetManualList(list);
+      msTotemSavePeriodList(data, _cfgPer, list);
       msTotemFecharConfig();
       msRenderTotemFS();
     };
