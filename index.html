@@ -7317,8 +7317,19 @@
       // Manual mode: mesma aparência do automático, sala identificada por MS_SALAS[i]
       if (msTotemGetModo() === 'manual') {
         const list = msTotemGetManualList(); // array de 20 strings (nome do curso ou '')
+        // Mesma ordenação do modo automático: ocupadas primeiro por coluna
+        const sortManual = salas => {
+          const occ  = salas.filter(s => (list[MS_SALAS.indexOf(s)] || '').trim());
+          const free = salas.filter(s => !(list[MS_SALAS.indexOf(s)] || '').trim());
+          return [...occ, ...free];
+        };
+        const salasManual = [
+          ...sortManual(MS_SALAS.slice(0, 10)),
+          ...sortManual(MS_SALAS.slice(10, 20)),
+        ];
         let tOcupM = 0, tDispM = 0;
-        grid.innerHTML = MS_SALAS.map((sala, i) => {
+        grid.innerHTML = salasManual.map(sala => {
+          const i = MS_SALAS.indexOf(sala);
           const curso = (list[i] || '').trim();
           const aloc  = !!curso;
           if (aloc) tOcupM++; else tDispM++;
