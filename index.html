@@ -1267,6 +1267,9 @@
       <button type="button" id="btn-tab-painel-doc" class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="painel-docentes" onclick="switchQuadrosTab(this)">
        <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>Painel Docentes
       </button>
+      <button type="button" class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="progresso-ucs" onclick="switchQuadrosTab(this)">
+       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>Progresso UCs
+      </button>
      </div>
      <!-- Tab: UCs por Curso -->
      <div id="tab-quadro-ucs" class="tab-content">
@@ -1361,6 +1364,9 @@
          <button onclick="qAbrirModalLote()" class="px-4 py-2 bg-orange-50 text-orange-700 hover:bg-orange-100 rounded-lg font-semibold text-sm flex items-center gap-2 border border-orange-200">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg> Lançar em Lote
          </button>
+         <button onclick="qAbrirModalExcluirLote()" class="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg font-semibold text-sm flex items-center gap-2 border border-red-200">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg> Excluir Lote
+         </button>
          <button onclick="qAbrirModalEditarLote()" class="px-4 py-2 bg-purple-50 text-purple-700 hover:bg-purple-100 rounded-lg font-semibold text-sm flex items-center gap-2 border border-purple-200">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg> Editar em Lote
          </button>
@@ -1446,6 +1452,77 @@
       <div id="painel-container"></div>
       <!-- Área exclusiva para impressão -->
       <div id="painel-print-area" class="print-only" style="display:none"></div>
+     </div>
+     <!-- Aba Progresso UCs -->
+     <div id="tab-progresso-ucs" class="tab-content" style="display:none">
+      <div id="progresso-ucs-container">
+       <p class="text-gray-400 text-center py-8 text-sm">Selecione uma turma no Quadro Semanal para ver o progresso das UCs.</p>
+      </div>
+     </div>
+    </div>
+    <!-- Modal Editar UC -->
+    <div id="modal-uc-edit" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+     <div class="bg-white rounded-2xl w-full max-w-sm shadow-2xl p-6">
+      <div class="flex justify-between items-center mb-4">
+       <h3 class="text-lg font-bold text-[#004587]">Editar UC</h3>
+       <button onclick="fecharModalEditUC()" class="text-gray-400 hover:text-gray-600"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+      </div>
+      <input type="hidden" id="edit-uc-nome-original">
+      <input type="hidden" id="edit-uc-cursoid">
+      <input type="hidden" id="edit-uc-versao">
+      <div class="space-y-3">
+       <div>
+        <label class="block text-sm font-semibold text-[#004587] mb-1">Nome da UC</label>
+        <input type="text" id="edit-uc-nome" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl text-sm focus:border-[#004587] focus:outline-none">
+       </div>
+       <div class="grid grid-cols-3 gap-2">
+        <div>
+         <label class="block text-xs font-semibold text-[#004587] mb-1">CH Pres. (h)</label>
+         <input type="number" id="edit-uc-pres" min="0" oninput="editUcCalcTotal()" class="w-full px-2 py-2 border-2 border-gray-200 rounded-xl text-sm focus:border-[#004587] focus:outline-none">
+        </div>
+        <div>
+         <label class="block text-xs font-semibold text-[#004587] mb-1">CH EAD (h)</label>
+         <input type="number" id="edit-uc-ead" min="0" oninput="editUcCalcTotal()" class="w-full px-2 py-2 border-2 border-gray-200 rounded-xl text-sm focus:border-[#004587] focus:outline-none">
+        </div>
+        <div>
+         <label class="block text-xs font-semibold text-gray-500 mb-1">Total</label>
+         <input type="number" id="edit-uc-total" readonly class="w-full px-2 py-2 border-2 border-gray-100 rounded-xl bg-gray-50 text-sm cursor-not-allowed">
+        </div>
+       </div>
+       <div class="flex gap-2 pt-1">
+        <button onclick="fecharModalEditUC()" class="flex-1 py-2 rounded-xl border-2 border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50">Cancelar</button>
+        <button onclick="qSalvarEdicaoUC()" class="flex-1 py-2 rounded-xl bg-[#004587] text-white font-semibold text-sm hover:bg-[#003366]">Salvar</button>
+       </div>
+      </div>
+     </div>
+    </div>
+    <!-- Modal Excluir Lote -->
+    <div id="modal-excluir-lote" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+     <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl p-6">
+      <div class="flex justify-between items-center mb-5">
+       <h3 class="text-xl font-bold text-red-600">Excluir Lote</h3>
+       <button onclick="fecharModalExcluirLote()" class="text-gray-400 hover:text-gray-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+      </div>
+      <div class="space-y-4">
+       <div>
+        <label class="block text-[#004587] font-semibold mb-2">Unidade Curricular</label>
+        <select id="excluir-lote-uc" class="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-sm focus:border-red-400 outline-none">
+         <option value="">Selecione a UC...</option>
+        </select>
+       </div>
+       <div>
+        <label class="block text-[#004587] font-semibold mb-2">Tipo de Aula</label>
+        <div class="flex gap-4 text-sm">
+         <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="excluir-lote-tipo" value="presencial" checked> Presencial</label>
+         <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="excluir-lote-tipo" value="ead"> EAD</label>
+         <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="excluir-lote-tipo" value="todos"> Todos os tipos</label>
+        </div>
+       </div>
+       <div class="flex gap-2 pt-2">
+        <button onclick="fecharModalExcluirLote()" class="flex-1 py-2 rounded-xl border-2 border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50">Cancelar</button>
+        <button onclick="qExcluirLote()" class="flex-1 py-2 rounded-xl bg-red-500 text-white font-bold text-sm hover:bg-red-600">Excluir Lote</button>
+       </div>
+      </div>
      </div>
     </div>
     <!-- Modal Editar em Lote -->
@@ -1719,6 +1796,15 @@
       </div>
       <div class="p-6 space-y-5">
        <div id="modal-feriado-aviso" class="hidden"></div>
+       <!-- Lançamento manual -->
+       <label class="flex items-center gap-3 p-3 bg-amber-50 rounded-xl border border-amber-200 cursor-pointer">
+        <input type="checkbox" id="modal-manual-check" onchange="toggleModalManual()" class="w-4 h-4 accent-[#F7941D] rounded">
+        <span class="text-sm font-semibold text-amber-800">Lançamento manual (evento, reserva ou atividade sem UC)</span>
+       </label>
+       <div id="modal-manual-row" class="hidden">
+        <label class="block text-[#004587] font-semibold mb-2 text-sm">Nome do Curso / Atividade</label>
+        <input type="text" id="modal-manual-nome" placeholder="Ex: Evento Corporativo, Reunião, Reserva..." class="w-full px-4 py-3 border-2 border-amber-200 rounded-xl focus:border-[#F7941D] focus:outline-none text-sm">
+       </div>
        <!-- UC (oculto para parceiros) -->
        <div id="modal-uc-row">
         <label class="block text-[#004587] font-semibold mb-2">Unidade Curricular</label>
@@ -2178,7 +2264,30 @@
        <span style="display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;color:#64748b;"><span style="width:12px;height:4px;border-radius:2px;background:#dde8ff;border:1px solid #b0c4d8;display:inline-block;"></span>Disponível</span>
        <span style="display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;color:#64748b;"><span style="width:12px;height:4px;border-radius:2px;background:#004587;display:inline-block;"></span>Sala Fixa</span>
       </div>
-      <button onclick="msFecharTotemFS()" style="background:#f0f4ff;border:1.5px solid #dde8ff;color:#004587;padding:10px 24px;border-radius:12px;font-size:12px;cursor:pointer;font-weight:700;font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">✕ FECHAR</button>
+      <div style="display:flex;gap:8px;">
+       <button onclick="msTotemAbrirConfig()" style="background:#fff7ed;border:1.5px solid #fed7aa;color:#c2410c;padding:10px 18px;border-radius:12px;font-size:12px;cursor:pointer;font-weight:700;font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">⚙ MANUAL</button>
+       <button onclick="msFecharTotemFS()" style="background:#f0f4ff;border:1.5px solid #dde8ff;color:#004587;padding:10px 24px;border-radius:12px;font-size:12px;cursor:pointer;font-weight:700;font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">✕ FECHAR</button>
+      </div>
+     </div>
+     <!-- Overlay configuração Manual do Totem -->
+     <div id="ms-totem-config" style="display:none;position:absolute;inset:0;background:rgba(0,10,30,0.92);z-index:10;overflow-y:auto;padding:40px 36px;">
+      <div style="max-width:780px;margin:0 auto;">
+       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;">
+        <div>
+         <div style="font-size:22px;font-weight:900;color:white;font-family:'Montserrat',sans-serif;">Configuração do Totem</div>
+         <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;font-family:'Montserrat',sans-serif;">Modo Manual: preencha os campos para exibir na TV</div>
+        </div>
+        <button onclick="msTotemFecharConfig()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;padding:10px 20px;border-radius:10px;font-size:12px;cursor:pointer;font-weight:700;font-family:'Montserrat',sans-serif;">✕ Fechar</button>
+       </div>
+       <!-- Toggle Modo -->
+       <div style="display:flex;gap:10px;margin-bottom:28px;">
+        <button id="ms-t-btn-auto" onclick="msTotemSetModoConfig('auto')" style="flex:1;padding:14px;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;border:2px solid #004587;background:#004587;color:white;">▶ Automático (Mapa de Salas)</button>
+        <button id="ms-t-btn-manual" onclick="msTotemSetModoConfig('manual')" style="flex:1;padding:14px;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);">✏ Manual (20 campos livres)</button>
+       </div>
+       <!-- 20 campos manuais -->
+       <div id="ms-t-manual-campos" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:24px;"></div>
+       <button onclick="msTotemSalvarConfig()" style="width:100%;padding:14px;border-radius:12px;background:#F7941D;border:none;color:white;font-size:14px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">✓ SALVAR E APLICAR</button>
+      </div>
      </div>
     </div>
    </div>
@@ -4244,6 +4353,9 @@
         if (!painelMesAtual) painelMesAtual = { ano: new Date().getFullYear(), mes: new Date().getMonth() };
         renderPainelDocentes();
       }
+      if (tabName === 'progresso-ucs') {
+        renderProgressoUCs();
+      }
     };
 
     // ── UCs por Curso ──
@@ -4392,6 +4504,12 @@
         );
         return (idMatch || nomeMatch) && String(u.versao) === String(versao);
       });
+      // Ordena pelo número extraído do nome (UC1, UC2 ... UC11)
+      ucs.sort((a, b) => {
+        const nA = parseInt((a.uc_nome || '').match(/\d+/)?.[0] || '9999');
+        const nB = parseInt((b.uc_nome || '').match(/\d+/)?.[0] || '9999');
+        return nA - nB;
+      });
       if (ucs.length === 0) {
         lista.innerHTML = `<p class="text-gray-400 text-center py-6 text-sm">Nenhuma UC cadastrada para este curso na versão ${versao}. Adicione a primeira UC ao lado.</p>`;
         return;
@@ -4405,12 +4523,17 @@
         const detalhe = [pres, ead].filter(Boolean).join(' + ');
         return `
         <div class="flex items-center justify-between bg-white border-2 border-gray-100 rounded-xl px-4 py-3">
-          <div>
+          <div class="flex-1 min-w-0 mr-2">
             <p class="font-semibold text-[#004587] text-sm">${uc.uc_nome}</p>
             <p class="text-xs text-gray-500">${detalhe ? detalhe + ` = ${total}h total` : `Carga Horária: ${total}h`}</p>
           </div>
-          <button data-ucnome="${uc.uc_nome.replace(/"/g,'&quot;')}" data-cursoid="${cursoId}" data-versao="${versao}"
-            onclick="qRemoverUC(this)" class="text-red-400 hover:text-red-600 text-xs font-semibold px-2 py-1 rounded hover:bg-red-50 transition-all">Remover</button>
+          <div class="flex gap-1 flex-shrink-0">
+            <button data-ucnome="${uc.uc_nome.replace(/"/g,'&quot;')}" data-cursoid="${cursoId}" data-versao="${versao}"
+              data-pres="${presNum}" data-ead="${eadNum}" data-total="${total}"
+              onclick="qEditarUC(this)" class="text-blue-500 hover:text-blue-700 text-xs font-semibold px-2 py-1 rounded hover:bg-blue-50 transition-all">Editar</button>
+            <button data-ucnome="${uc.uc_nome.replace(/"/g,'&quot;')}" data-cursoid="${cursoId}" data-versao="${versao}"
+              onclick="qRemoverUC(this)" class="text-red-400 hover:text-red-600 text-xs font-semibold px-2 py-1 rounded hover:bg-red-50 transition-all">Remover</button>
+          </div>
         </div>`;
       }).join('');
     }
@@ -4462,11 +4585,203 @@
       if (!confirm(`Remover a UC "${ucNome}" (versão ${versao})?`)) return;
       try {
         await deleteFromSheet('UCs', 'uc_nome', ucNome);
-        allUCsVersion++; // protege contra sobrescrita por loadUCs() pendente
+        allUCsVersion++;
         allUCs = allUCs.filter(u => !(u.uc_nome === ucNome && u.curso_id === cursoId && String(u.versao) === String(versao)));
         qRenderUCsLista(cursoId, versao);
         showSuccessMessage('✅ UC removida!');
       } catch(err) { showErrorMessage('❌ Erro: ' + err.message); }
+    };
+
+    // ── Feature 1: Editar UC ──
+    window.qEditarUC = function(btn) {
+      document.getElementById('edit-uc-nome-original').value = btn.dataset.ucnome;
+      document.getElementById('edit-uc-cursoid').value = btn.dataset.cursoid;
+      document.getElementById('edit-uc-versao').value = btn.dataset.versao;
+      document.getElementById('edit-uc-nome').value = btn.dataset.ucnome;
+      document.getElementById('edit-uc-pres').value = btn.dataset.pres || '';
+      document.getElementById('edit-uc-ead').value  = btn.dataset.ead  || '';
+      document.getElementById('edit-uc-total').value = (parseFloat(btn.dataset.pres)||0) + (parseFloat(btn.dataset.ead)||0) || '';
+      const modal = document.getElementById('modal-uc-edit');
+      modal.classList.remove('hidden'); modal.classList.add('flex');
+    };
+    window.fecharModalEditUC = function() {
+      const modal = document.getElementById('modal-uc-edit');
+      modal.classList.add('hidden'); modal.classList.remove('flex');
+    };
+    window.editUcCalcTotal = function() {
+      const p = parseFloat(document.getElementById('edit-uc-pres').value) || 0;
+      const e = parseFloat(document.getElementById('edit-uc-ead').value)  || 0;
+      document.getElementById('edit-uc-total').value = (p + e) || '';
+    };
+    window.qSalvarEdicaoUC = async function() {
+      const nomeOrig = document.getElementById('edit-uc-nome-original').value;
+      const cursoId  = document.getElementById('edit-uc-cursoid').value;
+      const versao   = document.getElementById('edit-uc-versao').value;
+      const novoNome = document.getElementById('edit-uc-nome').value.trim();
+      const pres  = parseFloat(document.getElementById('edit-uc-pres').value) || 0;
+      const ead   = parseFloat(document.getElementById('edit-uc-ead').value)  || 0;
+      const total = pres + ead;
+      if (!novoNome) { showErrorMessage('❌ Nome da UC não pode ser vazio'); return; }
+      const btn = document.querySelector('#modal-uc-edit button[onclick="qSalvarEdicaoUC()"]');
+      btn.disabled = true; btn.textContent = '⏳ Salvando...';
+      try {
+        await deleteFromSheet('UCs', 'uc_nome', nomeOrig);
+        const cursoNome = quadroCursoAtual?.nome || '';
+        await postToSheet('UCs', [cursoId, cursoNome, versao, novoNome, pres, ead, total]);
+        allUCsVersion++;
+        const idx = allUCs.findIndex(u => u.uc_nome === nomeOrig && u.curso_id === cursoId && String(u.versao) === String(versao));
+        const upd = { curso_id: cursoId, curso_nome: cursoNome, versao, uc_nome: novoNome, ch_presencial: pres, ch_ead: ead, carga_horaria_total: total };
+        if (idx >= 0) allUCs[idx] = upd; else allUCs.push(upd);
+        fecharModalEditUC();
+        qRenderUCsLista(cursoId, versao);
+        showSuccessMessage('✅ UC atualizada!');
+      } catch(err) { showErrorMessage('❌ Erro: ' + err.message); }
+      finally { btn.disabled = false; btn.textContent = 'Salvar'; }
+    };
+
+    // ── Feature 2: Progresso de UCs ──
+    window.renderProgressoUCs = async function() {
+      const container = document.getElementById('progresso-ucs-container');
+      if (!container) return;
+      if (!quadroTurmaAtual) {
+        container.innerHTML = '<p class="text-gray-400 text-center py-10 text-sm">Selecione uma turma no <strong>Quadro Semanal</strong> para ver o progresso das UCs.</p>';
+        return;
+      }
+      container.innerHTML = '<p class="text-gray-400 text-center py-4 text-sm">Carregando...</p>';
+      if (allUCs.length === 0) await loadUCs();
+      if (allAlocacoes.length === 0) allAlocacoes = await carregarDaAba('Alocacoes');
+      const norm = s => (s||'').toLowerCase().normalize('NFC').trim();
+      const versaoTurma = String(quadroTurmaAtual.versao_plano || '');
+      const dadosCursos = await carregarDadosCursos();
+      const todosCursos = [...(dadosCursos.cursos_tecnicos||[]), ...(dadosCursos.cursos_livres||[])];
+      const cursoEnc = todosCursos.find(c => norm(c.nome) === norm(quadroTurmaAtual.nome_curso));
+      const ucs = allUCs.filter(u => {
+        const mId   = cursoEnc && u.curso_id === cursoEnc.id;
+        const mNome = norm(u.curso_nome) === norm(quadroTurmaAtual.nome_curso);
+        const mVers = !versaoTurma || String(u.versao) === versaoTurma;
+        return (mId || mNome) && mVers;
+      });
+      ucs.sort((a, b) => {
+        const nA = parseInt((a.uc_nome||'').match(/\d+/)?.[0]||'9999');
+        const nB = parseInt((b.uc_nome||'').match(/\d+/)?.[0]||'9999');
+        return nA - nB;
+      });
+      const alocsTurma = allAlocacoes.filter(a => String(a.turma_codigo) === String(quadroTurmaAtual.codigo_oferta));
+      if (ucs.length === 0) {
+        container.innerHTML = `<div class="text-center py-8">
+          <p class="text-amber-600 font-semibold">Nenhuma UC cadastrada para ${quadroTurmaAtual.nome_curso}${versaoTurma ? ' versão '+versaoTurma : ''}.</p>
+          <p class="text-gray-400 text-sm mt-1">Cadastre as UCs na aba "UCs por Curso".</p>
+        </div>`;
+        return;
+      }
+      let tPlanPres=0, tPlanEad=0, tPlanTotal=0, tRealPres=0, tRealEad=0;
+      const rows = ucs.map(uc => {
+        const planPres  = Number(uc.ch_presencial)||0;
+        const planEad   = Number(uc.ch_ead)||0;
+        const planTotal = Number(uc.carga_horaria_total||uc.carga_horaria)||(planPres+planEad);
+        const alocUC = alocsTurma.filter(a => norm(a.uc_nome) === norm(uc.uc_nome));
+        const realPres  = alocUC.filter(a => (a.tipo_aula||'').toLowerCase() !== 'ead').reduce((s,a) => s+(parseFloat(a.horas)||0), 0);
+        const realEad   = alocUC.filter(a => (a.tipo_aula||'').toLowerCase() === 'ead').reduce((s,a) => s+(parseFloat(a.horas)||0), 0);
+        const realTotal = realPres + realEad;
+        const faltaTotal = Math.max(0, planTotal - realTotal);
+        tPlanPres+=planPres; tPlanEad+=planEad; tPlanTotal+=planTotal; tRealPres+=realPres; tRealEad+=realEad;
+        const cor = faltaTotal===0?'text-green-600':faltaTotal<planTotal*0.5?'text-amber-600':'text-red-500';
+        const ico = faltaTotal===0?'✓':faltaTotal<planTotal*0.5?'◑':'○';
+        return `<tr class="border-b border-gray-100 hover:bg-blue-50/30">
+          <td class="px-3 py-2.5 text-sm font-medium text-gray-800">${uc.uc_nome}</td>
+          <td class="px-3 py-2.5 text-sm text-center text-gray-600">${planPres||'—'}</td>
+          <td class="px-3 py-2.5 text-sm text-center text-orange-600">${planEad||'—'}</td>
+          <td class="px-3 py-2.5 text-sm text-center font-semibold text-[#004587]">${planTotal}</td>
+          <td class="px-3 py-2.5 text-sm text-center text-gray-600">${realPres||0}</td>
+          <td class="px-3 py-2.5 text-sm text-center text-orange-600">${realEad||0}</td>
+          <td class="px-3 py-2.5 text-sm text-center font-semibold text-gray-700">${realTotal||0}</td>
+          <td class="px-3 py-2.5 text-sm text-center font-bold ${cor}">${ico} ${faltaTotal}</td>
+        </tr>`;
+      });
+      const tFalta = Math.max(0, tPlanTotal-(tRealPres+tRealEad));
+      container.innerHTML = `
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-bold text-[#004587]">${quadroTurmaAtual.nome_curso}</h3>
+            <p class="text-xs text-gray-500">${quadroTurmaAtual.codigo_oferta}${versaoTurma?' · Versão '+versaoTurma:''} · ${quadroTurmaAtual.periodo}</p>
+          </div>
+          <button onclick="renderProgressoUCs()" class="text-xs text-[#004587] border border-[#004587]/20 rounded-lg px-3 py-1.5 hover:bg-blue-50 font-semibold">↺ Atualizar</button>
+        </div>
+        <div class="overflow-x-auto rounded-xl border border-gray-200">
+          <table class="w-full text-left">
+            <thead><tr class="bg-[#004587] text-white text-xs font-semibold uppercase tracking-wide">
+              <th class="px-3 py-3 rounded-tl-xl">Unidade Curricular</th>
+              <th class="px-3 py-3 text-center">Plan. Pres.</th>
+              <th class="px-3 py-3 text-center">Plan. EAD</th>
+              <th class="px-3 py-3 text-center">Plan. Total</th>
+              <th class="px-3 py-3 text-center">Real. Pres.</th>
+              <th class="px-3 py-3 text-center">Real. EAD</th>
+              <th class="px-3 py-3 text-center">Real. Total</th>
+              <th class="px-3 py-3 text-center rounded-tr-xl">Faltando</th>
+            </tr></thead>
+            <tbody class="bg-white">${rows.join('')}</tbody>
+            <tfoot><tr class="bg-gray-50 font-bold text-sm border-t-2 border-[#004587]/20">
+              <td class="px-3 py-3 text-[#004587]">Total Geral</td>
+              <td class="px-3 py-3 text-center">${tPlanPres}</td>
+              <td class="px-3 py-3 text-center text-orange-600">${tPlanEad}</td>
+              <td class="px-3 py-3 text-center text-[#004587]">${tPlanTotal}</td>
+              <td class="px-3 py-3 text-center">${tRealPres}</td>
+              <td class="px-3 py-3 text-center text-orange-600">${tRealEad}</td>
+              <td class="px-3 py-3 text-center">${tRealPres+tRealEad}</td>
+              <td class="px-3 py-3 text-center font-black ${tFalta===0?'text-green-600':'text-red-600'}">${tFalta===0?'✓ Completo':tFalta+'h'}</td>
+            </tr></tfoot>
+          </table>
+        </div>
+        <p class="text-xs text-gray-400 mt-3">* Planejado = CH definida nas UCs. Realizado = horas lançadas no Quadro Semanal para esta turma.</p>`;
+    };
+
+    // ── Feature 3: Excluir Lote ──
+    window.qAbrirModalExcluirLote = async function() {
+      if (!quadroTurmaAtual) { showErrorMessage('❌ Selecione uma turma primeiro'); return; }
+      const modal = document.getElementById('modal-excluir-lote');
+      modal.classList.remove('hidden'); modal.classList.add('flex');
+      if (allAlocacoes.length === 0) allAlocacoes = await carregarDaAba('Alocacoes');
+      const alocsTurma = allAlocacoes.filter(a => String(a.turma_codigo) === String(quadroTurmaAtual.codigo_oferta));
+      const ucsUnicas = [...new Set(alocsTurma.map(a => a.uc_nome).filter(Boolean))].sort((a,b) => {
+        const nA = parseInt((a||'').match(/\d+/)?.[0]||'9999');
+        const nB = parseInt((b||'').match(/\d+/)?.[0]||'9999');
+        return nA - nB;
+      });
+      const ucSel = document.getElementById('excluir-lote-uc');
+      ucSel.innerHTML = '<option value="">Selecione a UC...</option>' + ucsUnicas.map(u => `<option value="${u}">${u}</option>`).join('');
+    };
+    window.fecharModalExcluirLote = function() {
+      const m = document.getElementById('modal-excluir-lote');
+      m.classList.add('hidden'); m.classList.remove('flex');
+    };
+    window.qExcluirLote = async function() {
+      const ucNome = document.getElementById('excluir-lote-uc').value;
+      const tipo   = document.querySelector('input[name="excluir-lote-tipo"]:checked')?.value || 'presencial';
+      if (!ucNome) { showErrorMessage('❌ Selecione a UC'); return; }
+      const norm = s => (s||'').toLowerCase().normalize('NFC').trim();
+      const alocsTurma = allAlocacoes.filter(a => String(a.turma_codigo) === String(quadroTurmaAtual.codigo_oferta));
+      const alcsExcluir = alocsTurma.filter(a => {
+        if (norm(a.uc_nome) !== norm(ucNome)) return false;
+        if (tipo === 'todos') return true;
+        return (a.tipo_aula||'').toLowerCase() === tipo;
+      });
+      if (alcsExcluir.length === 0) { showErrorMessage('❌ Nenhum lançamento encontrado para esta combinação'); return; }
+      const tipoLabel = tipo === 'todos' ? 'todos os tipos' : tipo;
+      if (!confirm(`Excluir ${alcsExcluir.length} lançamento(s) de "${ucNome}" — ${tipoLabel}?\n\nEsta ação não pode ser desfeita.`)) return;
+      const btn = document.querySelector('#modal-excluir-lote button[onclick="qExcluirLote()"]');
+      btn.disabled = true; btn.textContent = `⏳ Excluindo ${alcsExcluir.length}...`;
+      let erros = 0;
+      for (const a of alcsExcluir) {
+        try { if (a.aloc_id) await deleteFromSheet('Alocacoes', 'aloc_id', a.aloc_id); }
+        catch(e) { erros++; }
+      }
+      const ids = new Set(alcsExcluir.map(a => a.aloc_id).filter(Boolean));
+      allAlocacoes = allAlocacoes.filter(a => !ids.has(a.aloc_id));
+      fecharModalExcluirLote();
+      qRenderMonthlyGrid(quadroTurmaAtual);
+      btn.disabled = false; btn.textContent = 'Excluir Lote';
+      if (erros) showErrorMessage(`⚠️ Concluído com ${erros} erro(s). Verifique a planilha.`);
+      else showSuccessMessage(`✅ ${alcsExcluir.length} lançamento(s) excluídos!`);
     };
 
     // ── Quadro Semanal ──
@@ -4899,6 +5214,9 @@
       document.getElementById('modal-horas').value = hDefault;
       // Docentes disponíveis
       await qPopularDocentesDisponiveis(diaNome);
+      // Reset manual mode
+      const manualCheck = document.getElementById('modal-manual-check');
+      if (manualCheck) { manualCheck.checked = false; toggleModalManual(); }
     };
 
     window.fecharModalAlocacao = function() {
@@ -5758,11 +6076,29 @@
         (ead ? `<p class="text-xs mt-1"><span class="font-bold text-[#F7941D]">EAD:</span> ${fmt(eadHoras)}/${fmt(ead)} alocadas · <span class="font-bold ${corEad}">${fmt(eadRestam)} restam</span></p>` : '');
     };
 
+    window.toggleModalManual = function() {
+      const checked = document.getElementById('modal-manual-check')?.checked;
+      const ucRow   = document.getElementById('modal-uc-row');
+      const mRow    = document.getElementById('modal-manual-row');
+      const tipoC   = document.getElementById('modal-tipo-container');
+      if (ucRow)  ucRow.style.display  = checked ? 'none' : '';
+      if (mRow)   mRow.classList.toggle('hidden', !checked);
+      if (tipoC)  tipoC.classList.add('hidden');
+    };
+
     window.salvarAlocacao = async function() {
-      const ucNome = document.getElementById('modal-uc-select').value;
-      const docenteNome = document.getElementById('modal-docente-select').value;
-      const isParc = isParceiro(quadroTurmaAtual);
-      if ((!ucNome && !isParc) || !docenteNome) { showErrorMessage('❌ Selecione ' + (isParc ? '' : 'UC e ') + 'Docente'); return; }
+      const isManual = document.getElementById('modal-manual-check')?.checked;
+      const isParc   = isParceiro(quadroTurmaAtual);
+      let ucNome, docenteNome;
+      if (isManual) {
+        ucNome = (document.getElementById('modal-manual-nome')?.value || '').trim();
+        docenteNome = document.getElementById('modal-docente-select').value || '';
+        if (!ucNome) { showErrorMessage('❌ Informe o nome do curso/atividade'); return; }
+      } else {
+        ucNome = document.getElementById('modal-uc-select').value;
+        docenteNome = document.getElementById('modal-docente-select').value;
+        if ((!ucNome && !isParc) || !docenteNome) { showErrorMessage('❌ Selecione ' + (isParc ? '' : 'UC e ') + 'Docente'); return; }
+      }
       // Bloqueia alocação em feriados, pontes e suspensões (suspensao_meio permite)
       if (isDataBloqueada(modalAlocacaoData)) {
         showErrorMessage(`🚫 Data bloqueada: ${FERIADOS_SENAC_2026[modalAlocacaoData].nome}`); return;
@@ -5771,7 +6107,7 @@
       if (isReuniaoPedagogica(modalAlocacaoData) && !isAprendizagemComercial(quadroTurmaAtual)) {
         showErrorMessage('📋 Reunião Pedagógica — sem aula para cursos técnicos e livres neste dia.'); return;
       }
-      const ucNomeFinal = isParc ? (ucNome || quadroTurmaAtual.nome_curso) : ucNome;
+      const ucNomeFinal = isManual ? ucNome : (isParc ? (ucNome || quadroTurmaAtual.nome_curso) : ucNome);
       if (!quadroTurmaAtual || !modalAlocacaoData) return;
       const btn = document.querySelector('#modal-alocacao button[onclick="salvarAlocacao()"]');
       btn.disabled = true; btn.textContent = '⏳ Salvando...';
@@ -5784,7 +6120,7 @@
       const [y,m,d] = modalAlocacaoData.split('-').map(Number);
       const diaSemana = DIAS_ID[new Date(y, m-1, d).getDay()];
       try {
-        const tipoAulaFinal = isParc ? 'parceiro' : tipoAula;
+        const tipoAulaFinal = isManual ? 'manual' : (isParc ? 'parceiro' : tipoAula);
         await postToSheet('Alocacoes', [alocId, quadroTurmaAtual.codigo_oferta, quadroTurmaAtual.nome_curso, modalAlocacaoData, diaSemana, ucNomeFinal, docenteNome, quadroTurmaAtual.periodo, tipoAulaFinal, horas]);
         allAlocacoes.push({ aloc_id: alocId, turma_codigo: quadroTurmaAtual.codigo_oferta, nome_curso: quadroTurmaAtual.nome_curso, data: modalAlocacaoData, dia_semana: diaSemana, uc_nome: ucNomeFinal, docente_nome: docenteNome, periodo: quadroTurmaAtual.periodo, tipo_aula: tipoAulaFinal, horas });
         fecharModalAlocacao();
@@ -6966,6 +7302,46 @@
       msRenderTotemBtns();
       const grid = document.getElementById('ms-t-grid');
       if (!grid) return;
+      // Manual mode: render free-text cards
+      if (msTotemGetModo() === 'manual') {
+        const list = msTotemGetManualList().filter(v => v);
+        grid.innerHTML = list.length
+          ? list.map(texto => {
+              const parts = texto.split('|').map(s => s.trim());
+              const sal  = parts[0] || '';
+              const cur  = parts[1] || '';
+              const doc  = parts[2] || '';
+              const resto = parts.slice(3).join(' | ');
+              return `<div style="background:white;border-radius:12px;border-left:5px solid #F7941D;box-shadow:0 3px 16px rgba(0,0,0,0.08);animation:ms-glow-orange 3s ease-in-out infinite;display:flex;flex-direction:row;align-items:stretch;overflow:hidden;">
+                <div style="width:27%;padding:9px 11px;display:flex;flex-direction:column;justify-content:center;gap:2px;background:rgba(247,148,29,0.07);border-right:1px solid rgba(247,148,29,0.13);flex-shrink:0;">
+                  <span style="font-size:16px;font-weight:900;color:#F7941D;font-family:'Montserrat',sans-serif;line-height:1;">${sal}</span>
+                </div>
+                <div style="width:73%;padding:9px 13px;display:flex;flex-direction:column;justify-content:center;gap:2px;">
+                  <div style="display:flex;align-items:center;gap:5px;margin-bottom:1px;">
+                    <span style="width:6px;height:6px;border-radius:50%;background:#F7941D;flex-shrink:0;animation:ms-blink 1.8s ease-in-out infinite;"></span>
+                    <span style="font-size:8px;font-weight:800;color:#F7941D;letter-spacing:1.5px;text-transform:uppercase;font-family:'Montserrat',sans-serif;">Em uso</span>
+                  </div>
+                  <div style="font-size:18px;font-weight:900;color:#0a1628;line-height:1.1;font-family:'Montserrat',sans-serif;">${cur}</div>
+                  ${doc ? `<div style="font-size:12px;color:#475569;font-weight:600;font-family:'Montserrat',sans-serif;margin-top:1px;">${doc}</div>` : ''}
+                  ${resto ? `<div style="font-size:10px;color:#94a3b8;font-weight:500;font-family:'Montserrat',sans-serif;">${resto}</div>` : ''}
+                </div>
+              </div>`;
+            }).join('')
+          : `<div style="grid-column:1/-1;display:flex;align-items:center;justify-content:center;height:200px;">
+               <div style="text-align:center;color:rgba(255,255,255,0.4);font-family:'Montserrat',sans-serif;">
+                 <div style="font-size:32px;margin-bottom:12px;">✏</div>
+                 <div style="font-size:14px;font-weight:700;">Modo Manual — nenhum campo preenchido</div>
+                 <div style="font-size:11px;margin-top:6px;">Clique em ⚙ MANUAL para configurar</div>
+               </div>
+             </div>`;
+        const oEl = document.getElementById('ms-t-stat-ocup');
+        const dEl = document.getElementById('ms-t-stat-disp');
+        const fEl = document.getElementById('ms-t-stat-fix');
+        if (oEl) oEl.textContent = list.length;
+        if (dEl) dEl.textContent = 20 - list.length;
+        if (fEl) fEl.textContent = 0;
+        return;
+      }
       let tOcup = 0, tDisp = 0, tFix = 0;
       // Ordena cada coluna: ocupadas primeiro, disponíveis depois (preserva ordem relativa)
       const sortCol = salas => {
@@ -7026,6 +7402,73 @@
     }
 
     window.msTotemSetPer = function(per) { msTotemPer = per; msRenderTotemFS(); msUpdateTotemClock(); };
+
+    // ── Totem Manual Mode helpers ─────────────────────────────────────
+    function msTotemGetModo() { return localStorage.getItem('ms_totem_modo') || 'auto'; }
+    function msTotemSetModo(m) { localStorage.setItem('ms_totem_modo', m); }
+    function msTotemGetManualList() {
+      try { return JSON.parse(localStorage.getItem('ms_totem_manual_list') || '[]'); } catch { return []; }
+    }
+    function msTotemSetManualList(arr) { localStorage.setItem('ms_totem_manual_list', JSON.stringify(arr)); }
+
+    window.msTotemAbrirConfig = function() {
+      const overlay = document.getElementById('ms-totem-config');
+      if (!overlay) return;
+      overlay.style.display = 'block';
+      const modo = msTotemGetModo();
+      const list = msTotemGetManualList();
+      // update toggle buttons style
+      const btnAuto   = document.getElementById('ms-t-btn-auto');
+      const btnManual = document.getElementById('ms-t-btn-manual');
+      if (btnAuto && btnManual) {
+        if (modo === 'auto') {
+          btnAuto.style.background   = '#004587'; btnAuto.style.color   = 'white'; btnAuto.style.borderColor   = '#004587';
+          btnManual.style.background = 'rgba(255,255,255,0.08)'; btnManual.style.color = 'rgba(255,255,255,0.6)'; btnManual.style.borderColor = 'rgba(255,255,255,0.2)';
+        } else {
+          btnManual.style.background = '#F7941D'; btnManual.style.color = 'white'; btnManual.style.borderColor = '#F7941D';
+          btnAuto.style.background   = 'rgba(255,255,255,0.08)'; btnAuto.style.color = 'rgba(255,255,255,0.6)'; btnAuto.style.borderColor = 'rgba(255,255,255,0.2)';
+        }
+      }
+      // render 20 fields
+      const campos = document.getElementById('ms-t-manual-campos');
+      if (campos) {
+        campos.innerHTML = Array.from({length: 20}, (_, i) => {
+          const val = (list[i] || '').replace(/"/g, '&quot;');
+          return `<input id="ms-t-campo-${i}" type="text" value="${val}" maxlength="80"
+            placeholder="Campo ${i+1} — ex: Sala 01 | Curso | Docente"
+            style="width:100%;padding:10px 14px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:white;font-size:12px;font-family:'Montserrat',sans-serif;outline:none;box-sizing:border-box;">`;
+        }).join('');
+      }
+    };
+
+    window.msTotemFecharConfig = function() {
+      const overlay = document.getElementById('ms-totem-config');
+      if (overlay) overlay.style.display = 'none';
+    };
+
+    window.msTotemSetModoConfig = function(modo) {
+      msTotemSetModo(modo);
+      const btnAuto   = document.getElementById('ms-t-btn-auto');
+      const btnManual = document.getElementById('ms-t-btn-manual');
+      if (btnAuto && btnManual) {
+        if (modo === 'auto') {
+          btnAuto.style.background   = '#004587'; btnAuto.style.color   = 'white'; btnAuto.style.borderColor   = '#004587';
+          btnManual.style.background = 'rgba(255,255,255,0.08)'; btnManual.style.color = 'rgba(255,255,255,0.6)'; btnManual.style.borderColor = 'rgba(255,255,255,0.2)';
+        } else {
+          btnManual.style.background = '#F7941D'; btnManual.style.color = 'white'; btnManual.style.borderColor = '#F7941D';
+          btnAuto.style.background   = 'rgba(255,255,255,0.08)'; btnAuto.style.color = 'rgba(255,255,255,0.6)'; btnAuto.style.borderColor = 'rgba(255,255,255,0.2)';
+        }
+      }
+    };
+
+    window.msTotemSalvarConfig = function() {
+      const list = Array.from({length: 20}, (_, i) =>
+        (document.getElementById(`ms-t-campo-${i}`)?.value || '').trim()
+      );
+      msTotemSetManualList(list);
+      msTotemFecharConfig();
+      msRenderTotemFS();
+    };
 
     function msRenderTotemPreview() {
       const prev = document.getElementById('ms-totem-preview');
