@@ -2195,6 +2195,9 @@
          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
          Abrir em Tela Cheia
         </button>
+        <button onclick="msTotemAbrirConfig()" class="bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-700 font-bold px-5 py-2 rounded-xl text-sm flex items-center gap-2 transition-all">
+         ⚙ Config. Manual
+        </button>
        </div>
       </div>
       <div class="bg-gradient-to-br from-[#eef2ff] to-[#f0f4ff] rounded-2xl p-6 flex items-center justify-center min-h-[300px] border border-[#dde8ff]">
@@ -2269,27 +2272,29 @@
        <button onclick="msFecharTotemFS()" style="background:#f0f4ff;border:1.5px solid #dde8ff;color:#004587;padding:10px 24px;border-radius:12px;font-size:12px;cursor:pointer;font-weight:700;font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">✕ FECHAR</button>
       </div>
      </div>
-     <!-- Overlay configuração Manual do Totem -->
-     <div id="ms-totem-config" style="display:none;position:absolute;inset:0;background:rgba(0,10,30,0.92);z-index:10;overflow-y:auto;padding:40px 36px;">
-      <div style="max-width:780px;margin:0 auto;">
-       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;">
-        <div>
-         <div style="font-size:22px;font-weight:900;color:white;font-family:'Montserrat',sans-serif;">Configuração do Totem</div>
-         <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;font-family:'Montserrat',sans-serif;">Modo Manual: preencha os campos para exibir na TV</div>
-        </div>
-        <button onclick="msTotemFecharConfig()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;padding:10px 20px;border-radius:10px;font-size:12px;cursor:pointer;font-weight:700;font-family:'Montserrat',sans-serif;">✕ Fechar</button>
-       </div>
-       <!-- Toggle Modo -->
-       <div style="display:flex;gap:10px;margin-bottom:28px;">
-        <button id="ms-t-btn-auto" onclick="msTotemSetModoConfig('auto')" style="flex:1;padding:14px;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;border:2px solid #004587;background:#004587;color:white;">▶ Automático (Mapa de Salas)</button>
-        <button id="ms-t-btn-manual" onclick="msTotemSetModoConfig('manual')" style="flex:1;padding:14px;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);">✏ Manual (20 campos livres)</button>
-       </div>
-       <!-- 20 campos manuais -->
-       <div id="ms-t-manual-campos" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:24px;"></div>
-       <button onclick="msTotemSalvarConfig()" style="width:100%;padding:14px;border-radius:12px;background:#F7941D;border:none;color:white;font-size:14px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">✓ SALVAR E APLICAR</button>
-      </div>
+     <!-- Overlay configuração Manual do Totem (movido para nível fixo da página) -->
      </div>
     </div>
+   </div>
+  </div>
+  <!-- Overlay configuração Manual do Totem — fixo, acessível de qualquer contexto -->
+  <div id="ms-totem-config" style="display:none;position:fixed;inset:0;background:rgba(0,10,30,0.92);z-index:99999;overflow-y:auto;padding:40px 36px;">
+   <div style="max-width:780px;margin:0 auto;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;">
+     <div>
+      <div style="font-size:22px;font-weight:900;color:white;font-family:'Montserrat',sans-serif;">Configuração do Totem</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;font-family:'Montserrat',sans-serif;">Modo Manual: preencha os campos para exibir na TV</div>
+     </div>
+     <button onclick="msTotemFecharConfig()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;padding:10px 20px;border-radius:10px;font-size:12px;cursor:pointer;font-weight:700;font-family:'Montserrat',sans-serif;">✕ Fechar</button>
+    </div>
+    <!-- Toggle Modo -->
+    <div style="display:flex;gap:10px;margin-bottom:28px;">
+     <button id="ms-t-btn-auto" onclick="msTotemSetModoConfig('auto')" style="flex:1;padding:14px;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;border:2px solid #004587;background:#004587;color:white;">▶ Automático (Mapa de Salas)</button>
+     <button id="ms-t-btn-manual" onclick="msTotemSetModoConfig('manual')" style="flex:1;padding:14px;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);">✏ Manual (20 campos livres)</button>
+    </div>
+    <!-- 20 campos manuais -->
+    <div id="ms-t-manual-campos" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:24px;"></div>
+    <button onclick="msTotemSalvarConfig()" style="width:100%;padding:14px;border-radius:12px;background:#F7941D;border:none;color:white;font-size:14px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">✓ SALVAR E APLICAR</button>
    </div>
   </div>
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
