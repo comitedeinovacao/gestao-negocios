@@ -643,9 +643,9 @@
          <svg class="w-4 h-4 text-[#004587]" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
          Verificar turmas já cadastradas antes de registrar
         </span>
-        <svg id="busca-turmas-chevron" class="w-4 h-4 text-gray-400 transition-transform" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        <svg id="busca-turmas-chevron" class="w-4 h-4 text-gray-400 transition-transform" style="transform:rotate(180deg)" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
        </button>
-       <div id="busca-turmas-panel" style="display:none" class="px-5 pb-5 bg-white border-t border-gray-100">
+       <div id="busca-turmas-panel" class="px-5 pb-5 bg-white border-t border-gray-100">
         <div class="flex gap-2 mt-4 mb-3">
          <input type="text" id="cad-busca-turma-input" placeholder="Buscar por nome do curso ou código..." oninput="cadBuscarTurmas(this.value)"
            class="flex-1 px-3 py-2 border-2 border-gray-200 rounded-xl text-sm focus:border-[#004587] focus:outline-none">
@@ -656,7 +656,7 @@
           <option value="parceiro">Parceiros</option>
          </select>
         </div>
-        <div id="cad-busca-turma-resultado" class="max-h-56 overflow-y-auto space-y-1 text-sm text-gray-500">
+        <div id="cad-busca-turma-resultado" class="max-h-80 overflow-y-auto space-y-1 text-sm text-gray-500">
          <p class="text-xs text-gray-400 text-center py-3">Digite para buscar turmas cadastradas.</p>
         </div>
        </div>
@@ -2642,6 +2642,21 @@
       document.querySelectorAll('#cadastro-page .tab-content').forEach(c => { c.style.display = 'none'; });
       btn.classList.add('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
       document.getElementById('tab-' + tabName).style.display = 'block';
+      // Pré-carrega e abre busca de turmas automaticamente ao acessar a aba
+      if (tabName === 'turmas') {
+        const panel = document.getElementById('busca-turmas-panel');
+        const chev  = document.getElementById('busca-turmas-chevron');
+        if (panel && panel.style.display === 'none') {
+          panel.style.display = 'block';
+          if (chev) chev.style.transform = 'rotate(180deg)';
+          const div = document.getElementById('cad-busca-turma-resultado');
+          if (div) div.innerHTML = '<p class="text-xs text-gray-400 text-center py-3">Carregando turmas...</p>';
+          Promise.all([loadTurmasDeduped(), carregarDadosCursos()]).then(([turmas]) => {
+            _turmasConsultaCache = turmas;
+            window.cadBuscarTurmas(document.getElementById('cad-busca-turma-input')?.value || '');
+          }).catch(() => {});
+        }
+      }
     };
 
     // Variável para docente selecionado
@@ -2915,7 +2930,7 @@
       const open  = panel.style.display === 'none';
       panel.style.display = open ? 'block' : 'none';
       if (chev) chev.style.transform = open ? 'rotate(180deg)' : '';
-      if (open) {
+      if (open && !Array.isArray(_turmasConsultaCache)) {
         const div = document.getElementById('cad-busca-turma-resultado');
         if (div) div.innerHTML = '<p class="text-xs text-gray-400 text-center py-3">Carregando turmas...</p>';
         try {
@@ -2957,14 +2972,32 @@
             const tag = isParc
               ? `<span class="text-[10px] font-bold text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full">Parceiro</span>`
               : `<span class="text-[10px] font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">${periodoLabel[t.periodo] || t.periodo || '-'}</span>`;
-            return `<div class="flex items-center justify-between ${cor} border rounded-xl px-3 py-2">
-              <div>
-                <p class="text-xs font-semibold text-gray-800">${t.nome_curso || '—'} <span class="text-gray-400 font-normal">· ${t.codigo_oferta || ''}</span></p>
-                <p class="text-[10px] text-gray-400">${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)}</p>
+            const apelidoHtml = t.apelido ? `<span class="text-[10px] font-bold text-[#F7941D]">${t.apelido}</span> · ` : '';
+            const cod = (t.codigo_oferta || '').replace(/'/g, "\\'");
+            return `<div class="flex items-center justify-between gap-2 ${cor} border rounded-xl px-3 py-2">
+              <div class="min-w-0 flex-1">
+                <p class="text-xs font-semibold text-gray-800 truncate">${t.nome_curso || '—'} <span class="text-gray-400 font-normal">· ${t.codigo_oferta || ''}</span></p>
+                <p class="text-[10px] text-gray-400">${apelidoHtml}${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)}</p>
               </div>
-              ${tag}
+              <div class="flex items-center gap-1.5 flex-shrink-0">
+                ${tag}
+                <button onclick="cadEditarTurmaByCode('${cod}')" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#004587] text-white hover:bg-[#003366] transition-colors">Editar</button>
+              </div>
             </div>`;
           }).join('');
+    };
+
+    // Abre o modal de edição de turma a partir da busca rápida no Cadastro
+    window.cadEditarTurmaByCode = function(codigo) {
+      if (!Array.isArray(_turmasConsultaCache)) return;
+      const t = _turmasConsultaCache.find(x => x.codigo_oferta === codigo);
+      if (!t) return;
+      // Garante que a turma está no _turmasDisplayCache para abrirEditarTurma(idx) funcionar
+      if (!_turmasDisplayCache.find(x => x.codigo_oferta === codigo)) {
+        _turmasDisplayCache = [..._turmasConsultaCache];
+      }
+      const idx = _turmasDisplayCache.findIndex(x => x.codigo_oferta === codigo);
+      if (idx >= 0) window.abrirEditarTurma(idx);
     };
 
     // Renderiza lista de cursos na Consulta
@@ -4929,7 +4962,7 @@
       </div>
       <p class="text-gray-400 text-sm text-center py-4">Carregando turmas...</p>`;
 
-      const turmas = await carregarDaAba('Turmas');
+      const turmas = await loadTurmasDeduped();
       const filtradas = turmas.filter(t => (t.nome_curso||'').toLowerCase() === cursoNome.toLowerCase());
 
       const header = `<div class="flex items-center justify-between mb-5 bg-blue-50 rounded-xl px-4 py-3">
@@ -6625,9 +6658,17 @@
       const totemDiaEl = document.getElementById('ms-totem-dia');
       if (totemDiaEl && !totemDiaEl.value) totemDiaEl.value = hoje;
       if (!msCarregado) {
-        msCarregar().then(() => { msRenderPainel(); msRenderTotemPreview(); });
+        // Mostra loading no painel durante a carga
+        const gridPainel = document.getElementById('ms-grid-painel');
+        if (gridPainel) gridPainel.innerHTML = '<p class="text-xs text-gray-400 text-center py-8 col-span-full">Carregando alocações...</p>';
+        msCarregar().then(() => {
+          msRenderPainel();
+          msRenderTotemPreview();
+          msRenderAlocacoes();
+          msRenderPendente();
+        });
       } else {
-        msRenderPainel(); msRenderTotemPreview();
+        msRenderPainel(); msRenderTotemPreview(); msRenderAlocacoes();
       }
       // Carrega turmas e quadro horário para o picker e sidebar
       const _loadTurmas = !allTurmas.length
@@ -7065,8 +7106,12 @@
           .filter(a => normData(a.data) === msDataAtiva)
           .map(a => String(a.turma_codigo))
       );
+      // Deduplica allTurmas por codigo_oferta (edições geram linhas duplicadas no Sheet)
+      const _allTurmasDedup = Object.values(
+        allTurmas.reduce((acc, t) => { if (t.codigo_oferta) acc[t.codigo_oferta] = t; return acc; }, {})
+      );
       // Match with allTurmas, filter by period (integral always included), exclude finalizadas
-      const turmasHoje = allTurmas.filter(t => {
+      const turmasHoje = _allTurmasDedup.filter(t => {
         if (!turmaCodesHoje.has(String(t.codigo_oferta))) return false;
         if (isTurmaFinalizada(t)) return false;
         if (t.periodo && t.periodo !== msPeriodoAtivo && t.periodo !== 'integral') return false;
