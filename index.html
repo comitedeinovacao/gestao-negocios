@@ -2642,20 +2642,14 @@
       document.querySelectorAll('#cadastro-page .tab-content').forEach(c => { c.style.display = 'none'; });
       btn.classList.add('bg-[#004587]/10', 'text-[#004587]', 'border-b-4', 'border-[#F7941D]');
       document.getElementById('tab-' + tabName).style.display = 'block';
-      // Pré-carrega e abre busca de turmas automaticamente ao acessar a aba
-      if (tabName === 'turmas') {
-        const panel = document.getElementById('busca-turmas-panel');
-        const chev  = document.getElementById('busca-turmas-chevron');
-        if (panel && panel.style.display === 'none') {
-          panel.style.display = 'block';
-          if (chev) chev.style.transform = 'rotate(180deg)';
-          const div = document.getElementById('cad-busca-turma-resultado');
-          if (div) div.innerHTML = '<p class="text-xs text-gray-400 text-center py-3">Carregando turmas...</p>';
-          Promise.all([loadTurmasDeduped(), carregarDadosCursos()]).then(([turmas]) => {
-            _turmasConsultaCache = turmas;
-            window.cadBuscarTurmas(document.getElementById('cad-busca-turma-input')?.value || '');
-          }).catch(() => {});
-        }
+      // Pré-carrega busca de turmas automaticamente ao acessar a aba
+      if (tabName === 'turmas' && !Array.isArray(_turmasConsultaCache)) {
+        const div = document.getElementById('cad-busca-turma-resultado');
+        if (div) div.innerHTML = '<p class="text-xs text-gray-400 text-center py-3">Carregando turmas...</p>';
+        loadTurmasDeduped().then(turmas => {
+          _turmasConsultaCache = turmas;
+          window.cadBuscarTurmas(document.getElementById('cad-busca-turma-input')?.value || '');
+        }).catch(() => {});
       }
     };
 
@@ -2949,7 +2943,14 @@
       const div = document.getElementById('cad-busca-turma-resultado');
       if (!div) return;
       if (!Array.isArray(_turmasConsultaCache)) {
-        div.innerHTML = '<p class="text-xs text-gray-400 text-center py-3">Carregando...</p>';
+        // Cache não carregado ainda: dispara o load e aguarda
+        div.innerHTML = '<p class="text-xs text-gray-400 text-center py-3">Carregando turmas...</p>';
+        loadTurmasDeduped().then(turmas => {
+          _turmasConsultaCache = turmas;
+          window.cadBuscarTurmas(document.getElementById('cad-busca-turma-input')?.value || '');
+        }).catch(() => {
+          div.innerHTML = '<p class="text-xs text-red-400 text-center py-3">Erro ao carregar. Tente novamente.</p>';
+        });
         return;
       }
       const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
@@ -3583,9 +3584,25 @@
       const btn = form.querySelector('button');
       const originalBtnHtml = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = '⏳ Salvando...';
+      btn.innerHTML = '⏳ Verificando...';
 
       try {
+        // Valida se codigo_oferta já existe (evita duplicatas)
+        if (!isParcForm && codigo_oferta) {
+          const turmasExistentes = Array.isArray(_turmasConsultaCache)
+            ? _turmasConsultaCache
+            : await loadTurmasDeduped();
+          _turmasConsultaCache = turmasExistentes;
+          const jaExiste = turmasExistentes.find(t => t.codigo_oferta === codigo_oferta && t.nome_curso !== '__DELETED__');
+          if (jaExiste) {
+            showErrorMessage(`⚠️ Turma já cadastrada! Código ${codigo_oferta} já pertence a "${jaExiste.nome_curso}" (${jaExiste.periodo || '-'}). Edite a turma existente em vez de criar uma nova.`, 7000);
+            btn.disabled = false;
+            btn.innerHTML = originalBtnHtml;
+            return;
+          }
+        }
+
+        btn.innerHTML = '⏳ Salvando...';
         const sala_fixa = form.sala_fixa?.value || '';
         const apelido = form.apelido?.value?.trim() || '';
         await postToSheet('Turmas', [codigo_oferta, nome_curso, versao_plano, periodo, data_inicio, data_termino, '', sala_fixa, apelido]);
@@ -4184,12 +4201,12 @@
       setTimeout(() => msgDiv.remove(), 4000);
     }
 
-    function showErrorMessage(msg) {
+    function showErrorMessage(msg, duration) {
       const msgDiv = document.createElement('div');
-      msgDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+      msgDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 max-w-sm text-sm';
       msgDiv.textContent = msg;
       document.body.appendChild(msgDiv);
-      setTimeout(() => msgDiv.remove(), 4000);
+      setTimeout(() => msgDiv.remove(), duration || 4000);
     }
 
     async function carregarEventosSheets() {
