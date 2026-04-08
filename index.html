@@ -6417,19 +6417,33 @@
       const icoEad  = eadRestam  === 0 ? '✅' : eadRestam  <= hPorAula ? '⚠️' : '💻';
 
       if (saldoDiv) {
+        // Aviso de inconsistência: horas lançadas como EAD mas UC não prevê EAD no plano
+        const avisoEadIndevido = eadHoras > 0 && ead === 0
+          ? `<div class="text-xs text-orange-600 font-semibold py-1 border-b border-orange-100 bg-orange-50 px-2 rounded mb-1">
+               ⚠️ ${fmt(eadHoras)} lançadas como EAD mas esta UC não prevê horas EAD no plano.
+               Verifique os lançamentos anteriores.
+             </div>`
+          : '';
+        // Aviso de inconsistência: horas lançadas como presencial mas UC não prevê presencial
+        const avisoPresIndevida = presHoras > 0 && pres === 0
+          ? `<div class="text-xs text-orange-600 font-semibold py-1 border-b border-orange-100 bg-orange-50 px-2 rounded mb-1">
+               ⚠️ ${fmt(presHoras)} lançadas como Presencial mas esta UC não prevê horas presenciais no plano.
+             </div>`
+          : '';
         saldoDiv.innerHTML =
+          avisoEadIndevido + avisoPresIndevida +
           (pres > 0
-            ? `<div class="flex items-center justify-between text-xs py-1 border-b border-gray-100">
+            ? `<div class="flex items-center justify-between text-xs py-1 ${(ead > 0 || eadHoras > 0) ? 'border-b border-gray-100' : ''}">
                 <span class="font-semibold text-[#004587]">${icoPres} Presencial</span>
                 <span class="text-gray-500">${fmt(presHoras)} alocadas / ${fmt(pres)} planejadas</span>
                 <span class="${corPres}">${fmt(presRestam)} restam</span>
                </div>`
             : '') +
-          (ead > 0
+          (ead > 0 || eadHoras > 0
             ? `<div class="flex items-center justify-between text-xs py-1">
                 <span class="font-semibold text-[#F7941D]">${icoEad} EAD</span>
                 <span class="text-gray-500">${fmt(eadHoras)} alocadas / ${fmt(ead)} planejadas</span>
-                <span class="${corEad}">${fmt(eadRestam)} restam</span>
+                <span class="${corEad}">${ead > 0 ? fmt(eadRestam) + ' restam' : '—'}</span>
                </div>`
             : '') +
           (!pres && !ead
