@@ -7507,15 +7507,10 @@
       // Manual mode: mesma aparência do automático, sala identificada por MS_SALAS[i]
       if (msTotemGetModo() === 'manual') {
         const list = msTotemGetPeriodList(msTotemData, msTotemPer); // lê por data+período
-        // Mesma ordenação do modo automático: ocupadas primeiro por coluna
-        const sortManual = salas => {
-          const occ  = salas.filter(s => (list[MS_SALAS.indexOf(s)] || '').trim());
-          const free = salas.filter(s => !(list[MS_SALAS.indexOf(s)] || '').trim());
-          return [...occ, ...free];
-        };
+        // Ordenação global: todas as ocupadas primeiro, disponíveis depois
         const salasManual = [
-          ...sortManual(MS_SALAS.slice(0, 10)),
-          ...sortManual(MS_SALAS.slice(10, 20)),
+          ...MS_SALAS.filter(s => (list[MS_SALAS.indexOf(s)] || '').trim()),
+          ...MS_SALAS.filter(s => !(list[MS_SALAS.indexOf(s)] || '').trim()),
         ];
         let tOcupM = 0, tDispM = 0;
         grid.innerHTML = salasManual.map(sala => {
@@ -7557,15 +7552,11 @@
         return;
       }
       let tOcup = 0, tDisp = 0, tFix = 0;
-      // Ordena cada coluna: ocupadas primeiro, disponíveis depois (preserva ordem relativa)
-      const sortCol = salas => {
-        const occ  = salas.filter(s =>  msGetAloc(s.id, msTotemData, msTotemPer));
-        const free = salas.filter(s => !msGetAloc(s.id, msTotemData, msTotemPer));
-        return [...occ, ...free];
-      };
+      // Ordenação global: todas as ocupadas primeiro (independente da coluna), disponíveis depois
+      // Com 3 ocupadas (ex: 03, 16, 17) elas aparecem nas primeiras posições do grid (topo-esquerda)
       const salasOrdenadas = [
-        ...sortCol(MS_SALAS.slice(0, 10)),   // coluna esquerda: S01–S10
-        ...sortCol(MS_SALAS.slice(10, 20)),  // coluna direita:  S11–S20
+        ...MS_SALAS.filter(s =>  msGetAloc(s.id, msTotemData, msTotemPer)),
+        ...MS_SALAS.filter(s => !msGetAloc(s.id, msTotemData, msTotemPer)),
       ];
       grid.innerHTML = salasOrdenadas.map(sala => {
         const aloc = msGetAloc(sala.id, msTotemData, msTotemPer);
