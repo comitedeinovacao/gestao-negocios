@@ -7413,7 +7413,12 @@
       const autoPer = msGetCurrentPeriod();
       msTotemPer = autoPer || document.getElementById('ms-totem-per')?.value || 'tarde';
       overlay.classList.remove('hidden');
-      msRenderTotemFS();
+      // Se modo manual: sincroniza dados do Sheets antes de renderizar
+      if (msTotemGetModo() === 'manual') {
+        msTotemManualSyncFromSheet().then(() => msRenderTotemFS());
+      } else {
+        msRenderTotemFS();
+      }
       // Solicita fullscreen nativo (esconde barra do browser sem precisar de F11)
       const el = document.documentElement;
       if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
@@ -7427,10 +7432,11 @@
         const p = msGetCurrentPeriod();
         if (p && p !== msTotemPer) { msTotemPer = p; msRenderTotemFS(); }
       }, 1000);
-      // Data refresh from sheet every 2 minutes
+      // Refresh a cada 2 min: dados do MapaSalas + dados manuais do Sheets
       if (msTotemRefreshInterval) clearInterval(msTotemRefreshInterval);
       msTotemRefreshInterval = setInterval(async () => {
         await msCarregar();
+        if (msTotemGetModo() === 'manual') await msTotemManualSyncFromSheet();
         msRenderTotemFS();
       }, 2 * 60 * 1000);
       window.addEventListener('resize', msScaleTotem);
@@ -7573,13 +7579,13 @@
         const acColor = aloc ? (isFixo ? '#004587' : '#F7941D') : 'rgba(0,69,135,0.13)';
         const bgCard  = aloc ? (isFixo ? 'linear-gradient(135deg,#f0f5ff,#e8f0fe)' : 'white') : 'rgba(240,245,255,0.7)';
         const animSt  = aloc ? (isFixo ? 'animation:ms-glow-blue 3.5s ease-in-out infinite;' : 'animation:ms-glow-orange 3s ease-in-out infinite;') : '';
-        const numColor  = aloc ? (isFixo ? '#004587' : '#F7941D') : 'rgba(0,69,135,0.18)';
+        const numColor  = aloc ? '#004587' : 'rgba(0,69,135,0.18)';
         const nameColor = aloc ? '#004587' : 'rgba(0,69,135,0.22)';
         const subColor  = aloc ? '#64748b' : '#b8c8d8';
         const num = sala.nome.replace('Sala ','');
         return `<div style="background:${bgCard};border-radius:12px;border-left:5px solid ${acColor};box-shadow:${aloc?'0 3px 16px rgba(0,0,0,0.08)':'none'};${animSt}display:flex;flex-direction:row;align-items:stretch;overflow:hidden;">
           <div style="width:27%;padding:9px 11px;display:flex;flex-direction:column;justify-content:center;gap:2px;background:${aloc?`${acColor}18`:'transparent'};border-right:1px solid ${aloc?`${acColor}22`:'rgba(0,69,135,0.05)'};flex-shrink:0;">
-            <span style="font-size:19px;font-weight:900;color:${numColor};font-family:'Montserrat',sans-serif;line-height:1;letter-spacing:-0.5px;">${num}</span>
+            <span style="font-size:30px;font-weight:900;color:${numColor};font-family:'Montserrat',sans-serif;line-height:1;letter-spacing:-0.5px;">${num}</span>
             <div style="font-size:9px;font-weight:800;color:${nameColor};font-family:'Montserrat',sans-serif;line-height:1.25;">${sala.nome}</div>
             <div style="font-size:8px;color:${subColor};font-weight:600;font-family:'Montserrat',sans-serif;line-height:1.3;">${sala.tipo}</div>
             <div style="font-size:8px;color:${subColor};font-weight:500;font-family:'Montserrat',sans-serif;">${sala.capacidade} lug.</div>
@@ -7616,22 +7622,56 @@
     window.msTotemSetPer = function(per) { msTotemPer = per; msRenderTotemFS(); msUpdateTotemClock(); };
 
     // ── Totem Manual Mode helpers ─────────────────────────────────────
+    // Modo (auto/manual) — armazenado localmente, pois é uma preferência por máquina
     function msTotemGetModo() { return localStorage.getItem('ms_totem_modo') || 'auto'; }
     function msTotemSetModo(m) { localStorage.setItem('ms_totem_modo', m); }
+
+    // Cache local dos dados manuais — sincronizado com a aba 'TotemManual' do Sheets
     // Estrutura: { "2026-04-07": { "manha": [...20], "tarde": [...20], "noite": [...20] } }
     function msTotemGetManualData() {
       try { return JSON.parse(localStorage.getItem('ms_totem_manual_data') || '{}'); } catch { return {}; }
     }
     function msTotemSetManualData(obj) { localStorage.setItem('ms_totem_manual_data', JSON.stringify(obj)); }
+
     function msTotemGetPeriodList(data, per) {
       const d = msTotemGetManualData();
       return (d[data] && d[data][per]) ? d[data][per] : Array(20).fill('');
     }
+
+    // Salva localmente E envia para o Sheets (aba TotemManual)
+    // Colunas TotemManual: key | date | periodo | s01 | s02 | ... | s20
     function msTotemSavePeriodList(data, per, list) {
+      // 1. Atualiza cache local imediatamente
       const d = msTotemGetManualData();
       if (!d[data]) d[data] = {};
       d[data][per] = list;
       msTotemSetManualData(d);
+      // 2. Persiste no Sheets de forma assíncrona
+      const key = `${data}_${per}`;
+      postToSheet('TotemManual', [key, data, per, ...list]).catch(() => {});
+    }
+
+    // Carrega dados manuais do Sheets e mescla no cache local
+    // Chame ao abrir o totem e a cada refresh para sincronizar entre computadores
+    async function msTotemManualSyncFromSheet() {
+      try {
+        const rows = await carregarDaAba('TotemManual');
+        if (!rows || !rows.length) return;
+        // Deduplica por key — mantém a última ocorrência (em caso de appends duplicados)
+        const byKey = {};
+        rows.forEach(r => { if (r.key) byKey[r.key] = r; });
+        const d = {};
+        Object.values(byKey).forEach(r => {
+          const date = r.date; const per = r.periodo;
+          if (!date || !per) return;
+          if (!d[date]) d[date] = {};
+          // Colunas s01..s20
+          d[date][per] = Array.from({length: 20}, (_, i) => r[`s${String(i+1).padStart(2,'0')}`] || '');
+        });
+        if (Object.keys(d).length) msTotemSetManualData(d);
+      } catch(e) {
+        console.warn('TotemManual: falha ao sincronizar do Sheets, usando cache local.', e);
+      }
     }
 
     // período atualmente selecionado na config
@@ -7716,7 +7756,8 @@
       if (dataEl) dataEl.value = msTotemData || msHoje();
       _cfgPer = msTotemPer || 'manha';
       _msTotemCfgAtualizaBotoesPer(_cfgPer);
-      window.msTotemConfigRenderCampos();
+      // Sincroniza dados do Sheets antes de renderizar os campos
+      msTotemManualSyncFromSheet().then(() => window.msTotemConfigRenderCampos()).catch(() => window.msTotemConfigRenderCampos());
     };
 
     window.msTotemFecharConfig = function() {
