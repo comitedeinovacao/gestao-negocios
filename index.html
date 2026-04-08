@@ -2446,7 +2446,7 @@
         const timeout = setTimeout(() => {
           cleanup();
           resolve([]);
-        }, 8000);
+        }, 15000);
 
         function cleanup() {
           clearTimeout(timeout);
@@ -5035,7 +5035,8 @@
       <p class="text-gray-400 text-sm text-center py-4">Carregando turmas...</p>`;
 
       const turmas = await loadTurmasDeduped();
-      const filtradas = turmas.filter(t => (t.nome_curso||'').toLowerCase() === cursoNome.toLowerCase());
+      const normNome = s => (s || '').normalize('NFC').toLowerCase().trim();
+      const filtradas = turmas.filter(t => normNome(t.nome_curso) === normNome(cursoNome));
 
       const header = `<div class="flex items-center justify-between mb-5 bg-blue-50 rounded-xl px-4 py-3">
         <div><p class="text-xs text-gray-500 uppercase font-semibold">Curso selecionado</p><p class="font-bold text-[#004587] text-sm">${cursoNome}</p></div>
@@ -5043,7 +5044,15 @@
       </div>`;
 
       if (filtradas.length === 0) {
-        container.innerHTML = header + '<p class="text-gray-500 text-center py-6 text-sm">Nenhuma turma cadastrada para este curso.</p>';
+        // Se turmas.length === 0 o problema é de carregamento (timeout), não ausência real de turmas
+        const msg = turmas.length === 0
+          ? `<p class="text-amber-600 text-center py-4 text-sm font-semibold">⚠️ Falha ao carregar as turmas (servidor demorou).</p>
+             <button onclick="qsCarregarTurmas('${cursoId}','${cursoNome.replace(/'/g,"\\'")}','${modalidade}')"
+               class="w-full py-2.5 bg-[#004587] text-white rounded-xl font-semibold text-sm hover:bg-[#003a72] transition-all">
+               🔄 Tentar novamente
+             </button>`
+          : '<p class="text-gray-500 text-center py-6 text-sm">Nenhuma turma cadastrada para este curso.</p>';
+        container.innerHTML = header + msg;
         return;
       }
 
