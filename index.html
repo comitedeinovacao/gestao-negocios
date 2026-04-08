@@ -6437,15 +6437,8 @@
             : '');
       }
 
-      // Tipo de aula — só mostra se há ambos pres e ead
-      if (pres > 0 && ead > 0) {
-        tipoContainer.classList.remove('hidden');
-      } else {
-        tipoContainer.classList.add('hidden');
-        // Força radio para o tipo disponível
-        const radio = document.querySelector(`input[name="tipo_aula"][value="${ead > 0 && !pres ? 'ead' : 'presencial'}"]`);
-        if (radio) radio.checked = true;
-      }
+      // Tipo de aula — sempre visível quando uma UC está selecionada
+      tipoContainer.classList.remove('hidden');
     };
 
     window.toggleModalManual = function() {
