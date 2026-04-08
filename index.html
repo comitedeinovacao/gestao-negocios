@@ -1821,20 +1821,30 @@
         <select id="modal-uc-select" onchange="calcularSaldoUC()" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
          <option value="">Selecione a UC...</option>
         </select>
-        <!-- Tipo de aula + saldo -->
-        <div id="modal-tipo-container" class="hidden mt-3 p-4 bg-gray-50 rounded-xl space-y-3">
-         <div>
-          <p class="text-[#004587] font-semibold text-sm mb-2">Tipo de Aula</p>
-          <div class="flex gap-4">
-           <label class="flex items-center gap-2 cursor-pointer text-sm font-medium text-gray-700">
-            <input type="radio" name="tipo_aula" value="presencial" checked class="accent-[#004587]"> Presencial
-           </label>
-           <label class="flex items-center gap-2 cursor-pointer text-sm font-medium text-gray-700">
-            <input type="radio" name="tipo_aula" value="ead" class="accent-[#F7941D]"> EAD
-           </label>
+        <!-- Saldo da UC — sempre visível ao selecionar -->
+        <div id="modal-saldo-uc" class="hidden mt-3 rounded-xl overflow-hidden border border-[#004587]/20">
+         <div class="bg-[#004587]/5 px-4 py-2 flex items-center justify-between">
+          <span class="text-xs font-bold text-[#004587] uppercase tracking-wide">Saldo da UC</span>
+          <span id="modal-saldo-pct" class="text-xs font-bold text-gray-500"></span>
+         </div>
+         <div class="px-4 pt-2 pb-1">
+          <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
+           <div id="modal-saldo-bar" class="h-2 rounded-full transition-all" style="width:0%;background:#004587"></div>
           </div>
          </div>
-         <div id="modal-saldo" class="border-t border-gray-200 pt-3 space-y-1"></div>
+         <div id="modal-saldo" class="px-4 pb-3 space-y-1"></div>
+        </div>
+        <!-- Tipo de aula -->
+        <div id="modal-tipo-container" class="hidden mt-3 p-4 bg-gray-50 rounded-xl">
+         <p class="text-[#004587] font-semibold text-sm mb-2">Tipo de Aula</p>
+         <div class="flex gap-4">
+          <label class="flex items-center gap-2 cursor-pointer text-sm font-medium text-gray-700">
+           <input type="radio" name="tipo_aula" value="presencial" checked class="accent-[#004587]"> Presencial
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer text-sm font-medium text-gray-700">
+           <input type="radio" name="tipo_aula" value="ead" class="accent-[#F7941D]"> EAD
+          </label>
+         </div>
         </div>
        </div>
        <!-- Horas (sempre visível) -->
@@ -6166,32 +6176,85 @@
     };
 
     window.calcularSaldoUC = function() {
-      const opt = document.getElementById('modal-uc-select').selectedOptions[0];
-      const container = document.getElementById('modal-tipo-container');
-      const saldoDiv  = document.getElementById('modal-saldo');
-      if (!opt || !opt.value) { container.classList.add('hidden'); return; }
-      const pres  = parseFloat(opt.dataset.presencial) || 0;
-      const ead   = parseFloat(opt.dataset.ead)        || 0;
-      if (!pres && !ead) { container.classList.add('hidden'); return; }
+      const opt        = document.getElementById('modal-uc-select').selectedOptions[0];
+      const tipoContainer = document.getElementById('modal-tipo-container');
+      const saldoUC    = document.getElementById('modal-saldo-uc');
+      const saldoDiv   = document.getElementById('modal-saldo');
+      const saldoBar   = document.getElementById('modal-saldo-bar');
+      const saldoPct   = document.getElementById('modal-saldo-pct');
+
+      // Esconde tudo se nenhuma UC selecionada
+      if (!opt || !opt.value) {
+        tipoContainer.classList.add('hidden');
+        if (saldoUC) saldoUC.classList.add('hidden');
+        return;
+      }
+
+      const pres = parseFloat(opt.dataset.presencial) || 0;
+      const ead  = parseFloat(opt.dataset.ead)        || 0;
       const hPorAula = quadroTurmaAtual?.periodo === 'noite' ? 3.5 : 4;
-      // Soma horas já alocadas para esta UC nesta turma
       const ucNome = opt.value;
+
+      // Soma horas já alocadas para esta UC nesta turma (todas as datas)
       const alocUC = allAlocacoes.filter(a =>
-        a.uc_nome === ucNome && a.turma_codigo === quadroTurmaAtual?.codigo_oferta
+        a.uc_nome === ucNome && String(a.turma_codigo) === String(quadroTurmaAtual?.codigo_oferta)
       );
       const presHoras = alocUC.filter(a => (a.tipo_aula || 'presencial') !== 'ead')
         .reduce((s, a) => s + (parseFloat(a.horas) || hPorAula), 0);
       const eadHoras  = alocUC.filter(a => (a.tipo_aula || '') === 'ead')
         .reduce((s, a) => s + (parseFloat(a.horas) || hPorAula), 0);
+
+      const totalPlan  = pres + ead;
+      const totalAloc  = presHoras + eadHoras;
       const presRestam = Math.max(0, pres - presHoras);
       const eadRestam  = Math.max(0, ead  - eadHoras);
-      container.classList.remove('hidden');
-      const corPres = presRestam === 0 ? 'text-red-600' : presRestam <= 4 ? 'text-amber-600' : 'text-green-700';
-      const corEad  = eadRestam  === 0 ? 'text-red-600' : eadRestam  <= 4 ? 'text-amber-600' : 'text-green-700';
-      const fmt = h => Number.isInteger(h) ? h + 'h' : h + 'h';
-      saldoDiv.innerHTML =
-        `<p class="text-xs"><span class="font-bold text-[#004587]">Presencial:</span> ${fmt(presHoras)}/${fmt(pres)} alocadas · <span class="font-bold ${corPres}">${fmt(presRestam)} restam</span></p>` +
-        (ead ? `<p class="text-xs mt-1"><span class="font-bold text-[#F7941D]">EAD:</span> ${fmt(eadHoras)}/${fmt(ead)} alocadas · <span class="font-bold ${corEad}">${fmt(eadRestam)} restam</span></p>` : '');
+      const fmt = h => (Number.isInteger(h) ? h : h) + 'h';
+
+      // Barra de progresso global da UC
+      if (saldoUC) {
+        saldoUC.classList.remove('hidden');
+        const pct = totalPlan > 0 ? Math.min(100, Math.round(totalAloc / totalPlan * 100)) : 0;
+        const barColor = pct >= 100 ? '#dc2626' : pct >= 75 ? '#f59e0b' : '#004587';
+        if (saldoBar) { saldoBar.style.width = pct + '%'; saldoBar.style.background = barColor; }
+        if (saldoPct) saldoPct.textContent = totalPlan > 0 ? `${fmt(totalAloc)} de ${fmt(totalPlan)} (${pct}%)` : `${fmt(totalAloc)} alocadas`;
+      }
+
+      // Detalhamento por tipo
+      const corPres = presRestam === 0 ? 'text-red-600 font-bold' : presRestam <= hPorAula ? 'text-amber-600 font-bold' : 'text-green-700 font-bold';
+      const corEad  = eadRestam  === 0 ? 'text-red-600 font-bold' : eadRestam  <= hPorAula ? 'text-amber-600 font-bold' : 'text-green-700 font-bold';
+      const icoPres = presRestam === 0 ? '✅' : presRestam <= hPorAula ? '⚠️' : '📘';
+      const icoEad  = eadRestam  === 0 ? '✅' : eadRestam  <= hPorAula ? '⚠️' : '💻';
+
+      if (saldoDiv) {
+        saldoDiv.innerHTML =
+          (pres > 0
+            ? `<div class="flex items-center justify-between text-xs py-1 border-b border-gray-100">
+                <span class="font-semibold text-[#004587]">${icoPres} Presencial</span>
+                <span class="text-gray-500">${fmt(presHoras)} alocadas / ${fmt(pres)} planejadas</span>
+                <span class="${corPres}">${fmt(presRestam)} restam</span>
+               </div>`
+            : '') +
+          (ead > 0
+            ? `<div class="flex items-center justify-between text-xs py-1">
+                <span class="font-semibold text-[#F7941D]">${icoEad} EAD</span>
+                <span class="text-gray-500">${fmt(eadHoras)} alocadas / ${fmt(ead)} planejadas</span>
+                <span class="${corEad}">${fmt(eadRestam)} restam</span>
+               </div>`
+            : '') +
+          (!pres && !ead
+            ? `<p class="text-xs text-gray-400 py-1">Carga horária não configurada para esta UC. Acesse UCs por Curso para definir.</p>`
+            : '');
+      }
+
+      // Tipo de aula — só mostra se há ambos pres e ead
+      if (pres > 0 && ead > 0) {
+        tipoContainer.classList.remove('hidden');
+      } else {
+        tipoContainer.classList.add('hidden');
+        // Força radio para o tipo disponível
+        const radio = document.querySelector(`input[name="tipo_aula"][value="${ead > 0 && !pres ? 'ead' : 'presencial'}"]`);
+        if (radio) radio.checked = true;
+      }
     };
 
     window.toggleModalManual = function() {
