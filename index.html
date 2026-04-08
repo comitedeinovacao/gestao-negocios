@@ -5304,6 +5304,9 @@
       const modal = document.getElementById('modal-alocacao');
       modal.classList.remove('hidden');
       modal.classList.add('flex');
+      // Reset manual mode ANTES dos awaits para não sobrescrever seleção do usuário
+      const manualCheckEarly = document.getElementById('modal-manual-check');
+      if (manualCheckEarly) { manualCheckEarly.checked = false; toggleModalManual(); }
       const diaLabels = { segunda: 'Segunda-feira', terca: 'Terça-feira', quarta: 'Quarta-feira', quinta: 'Quinta-feira', sexta: 'Sexta-feira', sabado: 'Sábado' };
       // Formata data para exibição: '2026-03-02' → '02/03/2026'
       const [y,m,d] = dataStr.split('-');
@@ -5419,9 +5422,6 @@
       document.getElementById('modal-horas').value = hDefault;
       // Docentes disponíveis
       await qPopularDocentesDisponiveis(diaNome);
-      // Reset manual mode
-      const manualCheck = document.getElementById('modal-manual-check');
-      if (manualCheck) { manualCheck.checked = false; toggleModalManual(); }
     };
 
     window.fecharModalAlocacao = function() {
