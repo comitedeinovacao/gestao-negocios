@@ -5138,7 +5138,9 @@
       // Deduplica férias por ferias_id (keep last) e remove __DELETED__
       const ferByKey = {};
       (feriasRaw || []).forEach(f => { if (f.ferias_id) ferByKey[f.ferias_id] = f; });
-      allFerias = Object.values(ferByKey).filter(f => f.descricao !== '__DELETED__');
+      allFerias = Object.values(ferByKey)
+        .filter(f => f.descricao !== '__DELETED__')
+        .map(f => ({ ...f, data_inicio: normData(f.data_inicio), data_fim: normData(f.data_fim) }));
       qRenderMonthlyGrid(turma);
     };
 
