@@ -1280,6 +1280,9 @@
       <button type="button" class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="progresso-ucs" onclick="switchQuadrosTab(this)">
        <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>Progresso UCs
       </button>
+      <button type="button" class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="planejamento" onclick="switchQuadrosTab(this)">
+       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Planejamento
+      </button>
      </div>
      <!-- Tab: UCs por Curso -->
      <div id="tab-quadro-ucs" class="tab-content">
@@ -1472,6 +1475,183 @@
        <p class="text-gray-400 text-center py-8 text-sm">Selecione uma turma no Quadro Semanal para ver o progresso das UCs.</p>
       </div>
      </div>
+
+     <!-- ══════════════════════ TAB: PLANEJAMENTO ══════════════════════ -->
+     <div id="tab-planejamento" class="tab-content" style="display:none">
+      <!-- Sub-abas internas -->
+      <div class="flex flex-wrap gap-2 mb-7 border-b border-gray-200 pb-4">
+       <button id="plan-tab-calc" onclick="switchPlanTab('calc')"
+         class="plan-sub-tab px-4 py-2 rounded-lg font-semibold text-sm border-2 border-[#004587] bg-[#004587]/10 text-[#004587] transition-all">
+        <svg class="w-4 h-4 inline-block mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 13h.01M13 13h.01M13 17h.01M17 13h.01M7 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2h-2M7 3a2 2 0 012-2h6a2 2 0 012 2v1H7V3z"/></svg>Calculadora
+       </button>
+       <button id="plan-tab-mapa" onclick="switchPlanTab('mapa')"
+         class="plan-sub-tab px-4 py-2 rounded-lg font-semibold text-sm border-2 border-gray-200 text-gray-600 hover:border-[#004587] hover:text-[#004587] transition-all">
+        <svg class="w-4 h-4 inline-block mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>Mapa de Salas
+       </button>
+       <button id="plan-tab-dash" onclick="switchPlanTab('dash')"
+         class="plan-sub-tab px-4 py-2 rounded-lg font-semibold text-sm border-2 border-gray-200 text-gray-600 hover:border-[#004587] hover:text-[#004587] transition-all">
+        <svg class="w-4 h-4 inline-block mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Dashboard de Horas
+       </button>
+      </div>
+
+      <!-- ── SEÇÃO: CALCULADORA ── -->
+      <div id="plan-sec-calc">
+       <div class="grid lg:grid-cols-2 gap-6">
+        <!-- Formulário -->
+        <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+         <h3 class="text-lg font-bold text-[#004587] mb-1">🧮 Calculadora de Duração de Turma</h3>
+         <p class="text-xs text-gray-500 mb-5">Calcule a data de término considerando feriados, pontes e reuniões pedagógicas.</p>
+         <div class="space-y-4">
+          <div>
+           <label class="block text-xs font-semibold text-gray-600 mb-1">Nome do Curso</label>
+           <input type="text" id="calc-nome" placeholder="Ex: Técnico em Logística" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+           <div>
+            <label class="block text-xs font-semibold text-gray-600 mb-1">Período</label>
+            <select id="calc-periodo" onchange="calcAtualizarHoras()" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+             <option value="manha">Manhã</option>
+             <option value="tarde">Tarde</option>
+             <option value="noite" selected>Noite</option>
+            </select>
+           </div>
+           <div>
+            <label class="block text-xs font-semibold text-gray-600 mb-1">Sala (opcional)</label>
+            <select id="calc-sala" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+             <option value="">Sem sala fixa</option>
+             <option value="S01">Sala 01 — Lab. Informática</option>
+             <option value="S02">Sala 02 — Lab. Informática</option>
+             <option value="S03">Sala 03 — Lab. Informática</option>
+             <option value="S04">Sala 04 — Lab. Informática</option>
+             <option value="S05">Sala 05 — Sala Ambiente</option>
+             <option value="S06">Sala 06 — Sala Ambiente</option>
+             <option value="S07">Sala 07 — Sala Ambiente</option>
+             <option value="S08">Sala 08 — Sala Ambiente</option>
+             <option value="S09">Sala 09 — Sala Ambiente</option>
+             <option value="S10">Sala 10 — Sala Ambiente</option>
+             <option value="S11">Sala 11 — Sala Ambiente</option>
+             <option value="S12">Sala 12 — Sala Ambiente</option>
+             <option value="S13">Sala 13 — Sala Ambiente</option>
+             <option value="S14">Sala 14 — Lab. Estética</option>
+             <option value="S15">Sala 15 — Lab. Estética</option>
+             <option value="S16">Sala 16 — Lab. Massot./Enf.</option>
+             <option value="S17">Sala 17 — Lab. Massot./Enf.</option>
+             <option value="S18">Sala 18 — Lab. Farm./Anal.</option>
+             <option value="S19">Sala 19 — Lab. Farm./Anal.</option>
+             <option value="S20">Sala 20 — Auditório</option>
+            </select>
+           </div>
+          </div>
+          <div>
+           <label class="block text-xs font-semibold text-gray-600 mb-1">Data de Início</label>
+           <input type="date" id="calc-inicio" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+          </div>
+          <div>
+           <label class="block text-xs font-semibold text-gray-600 mb-2">Dias da Semana</label>
+           <div class="flex flex-wrap gap-2">
+            <label class="flex items-center gap-1.5 text-xs font-semibold cursor-pointer px-2.5 py-1.5 rounded-lg border-2 border-gray-200 hover:border-[#004587] has-[:checked]:border-[#004587] has-[:checked]:bg-[#004587]/10 has-[:checked]:text-[#004587]"><input type="checkbox" class="calc-dia" value="1"> Seg</label>
+            <label class="flex items-center gap-1.5 text-xs font-semibold cursor-pointer px-2.5 py-1.5 rounded-lg border-2 border-gray-200 hover:border-[#004587] has-[:checked]:border-[#004587] has-[:checked]:bg-[#004587]/10 has-[:checked]:text-[#004587]"><input type="checkbox" class="calc-dia" value="2"> Ter</label>
+            <label class="flex items-center gap-1.5 text-xs font-semibold cursor-pointer px-2.5 py-1.5 rounded-lg border-2 border-gray-200 hover:border-[#004587] has-[:checked]:border-[#004587] has-[:checked]:bg-[#004587]/10 has-[:checked]:text-[#004587]"><input type="checkbox" class="calc-dia" value="3"> Qua</label>
+            <label class="flex items-center gap-1.5 text-xs font-semibold cursor-pointer px-2.5 py-1.5 rounded-lg border-2 border-gray-200 hover:border-[#004587] has-[:checked]:border-[#004587] has-[:checked]:bg-[#004587]/10 has-[:checked]:text-[#004587]"><input type="checkbox" class="calc-dia" value="4"> Qui</label>
+            <label class="flex items-center gap-1.5 text-xs font-semibold cursor-pointer px-2.5 py-1.5 rounded-lg border-2 border-gray-200 hover:border-[#004587] has-[:checked]:border-[#004587] has-[:checked]:bg-[#004587]/10 has-[:checked]:text-[#004587]"><input type="checkbox" class="calc-dia" value="5"> Sex</label>
+            <label class="flex items-center gap-1.5 text-xs font-semibold cursor-pointer px-2.5 py-1.5 rounded-lg border-2 border-gray-200 hover:border-[#F7941D] has-[:checked]:border-[#F7941D] has-[:checked]:bg-[#F7941D]/10 has-[:checked]:text-[#F7941D]"><input type="checkbox" class="calc-dia" value="6"> Sáb</label>
+           </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+           <div>
+            <label class="block text-xs font-semibold text-gray-600 mb-1">Carga Horária Total</label>
+            <div class="flex items-center gap-1">
+             <input type="number" id="calc-ch" min="1" step="0.5" placeholder="Ex: 400" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+             <span class="text-xs text-gray-400 whitespace-nowrap">h</span>
+            </div>
+           </div>
+           <div>
+            <label class="block text-xs font-semibold text-gray-600 mb-1">Horas / Aula</label>
+            <div class="flex items-center gap-1">
+             <input type="number" id="calc-hpa" min="0.5" step="0.5" value="3.5" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+             <span class="text-xs text-gray-400 whitespace-nowrap">h</span>
+            </div>
+           </div>
+          </div>
+          <button onclick="calcularDuracao()" class="w-full py-3 bg-[#004587] text-white rounded-xl font-bold text-sm hover:bg-[#003a72] transition-all flex items-center justify-center gap-2">
+           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 13h.01M13 13h.01M13 17h.01M17 13h.01M7 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2h-2M7 3a2 2 0 012-2h6a2 2 0 012 2v1H7V3z"/></svg>
+           Calcular Duração
+          </button>
+         </div>
+        </div>
+        <!-- Resultado -->
+        <div id="plan-calc-resultado" class="hidden">
+         <div class="bg-white rounded-2xl p-6 border-2 border-[#004587]/20 h-full">
+          <h3 class="text-lg font-bold text-[#004587] mb-4">📋 Resultado</h3>
+          <div id="plan-calc-resultado-conteudo"></div>
+         </div>
+        </div>
+       </div>
+      </div>
+
+      <!-- ── SEÇÃO: MAPA DE SALAS ── -->
+      <div id="plan-sec-mapa" style="display:none">
+       <div class="flex flex-wrap items-center justify-between gap-4 mb-5">
+        <div>
+         <h3 class="text-lg font-bold text-[#004587]">🏫 Mapa de Ocupação de Salas</h3>
+         <p class="text-xs text-gray-500 mt-0.5">Turmas alocadas por sala e período no ano selecionado</p>
+        </div>
+        <div class="flex items-center gap-3">
+         <select id="plan-mapa-ano" onchange="renderMapaOcupacao()" class="px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm font-semibold">
+          <option value="2025">2025</option>
+          <option value="2026" selected>2026</option>
+          <option value="2027">2027</option>
+          <option value="2028">2028</option>
+         </select>
+         <label class="flex items-center gap-2 text-xs font-semibold text-gray-600 cursor-pointer">
+          <input type="checkbox" id="plan-mapa-mostrar-finalizadas" onchange="renderMapaOcupacao()" checked class="accent-[#004587]"> Mostrar finalizadas
+         </label>
+         <button onclick="renderMapaOcupacao()" class="px-3 py-2 bg-[#004587]/10 text-[#004587] rounded-xl text-xs font-bold hover:bg-[#004587]/20 transition-all flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          Atualizar
+         </button>
+        </div>
+       </div>
+       <!-- Legenda -->
+       <div class="flex flex-wrap gap-3 mb-4 text-xs font-semibold">
+        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-blue-200 inline-block"></span> Planejado</span>
+        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-[#004587] inline-block"></span> Confirmado</span>
+        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-green-500 inline-block"></span> Em andamento</span>
+        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-gray-300 inline-block"></span> Finalizado</span>
+        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-red-400 inline-block"></span> Conflito</span>
+       </div>
+       <div id="plan-mapa-grid" class="overflow-x-auto">
+        <p class="text-gray-400 text-center py-8 text-sm">Carregando mapa...</p>
+       </div>
+      </div>
+
+      <!-- ── SEÇÃO: DASHBOARD ── -->
+      <div id="plan-sec-dash" style="display:none">
+       <div class="flex flex-wrap items-center justify-between gap-4 mb-5">
+        <div>
+         <h3 class="text-lg font-bold text-[#004587]">📊 Dashboard de Horas por Área</h3>
+         <p class="text-xs text-gray-500 mt-0.5">Provisionamento de turmas e horas estimadas por área e sala</p>
+        </div>
+        <div class="flex items-center gap-3">
+         <select id="plan-dash-ano" onchange="renderDashboardHoras()" class="px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm font-semibold">
+          <option value="2025">2025</option>
+          <option value="2026" selected>2026</option>
+          <option value="2027">2027</option>
+          <option value="2028">2028</option>
+         </select>
+         <button onclick="renderDashboardHoras()" class="px-3 py-2 bg-[#004587]/10 text-[#004587] rounded-xl text-xs font-bold hover:bg-[#004587]/20 transition-all flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          Atualizar
+         </button>
+        </div>
+       </div>
+       <div id="plan-dash-content">
+        <p class="text-gray-400 text-center py-8 text-sm">Carregando dashboard...</p>
+       </div>
+      </div>
+     </div>
+     <!-- ════════════════════════════════════════════════════════════════ -->
+
     </div>
     <!-- Modal Editar UC -->
     <div id="modal-uc-edit" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
@@ -3659,6 +3839,20 @@
         btn.innerHTML = '⏳ Salvando...';
         const sala_fixa = form.sala_fixa?.value || '';
         const apelido = form.apelido?.value?.trim() || '';
+
+        // Fase 3: verifica conflito de sala antes de salvar
+        if (sala_fixa && data_inicio && data_termino) {
+          const conflitos = verificarConflitoSala(sala_fixa, periodo, data_inicio, data_termino, null);
+          if (conflitos.length) {
+            const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
+            const fmt = d => { const [y,m,dia] = (d||'').split('-'); return dia ? `${dia}/${m}/${y}` : d||'-'; };
+            const lista = conflitos.map(c => `• ${c.nome_curso} (${periodoLabel[c.periodo]||c.periodo||'-'}) — ${fmt(normData(c.data_de_inicio))} a ${fmt(normData(c.data_de_termino))}`).join('\n');
+            if (!confirm(`⚠️ Conflito de sala detectado!\n\nA sala ${sala_fixa} já está ocupada no mesmo período por:\n${lista}\n\nDeseja salvar mesmo assim como turma planejada?`)) {
+              btn.disabled = false; btn.innerHTML = originalBtnHtml; return;
+            }
+          }
+        }
+
         await postToSheet('Turmas', [codigo_oferta, nome_curso, versao_plano, periodo, data_inicio, data_termino, '', sala_fixa, apelido]);
         form.reset();
         // Reset picker UI
@@ -4521,6 +4715,9 @@
       }
       if (tabName === 'progresso-ucs') {
         renderProgressoUCs();
+      }
+      if (tabName === 'planejamento') {
+        switchPlanTab('calc');
       }
     };
 
@@ -8505,6 +8702,505 @@
       const tabEl = document.getElementById('tab-' + tabId);
       if (tabEl) tabEl.style.display = 'block';
     };
+    // ==================== FIM NAVEGAÇÃO DE ABAS ====================
+
+    // ══════════════════════════════════════════════════════════════════
+    // MÓDULO: PLANEJAMENTO — Fase 1 (Calculadora) + Fase 2 (Mapa) + Fase 4 (Dashboard)
+    // ══════════════════════════════════════════════════════════════════
+
+    window.switchPlanTab = function(tab) {
+      ['calc','mapa','dash'].forEach(t => {
+        const sec = document.getElementById('plan-sec-' + t);
+        const btn = document.getElementById('plan-tab-' + t);
+        if (sec) sec.style.display = t === tab ? '' : 'none';
+        if (btn) {
+          if (t === tab) {
+            btn.className = 'plan-sub-tab px-4 py-2 rounded-lg font-semibold text-sm border-2 border-[#004587] bg-[#004587]/10 text-[#004587] transition-all';
+          } else {
+            btn.className = 'plan-sub-tab px-4 py-2 rounded-lg font-semibold text-sm border-2 border-gray-200 text-gray-600 hover:border-[#004587] hover:text-[#004587] transition-all';
+          }
+        }
+      });
+      if (tab === 'mapa') renderMapaOcupacao();
+      if (tab === 'dash') renderDashboardHoras();
+    };
+
+    window.calcAtualizarHoras = function() {
+      const periodo = document.getElementById('calc-periodo')?.value;
+      const hpa = document.getElementById('calc-hpa');
+      if (hpa) hpa.value = periodo === 'noite' ? 3.5 : 4;
+    };
+
+    // ── FASE 1: Calculadora de Duração ──────────────────────────────
+    // Gera datas sem depender de quadroTurmaAtual (versão standalone)
+    function calcGerarDatas(diasSemanaJS, numEncontros, dataInicio) {
+      const datas = [], puladas = [];
+      const data = new Date(dataInicio + 'T12:00:00');
+      let guard = 0;
+      while (datas.length < numEncontros && guard < 5000) {
+        guard++;
+        if (diasSemanaJS.includes(data.getDay())) {
+          const y = data.getFullYear();
+          const m = String(data.getMonth()+1).padStart(2,'0');
+          const d = String(data.getDate()).padStart(2,'0');
+          const ds = `${y}-${m}-${d}`;
+          if (isDataBloqueada(ds)) {
+            const fi = FERIADOS_SENAC_2026[ds];
+            puladas.push({ dateStr: ds, nome: fi.nome, tipo: fi.tipo });
+          } else if (isReuniaoPedagogica(ds)) {
+            puladas.push({ dateStr: ds, nome: 'Reunião Pedagógica', tipo: 'reuniao_pedagogica' });
+          } else {
+            datas.push(ds);
+          }
+        }
+        data.setDate(data.getDate() + 1);
+      }
+      return { datas, puladas };
+    }
+
+    window.calcularDuracao = function() {
+      const nome    = document.getElementById('calc-nome')?.value.trim() || 'Turma';
+      const periodo = document.getElementById('calc-periodo')?.value;
+      const sala    = document.getElementById('calc-sala')?.value;
+      const inicio  = document.getElementById('calc-inicio')?.value;
+      const ch      = parseFloat(document.getElementById('calc-ch')?.value);
+      const hpa     = parseFloat(document.getElementById('calc-hpa')?.value);
+      const dias    = [...document.querySelectorAll('.calc-dia:checked')].map(c => parseInt(c.value));
+
+      if (!inicio) { showErrorMessage('❌ Informe a data de início'); return; }
+      if (!dias.length) { showErrorMessage('❌ Selecione pelo menos um dia da semana'); return; }
+      if (!ch || ch <= 0) { showErrorMessage('❌ Informe a carga horária total'); return; }
+      if (!hpa || hpa <= 0) { showErrorMessage('❌ Informe as horas por aula'); return; }
+
+      const numEncontros = Math.ceil(ch / hpa);
+      const { datas, puladas } = calcGerarDatas(dias, numEncontros, inicio);
+
+      const dataFim    = datas[datas.length - 1] || inicio;
+      const totalHoras = (datas.length * hpa);
+      const fmt = d => { const [y,m,dia] = d.split('-'); return `${dia}/${m}/${y}`; };
+      const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' };
+      const NOMES_DIA  = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+      const MESES_FULL = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+      // Encontros por mês
+      const porMes = {};
+      datas.forEach(d => {
+        const key = d.slice(0,7); // YYYY-MM
+        porMes[key] = (porMes[key] || 0) + 1;
+      });
+
+      // Conflito de sala
+      let avisoConflito = '';
+      if (sala) {
+        const conflitos = verificarConflitoSala(sala, periodo, inicio, dataFim, null);
+        if (conflitos.length) {
+          avisoConflito = `<div class="mt-4 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 font-semibold">
+            ⚠️ Conflito de sala detectado!<br>
+            ${conflitos.map(c => `<span class="font-normal text-xs block mt-0.5">• ${c.nome_curso} (${periodoLabel[c.periodo]||c.periodo}) — ${fmt(c.data_de_inicio||'')} a ${fmt(c.data_de_termino||'')}</span>`).join('')}
+          </div>`;
+        } else if (sala) {
+          avisoConflito = `<div class="mt-3 p-2 bg-green-50 border border-green-200 rounded-xl text-xs text-green-700 font-semibold">✅ Sala disponível para este período.</div>`;
+        }
+      }
+
+      // Puladas por tipo
+      const tipoIcon = { feriado: '🚫', feriado_municipal: '🚫', suspensao: '⚠️', compensacao: '🔁', suspensao_meio: '⚠️', reuniao_pedagogica: '📋' };
+      const puladasHtml = puladas.length
+        ? `<div class="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-xl">
+            <p class="text-xs font-bold text-amber-700 mb-1">⚠️ ${puladas.length} dia(s) pulado(s):</p>
+            <div class="max-h-28 overflow-y-auto space-y-0.5">
+              ${puladas.map(p => `<p class="text-xs text-amber-600">${tipoIcon[p.tipo]||'•'} ${fmt(p.dateStr)} — ${p.nome}</p>`).join('')}
+            </div>
+           </div>`
+        : '<p class="text-xs text-green-600 mt-2 font-semibold">✅ Nenhum feriado ou RP no período calculado.</p>';
+
+      const mesesHtml = Object.entries(porMes).map(([ym, qtd]) => {
+        const [y,m] = ym.split('-');
+        return `<div class="flex items-center justify-between text-xs py-1 border-b border-gray-100">
+          <span class="text-gray-600 font-semibold">${MESES_FULL[parseInt(m)-1]} ${y}</span>
+          <span class="text-[#004587] font-bold">${qtd} aula${qtd>1?'s':''} · ${(qtd*hpa).toFixed(1).replace('.0','')}h</span>
+        </div>`;
+      }).join('');
+
+      const res = document.getElementById('plan-calc-resultado');
+      const cont = document.getElementById('plan-calc-resultado-conteudo');
+      res.classList.remove('hidden');
+      cont.innerHTML = `
+        <div class="space-y-3">
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-[#004587]/5 rounded-xl p-3 text-center">
+              <p class="text-xs text-gray-500 font-semibold mb-1">Data de Início</p>
+              <p class="text-lg font-bold text-[#004587]">${fmt(inicio)}</p>
+            </div>
+            <div class="bg-green-50 rounded-xl p-3 text-center border border-green-200">
+              <p class="text-xs text-gray-500 font-semibold mb-1">Data de Término Est.</p>
+              <p class="text-lg font-bold text-green-700">${fmt(dataFim)}</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-2 text-center">
+            <div class="bg-gray-50 rounded-xl p-3">
+              <p class="text-xs text-gray-400 font-semibold">Encontros</p>
+              <p class="text-xl font-bold text-[#004587]">${datas.length}</p>
+            </div>
+            <div class="bg-gray-50 rounded-xl p-3">
+              <p class="text-xs text-gray-400 font-semibold">Horas Total</p>
+              <p class="text-xl font-bold text-[#004587]">${totalHoras.toFixed(1).replace('.0','')}h</p>
+            </div>
+            <div class="bg-gray-50 rounded-xl p-3">
+              <p class="text-xs text-gray-400 font-semibold">Semanas</p>
+              <p class="text-xl font-bold text-[#004587]">${Math.round(datas.length / dias.length)}</p>
+            </div>
+          </div>
+          <div class="text-xs text-gray-500 font-semibold">📅 Dias: ${dias.map(d=>NOMES_DIA[d]).join(', ')} | ${periodoLabel[periodo]||periodo} | ${hpa}h/aula</div>
+          ${sala ? `<div class="text-xs text-gray-500 font-semibold">🏫 Sala: ${sala}</div>` : ''}
+          <div class="border-t border-gray-100 pt-3">
+            <p class="text-xs font-bold text-gray-600 mb-2">Encontros por mês:</p>
+            <div class="max-h-44 overflow-y-auto">${mesesHtml}</div>
+          </div>
+          ${puladasHtml}
+          ${avisoConflito}
+        </div>`;
+    };
+
+    // ── FASE 2: Mapa de Ocupação de Salas ────────────────────────────
+    window.renderMapaOcupacao = async function() {
+      const grid = document.getElementById('plan-mapa-grid');
+      if (!grid) return;
+      grid.innerHTML = '<p class="text-gray-400 text-center py-8 text-sm">⏳ Carregando turmas...</p>';
+
+      const ano = parseInt(document.getElementById('plan-mapa-ano')?.value || 2026);
+      const mostrarFin = document.getElementById('plan-mapa-mostrar-finalizadas')?.checked !== false;
+      const turmas = await loadTurmasDeduped();
+
+      const statusLabel = { planejado: 'Planejado', confirmado: 'Confirmado', em_andamento: 'Em andamento',
+        finalizado: 'Finalizado', cancelado: 'Cancelado', '': 'Ativo' };
+      const statusColor = {
+        planejado:    'bg-blue-200 text-blue-800 border-blue-300',
+        confirmado:   'bg-[#004587] text-white border-[#004587]',
+        em_andamento: 'bg-green-500 text-white border-green-600',
+        finalizado:   'bg-gray-200 text-gray-600 border-gray-300',
+        cancelado:    'bg-red-100 text-red-600 border-red-200',
+        '':           'bg-[#004587] text-white border-[#004587]'
+      };
+
+      const MESES_ABR = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+      const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite', integral: 'Integral', sabado: 'Sáb' };
+      const fmt = d => { if (!d) return ''; const [y,m,dia] = d.split('-'); return `${dia}/${m}/${y}`; };
+
+      // Filtra turmas do ano e com sala fixa
+      const turmasAno = turmas.filter(t => {
+        if (!t.sala_fixa || t.nome_curso === '__DELETED__') return false;
+        const status = (t.status_turma || '').toLowerCase();
+        if (status === 'cancelado') return false;
+        if (status === 'finalizado' && !mostrarFin) return false;
+        const ini = normData(t.data_de_inicio);
+        const fim = normData(t.data_de_termino);
+        if (!ini && !fim) return false;
+        const anoIni = ini ? parseInt(ini.slice(0,4)) : 0;
+        const anoFim = fim ? parseInt(fim.slice(0,4)) : 9999;
+        return anoFim >= ano && anoIni <= ano;
+      });
+
+      // Detecta conflitos: mesma sala + mesmo periodo + datas sobrepostas
+      const conflitos = new Set();
+      for (let i = 0; i < turmasAno.length; i++) {
+        for (let j = i+1; j < turmasAno.length; j++) {
+          const a = turmasAno[i], b = turmasAno[j];
+          if (a.sala_fixa !== b.sala_fixa) continue;
+          const pa = (a.periodo||'').toLowerCase(), pb = (b.periodo||'').toLowerCase();
+          if (pa && pb && pa !== pb && pa !== 'integral' && pb !== 'integral') continue;
+          const iniA = normData(a.data_de_inicio)||'0000', fimA = normData(a.data_de_termino)||'9999';
+          const iniB = normData(b.data_de_inicio)||'0000', fimB = normData(b.data_de_termino)||'9999';
+          if (iniA <= fimB && fimA >= iniB) {
+            conflitos.add(a.codigo_oferta);
+            conflitos.add(b.codigo_oferta);
+          }
+        }
+      }
+
+      // Monta grid: linhas por sala
+      let html = `<div class="rounded-xl overflow-hidden border border-gray-200 text-xs">`;
+      // Cabeçalho
+      html += `<div class="grid bg-[#004587] text-white font-bold" style="grid-template-columns: 110px repeat(12, 1fr);">
+        <div class="px-2 py-2.5 text-center text-[10px]">SALA</div>
+        ${MESES_ABR.map(m => `<div class="px-1 py-2.5 text-center text-[10px] border-l border-white/20">${m}</div>`).join('')}
+      </div>`;
+
+      MS_SALAS.forEach((sala, idx) => {
+        const turmasSala = turmasAno.filter(t => t.sala_fixa === sala.id);
+        const rowBg = idx % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+
+        // Para cada mês, quais turmas estão ativas?
+        const cells = Array.from({length: 12}, (_, mes) => {
+          const mesIni = `${ano}-${String(mes+1).padStart(2,'0')}-01`;
+          const mesFim = `${ano}-${String(mes+1).padStart(2,'0')}-31`;
+          return turmasSala.filter(t => {
+            const ini = normData(t.data_de_inicio) || '0000-01-01';
+            const fim = normData(t.data_de_termino) || '9999-12-31';
+            return ini <= mesFim && fim >= mesIni;
+          });
+        });
+
+        const hasAny = cells.some(c => c.length > 0);
+        html += `<div class="grid border-t border-gray-200 ${rowBg} hover:bg-blue-50/30 transition-colors" style="grid-template-columns: 110px repeat(12, 1fr);">
+          <div class="px-2 py-2 flex flex-col justify-center border-r border-gray-200">
+            <span class="font-bold text-[#004587] text-[11px]">${sala.nome.replace('Sala ','S')}</span>
+            <span class="text-gray-400 text-[9px]">${sala.tipo}</span>
+          </div>
+          ${cells.map(turmasMes => {
+            if (!turmasMes.length) return `<div class="px-1 py-1 border-l border-gray-100 min-h-[40px]"></div>`;
+            return `<div class="px-1 py-1 border-l border-gray-100 min-h-[40px] space-y-0.5">
+              ${turmasMes.map(t => {
+                const st = (t.status_turma || '').toLowerCase();
+                const isConflito = conflitos.has(t.codigo_oferta);
+                const cor = isConflito ? 'bg-red-100 text-red-700 border-red-300' : (statusColor[st] || statusColor['']);
+                const per = periodoLabel[t.periodo] || t.periodo || '';
+                return `<div class="rounded px-1 py-0.5 border text-[9px] font-semibold leading-tight cursor-default truncate ${cor}"
+                  title="${t.nome_curso} | ${per} | ${fmt(normData(t.data_de_inicio))} – ${fmt(normData(t.data_de_termino))}${isConflito?' | ⚠️ CONFLITO':''}">
+                  ${per ? per[0] : ''}${isConflito?'⚠️':''} ${(t.nome_curso||'').replace('Técnico em ','Téc.').substring(0,14)}
+                </div>`;
+              }).join('')}
+            </div>`;
+          }).join('')}
+        </div>`;
+      });
+      html += `</div>`;
+
+      if (turmasAno.length === 0) {
+        html = `<div class="text-center py-10 text-gray-400 text-sm">
+          <p class="font-semibold">Nenhuma turma com sala fixa encontrada para ${ano}.</p>
+          <p class="text-xs mt-1">Cadastre turmas com sala fixa definida para visualizar o mapa.</p>
+        </div>`;
+      }
+
+      // Resumo
+      const total = turmasAno.length;
+      const nConflitos = conflitos.size;
+      const porStatus = {};
+      turmasAno.forEach(t => { const s = (t.status_turma||'ativo'); porStatus[s] = (porStatus[s]||0)+1; });
+      const resumoHtml = `<div class="flex flex-wrap gap-3 mb-4 text-xs">
+        <span class="font-semibold text-gray-600">${total} turma${total!==1?'s':''} em ${ano}</span>
+        ${nConflitos ? `<span class="text-red-600 font-bold">⚠️ ${nConflitos/2|0} conflito(s) de sala</span>` : '<span class="text-green-600 font-semibold">✅ Sem conflitos</span>'}
+        ${Object.entries(porStatus).map(([s,n])=>`<span class="text-gray-500">${statusLabel[s]||s}: <b>${n}</b></span>`).join(' | ')}
+      </div>`;
+
+      grid.innerHTML = resumoHtml + html;
+    };
+
+    // ── FASE 3: Verifica conflito de sala ────────────────────────────
+    function verificarConflitoSala(salaId, periodo, dataIni, dataFim, excludeCodigo) {
+      if (!salaId || !dataIni || !dataFim) return [];
+      const turmas = (window._turmasConsultaCache || allTurmas || []);
+      return turmas.filter(t => {
+        if (!t.sala_fixa || t.sala_fixa !== salaId) return false;
+        if (excludeCodigo && t.codigo_oferta === excludeCodigo) return false;
+        if ((t.status_turma||'').toLowerCase() === 'cancelado') return false;
+        if ((t.status_turma||'').toLowerCase() === 'finalizado') return false;
+        // Verifica sobreposição de período (manhã/tarde/noite)
+        const pa = (periodo||'').toLowerCase(), pb = (t.periodo||'').toLowerCase();
+        if (pa && pb && pa !== pb && pa !== 'integral' && pb !== 'integral') return false;
+        // Verifica sobreposição de datas
+        const iniT = normData(t.data_de_inicio) || '0000-01-01';
+        const fimT = normData(t.data_de_termino) || '9999-12-31';
+        return dataIni <= fimT && dataFim >= iniT;
+      });
+    }
+
+    // ── FASE 4: Dashboard de Horas por Área ──────────────────────────
+    window.renderDashboardHoras = async function() {
+      const cont = document.getElementById('plan-dash-content');
+      if (!cont) return;
+      cont.innerHTML = '<p class="text-gray-400 text-center py-8 text-sm">⏳ Carregando...</p>';
+
+      const ano = parseInt(document.getElementById('plan-dash-ano')?.value || 2026);
+      const [turmas, dadosCursos] = await Promise.all([loadTurmasDeduped(), carregarDadosCursos()]);
+      const todosCursos = [...(dadosCursos.cursos_tecnicos||[]), ...(dadosCursos.cursos_livres||[])];
+
+      // Função auxiliar: estima horas de uma turma pelo período e CH de UCs
+      // Se não houver UCs cadastradas, usa heurística: dias úteis × horas/dia
+      function estimarHorasTurma(t) {
+        // Usa as UCs carregadas se disponíveis
+        const norm = s => (s||'').toLowerCase().normalize('NFC').trim();
+        const versaoT = String(t.versao_plano || '');
+        const cursoEnc = todosCursos.find(c => norm(c.nome) === norm(t.nome_curso));
+        const ucsT = allUCs.filter(u => {
+          const matchId   = cursoEnc && u.curso_id === cursoEnc.id;
+          const matchNome = norm(u.curso_nome) === norm(t.nome_curso);
+          const matchVers = !versaoT || String(u.versao) === versaoT;
+          return (matchId || matchNome) && matchVers;
+        });
+        if (ucsT.length > 0) {
+          return ucsT.reduce((s, u) => s + (parseFloat(u.carga_horaria_total)||parseFloat(u.carga_horaria)||0), 0);
+        }
+        // Heurística: se tiver datas, usa duração × 3 dias/sem × h/aula
+        const ini = normData(t.data_de_inicio);
+        const fim = normData(t.data_de_termino);
+        if (ini && fim) {
+          const dias = Math.max(0, (new Date(fim+'T12:00:00') - new Date(ini+'T12:00:00')) / 86400000);
+          const semanas = dias / 7;
+          const hPorAula = t.periodo === 'noite' ? 3.5 : 4;
+          return Math.round(semanas * 3 * hPorAula);
+        }
+        return 0;
+      }
+
+      // Filtra turmas do ano selecionado
+      const turmasAno = turmas.filter(t => {
+        if (t.nome_curso === '__DELETED__') return false;
+        if ((t.status_turma||'').toLowerCase() === 'cancelado') return false;
+        const ini = normData(t.data_de_inicio);
+        const fim = normData(t.data_de_termino);
+        const anoIni = ini ? parseInt(ini.slice(0,4)) : 0;
+        const anoFim = fim ? parseInt(fim.slice(0,4)) : 9999;
+        return anoFim >= ano && anoIni <= ano;
+      });
+
+      if (turmasAno.length === 0) {
+        cont.innerHTML = `<p class="text-gray-400 text-center py-8 text-sm">Nenhuma turma encontrada para ${ano}.</p>`;
+        return;
+      }
+
+      // ── Cards de resumo ──
+      const stCount = { planejado:0, confirmado:0, em_andamento:0, finalizado:0 };
+      let horasTotais = 0;
+      turmasAno.forEach(t => {
+        const st = (t.status_turma||'').toLowerCase() || 'confirmado';
+        if (st in stCount) stCount[st]++;
+        horasTotais += estimarHorasTurma(t);
+      });
+
+      const cardsCores = {
+        planejado:    'bg-blue-50 border-blue-200 text-blue-700',
+        confirmado:   'bg-[#004587]/5 border-[#004587]/20 text-[#004587]',
+        em_andamento: 'bg-green-50 border-green-200 text-green-700',
+        finalizado:   'bg-gray-50 border-gray-200 text-gray-600',
+      };
+      const cardsLabels = { planejado:'Planejadas', confirmado:'Confirmadas', em_andamento:'Em andamento', finalizado:'Finalizadas' };
+
+      const cardsHtml = `<div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3 mb-6">
+        <div class="bg-white rounded-2xl p-4 border-2 border-[#F7941D]/20 text-center">
+          <p class="text-xs text-gray-500 font-semibold mb-1">Total Turmas ${ano}</p>
+          <p class="text-3xl font-bold text-[#F7941D]">${turmasAno.length}</p>
+        </div>
+        ${Object.entries(stCount).map(([st, n]) => `
+          <div class="rounded-2xl p-4 border-2 ${cardsCores[st]} text-center">
+            <p class="text-xs font-semibold mb-1 opacity-75">${cardsLabels[st]}</p>
+            <p class="text-3xl font-bold">${n}</p>
+          </div>`).join('')}
+        <div class="bg-indigo-50 rounded-2xl p-4 border-2 border-indigo-200 text-center">
+          <p class="text-xs text-indigo-600 font-semibold mb-1">Horas Estimadas</p>
+          <p class="text-2xl font-bold text-indigo-700">${horasTotais.toLocaleString('pt-BR')}h</p>
+        </div>
+      </div>`;
+
+      // ── Tabela por área ──
+      const norm = s => (s||'').toLowerCase().normalize('NFC').trim();
+      const porArea = {};
+      turmasAno.forEach(t => {
+        const curso = todosCursos.find(c => norm(c.nome) === norm(t.nome_curso));
+        const area = curso?.area || 'Gestão e Negócios';
+        if (!porArea[area]) porArea[area] = { planejado:0, confirmado:0, em_andamento:0, finalizado:0, horas:0, turmas:[] };
+        const st = (t.status_turma||'').toLowerCase() || 'confirmado';
+        if (st in porArea[area]) porArea[area][st]++;
+        porArea[area].horas += estimarHorasTurma(t);
+        porArea[area].turmas.push(t);
+      });
+
+      const rowsArea = Object.entries(porArea).sort((a,b)=>b[1].horas-a[1].horas).map(([area, d]) => {
+        const total = d.planejado + d.confirmado + d.em_andamento + d.finalizado;
+        const pct = horasTotais > 0 ? Math.round(d.horas / horasTotais * 100) : 0;
+        return `<tr class="border-b border-gray-100 hover:bg-blue-50/40">
+          <td class="px-4 py-3 font-semibold text-gray-800 text-sm">${area}</td>
+          <td class="px-3 py-3 text-center text-sm font-bold text-gray-700">${total}</td>
+          <td class="px-3 py-3 text-center text-xs text-blue-700 font-semibold">${d.planejado||'—'}</td>
+          <td class="px-3 py-3 text-center text-xs text-[#004587] font-semibold">${d.confirmado||'—'}</td>
+          <td class="px-3 py-3 text-center text-xs text-green-700 font-semibold">${d.em_andamento||'—'}</td>
+          <td class="px-3 py-3 text-center text-xs text-gray-500 font-semibold">${d.finalizado||'—'}</td>
+          <td class="px-3 py-3 text-right font-bold text-indigo-700">${d.horas.toLocaleString('pt-BR')}h</td>
+          <td class="px-3 py-3 min-w-[80px]">
+            <div class="flex items-center gap-1.5">
+              <div class="flex-1 bg-gray-200 rounded-full h-1.5">
+                <div class="h-1.5 rounded-full bg-[#004587]" style="width:${pct}%"></div>
+              </div>
+              <span class="text-[10px] text-gray-500 font-semibold w-7">${pct}%</span>
+            </div>
+          </td>
+        </tr>`;
+      }).join('');
+
+      const tabelaAreaHtml = `
+        <h4 class="text-sm font-bold text-[#004587] mb-3">Por Área do Conhecimento</h4>
+        <div class="overflow-x-auto rounded-xl border border-gray-200 mb-6">
+          <table class="w-full text-left">
+            <thead><tr class="bg-[#004587] text-white text-xs font-semibold">
+              <th class="px-4 py-3 rounded-tl-xl">Área</th>
+              <th class="px-3 py-3 text-center">Total</th>
+              <th class="px-3 py-3 text-center">Planej.</th>
+              <th class="px-3 py-3 text-center">Confirm.</th>
+              <th class="px-3 py-3 text-center">Andamento</th>
+              <th class="px-3 py-3 text-center">Finaliz.</th>
+              <th class="px-3 py-3 text-right">Horas Est.</th>
+              <th class="px-3 py-3 rounded-tr-xl min-w-[100px]">% do Total</th>
+            </tr></thead>
+            <tbody class="bg-white">${rowsArea}</tbody>
+          </table>
+        </div>`;
+
+      // ── Tabela por sala ──
+      const porSala = {};
+      turmasAno.forEach(t => {
+        const sala = t.sala_fixa;
+        if (!sala) return;
+        if (!porSala[sala]) porSala[sala] = { total:0, horas:0, periodos: new Set(), turmas:[] };
+        porSala[sala].total++;
+        porSala[sala].horas += estimarHorasTurma(t);
+        if (t.periodo) porSala[sala].periodos.add(t.periodo);
+        porSala[sala].turmas.push(t.nome_curso);
+      });
+
+      const rowsSala = MS_SALAS
+        .filter(s => porSala[s.id])
+        .sort((a,b) => (porSala[b.id]?.horas||0) - (porSala[a.id]?.horas||0))
+        .map(s => {
+          const d = porSala[s.id];
+          const pers = [...d.periodos].map(p => ({manha:'Manhã',tarde:'Tarde',noite:'Noite'}[p]||p)).join(', ');
+          return `<tr class="border-b border-gray-100 hover:bg-blue-50/40">
+            <td class="px-4 py-3 font-bold text-[#004587] text-sm">${s.nome}</td>
+            <td class="px-3 py-3 text-xs text-gray-500">${s.tipo}</td>
+            <td class="px-3 py-3 text-center font-bold text-gray-700">${d.total}</td>
+            <td class="px-3 py-3 text-xs text-gray-500">${pers || '—'}</td>
+            <td class="px-3 py-3 text-right font-bold text-indigo-700">${d.horas.toLocaleString('pt-BR')}h</td>
+          </tr>`;
+        }).join('');
+
+      const tabelaSalaHtml = rowsSala ? `
+        <h4 class="text-sm font-bold text-[#004587] mb-3">Por Sala (turmas com sala fixa)</h4>
+        <div class="overflow-x-auto rounded-xl border border-gray-200">
+          <table class="w-full text-left">
+            <thead><tr class="bg-[#004587] text-white text-xs font-semibold">
+              <th class="px-4 py-3 rounded-tl-xl">Sala</th>
+              <th class="px-3 py-3">Tipo</th>
+              <th class="px-3 py-3 text-center">Turmas</th>
+              <th class="px-3 py-3">Períodos</th>
+              <th class="px-3 py-3 text-right rounded-tr-xl">Horas Est.</th>
+            </tr></thead>
+            <tbody class="bg-white">${rowsSala}</tbody>
+          </table>
+        </div>` : '<p class="text-xs text-gray-400 mt-2">Nenhuma turma com sala fixa cadastrada para este ano.</p>';
+
+      cont.innerHTML = cardsHtml + tabelaAreaHtml + tabelaSalaHtml;
+    };
+
+    // ── FASE 3: Hook no cadastro de turma ────────────────────────────
+    // Injetar verificação de conflito no fluxo de salvamento de turma (chamado de salvarTurma)
+    const _origSalvarTurma = window.salvarTurma;
+    // A verificação de conflito já está disponível via verificarConflitoSala()
+    // e é chamada diretamente pelo calcularDuracao() e pelo hook abaixo
+
+    // Garante que ao salvar uma turma com sala_fixa, o conflito é verificado
+    // (integrado ao calcularDuracao; para o cadastro direto, o aviso é passivo)
+    // ── FIM MÓDULO PLANEJAMENTO ──────────────────────────────────────
+
     // ==================== FIM NAVEGAÇÃO DE ABAS ====================
   </script>
  </body>
