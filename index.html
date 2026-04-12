@@ -982,10 +982,18 @@
         </button>
        </div>
       </div>
-      <!-- Step 2: Lista de turmas com status do PCTD -->
-      <div id="pctd-step-turmas" style="display:none">
+      <!-- Step 2: Lista de cursos -->
+      <div id="pctd-step-cursos" style="display:none">
        <button onclick="pctdVoltarTipo()" class="mb-5 text-sm text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Trocar tipo
+       </button>
+       <p class="font-semibold text-gray-700 mb-3 text-sm">Selecione o curso:</p>
+       <div id="pctd-cursos-container" class="space-y-2"></div>
+      </div>
+      <!-- Step 3: Turmas do curso com status do PCTD -->
+      <div id="pctd-step-turmas" style="display:none">
+       <button onclick="pctdVoltarCursos()" class="mb-5 text-sm text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Voltar aos cursos
        </button>
        <div id="pctd-turmas-container" class="space-y-3"></div>
       </div>
@@ -1012,14 +1020,22 @@
         </button>
        </div>
       </div>
-      <!-- Step 2: Lista de turmas -->
-      <div id="pitd-step-turmas" style="display:none">
+      <!-- Step 2: Lista de cursos do tipo selecionado -->
+      <div id="pitd-step-cursos" style="display:none">
        <button onclick="pitdVoltarTipo()" class="mb-5 text-sm text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Trocar tipo
        </button>
-       <div id="pitd-turmas-container"></div>
+       <p class="font-semibold text-gray-700 mb-3 text-sm">Selecione o curso:</p>
+       <div id="pitd-cursos-container" class="space-y-2"></div>
       </div>
-      <!-- Step 3: UCs da turma selecionada -->
+      <!-- Step 3: Turmas do curso selecionado -->
+      <div id="pitd-step-turmas" style="display:none">
+       <button onclick="pitdVoltarCursos()" class="mb-5 text-sm text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Voltar aos cursos
+       </button>
+       <div id="pitd-turmas-container" class="space-y-2"></div>
+      </div>
+      <!-- Step 4: UCs da turma selecionada -->
       <div id="pitd-step-ucs" style="display:none">
        <button onclick="pitdVoltarTurmas()" class="mb-5 text-sm text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Voltar às turmas
@@ -2998,19 +3014,13 @@
       renderConsultaView(viewId);
       if (viewId === 'docentes-list') { renderDocentes(); if (allTeachers.length === 0) loadDocentes(); }
       if (viewId === 'pctd-list') {
-        _pctdTipo = null;
-        ['pctd-step-tipo','pctd-step-turmas'].forEach((id, i) => {
-          const el = document.getElementById(id);
-          if (el) el.style.display = i === 0 ? 'block' : 'none';
-        });
+        _pctdTipo = null; _pctdCurso = null;
+        _pctdShow('pctd-step-tipo');
         loadPCTD();
       }
       if (viewId === 'pitd-list') {
-        _pitdTipo = null; _pitdTurma = null;
-        ['pitd-step-tipo','pitd-step-turmas','pitd-step-ucs'].forEach((id, i) => {
-          const el = document.getElementById(id);
-          if (el) el.style.display = i === 0 ? 'block' : 'none';
-        });
+        _pitdTipo = null; _pitdCurso = null; _pitdTurma = null;
+        _pitdShow('pitd-step-tipo');
         loadPITD();
       }
       if (viewId === 'representantes-filter') { filterRepresentantes(); loadRepresentantes(); }
@@ -3763,137 +3773,229 @@
     function renderPITD() {}
     window.filterPITD = function() {};
 
-    // ── PCTD: Nova navegação por tipo → turma ─────────────────────────
-    let _pctdTipo = null;
+    // ── Helper compartilhado: carrega turmas com cache robusto ───────
+    async function _carregarTurmasCache() {
+      if (!Array.isArray(_turmasConsultaCache) || _turmasConsultaCache.length === 0) {
+        _turmasConsultaCache = await loadTurmasDeduped();
+      }
+      return _turmasConsultaCache;
+    }
 
-    window.pctdSelecionarTipo = function(tipo) {
-      _pctdTipo = tipo;
-      document.getElementById('pctd-step-tipo').style.display = 'none';
-      document.getElementById('pctd-step-turmas').style.display = 'block';
+    // Retorna turmas ativas do tipo (tecnico/livre), sem parceiros/finalizadas
+    function _turmasPorTipo(turmas, tipo) {
+      return turmas.filter(t => {
+        if (isParceiro(t) || isTurmaFinalizada(t)) return false;
+        // Heurística de classificação: técnico começa com "Técnico", livre é o resto
+        const nome = (t.nome_curso || '').toLowerCase();
+        const ehTecnico = nome.startsWith('técnico') || nome.startsWith('tecnico');
+        return tipo === 'tecnico' ? ehTecnico : !ehTecnico;
+      });
+    }
+
+    // Cursos únicos de uma lista de turmas, ordenados
+    function _cursosUnicos(turmas) {
+      const nomes = [...new Set(turmas.map(t => t.nome_curso || '').filter(Boolean))];
+      return nomes.sort((a, b) => a.localeCompare(b, 'pt-BR'));
+    }
+
+    // ── PCTD: Navegação tipo → curso → turma ──────────────────────────
+    let _pctdTipo = null;
+    let _pctdCurso = null;
+
+    function _pctdShow(stepId) {
+      ['pctd-step-tipo','pctd-step-cursos','pctd-step-turmas'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = id === stepId ? 'block' : 'none';
+      });
+    }
+
+    window.pctdSelecionarTipo = async function(tipo) {
+      _pctdTipo = tipo; _pctdCurso = null;
+      _pctdShow('pctd-step-cursos');
+      const container = document.getElementById('pctd-cursos-container');
+      if (!container) return;
+      container.innerHTML = '<p class="text-gray-400 text-sm text-center py-4">⏳ Carregando...</p>';
+      try {
+        const turmas = await _carregarTurmasCache();
+        const filtradas = _turmasPorTipo(turmas, tipo);
+        const cursos = _cursosUnicos(filtradas);
+        if (!cursos.length) {
+          container.innerHTML = `<p class="text-gray-400 text-center py-6 text-sm">Nenhum curso ${tipo === 'tecnico' ? 'técnico' : 'livre'} em andamento.</p>`;
+          return;
+        }
+        container.innerHTML = cursos.map(nome => {
+          const count = filtradas.filter(t => t.nome_curso === nome).length;
+          const nomeEsc = nome.replace(/'/g, "\\'");
+          return `<div onclick="pctdSelecionarCurso('${nomeEsc}')" class="cursor-pointer flex items-center justify-between bg-white border-2 border-gray-200 hover:border-[#004587] hover:bg-blue-50 rounded-xl px-4 py-3 transition-all">
+            <div>
+              <p class="font-semibold text-gray-800 text-sm">${nome}</p>
+              <p class="text-xs text-gray-500 mt-0.5">${count} turma${count !== 1 ? 's' : ''}</p>
+            </div>
+            <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>`;
+        }).join('');
+      } catch(e) {
+        container.innerHTML = `<p class="text-red-400 text-sm text-center py-4">⚠️ Erro: ${e.message||e}</p>`;
+      }
+    };
+
+    window.pctdSelecionarCurso = function(nomeCurso) {
+      _pctdCurso = nomeCurso;
+      _pctdShow('pctd-step-turmas');
       _pctdRenderTurmas();
     };
 
     window.pctdVoltarTipo = function() {
-      _pctdTipo = null;
-      document.getElementById('pctd-step-tipo').style.display = 'block';
-      document.getElementById('pctd-step-turmas').style.display = 'none';
+      _pctdTipo = null; _pctdCurso = null;
+      _pctdShow('pctd-step-tipo');
     };
 
-    async function _pctdRenderTurmas() {
+    window.pctdVoltarCursos = function() {
+      _pctdCurso = null;
+      _pctdShow('pctd-step-cursos');
+    };
+
+    function _pctdRenderTurmas() {
       const container = document.getElementById('pctd-turmas-container');
       if (!container) return;
-      container.innerHTML = '<p class="text-gray-400 text-sm text-center py-6">⏳ Carregando turmas...</p>';
-      try {
-        if (!_turmasConsultaCache) _turmasConsultaCache = await loadTurmasDeduped();
-        const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite', integral: 'Integral', sabado: 'Sábado' };
-        const filtradas = _turmasConsultaCache.filter(t =>
-          !isParceiro(t) && !isTurmaFinalizada(t) && getTipoCurso(t.nome_curso) === _pctdTipo
-        ).sort((a, b) => (a.nome_curso || '').localeCompare(b.nome_curso || '', 'pt-BR'));
+      const turmas = Array.isArray(_turmasConsultaCache) ? _turmasConsultaCache : [];
+      const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite', integral: 'Integral', sabado: 'Sábado' };
+      const filtradas = turmas.filter(t =>
+        !isParceiro(t) && !isTurmaFinalizada(t) && t.nome_curso === _pctdCurso
+      ).sort((a, b) => (a.periodo || '').localeCompare(b.periodo || ''));
+      if (!filtradas.length) {
+        container.innerHTML = '<p class="text-gray-400 text-center py-6 text-sm">Nenhuma turma ativa encontrada para este curso.</p>';
+        return;
+      }
+      container.innerHTML = filtradas.map(t => {
+        const pctd = allPCTD.find(p => p.codigo_oferta === t.codigo_oferta);
+        const temPlano = pctd && pctd.link_arquivo;
+        const apelido = t.apelido ? ` · ${t.apelido}` : '';
+        return `<div class="flex items-center gap-4 p-4 bg-white border-2 ${temPlano ? 'border-green-200' : 'border-gray-200'} rounded-xl">
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold text-gray-800 text-sm">${periodoLabel[t.periodo] || t.periodo || '-'}${apelido}</p>
+            <p class="text-xs text-gray-500 mt-0.5">${t.codigo_oferta || ''} · ${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)}</p>
+          </div>
+          ${temPlano
+            ? `<a href="${pctd.link_arquivo}" target="_blank" rel="noopener" class="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 bg-green-600 text-white rounded-xl text-xs font-semibold hover:bg-green-700 transition-all">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                Visualizar PCTD</a>`
+            : `<span class="flex-shrink-0 text-xs text-amber-600 font-semibold bg-amber-50 border border-amber-200 px-3 py-2 rounded-xl">⚠️ Sem plano</span>`
+          }
+        </div>`;
+      }).join('');
+    }
 
-        if (!filtradas.length) {
-          container.innerHTML = `<p class="text-gray-400 text-center py-6 text-sm">Nenhuma turma ${_pctdTipo === 'tecnico' ? 'técnica' : 'de curso livre'} em andamento encontrada.</p>`;
+    // ── PITD: Navegação tipo → curso → turma → UC ─────────────────────
+    let _pitdTipo = null;
+    let _pitdCurso = null;
+    let _pitdTurma = null;
+
+    function _pitdShow(stepId) {
+      ['pitd-step-tipo','pitd-step-cursos','pitd-step-turmas','pitd-step-ucs'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = id === stepId ? 'block' : 'none';
+      });
+    }
+
+    window.pitdSelecionarTipo = async function(tipo) {
+      _pitdTipo = tipo; _pitdCurso = null; _pitdTurma = null;
+      _pitdShow('pitd-step-cursos');
+      const container = document.getElementById('pitd-cursos-container');
+      if (!container) return;
+      container.innerHTML = '<p class="text-gray-400 text-sm text-center py-4">⏳ Carregando...</p>';
+      try {
+        const turmas = await _carregarTurmasCache();
+        const filtradas = _turmasPorTipo(turmas, tipo);
+        const cursos = _cursosUnicos(filtradas);
+        if (!cursos.length) {
+          container.innerHTML = `<p class="text-gray-400 text-center py-6 text-sm">Nenhum curso ${tipo === 'tecnico' ? 'técnico' : 'livre'} em andamento.</p>`;
           return;
         }
-        container.innerHTML = filtradas.map(t => {
-          const pctd = allPCTD.find(p => p.codigo_oferta === t.codigo_oferta);
-          const temPlano = pctd && pctd.link_arquivo;
-          const apelido = t.apelido ? ` · ${t.apelido}` : '';
-          return `<div class="flex items-center gap-4 p-4 bg-white border-2 ${temPlano ? 'border-green-200 bg-green-50/30' : 'border-gray-200'} rounded-xl hover:border-[#004587] transition-all">
-            <div class="flex-1 min-w-0">
-              <p class="font-semibold text-gray-800 text-sm truncate">${t.nome_curso}${apelido}</p>
-              <p class="text-xs text-gray-500 mt-0.5">${t.codigo_oferta || ''} · ${periodoLabel[t.periodo] || t.periodo || '-'}</p>
+        container.innerHTML = cursos.map(nome => {
+          const count = filtradas.filter(t => t.nome_curso === nome).length;
+          const nomeEsc = nome.replace(/'/g, "\\'");
+          return `<div onclick="pitdSelecionarCurso('${nomeEsc}')" class="cursor-pointer flex items-center justify-between bg-white border-2 border-gray-200 hover:border-[#004587] hover:bg-blue-50 rounded-xl px-4 py-3 transition-all">
+            <div>
+              <p class="font-semibold text-gray-800 text-sm">${nome}</p>
+              <p class="text-xs text-gray-500 mt-0.5">${count} turma${count !== 1 ? 's' : ''}</p>
             </div>
-            ${temPlano
-              ? `<a href="${pctd.link_arquivo}" target="_blank" rel="noopener" class="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 bg-green-600 text-white rounded-xl text-xs font-semibold hover:bg-green-700 transition-all">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                  Visualizar PCTD</a>`
-              : `<span class="flex-shrink-0 text-xs text-amber-600 font-semibold bg-amber-50 border border-amber-200 px-3 py-2 rounded-xl">⚠️ Sem plano</span>`
-            }
+            <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
           </div>`;
         }).join('');
       } catch(e) {
-        container.innerHTML = '<p class="text-red-400 text-sm text-center py-4">Erro ao carregar turmas.</p>';
+        container.innerHTML = `<p class="text-red-400 text-sm text-center py-4">⚠️ Erro: ${e.message||e}</p>`;
       }
-    }
+    };
 
-    // ── PITD: Nova navegação por tipo → turma → UC ────────────────────
-    let _pitdTipo = null;
-    let _pitdTurma = null;
-
-    window.pitdSelecionarTipo = function(tipo) {
-      _pitdTipo = tipo;
-      document.getElementById('pitd-step-tipo').style.display = 'none';
-      document.getElementById('pitd-step-turmas').style.display = 'block';
+    window.pitdSelecionarCurso = function(nomeCurso) {
+      _pitdCurso = nomeCurso; _pitdTurma = null;
+      _pitdShow('pitd-step-turmas');
       _pitdRenderTurmas();
     };
 
     window.pitdVoltarTipo = function() {
-      _pitdTipo = null; _pitdTurma = null;
-      document.getElementById('pitd-step-tipo').style.display = 'block';
-      document.getElementById('pitd-step-turmas').style.display = 'none';
-      document.getElementById('pitd-step-ucs').style.display = 'none';
+      _pitdTipo = null; _pitdCurso = null; _pitdTurma = null;
+      _pitdShow('pitd-step-tipo');
+    };
+
+    window.pitdVoltarCursos = function() {
+      _pitdCurso = null; _pitdTurma = null;
+      _pitdShow('pitd-step-cursos');
     };
 
     window.pitdVoltarTurmas = function() {
       _pitdTurma = null;
-      document.getElementById('pitd-step-turmas').style.display = 'block';
-      document.getElementById('pitd-step-ucs').style.display = 'none';
+      _pitdShow('pitd-step-turmas');
     };
 
-    async function _pitdRenderTurmas() {
+    function _pitdRenderTurmas() {
       const container = document.getElementById('pitd-turmas-container');
       if (!container) return;
-      container.innerHTML = '<p class="text-gray-400 text-sm text-center py-6">⏳ Carregando turmas...</p>';
-      try {
-        if (!_turmasConsultaCache) _turmasConsultaCache = await loadTurmasDeduped();
-        const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite', integral: 'Integral', sabado: 'Sábado' };
-        const periodoOrder = ['manha', 'tarde', 'noite', 'integral', 'sabado'];
-        const filtradas = _turmasConsultaCache.filter(t =>
-          !isParceiro(t) && !isTurmaFinalizada(t) && getTipoCurso(t.nome_curso) === _pitdTipo
-        );
-        if (!filtradas.length) {
-          container.innerHTML = `<p class="text-gray-400 text-center py-6 text-sm">Nenhuma turma ${_pitdTipo === 'tecnico' ? 'técnica' : 'de curso livre'} em andamento encontrada.</p>`;
-          return;
-        }
-        // Agrupa por período
-        const grupos = {};
-        filtradas.forEach(t => { const p = t.periodo || 'outro'; if (!grupos[p]) grupos[p] = []; grupos[p].push(t); });
-        const periodos = [...periodoOrder.filter(p => grupos[p]), ...Object.keys(grupos).filter(p => !periodoOrder.includes(p))];
-        let html = '';
-        periodos.forEach(per => {
-          html += `<div class="mb-4">
-            <div class="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-lg mb-2">
-              <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">${periodoLabel[per] || per}</span>
-              <span class="text-xs text-gray-400">${grupos[per].length} turma${grupos[per].length !== 1 ? 's' : ''}</span>
-            </div>`;
-          grupos[per].forEach(t => {
-            const apelido = t.apelido ? ` · <span class="text-[#F7941D] font-semibold">${t.apelido}</span>` : '';
-            const stCss = _STATUS_BADGE_CSS[(t.status_turma||'').toLowerCase()] || 'bg-green-100 text-green-700';
-            const stLabel = _STATUS_LABEL[(t.status_turma||'').toLowerCase()] || '🟢 Em andamento';
-            const codEsc = t.codigo_oferta.replace(/'/g, "\\'");
-            html += `<div onclick="pitdSelecionarTurma('${codEsc}')" class="cursor-pointer flex items-center justify-between bg-white border-2 border-gray-200 hover:border-[#004587] hover:bg-blue-50 rounded-xl px-4 py-3 mb-2 transition-all">
-              <div>
-                <p class="font-semibold text-gray-800 text-sm">${t.nome_curso}${apelido}</p>
-                <p class="text-xs text-gray-500 mt-0.5">${t.codigo_oferta}</p>
-                <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${stCss}">${stLabel}</span>
-              </div>
-              <svg class="w-5 h-5 text-gray-400 flex-shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            </div>`;
-          });
-          html += '</div>';
-        });
-        container.innerHTML = html;
-      } catch(e) {
-        container.innerHTML = '<p class="text-red-400 text-sm text-center py-4">Erro ao carregar turmas.</p>';
+      const turmas = Array.isArray(_turmasConsultaCache) ? _turmasConsultaCache : [];
+      const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite', integral: 'Integral', sabado: 'Sábado' };
+      const periodoOrder = ['manha', 'tarde', 'noite', 'integral', 'sabado'];
+      const filtradas = turmas.filter(t =>
+        !isParceiro(t) && !isTurmaFinalizada(t) && t.nome_curso === _pitdCurso
+      );
+      if (!filtradas.length) {
+        container.innerHTML = '<p class="text-gray-400 text-center py-6 text-sm">Nenhuma turma ativa encontrada para este curso.</p>';
+        return;
       }
+      const grupos = {};
+      filtradas.forEach(t => { const p = t.periodo || 'outro'; if (!grupos[p]) grupos[p] = []; grupos[p].push(t); });
+      const periodos = [...periodoOrder.filter(p => grupos[p]), ...Object.keys(grupos).filter(p => !periodoOrder.includes(p))];
+      let html = '';
+      periodos.forEach(per => {
+        html += `<div class="mb-4">
+          <div class="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-lg mb-2">
+            <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">${periodoLabel[per] || per}</span>
+            <span class="text-xs text-gray-400">${grupos[per].length} turma${grupos[per].length !== 1 ? 's' : ''}</span>
+          </div>`;
+        grupos[per].forEach(t => {
+          const apelido = t.apelido ? ` · ${t.apelido}` : '';
+          const stCss = _STATUS_BADGE_CSS[(t.status_turma||'').toLowerCase()] || 'bg-green-100 text-green-700';
+          const stLabel = _STATUS_LABEL[(t.status_turma||'').toLowerCase()] || '🟢 Em andamento';
+          const codEsc = (t.codigo_oferta || '').replace(/'/g, "\\'");
+          html += `<div onclick="pitdSelecionarTurma('${codEsc}')" class="cursor-pointer flex items-center justify-between bg-white border-2 border-gray-200 hover:border-[#004587] hover:bg-blue-50 rounded-xl px-4 py-3 mb-2 transition-all">
+            <div>
+              <p class="font-semibold text-gray-800 text-sm">${t.codigo_oferta || '—'}${apelido}</p>
+              <p class="text-xs text-gray-500 mt-0.5">${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)}</p>
+              <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${stCss}">${stLabel}</span>
+            </div>
+            <svg class="w-5 h-5 text-gray-400 flex-shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>`;
+        });
+        html += '</div>';
+      });
+      container.innerHTML = html;
     }
 
     window.pitdSelecionarTurma = async function(codigoOferta) {
       const t = (_turmasConsultaCache || []).find(x => x.codigo_oferta === codigoOferta);
       if (!t) return;
       _pitdTurma = t;
-      document.getElementById('pitd-step-turmas').style.display = 'none';
-      document.getElementById('pitd-step-ucs').style.display = 'block';
+      _pitdShow('pitd-step-ucs');
       const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite', integral: 'Integral', sabado: 'Sábado' };
       document.getElementById('pitd-turma-header').innerHTML = `
         <div class="flex items-start gap-3">
