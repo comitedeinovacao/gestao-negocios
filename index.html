@@ -964,44 +964,98 @@
      <!-- Consulta PCTD -->
      <div id="pctd-list" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200" style="display:none">
       <button onclick="closeConsultaView('pctd-list')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
-       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Voltar
       </button>
-      <h3 class="text-xl font-bold text-[#004587] mb-4">Planos Coletivos de Trabalho Docente</h3>
-      <div class="grid md:grid-cols-2 gap-4 mb-6 bg-blue-50 p-6 rounded-xl">
-       <div>
-        <label class="block text-[#004587] font-semibold mb-2">Nome do Curso</label>
-        <input type="text" id="pctd-search-curso" placeholder="Ex: Administração..." oninput="filterPCTD()" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" />
-       </div>
-       <div>
-        <label class="block text-[#004587] font-semibold mb-2">Período</label>
-        <select id="pctd-search-periodo" onchange="filterPCTD()" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
-         <option value="">Todos</option>
-         <option value="manha">Manhã</option>
-         <option value="tarde">Tarde</option>
-         <option value="noite">Noite</option>
-        </select>
+      <h3 class="text-xl font-bold text-[#004587] mb-1">Plano Coletivo de Trabalho Docente</h3>
+      <p class="text-sm text-gray-500 mb-6">Selecione o tipo de curso para visualizar os planos cadastrados.</p>
+      <!-- Step 1: Tipo -->
+      <div id="pctd-step-tipo">
+       <p class="font-semibold text-gray-700 mb-4">Selecione o tipo de curso:</p>
+       <div class="grid grid-cols-2 gap-4 max-w-xs">
+        <button onclick="pctdSelecionarTipo('tecnico')" class="flex flex-col items-center gap-3 p-6 border-2 border-gray-200 rounded-2xl hover:border-[#004587] hover:bg-blue-50 transition-all">
+         <svg class="w-10 h-10 text-[#004587]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+         <span class="font-bold text-[#004587] text-sm">Técnico</span>
+        </button>
+        <button onclick="pctdSelecionarTipo('livre')" class="flex flex-col items-center gap-3 p-6 border-2 border-gray-200 rounded-2xl hover:border-[#F7941D] hover:bg-orange-50 transition-all">
+         <svg class="w-10 h-10 text-[#F7941D]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+         <span class="font-bold text-[#F7941D] text-sm">Livre</span>
+        </button>
        </div>
       </div>
-      <div id="pctd-grid" class="grid md:grid-cols-2 gap-4"></div>
+      <!-- Step 2: Lista de turmas com status do PCTD -->
+      <div id="pctd-step-turmas" style="display:none">
+       <button onclick="pctdVoltarTipo()" class="mb-5 text-sm text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Trocar tipo
+       </button>
+       <div id="pctd-turmas-container" class="space-y-3"></div>
+      </div>
      </div>
 
      <!-- Consulta PITD -->
      <div id="pitd-list" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200" style="display:none">
       <button onclick="closeConsultaView('pitd-list')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
-       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Voltar
       </button>
-      <h3 class="text-xl font-bold text-[#004587] mb-4">Planos Individuais de Trabalho Docente</h3>
-      <div class="grid md:grid-cols-2 gap-4 mb-6 bg-blue-50 p-6 rounded-xl">
-       <div>
-        <label class="block text-[#004587] font-semibold mb-2">Nome do Docente</label>
-        <input type="text" id="pitd-search-docente" placeholder="Ex: João Silva..." oninput="filterPITD()" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" />
-       </div>
-       <div>
-        <label class="block text-[#004587] font-semibold mb-2">Unidade Curricular</label>
-        <input type="text" id="pitd-search-uc" placeholder="Ex: Gestão Empresarial..." oninput="filterPITD()" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" />
+      <h3 class="text-xl font-bold text-[#004587] mb-1">Plano Individual de Trabalho Docente</h3>
+      <p class="text-sm text-gray-500 mb-6">Selecione o curso para enviar e gerenciar os planos de aula por unidade curricular.</p>
+      <!-- Step 1: Tipo -->
+      <div id="pitd-step-tipo">
+       <p class="font-semibold text-gray-700 mb-4">Selecione o tipo de curso:</p>
+       <div class="grid grid-cols-2 gap-4 max-w-xs">
+        <button onclick="pitdSelecionarTipo('tecnico')" class="flex flex-col items-center gap-3 p-6 border-2 border-gray-200 rounded-2xl hover:border-[#004587] hover:bg-blue-50 transition-all">
+         <svg class="w-10 h-10 text-[#004587]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+         <span class="font-bold text-[#004587] text-sm">Técnico</span>
+        </button>
+        <button onclick="pitdSelecionarTipo('livre')" class="flex flex-col items-center gap-3 p-6 border-2 border-gray-200 rounded-2xl hover:border-[#F7941D] hover:bg-orange-50 transition-all">
+         <svg class="w-10 h-10 text-[#F7941D]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+         <span class="font-bold text-[#F7941D] text-sm">Livre</span>
+        </button>
        </div>
       </div>
-      <div id="pitd-grid" class="grid md:grid-cols-2 gap-4"></div>
+      <!-- Step 2: Lista de turmas -->
+      <div id="pitd-step-turmas" style="display:none">
+       <button onclick="pitdVoltarTipo()" class="mb-5 text-sm text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Trocar tipo
+       </button>
+       <div id="pitd-turmas-container"></div>
+      </div>
+      <!-- Step 3: UCs da turma selecionada -->
+      <div id="pitd-step-ucs" style="display:none">
+       <button onclick="pitdVoltarTurmas()" class="mb-5 text-sm text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Voltar às turmas
+       </button>
+       <div id="pitd-turma-header" class="mb-5 p-4 bg-blue-50 rounded-xl"></div>
+       <div id="pitd-ucs-container" class="space-y-3"></div>
+      </div>
+     </div>
+
+     <!-- Modal: Adicionar / Editar PITD -->
+     <div id="modal-pitd-plano" class="hidden fixed inset-0 z-[9100] flex items-center justify-center" style="background:rgba(0,0,0,0.45);backdrop-filter:blur(4px)">
+      <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4">
+       <div class="flex items-start justify-between mb-4">
+        <h3 id="pitd-modal-titulo" class="font-bold text-[#004587] text-lg">Adicionar Plano de Aula</h3>
+        <button onclick="pitdFecharModal()" class="text-gray-400 hover:text-gray-600 text-xl leading-none">✕</button>
+       </div>
+       <input type="hidden" id="pitd-modal-pitd-id">
+       <input type="hidden" id="pitd-modal-turma-codigo">
+       <input type="hidden" id="pitd-modal-uc-nome">
+       <div class="space-y-4">
+        <div id="pitd-modal-uc-label" class="px-3 py-2 bg-blue-50 rounded-lg text-sm text-[#004587] font-semibold"></div>
+        <div>
+         <label class="block text-xs font-semibold text-gray-600 mb-1">Nome do Docente</label>
+         <input type="text" id="pitd-modal-docente" placeholder="Ex: João Silva" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+        </div>
+        <div>
+         <label class="block text-xs font-semibold text-gray-600 mb-1">Link do Plano de Aula</label>
+         <input type="url" id="pitd-modal-link" placeholder="https://drive.google.com/... ou https://1drv.ms/..." class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+         <p class="text-xs text-gray-400 mt-1.5">📎 Compartilhe o link do Google Drive ou OneDrive com permissão de visualização</p>
+        </div>
+       </div>
+       <div class="flex gap-2 mt-5">
+        <button onclick="pitdFecharModal()" class="px-4 py-2.5 rounded-xl border-2 border-gray-200 font-semibold text-sm text-gray-600 hover:bg-gray-50 transition-all">Cancelar</button>
+        <button id="btn-pitd-salvar" onclick="pitdSalvarPlano()" class="flex-1 px-4 py-2.5 rounded-xl bg-[#004587] text-white font-bold text-sm hover:bg-[#003366] transition-all">Salvar</button>
+       </div>
+      </div>
      </div>
 
      <!-- Consulta Representantes -->
@@ -1061,8 +1115,12 @@
     </div>
     <div><label class="block text-xs font-semibold text-gray-600 mb-1">Status</label>
       <select id="turmas-search-status" onchange="filtrarTurmasConsulta()" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
-        <option value="ativas">Em andamento</option>
-        <option value="finalizadas">Finalizadas</option>
+        <option value="ativas">Ativas (todas)</option>
+        <option value="planejado">📋 Planejado</option>
+        <option value="confirmado">✅ Confirmado</option>
+        <option value="em_andamento">🟢 Em andamento</option>
+        <option value="finalizado">🏁 Finalizado</option>
+        <option value="cancelado">❌ Cancelado</option>
         <option value="">Todas</option>
       </select>
     </div>
@@ -1102,10 +1160,18 @@
    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Apelido da Turma <span class="text-gray-400 font-normal">(exibido no Totem)</span></label>
     <input type="text" id="editar-turma-apelido" placeholder="Ex: Turma 2026-A ou Manhã A" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
    </div>
+   <div><label class="block text-xs font-semibold text-gray-600 mb-1">Status da turma</label>
+    <select id="editar-turma-status" class="w-full px-3 py-2 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none text-sm">
+     <option value="planejado">📋 Planejado</option>
+     <option value="confirmado">✅ Confirmado</option>
+     <option value="em_andamento">🟢 Em andamento</option>
+     <option value="finalizado">🏁 Finalizado</option>
+     <option value="cancelado">❌ Cancelado</option>
+    </select>
+   </div>
   </div>
   <div class="flex gap-2 mt-5 flex-wrap">
    <button onclick="fecharEditarTurma()" class="px-4 py-2.5 rounded-xl border-2 border-gray-200 font-semibold text-sm text-gray-600 hover:bg-gray-50 transition-all">Cancelar</button>
-   <button id="btn-finalizar-turma" onclick="toggleFinalizarTurma()" class="px-4 py-2.5 rounded-xl border-2 border-orange-200 text-orange-600 font-semibold text-sm hover:bg-orange-50 transition-all">Finalizar turma</button>
    <button id="btn-salvar-edicao-turma" onclick="salvarEdicaoTurma()" class="flex-1 px-4 py-2.5 rounded-xl bg-[#004587] text-white font-bold text-sm hover:bg-[#003366] transition-all">Salvar alterações</button>
   </div>
  </div>
@@ -2732,13 +2798,26 @@
     };
 
     async function loadPCTD() {
-      [allPCTD] = await Promise.all([carregarDaAba('PCTD'), carregarDadosCursos()]);
-      renderPCTD();
+      const [raw] = await Promise.all([carregarDaAba('PCTD'), carregarDadosCursos()]);
+      // Deduplica por codigo_oferta (mantém última entrada)
+      const byCode = {};
+      (raw || []).forEach(p => { if (p.codigo_oferta) byCode[p.codigo_oferta] = p; });
+      allPCTD = Object.values(byCode).filter(p => p.nome_curso !== '__DELETED__');
     }
 
     async function loadPITD() {
-      allPITD = await carregarDaAba('PITD');
-      renderPITD();
+      const raw = await carregarDaAba('PITD');
+      // Deduplica por pitd_id (mantém última entrada); registros legados sem pitd_id são mantidos
+      const byId = {};
+      const legado = [];
+      (raw || []).forEach(p => {
+        if (p.pitd_id) byId[p.pitd_id] = p;
+        else legado.push(p);
+      });
+      allPITD = [
+        ...legado.filter(p => p.link_arquivo_pitd !== '__DELETED__' && p.docente !== '__DELETED__'),
+        ...Object.values(byId).filter(p => p.link_arquivo_pitd !== '__DELETED__' && p.docente !== '__DELETED__')
+      ];
     }
 
     async function loadRepresentantes() {
@@ -2918,8 +2997,22 @@
     window.openConsultaView = (viewId) => {
       renderConsultaView(viewId);
       if (viewId === 'docentes-list') { renderDocentes(); if (allTeachers.length === 0) loadDocentes(); }
-      if (viewId === 'pctd-list') { filterPCTD(); loadPCTD(); }
-      if (viewId === 'pitd-list') { filterPITD(); loadPITD(); }
+      if (viewId === 'pctd-list') {
+        _pctdTipo = null;
+        ['pctd-step-tipo','pctd-step-turmas'].forEach((id, i) => {
+          const el = document.getElementById(id);
+          if (el) el.style.display = i === 0 ? 'block' : 'none';
+        });
+        loadPCTD();
+      }
+      if (viewId === 'pitd-list') {
+        _pitdTipo = null; _pitdTurma = null;
+        ['pitd-step-tipo','pitd-step-turmas','pitd-step-ucs'].forEach((id, i) => {
+          const el = document.getElementById(id);
+          if (el) el.style.display = i === 0 ? 'block' : 'none';
+        });
+        loadPITD();
+      }
       if (viewId === 'representantes-filter') { filterRepresentantes(); loadRepresentantes(); }
       if (viewId === 'cursos-tecnicos-list') { renderCursosLista('tecnicos'); }
       if (viewId === 'cursos-livres-list') { renderCursosLista('livres'); }
@@ -2955,6 +3048,25 @@
       return s;
     }
 
+    const _STATUS_BADGE_CSS = {
+      planejado:    'bg-sky-100 text-sky-700',
+      confirmado:   'bg-indigo-100 text-indigo-700',
+      em_andamento: 'bg-green-100 text-green-700',
+      finalizado:   'bg-gray-200 text-gray-500',
+      finalizada:   'bg-gray-200 text-gray-500',
+      cancelado:    'bg-red-100 text-red-500',
+      ativa:        'bg-green-100 text-green-700',
+    };
+    const _STATUS_LABEL = {
+      planejado:    '📋 Planejado',
+      confirmado:   '✅ Confirmado',
+      em_andamento: '🟢 Em andamento',
+      finalizado:   '🏁 Finalizado',
+      finalizada:   '🏁 Finalizado',
+      cancelado:    '❌ Cancelado',
+      ativa:        '🟢 Em andamento',
+    };
+
     function _turmaRow(t, isParc, idx) {
       const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite', integral: 'Integral', sabado: 'Sábado' };
       const finalizada = isTurmaFinalizada(t);
@@ -2964,9 +3076,10 @@
       const badge = isParc
         ? `<span class="text-xs font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">Parceiro</span>`
         : `<span class="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">${periodoLabel[t.periodo] || t.periodo || '-'}</span>`;
-      const finBadge = finalizada
-        ? `<span class="text-xs font-bold px-2 py-0.5 rounded-full bg-gray-200 text-gray-500">Finalizada</span>`
-        : '';
+      const st = (t.status_turma || '').toLowerCase();
+      const stCss = _STATUS_BADGE_CSS[st] || (finalizada ? 'bg-gray-200 text-gray-500' : 'bg-green-100 text-green-700');
+      const stLabel = _STATUS_LABEL[st] || (finalizada ? '🏁 Finalizado' : '🟢 Em andamento');
+      const finBadge = `<span class="text-xs font-bold px-2 py-0.5 rounded-full ${stCss}">${stLabel}</span>`;
       const actionBtns = idx !== undefined ? `
         <button onclick="abrirEditarTurma(${idx})" title="Editar"
           class="p-1.5 rounded-lg hover:bg-blue-50 text-gray-300 hover:text-[#004587] transition-colors flex-shrink-0">
@@ -2998,13 +3111,14 @@
       document.getElementById('editar-turma-termino').value = _normDateForInput(t.data_de_termino);
       document.getElementById('editar-turma-versao').value = t.versao_plano || '';
       document.getElementById('editar-turma-apelido').value = t.apelido || '';
-      const btnFin = document.getElementById('btn-finalizar-turma');
-      if (btnFin) {
-        const fin = isTurmaFinalizada(t);
-        btnFin.textContent = fin ? 'Reativar turma' : 'Finalizar turma';
-        btnFin.className = fin
-          ? 'px-4 py-2.5 rounded-xl border-2 border-green-300 text-green-700 font-semibold text-sm hover:bg-green-50 transition-all'
-          : 'px-4 py-2.5 rounded-xl border-2 border-orange-200 text-orange-600 font-semibold text-sm hover:bg-orange-50 transition-all';
+      const statusSel = document.getElementById('editar-turma-status');
+      if (statusSel) {
+        const st = (t.status_turma || '').toLowerCase();
+        // Normaliza valores legados para o novo sistema
+        if (st === 'ativa') statusSel.value = 'em_andamento';
+        else if (st === 'finalizada') statusSel.value = 'finalizado';
+        else if (['planejado','confirmado','em_andamento','finalizado','cancelado'].includes(st)) statusSel.value = st;
+        else statusSel.value = isTurmaFinalizada(t) ? 'finalizado' : 'em_andamento';
       }
       document.getElementById('modal-editar-turma').classList.remove('hidden');
     };
@@ -3022,11 +3136,12 @@
       const termino = document.getElementById('editar-turma-termino').value;
       const versao  = document.getElementById('editar-turma-versao').value.trim();
       const apelido = document.getElementById('editar-turma-apelido').value.trim();
+      const novoStatus = document.getElementById('editar-turma-status')?.value || t.status_turma || 'em_andamento';
       const btn = document.getElementById('btn-salvar-edicao-turma');
       const orig = btn.textContent;
       btn.disabled = true; btn.textContent = '⏳ Salvando...';
       try {
-        await postToSheet('Turmas', [t.codigo_oferta, t.nome_curso, versao, periodo, inicio, termino, t.status_turma || '', t.sala_fixa || '', apelido]);
+        await postToSheet('Turmas', [t.codigo_oferta, t.nome_curso, versao, periodo, inicio, termino, novoStatus, t.sala_fixa || '', apelido]);
         fecharEditarTurma();
         _turmasConsultaCache = null;
         allTurmas = allTurmas.filter(x => x.codigo_oferta !== t.codigo_oferta);
@@ -3104,10 +3219,22 @@
       const periodo = document.getElementById('turmas-search-periodo')?.value || '';
       const codigo  = (document.getElementById('turmas-search-codigo')?.value || '').toLowerCase();
       const status  = document.getElementById('turmas-search-status')?.value ?? 'ativas';
+      const _ACTIVE_ST = ['planejado', 'confirmado', 'em_andamento', 'ativa'];
+      const _INACTIVE_ST = ['finalizada', 'finalizado', 'cancelado'];
       const turmas  = _turmasConsultaCache.filter(t => {
         if (isParceiro(t)) return false;
-        if (status === 'ativas' && isTurmaFinalizada(t)) return false;
-        if (status === 'finalizadas' && !isTurmaFinalizada(t)) return false;
+        const tSt = (t.status_turma || '').toLowerCase();
+        if (status === 'ativas') {
+          // mostra todas as não-inativas
+          if (_INACTIVE_ST.includes(tSt)) return false;
+          if (!tSt && isTurmaFinalizada(t)) return false;
+        } else if (status === 'finalizadas') {
+          // legado — mostra finalizado+cancelado
+          if (!_INACTIVE_ST.includes(tSt) && !(!tSt && isTurmaFinalizada(t))) return false;
+        } else if (status) {
+          // filtro exato de status
+          if (tSt !== status) return false;
+        }
         if (areaAtiva) {
           const area = _getCourseArea(t.nome_curso);
           if (area !== areaAtiva.nome) return false;
@@ -3595,14 +3722,10 @@
       });
     }
 
-    // Renderizar PCTD (usa filterPCTD)
-    function renderPCTD() {
-      const grid = document.getElementById('pctd-grid');
-      if (!grid) return;
-      filterPCTD();
-    }
-
+    // Stubs legados (mantidos para compatibilidade com chamadas antigas)
+    function renderPCTD() {}
     window.filterPCTD = function() {
+      // Substituído por pctdRenderTurmas() na nova UI
       const grid = document.getElementById('pctd-grid');
       if (!grid) return;
       const curso = (document.getElementById('pctd-search-curso')?.value || '').toLowerCase();
@@ -3636,44 +3759,301 @@
         : '<p class="text-gray-500 text-center py-8 col-span-2">Nenhum PCTD encontrado</p>';
     };
 
-    // Renderizar PITD (usa filterPITD)
-    function renderPITD() {
-      const grid = document.getElementById('pitd-grid');
-      if (!grid) return;
-      filterPITD();
+    // Stubs legados
+    function renderPITD() {}
+    window.filterPITD = function() {};
+
+    // ── PCTD: Nova navegação por tipo → turma ─────────────────────────
+    let _pctdTipo = null;
+
+    window.pctdSelecionarTipo = function(tipo) {
+      _pctdTipo = tipo;
+      document.getElementById('pctd-step-tipo').style.display = 'none';
+      document.getElementById('pctd-step-turmas').style.display = 'block';
+      _pctdRenderTurmas();
+    };
+
+    window.pctdVoltarTipo = function() {
+      _pctdTipo = null;
+      document.getElementById('pctd-step-tipo').style.display = 'block';
+      document.getElementById('pctd-step-turmas').style.display = 'none';
+    };
+
+    async function _pctdRenderTurmas() {
+      const container = document.getElementById('pctd-turmas-container');
+      if (!container) return;
+      container.innerHTML = '<p class="text-gray-400 text-sm text-center py-6">⏳ Carregando turmas...</p>';
+      try {
+        if (!_turmasConsultaCache) _turmasConsultaCache = await loadTurmasDeduped();
+        const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite', integral: 'Integral', sabado: 'Sábado' };
+        const filtradas = _turmasConsultaCache.filter(t =>
+          !isParceiro(t) && !isTurmaFinalizada(t) && getTipoCurso(t.nome_curso) === _pctdTipo
+        ).sort((a, b) => (a.nome_curso || '').localeCompare(b.nome_curso || '', 'pt-BR'));
+
+        if (!filtradas.length) {
+          container.innerHTML = `<p class="text-gray-400 text-center py-6 text-sm">Nenhuma turma ${_pctdTipo === 'tecnico' ? 'técnica' : 'de curso livre'} em andamento encontrada.</p>`;
+          return;
+        }
+        container.innerHTML = filtradas.map(t => {
+          const pctd = allPCTD.find(p => p.codigo_oferta === t.codigo_oferta);
+          const temPlano = pctd && pctd.link_arquivo;
+          const apelido = t.apelido ? ` · ${t.apelido}` : '';
+          return `<div class="flex items-center gap-4 p-4 bg-white border-2 ${temPlano ? 'border-green-200 bg-green-50/30' : 'border-gray-200'} rounded-xl hover:border-[#004587] transition-all">
+            <div class="flex-1 min-w-0">
+              <p class="font-semibold text-gray-800 text-sm truncate">${t.nome_curso}${apelido}</p>
+              <p class="text-xs text-gray-500 mt-0.5">${t.codigo_oferta || ''} · ${periodoLabel[t.periodo] || t.periodo || '-'}</p>
+            </div>
+            ${temPlano
+              ? `<a href="${pctd.link_arquivo}" target="_blank" rel="noopener" class="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 bg-green-600 text-white rounded-xl text-xs font-semibold hover:bg-green-700 transition-all">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                  Visualizar PCTD</a>`
+              : `<span class="flex-shrink-0 text-xs text-amber-600 font-semibold bg-amber-50 border border-amber-200 px-3 py-2 rounded-xl">⚠️ Sem plano</span>`
+            }
+          </div>`;
+        }).join('');
+      } catch(e) {
+        container.innerHTML = '<p class="text-red-400 text-sm text-center py-4">Erro ao carregar turmas.</p>';
+      }
     }
 
-    window.filterPITD = function() {
-      const grid = document.getElementById('pitd-grid');
-      if (!grid) return;
-      const docente = (document.getElementById('pitd-search-docente')?.value || '').toLowerCase();
-      const uc = (document.getElementById('pitd-search-uc')?.value || '').toLowerCase();
-      const sorted = [...allPITD].sort((a, b) =>
-        (a.docente || '').localeCompare(b.docente || '', 'pt-BR')
-      );
-      const filtrados = sorted.filter(p => {
-        if (areaAtiva) {
-          const doc = allTeachers.find(d => (d.nome_completo||'').toLowerCase() === (p.docente||'').toLowerCase());
-          if (doc) {
-            const docAreas = doc.areas ? doc.areas.split(',').map(s => s.trim()) : ['Gestão e Negócios'];
-            if (!docAreas.includes(areaAtiva.nome)) return false;
-          }
+    // ── PITD: Nova navegação por tipo → turma → UC ────────────────────
+    let _pitdTipo = null;
+    let _pitdTurma = null;
+
+    window.pitdSelecionarTipo = function(tipo) {
+      _pitdTipo = tipo;
+      document.getElementById('pitd-step-tipo').style.display = 'none';
+      document.getElementById('pitd-step-turmas').style.display = 'block';
+      _pitdRenderTurmas();
+    };
+
+    window.pitdVoltarTipo = function() {
+      _pitdTipo = null; _pitdTurma = null;
+      document.getElementById('pitd-step-tipo').style.display = 'block';
+      document.getElementById('pitd-step-turmas').style.display = 'none';
+      document.getElementById('pitd-step-ucs').style.display = 'none';
+    };
+
+    window.pitdVoltarTurmas = function() {
+      _pitdTurma = null;
+      document.getElementById('pitd-step-turmas').style.display = 'block';
+      document.getElementById('pitd-step-ucs').style.display = 'none';
+    };
+
+    async function _pitdRenderTurmas() {
+      const container = document.getElementById('pitd-turmas-container');
+      if (!container) return;
+      container.innerHTML = '<p class="text-gray-400 text-sm text-center py-6">⏳ Carregando turmas...</p>';
+      try {
+        if (!_turmasConsultaCache) _turmasConsultaCache = await loadTurmasDeduped();
+        const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite', integral: 'Integral', sabado: 'Sábado' };
+        const periodoOrder = ['manha', 'tarde', 'noite', 'integral', 'sabado'];
+        const filtradas = _turmasConsultaCache.filter(t =>
+          !isParceiro(t) && !isTurmaFinalizada(t) && getTipoCurso(t.nome_curso) === _pitdTipo
+        );
+        if (!filtradas.length) {
+          container.innerHTML = `<p class="text-gray-400 text-center py-6 text-sm">Nenhuma turma ${_pitdTipo === 'tecnico' ? 'técnica' : 'de curso livre'} em andamento encontrada.</p>`;
+          return;
         }
-        const matchDocente = !docente || (p.docente || '').toLowerCase().includes(docente);
-        const matchUC = !uc || (p.unidade_curricular || '').toLowerCase().includes(uc);
-        return matchDocente && matchUC;
+        // Agrupa por período
+        const grupos = {};
+        filtradas.forEach(t => { const p = t.periodo || 'outro'; if (!grupos[p]) grupos[p] = []; grupos[p].push(t); });
+        const periodos = [...periodoOrder.filter(p => grupos[p]), ...Object.keys(grupos).filter(p => !periodoOrder.includes(p))];
+        let html = '';
+        periodos.forEach(per => {
+          html += `<div class="mb-4">
+            <div class="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-lg mb-2">
+              <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">${periodoLabel[per] || per}</span>
+              <span class="text-xs text-gray-400">${grupos[per].length} turma${grupos[per].length !== 1 ? 's' : ''}</span>
+            </div>`;
+          grupos[per].forEach(t => {
+            const apelido = t.apelido ? ` · <span class="text-[#F7941D] font-semibold">${t.apelido}</span>` : '';
+            const stCss = _STATUS_BADGE_CSS[(t.status_turma||'').toLowerCase()] || 'bg-green-100 text-green-700';
+            const stLabel = _STATUS_LABEL[(t.status_turma||'').toLowerCase()] || '🟢 Em andamento';
+            const codEsc = t.codigo_oferta.replace(/'/g, "\\'");
+            html += `<div onclick="pitdSelecionarTurma('${codEsc}')" class="cursor-pointer flex items-center justify-between bg-white border-2 border-gray-200 hover:border-[#004587] hover:bg-blue-50 rounded-xl px-4 py-3 mb-2 transition-all">
+              <div>
+                <p class="font-semibold text-gray-800 text-sm">${t.nome_curso}${apelido}</p>
+                <p class="text-xs text-gray-500 mt-0.5">${t.codigo_oferta}</p>
+                <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${stCss}">${stLabel}</span>
+              </div>
+              <svg class="w-5 h-5 text-gray-400 flex-shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </div>`;
+          });
+          html += '</div>';
+        });
+        container.innerHTML = html;
+      } catch(e) {
+        container.innerHTML = '<p class="text-red-400 text-sm text-center py-4">Erro ao carregar turmas.</p>';
+      }
+    }
+
+    window.pitdSelecionarTurma = async function(codigoOferta) {
+      const t = (_turmasConsultaCache || []).find(x => x.codigo_oferta === codigoOferta);
+      if (!t) return;
+      _pitdTurma = t;
+      document.getElementById('pitd-step-turmas').style.display = 'none';
+      document.getElementById('pitd-step-ucs').style.display = 'block';
+      const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite', integral: 'Integral', sabado: 'Sábado' };
+      document.getElementById('pitd-turma-header').innerHTML = `
+        <div class="flex items-start gap-3">
+          <div class="w-10 h-10 bg-[#004587] rounded-xl flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+          </div>
+          <div>
+            <p class="font-bold text-[#004587] text-sm">${t.nome_curso}${t.apelido ? ' · ' + t.apelido : ''}</p>
+            <p class="text-xs text-gray-500 mt-0.5">${t.codigo_oferta} · ${periodoLabel[t.periodo] || t.periodo || '-'} · ${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)}</p>
+          </div>
+        </div>`;
+      const ucsContainer = document.getElementById('pitd-ucs-container');
+      ucsContainer.innerHTML = '<p class="text-gray-400 text-sm text-center py-6">⏳ Carregando unidades curriculares...</p>';
+      if (allUCs.length === 0) await loadUCs();
+      _pitdRenderUCs();
+    };
+
+    function _pitdRenderUCs() {
+      const container = document.getElementById('pitd-ucs-container');
+      if (!container || !_pitdTurma) return;
+      const ucs = _getUCsParaTurma(_pitdTurma);
+      if (!ucs.length) {
+        container.innerHTML = `<div class="text-center py-8 text-gray-500">
+          <p class="text-sm">Nenhuma UC cadastrada para este curso.</p>
+          <p class="text-xs text-gray-400 mt-1">Acesse Quadros → selecione o curso e cadastre as UCs.</p>
+        </div>`;
+        return;
+      }
+      container.innerHTML = ucs.map(uc => {
+        const pitds = _getPITDPorUC(_pitdTurma.codigo_oferta, uc.uc_nome);
+        const total = uc.carga_horaria_total || uc.ch_presencial || 0;
+        const ucNomeEsc = uc.uc_nome.replace(/\\/g,'\\\\').replace(/'/g, "\\'");
+        const codEsc = _pitdTurma.codigo_oferta.replace(/\\/g,'\\\\').replace(/'/g, "\\'");
+        const pitdRows = pitds.length
+          ? pitds.map(p => {
+              const pidEsc = (p.pitd_id || '').replace(/\\/g,'\\\\').replace(/'/g, "\\'");
+              const temLink = !!p.link_arquivo_pitd;
+              return `<div class="flex items-center gap-2 px-3 py-2.5 bg-white border border-gray-100 rounded-lg">
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-semibold text-gray-800 truncate">${p.docente || '—'}</p>
+                  ${temLink ? `<p class="text-xs text-gray-400 truncate">${p.link_arquivo_pitd}</p>` : '<p class="text-xs text-amber-500">⚠️ Sem link cadastrado</p>'}
+                </div>
+                ${temLink ? `<a href="${p.link_arquivo_pitd}" target="_blank" rel="noopener" title="Visualizar" class="p-1.5 rounded-lg hover:bg-green-50 text-green-600 transition-all flex-shrink-0">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                </a>` : ''}
+                ${p.pitd_id ? `
+                <button onclick="pitdAbrirModalEditar('${pidEsc}')" title="Editar" class="p-1.5 rounded-lg hover:bg-blue-50 text-blue-400 hover:text-blue-600 transition-all flex-shrink-0">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                </button>
+                <button onclick="pitdDeletarPlano('${pidEsc}')" title="Excluir" class="p-1.5 rounded-lg hover:bg-red-50 text-gray-300 hover:text-red-500 transition-all flex-shrink-0">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>` : ''}
+              </div>`;
+            }).join('')
+          : `<p class="text-xs text-gray-400 px-3 py-2 italic">Nenhum plano de aula cadastrado para esta UC.</p>`;
+        return `<div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
+          <div class="flex items-center justify-between px-4 py-3 bg-white border-b border-gray-100">
+            <div>
+              <p class="font-semibold text-[#004587] text-sm">${uc.uc_nome}</p>
+              ${total ? `<p class="text-xs text-gray-400">${total}h total</p>` : ''}
+            </div>
+            <button onclick="pitdAbrirModalAdicionar('${codEsc}','${ucNomeEsc}')" class="flex items-center gap-1.5 px-3 py-1.5 bg-[#004587] text-white rounded-lg text-xs font-semibold hover:bg-[#003366] transition-all flex-shrink-0">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              Adicionar
+            </button>
+          </div>
+          <div class="p-2 space-y-1">${pitdRows}</div>
+        </div>`;
+      }).join('');
+    }
+
+    function _getUCsParaTurma(turma) {
+      const nomeRef = (turma.nome_curso || '').trim().toLowerCase();
+      const versaoRef = String(turma.versao_plano || '');
+      return allUCs.filter(u => {
+        const nomeMatch = ((u.curso_nome || u.nome_curso || '').trim().toLowerCase() === nomeRef);
+        const versaoMatch = !versaoRef || String(u.versao || '') === versaoRef;
+        return nomeMatch && versaoMatch;
+      }).sort((a, b) => {
+        const nA = parseInt((a.uc_nome || '').match(/\d+/)?.[0] || '9999');
+        const nB = parseInt((b.uc_nome || '').match(/\d+/)?.[0] || '9999');
+        return nA - nB;
       });
-      grid.innerHTML = filtrados.length > 0
-        ? filtrados.map(pitd => `
-            <div class="bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 p-5 rounded-xl border-2 border-[#004587]/20">
-              <p class="font-bold text-[#004587] text-lg">${pitd.docente || 'Sem nome'}</p>
-              <p class="text-sm text-gray-600 mt-1">UC: ${pitd.unidade_curricular || '-'}</p>
-              ${pitd.link_arquivo_pitd ? `<a href="${pitd.link_arquivo_pitd}" target="_blank" class="mt-3 flex items-center justify-center gap-2 w-full px-3 py-2 bg-[#004587] text-white rounded-lg font-semibold text-sm hover:bg-[#003366] transition-all">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-                Abrir Documento</a>`
-              : '<p class="text-sm text-gray-500 mt-2">Link não disponível</p>'}
-            </div>`).join('')
-        : '<p class="text-gray-500 text-center py-8 col-span-2">Nenhum PITD encontrado</p>';
+    }
+
+    function _getPITDPorUC(turmaCodigo, ucNome) {
+      return allPITD.filter(p => p.turma_codigo === turmaCodigo && p.unidade_curricular === ucNome);
+    }
+
+    // Modal PITD: abrir para adicionar
+    window.pitdAbrirModalAdicionar = function(turmaCodigo, ucNome) {
+      document.getElementById('pitd-modal-titulo').textContent = 'Adicionar Plano de Aula';
+      document.getElementById('pitd-modal-pitd-id').value = '';
+      document.getElementById('pitd-modal-turma-codigo').value = turmaCodigo;
+      document.getElementById('pitd-modal-uc-nome').value = ucNome;
+      document.getElementById('pitd-modal-uc-label').textContent = `📘 UC: ${ucNome}`;
+      document.getElementById('pitd-modal-docente').value = '';
+      document.getElementById('pitd-modal-link').value = '';
+      document.getElementById('modal-pitd-plano').classList.remove('hidden');
+    };
+
+    // Modal PITD: abrir para editar
+    window.pitdAbrirModalEditar = function(pitdId) {
+      const p = allPITD.find(x => x.pitd_id === pitdId);
+      if (!p) return;
+      document.getElementById('pitd-modal-titulo').textContent = 'Editar Plano de Aula';
+      document.getElementById('pitd-modal-pitd-id').value = p.pitd_id;
+      document.getElementById('pitd-modal-turma-codigo').value = p.turma_codigo;
+      document.getElementById('pitd-modal-uc-nome').value = p.unidade_curricular;
+      document.getElementById('pitd-modal-uc-label').textContent = `📘 UC: ${p.unidade_curricular}`;
+      document.getElementById('pitd-modal-docente').value = p.docente || '';
+      document.getElementById('pitd-modal-link').value = p.link_arquivo_pitd || '';
+      document.getElementById('modal-pitd-plano').classList.remove('hidden');
+    };
+
+    window.pitdFecharModal = function() {
+      document.getElementById('modal-pitd-plano').classList.add('hidden');
+    };
+
+    // Salvar plano PITD (novo ou edição)
+    window.pitdSalvarPlano = async function() {
+      const existingId = document.getElementById('pitd-modal-pitd-id').value;
+      const pitdId = existingId || ('pitd_' + Date.now());
+      const turmaCodigo = document.getElementById('pitd-modal-turma-codigo').value;
+      const ucNome = document.getElementById('pitd-modal-uc-nome').value;
+      const docente = document.getElementById('pitd-modal-docente').value.trim();
+      const link = document.getElementById('pitd-modal-link').value.trim();
+      if (!docente) { showErrorMessage('❌ Informe o nome do docente'); return; }
+      if (!link) { showErrorMessage('❌ Informe o link do plano de aula'); return; }
+      const btn = document.getElementById('btn-pitd-salvar');
+      btn.disabled = true; btn.textContent = '⏳ Salvando...';
+      try {
+        // Colunas: docente | unidade_curricular | link_arquivo_pitd | turma_codigo | pitd_id
+        await postToSheet('PITD', [docente, ucNome, link, turmaCodigo, pitdId]);
+        const rec = { docente, unidade_curricular: ucNome, link_arquivo_pitd: link, turma_codigo: turmaCodigo, pitd_id: pitdId };
+        const idx = allPITD.findIndex(p => p.pitd_id === pitdId);
+        if (idx >= 0) allPITD[idx] = rec; else allPITD.push(rec);
+        pitdFecharModal();
+        _pitdRenderUCs();
+        showSuccessMessage('✅ Plano de aula salvo com sucesso!');
+      } catch(e) {
+        showErrorMessage('❌ Erro ao salvar: ' + (e.message || e));
+      } finally {
+        btn.disabled = false; btn.textContent = 'Salvar';
+      }
+    };
+
+    // Excluir plano PITD
+    window.pitdDeletarPlano = async function(pitdId) {
+      const p = allPITD.find(x => x.pitd_id === pitdId);
+      if (!p) return;
+      if (!confirm(`Excluir o plano de "${p.docente}" para "${p.unidade_curricular}"?\n\nEsta ação não pode ser desfeita.`)) return;
+      try {
+        await postToSheet('PITD', [p.docente, p.unidade_curricular, '__DELETED__', p.turma_codigo, p.pitd_id]);
+        allPITD = allPITD.filter(x => x.pitd_id !== pitdId);
+        _pitdRenderUCs();
+        showSuccessMessage('✅ Plano removido.');
+      } catch(e) {
+        showErrorMessage('❌ Erro ao excluir: ' + (e.message || e));
+      }
     };
 
     // Renderizar Representantes (com busca por nome e turma)
@@ -3853,7 +4233,7 @@
           }
         }
 
-        await postToSheet('Turmas', [codigo_oferta, nome_curso, versao_plano, periodo, data_inicio, data_termino, '', sala_fixa, apelido]);
+        await postToSheet('Turmas', [codigo_oferta, nome_curso, versao_plano, periodo, data_inicio, data_termino, 'planejado', sala_fixa, apelido]);
         form.reset();
         // Reset picker UI
         const pickerSel = document.getElementById('curso-picker-selecionado');
@@ -5287,11 +5667,15 @@
         grupo.forEach(t => {
           const div = document.createElement('div');
           div.className = `cursor-pointer flex items-center justify-between ${cfg.bg} border-2 ${cfg.border} border-opacity-40 ${cfg.hoverBorder} rounded-xl px-5 py-4 transition-all mb-2`;
+          const qsSt = (t.status_turma || '').toLowerCase();
+          const qsStCss = _STATUS_BADGE_CSS[qsSt] || 'bg-green-100 text-green-700';
+          const qsStLabel = _STATUS_LABEL[qsSt] || '🟢 Em andamento';
           div.innerHTML = `<div class="flex items-center gap-3">
             <span class="w-2.5 h-2.5 rounded-full flex-shrink-0 ${cfg.dot}"></span>
             <div>
               <p class="font-bold text-[#004587] text-sm">Turma ${t.codigo_oferta || '—'}</p>
               <p class="text-xs text-gray-500 mt-0.5">${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)}</p>
+              <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${qsStCss}">${qsStLabel}</span>
             </div>
           </div>
           <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>`;
@@ -6270,11 +6654,13 @@
       return cod.startsWith('PARC-') || ['GEP/GD','Sebrae'].includes(nome) || nome.startsWith('Evento —');
     }
 
-    // Retorna true se a turma está finalizada (explicitamente ou por regra dos 15 dias)
+    // Retorna true se a turma está inativa (finalizada ou cancelada)
     function isTurmaFinalizada(t) {
       if (!t) return false;
-      if (t.status_turma === 'finalizada') return true;
-      if (t.status_turma === 'ativa') return false; // explicitamente ativa — ignora regra de data
+      const st = (t.status_turma || '').toLowerCase();
+      if (['finalizada', 'finalizado', 'cancelado'].includes(st)) return true;
+      if (['planejado', 'confirmado', 'em_andamento', 'ativa'].includes(st)) return false;
+      // sem status → usa regra de 15 dias após término
       if (t.data_de_termino) {
         const m = String(t.data_de_termino).match(/(\d{4})-(\d{2})-(\d{2})/);
         if (m) {
@@ -7590,10 +7976,13 @@
       const _allTurmasDedup = Object.values(
         allTurmas.reduce((acc, t) => { if (t.codigo_oferta) acc[t.codigo_oferta] = t; return acc; }, {})
       );
-      // Match with allTurmas, filter by period (integral always included), exclude finalizadas
+      // Match with allTurmas, filter by period (integral always included), exclude finalizadas/planejadas
       const turmasHoje = _allTurmasDedup.filter(t => {
         if (!turmaCodesHoje.has(String(t.codigo_oferta))) return false;
         if (isTurmaFinalizada(t)) return false;
+        const st = (t.status_turma || '').toLowerCase();
+        // Totem mostra apenas turmas em andamento (não planejado/confirmado)
+        if (st === 'planejado' || st === 'confirmado') return false;
         if (t.periodo && t.periodo !== msPeriodoAtivo && t.periodo !== 'integral') return false;
         return true;
       });
@@ -8873,14 +9262,16 @@
       const turmas = await loadTurmasDeduped();
 
       const statusLabel = { planejado: 'Planejado', confirmado: 'Confirmado', em_andamento: 'Em andamento',
-        finalizado: 'Finalizado', cancelado: 'Cancelado', '': 'Ativo' };
+        finalizado: 'Finalizado', finalizada: 'Finalizado', cancelado: 'Cancelado', ativa: 'Em andamento', '': 'Em andamento' };
       const statusColor = {
-        planejado:    'bg-blue-200 text-blue-800 border-blue-300',
-        confirmado:   'bg-[#004587] text-white border-[#004587]',
+        planejado:    'bg-sky-100 text-sky-800 border-sky-300',
+        confirmado:   'bg-indigo-500 text-white border-indigo-600',
         em_andamento: 'bg-green-500 text-white border-green-600',
         finalizado:   'bg-gray-200 text-gray-600 border-gray-300',
+        finalizada:   'bg-gray-200 text-gray-600 border-gray-300',
         cancelado:    'bg-red-100 text-red-600 border-red-200',
-        '':           'bg-[#004587] text-white border-[#004587]'
+        ativa:        'bg-green-500 text-white border-green-600',
+        '':           'bg-green-500 text-white border-green-600'
       };
 
       const MESES_ABR = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -8994,8 +9385,7 @@
       return turmas.filter(t => {
         if (!t.sala_fixa || t.sala_fixa !== salaId) return false;
         if (excludeCodigo && t.codigo_oferta === excludeCodigo) return false;
-        if ((t.status_turma||'').toLowerCase() === 'cancelado') return false;
-        if ((t.status_turma||'').toLowerCase() === 'finalizado') return false;
+        if (['cancelado','finalizado','finalizada'].includes((t.status_turma||'').toLowerCase())) return false;
         // Verifica sobreposição de período (manhã/tarde/noite)
         const pa = (periodo||'').toLowerCase(), pb = (t.periodo||'').toLowerCase();
         if (pa && pb && pa !== pb && pa !== 'integral' && pb !== 'integral') return false;
