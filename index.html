@@ -70,17 +70,16 @@
       animation: pulse-node 2.4s ease-in-out infinite;
     }
 
-    /* ── Card com efeito scan ── */
+    /* ── Card com efeito scan (hover-only — ver regras em bloco mobile) ── */
     .card-scan {
       position: relative; overflow: hidden;
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .card-scan::after {
       content: '';
-      position: absolute; top: 0; left: -100%;
+      position: absolute; top: 0;
       width: 100%; height: 2px;
       background: linear-gradient(90deg, transparent, #F7941D, transparent);
-      animation: scan 3.5s linear infinite;
     }
     .card-scan:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,69,135,0.18); }
 
@@ -98,13 +97,7 @@
     .eco-card:hover::before { left: 100%; }
     .eco-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,69,135,0.15); }
 
-    /* ── Fade-in escalonado ── */
-    .fade-up   { animation: fadeUp 0.6s ease-out both; }
-    .delay-100 { animation-delay: 0.1s; }
-    .delay-200 { animation-delay: 0.2s; }
-    .delay-300 { animation-delay: 0.3s; }
-    .delay-400 { animation-delay: 0.4s; }
-    .delay-500 { animation-delay: 0.5s; }
+    /* ── Fade-in escalonado — gerenciado por IntersectionObserver + .in-view ── */
 
     /* ── Botão com glow ── */
     .btn-glow:hover { animation: pulse-glow 1.4s ease-in-out infinite; }
@@ -187,8 +180,8 @@
     #painel-print-area th { background: #004587 !important; color: white !important; }
     #painel-print-area tr { page-break-inside: avoid; }
   }
-  </style>
-  <style>body { box-sizing: border-box; }
+  
+  body { box-sizing: border-box; }
   .ms-nav-tab { transition: all 0.2s; }
   .ms-nav-tab.active { background: rgba(255,255,255,0.2) !important; color: white !important; }
   .ms-nav-tab:not(.active) { color: rgba(255,255,255,0.7); }
@@ -205,28 +198,7 @@
   @keyframes ms-glow-blue   { 0%,100%{box-shadow:0 2px 16px rgba(0,69,135,0.11),0 1px 3px rgba(0,0,0,0.04)}   50%{box-shadow:0 6px 32px rgba(0,69,135,0.34),0 0 0 1px rgba(0,69,135,0.10)} }
   @keyframes ms-blink       { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.25;transform:scale(0.7)} }
   @keyframes ms-scan        { 0%{transform:translateY(-100%)} 100%{transform:translateY(100vh)} }
-  </style>
-  <script>
-  window.dataSdk = {
-    create: async function(data) {
-      console.log('Dado salvo:', data);
-      return { isOk: true, data: { id: 'id_' + Date.now(), ...data } };
-    },
-    list: async function(filter) {
-      return { isOk: true, data: [] };
-    },
-    update: async function(id, data) {
-      return { isOk: true, data: { id, ...data } };
-    },
-    delete: async function(id) {
-      return { isOk: true };
-    }
-  };
-  window.elementSdk = {
-    getUser: function() { return { name: 'Usuário', email: 'usuario@senac.br' }; }
-  };
-</script>
- <style>
+
   .area-card {
     display:block; width:100%; text-align:left; cursor:pointer;
     border:1.5px solid rgba(255,255,255,0.12); border-radius:12px;
@@ -252,7 +224,71 @@
   .ms-turma-drag-card[draggable=true]:active { cursor:grabbing; opacity:0.7; }
   .ms-sala-drop-zone.drag-over { outline:2px dashed #004587; background:rgba(0,69,135,0.06) !important; }
   .ms-sala-drop-zone { transition:outline 0.1s, background 0.1s; }
- </style>
+
+  /* ── Mobile menu ── */
+  #mobile-menu { will-change: transform; }
+  #mobile-menu.open { transform: translateY(0); }
+  #nav-hamburger[aria-expanded="true"] .hamburger-bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+  #nav-hamburger[aria-expanded="true"] .hamburger-bar:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  #nav-hamburger[aria-expanded="true"] .hamburger-bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+  /* ── Scan animation — hover-only ── */
+  .card-scan::after { animation: none; left: -100%; }
+  .card-scan:hover::after { animation: scan 0.9s linear forwards; }
+
+  /* ── FadeUp — controlled by IntersectionObserver ── */
+  .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+  .fade-up.in-view { opacity: 1; transform: translateY(0); }
+  .fade-up.delay-100 { transition-delay: 0.1s; }
+  .fade-up.delay-200 { transition-delay: 0.2s; }
+  .fade-up.delay-300 { transition-delay: 0.3s; }
+  .fade-up.delay-400 { transition-delay: 0.4s; }
+  .fade-up.delay-500 { transition-delay: 0.5s; }
+  </style>
+  <script>
+  // dataSdk — persistência via localStorage (fallback offline)
+  window.dataSdk = (function() {
+    const PREFIX = 'hub_sdk_';
+    function _load(collection) {
+      try { return JSON.parse(localStorage.getItem(PREFIX + collection) || '[]'); } catch { return []; }
+    }
+    function _save(collection, rows) {
+      try { localStorage.setItem(PREFIX + collection, JSON.stringify(rows)); } catch { /* quota exceeded */ }
+    }
+    return {
+      create: async function(data) {
+        const col = data._collection || 'default';
+        const rows = _load(col);
+        const record = { id: 'id_' + Date.now() + '_' + Math.random().toString(36).slice(2), ...data, _createdAt: new Date().toISOString() };
+        rows.push(record);
+        _save(col, rows);
+        return { isOk: true, data: record };
+      },
+      list: async function(filter) {
+        const col = (filter && filter._collection) || 'default';
+        const rows = _load(col);
+        const result = filter ? rows.filter(r => Object.keys(filter).every(k => k === '_collection' || r[k] === filter[k])) : rows;
+        return { isOk: true, data: result };
+      },
+      update: async function(id, data) {
+        const col = data._collection || 'default';
+        const rows = _load(col);
+        const idx = rows.findIndex(r => r.id === id);
+        if (idx !== -1) { rows[idx] = { ...rows[idx], ...data, id }; _save(col, rows); return { isOk: true, data: rows[idx] }; }
+        return { isOk: false, error: 'Not found' };
+      },
+      delete: async function(id, collection) {
+        const col = collection || 'default';
+        const rows = _load(col).filter(r => r.id !== id);
+        _save(col, rows);
+        return { isOk: true };
+      }
+    };
+  })();
+  window.elementSdk = {
+    getUser: function() { return { name: 'Usuário', email: 'usuario@senac.br' }; }
+  };
+</script>
  </head>
  <body class="h-full bg-gradient-to-b from-[#0a1628] via-[#0f2847] to-[#1a1a2e] overflow-auto">
   <div class="w-full h-full"><!-- PÁGINA HOME -->
@@ -261,7 +297,7 @@
      <div class="max-w-7xl mx-auto">
       <div class="relative flex justify-between items-center">
       <div class="flex items-center gap-3 group cursor-pointer" onclick="scrollToTop()" aria-label="Logo Hub Senac Araçatuba">
-       <svg viewbox="0 0 200 50" class="h-10 w-auto transition-transform duration-300 group-hover:scale-110" role="img" aria-label="Logo Hub Senac Araçatuba">
+       <svg viewBox="0 0 200 50" class="h-10 w-auto transition-transform duration-300 group-hover:scale-110" role="img" aria-label="Logo Hub Senac Araçatuba">
         <rect x="0" y="8" width="24" height="24" fill="#F7941D" /> <rect x="4" y="12" width="8" height="8" fill="white" /> <rect x="12" y="20" width="8" height="8" fill="white" /> <text x="32" y="26" font-family="Montserrat" font-weight="700" font-size="16" fill="white">
          HUB SENAC
         </text> <text x="32" y="40" font-family="Montserrat" font-weight="700" font-size="16" fill="#F7941D">
@@ -285,16 +321,55 @@
          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
          Selecione uma área
        </div>
-       <div id="area-ativa-pill" style="display:none" class="flex items-center gap-2">
+       <div id="area-ativa-pill" style="display:none" class="hidden md:flex items-center gap-2">
          <span id="area-ativa-pill-nome" class="px-2.5 py-1 rounded-full text-white text-xs font-bold border"></span>
          <button onclick="scrollToTop()" class="flex items-center gap-1 text-white/60 hover:text-white text-xs font-semibold transition-colors hover:underline">
            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
            Trocar área
          </button>
        </div>
+       <!-- Hamburger (mobile only) -->
+       <button id="nav-hamburger" onclick="toggleMobileMenu()" class="md:hidden flex flex-col gap-1.5 p-2 rounded-lg hover:bg-white/10 transition-colors" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu">
+         <span class="hamburger-bar block w-6 h-0.5 bg-white transition-all duration-300"></span>
+         <span class="hamburger-bar block w-6 h-0.5 bg-white transition-all duration-300"></span>
+         <span class="hamburger-bar block w-6 h-0.5 bg-white transition-all duration-300"></span>
+       </button>
       </div>
      </div>
     </header>
+    <!-- Mobile Menu Drawer -->
+    <div id="mobile-menu" class="fixed inset-x-0 top-0 z-40 md:hidden translate-y-[-100%] transition-transform duration-300 ease-in-out" aria-hidden="true">
+     <div class="bg-[#0a1628]/95 backdrop-blur-md border-b border-white/10 px-4 pt-20 pb-6 shadow-2xl">
+      <div id="mobile-menu-area-label" class="text-xs font-semibold text-[#F7941D] uppercase tracking-widest mb-4 px-2"></div>
+      <nav class="flex flex-col gap-1">
+        <a href="#gestao" onclick="closeMobileMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white font-semibold text-sm hover:bg-white/10 transition-colors">
+          <svg class="w-4 h-4 text-[#F7941D]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          Gestão
+        </a>
+        <button onclick="closeMobileMenu();navigateToPage('eventos')" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white font-semibold text-sm hover:bg-white/10 transition-colors w-full text-left">
+          <svg class="w-4 h-4 text-[#F7941D]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          Eventos
+        </button>
+        <button onclick="closeMobileMenu();navigateToPage('quadros')" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white font-semibold text-sm hover:bg-white/10 transition-colors w-full text-left">
+          <svg class="w-4 h-4 text-[#F7941D]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          Quadros
+        </button>
+        <button onclick="closeMobileMenu();navigateToPage('mapa-salas')" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white font-semibold text-sm hover:bg-white/10 transition-colors w-full text-left">
+          <svg class="w-4 h-4 text-[#F7941D]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          Mapa de Salas
+        </button>
+        <button onclick="closeMobileMenu();scrollToFooter()" class="flex items-center gap-3 px-4 py-3 rounded-xl text-white font-semibold text-sm hover:bg-white/10 transition-colors w-full text-left">
+          <svg class="w-4 h-4 text-[#F7941D]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          Contato
+        </button>
+      </nav>
+      <div class="mt-4 pt-4 border-t border-white/10">
+        <button onclick="closeMobileMenu();scrollToTop()" class="text-xs text-white/50 hover:text-white/80 transition-colors">← Trocar área</button>
+      </div>
+     </div>
+    </div>
+    <!-- Mobile menu backdrop -->
+    <div id="mobile-menu-backdrop" onclick="closeMobileMenu()" class="fixed inset-0 z-30 bg-black/50 md:hidden hidden"></div>
     <div class="h-24"></div><!-- Hero Section -->
     <section class="relative bg-gradient-to-br from-[#0a1628] via-[#0f2847] to-[#1a1a2e] text-white py-24 lg:py-32 overflow-hidden">
      <!-- Blobs decorativos de fundo -->
@@ -377,14 +452,14 @@
           <button onclick="navigateToPage('cadastro')" class="btn-glow group relative px-8 py-4 rounded-xl font-semibold text-white overflow-hidden">
           <div class="absolute inset-0 bg-gradient-to-r from-[#004587] to-[#F7941D] rounded-xl"></div>
           <div class="relative flex items-center gap-2">
-           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
            </svg> Explorar Plataforma
           </div></button>
           <button onclick="navigateToPage('eventos')" class="btn-glow group relative px-8 py-4 rounded-xl font-semibold text-white border-2 border-[#F7941D]/50 hover:border-[#F7941D] transition-all duration-300 overflow-hidden">
           <div class="absolute inset-0 bg-[#F7941D] opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-xl"></div>
           <div class="relative flex items-center gap-2">
-           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
            </svg> Agenda de Eventos
           </div></button>
@@ -396,7 +471,7 @@
          <!-- Card central animado -->
          <div class="card-scan bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 text-center shadow-2xl">
           <div class="w-20 h-20 bg-gradient-to-br from-[#F7941D] to-[#004587] organic-blob mx-auto mb-6 flex items-center justify-center">
-           <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+           <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
            </svg>
           </div>
@@ -464,27 +539,27 @@
        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
        <div class="card-scan bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-8 shadow-lg border-2 border-[#004587]/20 cursor-pointer" onclick="navigateToPage('cadastro')">
         <div class="w-16 h-16 bg-gradient-to-br from-[#004587] to-[#003366] rounded-2xl flex items-center justify-center mb-6 mx-auto">
-         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
          </svg>
         </div>
         <h3 class="text-2xl font-bold text-[#004587] mb-3 text-center">Cadastrar</h3>
         <p class="text-gray-500 text-sm text-center mb-6">Registre docentes, turmas, PITD, PCTD e representantes na plataforma.</p>
         <button class="w-full btn-primary btn-glow py-3 rounded-xl text-white font-semibold flex items-center justify-center gap-2 hover:scale-105 transition-transform" onclick="navigateToPage('cadastro')">
-         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
          </svg> Acessar Cadastro </button>
        </div>
        <div class="card-scan bg-gradient-to-br from-[#F7941D]/5 to-[#004587]/5 rounded-2xl p-8 shadow-lg border-2 border-[#F7941D]/20 cursor-pointer" onclick="navigateToPage('consulta')">
         <div class="w-16 h-16 bg-gradient-to-br from-[#F7941D] to-[#E8850D] rounded-2xl flex items-center justify-center mb-6 mx-auto">
-         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
          </svg>
         </div>
         <h3 class="text-2xl font-bold text-[#004587] mb-3 text-center">Consultar</h3>
         <p class="text-gray-500 text-sm text-center mb-6">Consulte docentes, turmas em andamento, planos de curso e representantes.</p>
         <button class="w-full btn-primary btn-glow py-3 rounded-xl text-white font-semibold flex items-center justify-center gap-2 hover:scale-105 transition-transform" onclick="navigateToPage('consulta')">
-         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
          </svg> Acessar Consulta </button>
        </div>
@@ -520,7 +595,7 @@
        <div>
         <h4 class="font-bold text-lg mb-6">Coordenação</h4>
         <p class="text-gray-300 mb-2">Senac Araçatuba</p>
-        <p class="text-gray-300 mb-2">Hub Senac Araçatuba</p><a id="footer-email" href="/cdn-cgi/l/email-protection#2641545356494745474143555247494348434149454f4955665556085543484745084454" class="text-gray-300 hover:text-[#F7941D] transition-colors"><span class="__cf_email__" data-cfemail="54332621243b35373533312720353b313a31333b373d3b271427247a27313a35377a3626">[email&#160;protected]</span></a>
+        <p class="text-gray-300 mb-2">Hub Senac Araçatuba</p><a id="footer-email" href="mailto:grupoacagestaoenegocios@sp.senac.br" class="text-gray-300 hover:text-[#F7941D] transition-colors">grupoacagestaoenegocios@sp.senac.br</a>
        </div>
       </div>
      </div>
@@ -536,7 +611,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
      <div class="flex items-center justify-between mb-8 pb-6 border-b-2 border-gray-200">
       <h2 class="text-3xl font-bold text-[#004587]">Cadastro</h2><button onclick="scrollToGestao()" class="px-6 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl font-semibold flex items-center gap-2 transition-all">
-       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
        </svg> Voltar </button>
      </div><!-- Abas -->
@@ -544,19 +619,19 @@
       <button id="cadastro-tab-back-btn" onclick="voltarTabAnterior('cadastro')" style="display:none" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-500 hover:text-[#004587] hover:bg-blue-50 rounded-lg border border-gray-200 transition-all mr-1 flex-shrink-0">
        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>Anterior
       </button><button class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="cad-docentes" onclick="switchCadastroTab(this)">
-       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
        </svg>Docentes </button> <button class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="turmas" onclick="switchCadastroTab(this)">
-       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-2a6 6 0 0112 0v2zm0 0h6v-2a6 6 0 00-9-5.697M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
        </svg>Turmas </button> <button class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="pitd" onclick="switchCadastroTab(this)">
-       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
        </svg>PITD </button> <button class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="pctd" onclick="switchCadastroTab(this)">
-       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
        </svg>PCTD </button> <button class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="representantes" onclick="switchCadastroTab(this)">
-       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-2a6 6 0 0112 0v2zm0 0h6v-2a6 6 0 00-9-5.697M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
        </svg>Representante </button>
      </div><!-- Docentes -->
@@ -569,7 +644,7 @@
           <span id="cad-docentes-area-badge" class="px-2 py-0.5 bg-[#004587]/10 text-[#004587] text-xs font-bold rounded-full"></span>
         </div>
         <button type="button" onclick="novoDocente()" class="px-4 py-2 bg-[#F7941D] text-white rounded-xl font-semibold text-sm hover:bg-[#E8850D] transition-all flex items-center gap-2">
-         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Novo Docente
+         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Novo Docente
         </button>
        </div>
        <input type="text" id="busca-docente-cad" placeholder="Buscar docente pelo nome..." oninput="filtrarDocentesCad(this.value)" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-sm focus:border-[#004587] focus:outline-none mb-3">
@@ -581,7 +656,7 @@
       <div class="flex items-center justify-between mb-6">
        <h3 id="docentes-form-titulo" class="text-2xl font-bold text-[#004587]">Novo Cadastro</h3>
        <button type="button" id="docentes-form-limpar" onclick="novoDocente()" style="display:none" class="text-sm text-gray-500 hover:text-gray-700 font-semibold px-3 py-2 rounded-lg hover:bg-gray-200 transition-all flex items-center gap-1">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg> Limpar / Novo
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg> Limpar / Novo
        </button>
       </div>
       <form id="cadastro-form" class="space-y-6">
@@ -629,7 +704,7 @@
         </div>
        </div>
        <button type="submit" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
         </svg>Salvar Cadastro </button>
       </form>
@@ -640,10 +715,10 @@
       <div class="mb-8 border-2 border-dashed border-gray-300 rounded-2xl overflow-hidden">
        <button type="button" onclick="toggleBuscaTurmas()" class="w-full flex items-center justify-between px-5 py-4 bg-white hover:bg-gray-50 transition-colors text-left">
         <span class="flex items-center gap-2 font-semibold text-gray-700 text-sm">
-         <svg class="w-4 h-4 text-[#004587]" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+         <svg class="w-4 h-4 text-[#004587]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
          Verificar turmas já cadastradas antes de registrar
         </span>
-        <svg id="busca-turmas-chevron" class="w-4 h-4 text-gray-400 transition-transform" style="transform:rotate(180deg)" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        <svg id="busca-turmas-chevron" class="w-4 h-4 text-gray-400 transition-transform" style="transform:rotate(180deg)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
        </button>
        <div id="busca-turmas-panel" class="px-5 pb-5 bg-white border-t border-gray-100">
         <div class="flex gap-2 mt-4 mb-3">
@@ -746,7 +821,7 @@
         </select>
        </div>
        <button type="submit" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
         </svg>Salvar Turma </button>
       </form>
@@ -851,7 +926,7 @@
         <div><label class="block text-[#004587] font-semibold mb-3">Telefone do Vice-Representante</label> <input type="tel" placeholder="(XX) 9XXXX-XXXX" name="telefone_do_vice_representante" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
         </div>
        </div><button type="submit" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
         </svg>Salvar Representante </button>
       </form>
@@ -862,14 +937,14 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
      <div class="flex items-center justify-between mb-8 pb-6 border-b-2 border-gray-200">
       <h2 class="text-3xl font-bold text-[#004587]">Consulta</h2><button onclick="scrollToGestao()" class="px-6 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl font-semibold flex items-center gap-2 transition-all">
-       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
        </svg> Voltar </button>
      </div>     <!-- Todos os cards de consulta — grid unificado -->
      <div id="consulta-cards" class="grid md:grid-cols-2 gap-6 mb-8" style="display:none">
       <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-6 shadow-lg border-2 border-[#004587]/20 cursor-pointer hover:border-[#004587] hover:shadow-xl transition-all" onclick="openConsultaView('cursos-tecnicos-list')">
        <div class="w-14 h-14 bg-gradient-to-br from-[#004587] to-[#003366] rounded-xl flex items-center justify-center mb-4 mx-auto">
-        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
         </svg>
        </div>
@@ -878,7 +953,7 @@
       </div>
       <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-6 shadow-lg border-2 border-[#F7941D]/20 cursor-pointer hover:border-[#F7941D] hover:shadow-xl transition-all" onclick="openConsultaView('cursos-livres-list')">
        <div class="w-14 h-14 bg-gradient-to-br from-[#F7941D] to-[#E8850D] rounded-xl flex items-center justify-center mb-4 mx-auto">
-        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
         </svg>
        </div>
@@ -887,7 +962,7 @@
       </div>
       <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-6 shadow-lg border-2 border-[#004587]/20 cursor-pointer hover:border-[#004587] hover:shadow-xl transition-all" onclick="openConsultaView('docentes-list')">
        <div class="w-14 h-14 bg-gradient-to-br from-[#004587] to-[#003366] rounded-xl flex items-center justify-center mb-4 mx-auto">
-        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
         </svg>
        </div>
@@ -896,7 +971,7 @@
       </div>
       <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-6 shadow-lg border-2 border-[#004587]/20 cursor-pointer hover:border-[#004587] hover:shadow-xl transition-all" onclick="openConsultaView('representantes-filter')">
        <div class="w-14 h-14 bg-gradient-to-br from-[#F7941D] to-[#E8850D] rounded-xl flex items-center justify-center mb-4 mx-auto">
-        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-2a6 6 0 0112 0v2zm0 0h6v-2a6 6 0 00-9-5.697M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
        </div>
@@ -905,7 +980,7 @@
       </div>
       <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-6 shadow-lg border-2 border-[#004587]/20 cursor-pointer hover:border-[#004587] hover:shadow-xl transition-all" onclick="openConsultaView('pctd-list')">
        <div class="w-14 h-14 bg-gradient-to-br from-[#004587] to-[#003366] rounded-xl flex items-center justify-center mb-4 mx-auto">
-        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
         </svg>
        </div>
@@ -914,7 +989,7 @@
       </div>
       <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-6 shadow-lg border-2 border-[#004587]/20 cursor-pointer hover:border-[#004587] hover:shadow-xl transition-all" onclick="openConsultaView('pitd-list')">
        <div class="w-14 h-14 bg-gradient-to-br from-[#F7941D] to-[#E8850D] rounded-xl flex items-center justify-center mb-4 mx-auto">
-        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
        </div>
@@ -923,14 +998,14 @@
       </div>
       <div class="eco-card bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-6 shadow-lg border-2 border-[#004587]/20 cursor-pointer hover:border-[#004587] hover:shadow-xl transition-all" onclick="openConsultaView('turmas-list')">
        <div class="w-14 h-14 bg-gradient-to-br from-[#004587] to-[#003366] rounded-xl flex items-center justify-center mb-4 mx-auto">
-        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
        </div>
        <h4 class="text-lg font-bold text-[#004587] text-center mb-2">Turmas</h4>
        <p class="text-gray-600 text-sm text-center">Consulte turmas técnicas e livres cadastradas</p>
       </div>
       <div class="eco-card bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-2xl p-6 shadow-lg border-2 border-purple-200 cursor-pointer hover:border-purple-400 hover:shadow-xl transition-all" onclick="openConsultaView('parceiros-list')">
        <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-700 rounded-xl flex items-center justify-center mb-4 mx-auto">
-        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
        </div>
        <h4 class="text-lg font-bold text-purple-700 text-center mb-2">Parceiros</h4>
        <p class="text-gray-600 text-sm text-center">GEP/GD, Sebrae e eventos cadastrados</p>
@@ -942,7 +1017,7 @@
         <div class="flex justify-between items-center">
          <h3 id="modal-title" class="text-2xl font-bold text-[#004587]">Cursos Técnicos</h3>
          <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
          </button>
@@ -961,7 +1036,7 @@
         <div class="flex justify-between items-center">
          <h3 id="modal-turmas-title" class="text-2xl font-bold text-[#004587]">Turmas do Curso</h3>
          <button onclick="closeModalTurmas()" class="text-gray-400 hover:text-gray-600">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
          </button>
@@ -976,7 +1051,7 @@
      <!-- Consulta Docentes -->
      <div id="docentes-list" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200" style="display:none">
       <button onclick="closeConsultaView('docentes-list')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
-       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
       </button>
       <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
         <h3 class="text-xl font-bold text-[#004587]">Docentes Cadastrados</h3>
@@ -991,15 +1066,15 @@
      <!-- Detalhe do Docente -->
      <div id="docente-detail" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200" style="display:none">
       <button onclick="voltarListaDocentes()" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
-       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar à lista
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar à lista
       </button>
       <div id="docente-detail-content" class="mb-6"></div>
       <div class="flex gap-3 flex-wrap">
        <button onclick="editarDocente()" class="px-6 py-3 bg-[#004587] text-white rounded-xl font-semibold hover:bg-[#003366] transition-all flex items-center gap-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg> Editar
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg> Editar
        </button>
        <button onclick="excluirDocente()" class="px-6 py-3 bg-red-500 text-white rounded-xl font-semibold hover:bg-red-600 transition-all flex items-center gap-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg> Excluir
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg> Excluir
        </button>
       </div>
      </div>
@@ -1120,7 +1195,7 @@
      <!-- Consulta Representantes -->
      <div id="representantes-filter" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200" style="display:none">
       <button onclick="closeConsultaView('representantes-filter')" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
-       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
       </button>
       <h3 class="text-xl font-bold text-[#004587] mb-4">Representantes Estudantis</h3>
       <div class="grid md:grid-cols-2 gap-4 mb-6 bg-blue-50 p-6 rounded-xl">
@@ -1139,7 +1214,7 @@
 <!-- Lista Cursos Técnicos -->
 <div id="cursos-tecnicos-list" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200" style="display:none">
   <button onclick="closeConsultaView()" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
   </button>
   <h3 class="text-xl font-bold text-[#004587] mb-6">Cursos Técnicos</h3>
   <div id="cursos-tecnicos-grid" class="grid gap-3"></div>
@@ -1148,7 +1223,7 @@
 <!-- Lista Cursos Livres -->
 <div id="cursos-livres-list" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200" style="display:none">
   <button onclick="closeConsultaView()" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar
   </button>
   <h3 class="text-xl font-bold text-[#004587] mb-6">Cursos Livres / Qualificação</h3>
   <div id="cursos-livres-grid" class="grid gap-3"></div>
@@ -1157,7 +1232,7 @@
 <!-- Consulta Turmas -->
 <div id="turmas-list" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200" style="display:none">
   <button onclick="closeConsultaView()" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Voltar
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Voltar
   </button>
   <h3 class="text-xl font-bold text-[#004587] mb-4">Turmas Cadastradas</h3>
   <div class="grid md:grid-cols-4 gap-3 mb-5 bg-blue-50 p-4 rounded-xl">
@@ -1239,7 +1314,7 @@
 <!-- Consulta Parceiros -->
 <div id="parceiros-list" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200" style="display:none">
   <button onclick="closeConsultaView()" class="mb-6 px-4 py-2 bg-purple-50 text-purple-600 hover:bg-purple-100 rounded-lg font-semibold flex items-center gap-2">
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Voltar
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Voltar
   </button>
   <h3 class="text-xl font-bold text-purple-700 mb-4">Parceiros Cadastrados</h3>
   <div class="mb-4">
@@ -1251,7 +1326,7 @@
 <!-- Detalhe do Curso -->
 <div id="curso-detail" class="consulta-section mt-8 bg-white rounded-2xl p-8 border-2 border-gray-200" style="display:none">
   <button onclick="voltarListaCursos()" class="mb-6 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold flex items-center gap-2">
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar à lista
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg> Voltar à lista
   </button>
   <div id="curso-detail-header" class="mb-8"></div>
   <div class="bg-gray-50 rounded-2xl p-6">
@@ -1267,7 +1342,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
      <div class="flex items-center justify-between mb-8 pb-6 border-b-2 border-gray-200">
       <h2 class="text-3xl font-bold text-[#004587]">Eventos</h2><button onclick="navigateToPage('home')" class="px-6 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl font-semibold flex items-center gap-2 transition-all">
-       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
        </svg> Voltar </button>
      </div><!-- Abas de Eventos -->
@@ -1275,10 +1350,10 @@
       <button id="eventos-tab-back-btn" onclick="voltarTabAnterior('eventos')" style="display:none" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-500 hover:text-[#004587] hover:bg-blue-50 rounded-lg border border-gray-200 transition-all mr-1 flex-shrink-0">
        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>Anterior
       </button><button class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap bg-[#004587]/10 text-[#004587] border-b-4 border-[#F7941D]" data-tab="agenda-eventos" onclick="switchEventosTab(this)">
-       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
        </svg>Agenda </button> <button class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="criar-evento" onclick="switchEventosTab(this)">
-       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
        </svg>Criar Evento </button>
      </div><!-- Agenda de Eventos --> <!-- Agenda de Eventos -->
@@ -1286,11 +1361,11 @@
       <h3 class="text-2xl font-bold text-[#004587] mb-8">Agenda de Eventos</h3><!-- Calendário -->
       <div class="bg-white rounded-2xl p-8 mb-8 border-2 border-gray-200">
        <div class="flex justify-between items-center mb-6"><button id="prev-month" class="px-4 py-2 bg-[#004587] text-white rounded-lg hover:bg-[#003366] font-semibold flex items-center gap-2">
-         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
          </svg>Anterior </button>
         <h2 id="calendar-month" class="text-2xl font-bold text-[#004587] text-center flex-1">Janeiro 2024</h2><button id="next-month" class="px-4 py-2 bg-[#004587] text-white rounded-lg hover:bg-[#003366] font-semibold flex items-center gap-2">Próximo 
-         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
          </svg></button>
        </div><!-- Legenda -->
@@ -1370,7 +1445,7 @@
        </div>
        <div><label class="block text-[#004587] font-semibold mb-3">Responsável</label> <input type="text" placeholder="Nome de quem organizou o evento" name="responsavel" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
        </div><button type="submit" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
         </svg>Salvar Evento </button>
       </form>
@@ -1382,7 +1457,7 @@
      <div class="flex items-center justify-between mb-8 pb-6 border-b-2 border-gray-200">
       <h2 class="text-3xl font-bold text-[#004587]">Quadros</h2>
       <button onclick="scrollToGestao()" class="px-6 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl font-semibold flex items-center gap-2 transition-all">
-       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg> Voltar
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg> Voltar
       </button>
      </div>
      <!-- Abas Quadros -->
@@ -1391,10 +1466,10 @@
        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>Anterior
       </button>
       <button class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="quadro-ucs" onclick="switchQuadrosTab(this)">
-       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>UCs por Curso
+       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>UCs por Curso
       </button>
       <button class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="quadro-semanal" onclick="switchQuadrosTab(this)">
-       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Quadro Semanal
+       <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Quadro Semanal
       </button>
       <button type="button" id="btn-tab-perc" class="tab-btn px-5 py-2 rounded-lg font-semibold text-sm transition-all duration-300 whitespace-nowrap" data-tab="perc-docentes" onclick="switchQuadrosTab(this)">
        <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>% Docentes
@@ -1454,7 +1529,7 @@
            </div>
           </div>
           <button onclick="qAdicionarUC()" class="btn-primary w-full py-3 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
-           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Adicionar UC
+           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Adicionar UC
           </button>
          </div>
         </div>
@@ -1512,10 +1587,10 @@
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg> Editar em Lote
          </button>
          <button onclick="imprimirCalendario()" class="px-4 py-2 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg font-semibold text-sm flex items-center gap-2 border border-green-200">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg> Imprimir
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg> Imprimir
          </button>
          <button onclick="qVoltarSelecao()" class="px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold text-sm flex items-center gap-2">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Trocar turma
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Trocar turma
          </button>
         </div>
        </div>
@@ -2149,7 +2224,7 @@
        <div class="flex justify-between items-center">
         <h3 id="modal-aloc-titulo" class="text-xl font-bold text-[#004587]">Alocar Docente</h3>
         <button onclick="fecharModalAlocacao()" class="text-gray-400 hover:text-gray-600">
-         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
        </div>
       </div>
@@ -2221,7 +2296,7 @@
       </div>
       <div class="px-6 pb-6">
        <button onclick="salvarAlocacao()" class="w-full btn-primary py-3 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Salvar Alocação
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Salvar Alocação
        </button>
       </div>
      </div>
@@ -2702,7 +2777,7 @@
     <button onclick="msTotemSalvarConfig()" style="width:100%;padding:14px;border-radius:12px;background:#F7941D;border:none;color:white;font-size:14px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">✓ SALVAR PERÍODO E APLICAR</button>
    </div>
   </div>
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  <script>
     let allTeachers = [];
     let allTeachersVersion = 0;
     let allTurmas = [];
@@ -2812,7 +2887,7 @@
             <p class="font-semibold text-[#004587] text-sm truncate">${d.nome_completo||'Sem nome'}</p>
             <p class="text-xs text-gray-400">${d.telefone || 'Telefone não informado'}</p>
           </div>
-          <svg class="w-4 h-4 text-gray-300 group-hover:text-[#004587] flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 13l6.5-6.5M3 21h4l10-10-4-4L3 17v4z"/></svg>
+          <svg class="w-4 h-4 text-gray-300 group-hover:text-[#004587] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 13l6.5-6.5M3 21h4l10-10-4-4L3 17v4z"/></svg>
         </button>`;
       }).join('');
     }
@@ -3435,7 +3510,7 @@
               <p class="font-bold text-[#004587]">${c.nome}</p>
               <p class="text-sm text-gray-500 mt-0.5">Ficha: ${c.codigo_ficha} &nbsp;·&nbsp; ${c.subarea}</p>
             </div>
-            <svg class="w-5 h-5 text-[#004587] flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            <svg class="w-5 h-5 text-[#004587] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
           </div>`).join('');
       } catch(e) {
         grid.innerHTML = '<p class="text-red-500">Erro ao carregar cursos.</p>';
@@ -3805,7 +3880,7 @@
               ${pctd.data_inicio ? `<p class="text-sm text-gray-600">Início: ${formatarData(pctd.data_inicio)}</p>` : ''}
               ${pctd.data_conclusao ? `<p class="text-sm text-gray-600">Conclusão: ${formatarData(pctd.data_conclusao)}</p>` : ''}
               ${pctd.link_arquivo ? `<a href="${pctd.link_arquivo}" target="_blank" class="mt-3 flex items-center justify-center gap-2 w-full px-3 py-2 bg-[#F7941D] text-white rounded-lg font-semibold text-sm hover:bg-[#E8850D] transition-all">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                 Abrir Documento</a>`
               : '<p class="text-sm text-gray-500 mt-2">Link não disponível</p>'}
             </div>`).join('')
@@ -4829,7 +4904,7 @@
             <div class="flex justify-between items-center">
               <h3 class="text-2xl font-bold text-[#004587]">Eventos em ${dataFormatada}</h3>
               <button onclick="closeEventosDiaModal()" class="text-gray-400 hover:text-gray-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
@@ -5612,7 +5687,7 @@
         qRenderUCsLista(quadroCursoAtual.id, versao);
         showSuccessMessage('✅ UC adicionada!');
       } catch(err) { showErrorMessage('❌ Erro: ' + err.message); }
-      finally { btn.disabled = false; btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Adicionar UC'; }
+      finally { btn.disabled = false; btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Adicionar UC'; }
     };
 
     window.qRemoverUC = async function(btn) {
@@ -5860,7 +5935,7 @@
               <p class="font-bold text-purple-700 text-sm">${icone} ${t.nome_curso} — ${t.codigo_oferta || ''}</p>
               <p class="text-xs text-gray-500">${periodoLabel[t.periodo] || t.periodo || '-'} · ${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)}</p>
             </div>
-            <svg class="w-5 h-5 text-purple-400 flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>`;
+            <svg class="w-5 h-5 text-purple-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>`;
             div.onclick = () => qsAbrirQuadro(t);
             container.appendChild(div);
           });
@@ -5972,7 +6047,7 @@
               <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${qsStCss}">${qsStLabel}</span>
             </div>
           </div>
-          <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>`;
+          <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>`;
           div.onclick = () => qsAbrirQuadro(t);
           container.appendChild(div);
         });
@@ -6159,7 +6234,7 @@
               ? `<div class="no-print w-full mt-1 py-1 rounded text-[10px] text-green-600 font-semibold text-center bg-green-50 border border-green-200">🏖️ Recesso</div>`
               : `<button onclick="qAbrirModalAlocacao('${cel.dateStr}','${cel.diaNome}')"
                 class="no-print w-full mt-1 py-1 rounded border border-dashed border-[#004587]/30 hover:border-[#004587] text-[#004587] text-xs font-semibold hover:bg-[#004587]/5 transition-all flex items-center justify-center gap-0.5">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Alocar
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Alocar
               </button>`;
             td.innerHTML = `
               <p class="text-xs font-bold text-gray-500 mb-1">${cel.diaNum}</p>
@@ -7388,7 +7463,7 @@
         qRenderMonthlyGrid(quadroTurmaAtual);
         showSuccessMessage('✅ Docente alocado com sucesso!');
       } catch(err) { showErrorMessage('❌ Erro: ' + err.message); }
-      finally { btn.disabled = false; btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Salvar Alocação'; }
+      finally { btn.disabled = false; btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Salvar Alocação'; }
     };
 
     window.qRemoverAlocacao = async function(alocId, dataStr, ucNome, docenteNome, turmaCodigo) {
@@ -9875,15 +9950,79 @@
       cont.innerHTML = cardsHtml + tabelaAreaHtml + tabelaSalaHtml;
     };
 
-    // ── FASE 3: Hook no cadastro de turma ────────────────────────────
-    // Injetar verificação de conflito no fluxo de salvamento de turma (chamado de salvarTurma)
-    const _origSalvarTurma = window.salvarTurma;
-    // A verificação de conflito já está disponível via verificarConflitoSala()
-    // e é chamada diretamente pelo calcularDuracao() e pelo hook abaixo
-
-    // Garante que ao salvar uma turma com sala_fixa, o conflito é verificado
-    // (integrado ao calcularDuracao; para o cadastro direto, o aviso é passivo)
     // ── FIM MÓDULO PLANEJAMENTO ──────────────────────────────────────
+
+    // ==================== MOBILE MENU ====================
+    window.toggleMobileMenu = function() {
+      const menu = document.getElementById('mobile-menu');
+      const backdrop = document.getElementById('mobile-menu-backdrop');
+      const btn = document.getElementById('nav-hamburger');
+      const isOpen = menu.classList.contains('open');
+      if (isOpen) {
+        menu.classList.remove('open');
+        backdrop.classList.add('hidden');
+        btn.setAttribute('aria-expanded', 'false');
+        menu.setAttribute('aria-hidden', 'true');
+      } else {
+        menu.classList.add('open');
+        backdrop.classList.remove('hidden');
+        btn.setAttribute('aria-expanded', 'true');
+        menu.setAttribute('aria-hidden', 'false');
+      }
+    };
+    window.closeMobileMenu = function() {
+      const menu = document.getElementById('mobile-menu');
+      const backdrop = document.getElementById('mobile-menu-backdrop');
+      const btn = document.getElementById('nav-hamburger');
+      if (menu) menu.classList.remove('open');
+      if (backdrop) backdrop.classList.add('hidden');
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+      if (menu) menu.setAttribute('aria-hidden', 'true');
+    };
+    // Close menu on desktop resize
+    window.addEventListener('resize', () => { if (window.innerWidth >= 768) closeMobileMenu(); });
+
+    // ==================== INTERSECTIONOBSERVER — fadeUp ====================
+    (function() {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      // Observe existing + future elements
+      function observeFadeUps() {
+        document.querySelectorAll('.fade-up:not(.in-view)').forEach(el => io.observe(el));
+      }
+      observeFadeUps();
+      // Re-observe when new pages become active (simple MutationObserver on body)
+      new MutationObserver(observeFadeUps).observe(document.body, { childList: true, subtree: true, attributeFilter: ['class'] });
+    })();
+
+    // ==================== SESSIONSTORAGE — área ativa ====================
+    (function restoreAreaFromSession() {
+      try {
+        const saved = sessionStorage.getItem('hub_area_ativa');
+        if (!saved) return;
+        const { nome, cor } = JSON.parse(saved);
+        const btn = document.querySelector(`.area-card[data-nome="${CSS.escape ? nome.replace(/"/g, '\\"') : nome}"]`);
+        if (btn) { window.setAreaAtiva(btn); }
+      } catch { /* ignore */ }
+    })();
+
+    // Hook setAreaAtiva to persist selection
+    (function() {
+      const origSetArea = window.setAreaAtiva;
+      window.setAreaAtiva = function(btn) {
+        origSetArea(btn);
+        try { sessionStorage.setItem('hub_area_ativa', JSON.stringify({ nome: btn.dataset.nome, cor: btn.dataset.cor })); } catch { /* ignore */ }
+        // Update mobile menu label
+        const label = document.getElementById('mobile-menu-area-label');
+        if (label) label.textContent = btn.dataset.nome;
+      };
+    })();
 
     // ==================== FIM NAVEGAÇÃO DE ABAS ====================
   </script>
