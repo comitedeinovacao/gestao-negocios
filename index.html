@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR" class="h-full">
+<html lang="pt-BR">
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -132,7 +132,7 @@
     ::-webkit-scrollbar-thumb { background: #004587; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #F7941D; }
 
-    .page-container { min-height: 100%; display: none; }
+    .page-container { min-height: 100vh; display: none; }
     .page-container.active { display: block; }
     .tab-content { transition: all 0.3s ease; }
 
@@ -292,8 +292,8 @@
   };
 </script>
  </head>
- <body class="h-full bg-white overflow-auto">
-  <div class="w-full h-full"><!-- PÁGINA HOME -->
+ <body class="bg-white">
+  <div class="w-full"><!-- PÁGINA HOME -->
    <div id="home-page" class="page-container active bg-white"><!-- Header -->
     <header class="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 py-4 bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-100">
      <div class="max-w-7xl mx-auto">
@@ -3028,8 +3028,6 @@
       document.querySelectorAll('.page-container').forEach(p => p.classList.remove('active'));
       document.getElementById(page + '-page').classList.add('active');
       window.scrollTo(0, 0);
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
       if (page === 'consulta') {
         renderConsultaView(null);
       }
