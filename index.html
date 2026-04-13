@@ -3823,17 +3823,19 @@
           container.innerHTML = `<p class="text-gray-400 text-center py-6 text-sm">Nenhum curso ${tipo === 'tecnico' ? 'técnico' : 'livre'} em andamento.</p>`;
           return;
         }
-        container.innerHTML = cursos.map(nome => {
+        container.innerHTML = cursos.map((nome, idx) => {
           const count = filtradas.filter(t => t.nome_curso === nome).length;
-          const nomeEsc = nome.replace(/'/g, "\\'");
-          return `<div onclick="pctdSelecionarCurso('${nomeEsc}')" class="cursor-pointer flex items-center justify-between bg-white border-2 border-gray-200 hover:border-[#004587] hover:bg-blue-50 rounded-xl px-4 py-3 transition-all">
+          return `<div data-pctd-curso-idx="${idx}" class="cursor-pointer flex items-center justify-between bg-white border-2 border-gray-200 hover:border-[#004587] hover:bg-blue-50 rounded-xl px-4 py-3 transition-all">
             <div>
-              <p class="font-semibold text-gray-800 text-sm">${nome}</p>
+              <p class="font-semibold text-gray-800 text-sm">${nome.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</p>
               <p class="text-xs text-gray-500 mt-0.5">${count} turma${count !== 1 ? 's' : ''}</p>
             </div>
             <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
           </div>`;
         }).join('');
+        container.querySelectorAll('[data-pctd-curso-idx]').forEach(el => {
+          el.addEventListener('click', () => pctdSelecionarCurso(cursos[+el.dataset.pctdCursoIdx]));
+        });
       } catch(e) {
         container.innerHTML = `<p class="text-red-400 text-sm text-center py-4">⚠️ Erro: ${e.message||e}</p>`;
       }
@@ -3858,32 +3860,44 @@
     function _pctdRenderTurmas() {
       const container = document.getElementById('pctd-turmas-container');
       if (!container) return;
-      const turmas = Array.isArray(_turmasConsultaCache) ? _turmasConsultaCache : [];
-      const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite', integral: 'Integral', sabado: 'Sábado' };
-      const filtradas = turmas.filter(t =>
-        !isParceiro(t) && !isTurmaFinalizada(t) && t.nome_curso === _pctdCurso
-      ).sort((a, b) => (a.periodo || '').localeCompare(b.periodo || ''));
-      if (!filtradas.length) {
-        container.innerHTML = '<p class="text-gray-400 text-center py-6 text-sm">Nenhuma turma ativa encontrada para este curso.</p>';
-        return;
+      try {
+        const turmas = Array.isArray(_turmasConsultaCache) ? _turmasConsultaCache : [];
+        if (!turmas.length) {
+          container.innerHTML = '<p class="text-amber-500 text-center py-6 text-sm">⏳ Cache não carregado. Volte e selecione o tipo novamente.</p>';
+          return;
+        }
+        const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite', integral: 'Integral', sabado: 'Sábado' };
+        const filtradas = turmas.filter(t =>
+          !isParceiro(t) && !isTurmaFinalizada(t) && t.nome_curso === _pctdCurso
+        ).sort((a, b) => (a.periodo || '').localeCompare(b.periodo || ''));
+        if (!filtradas.length) {
+          const todasDoCurso = turmas.filter(t => t.nome_curso === _pctdCurso);
+          const msg = todasDoCurso.length
+            ? `Todas as ${todasDoCurso.length} turma(s) de "${_pctdCurso}" estão finalizadas ou canceladas.`
+            : `Nenhuma turma encontrada para o curso "${_pctdCurso}".`;
+          container.innerHTML = `<p class="text-gray-400 text-center py-6 text-sm">${msg}</p>`;
+          return;
+        }
+        container.innerHTML = filtradas.map(t => {
+          const pctd = allPCTD.find(p => p.codigo_oferta === t.codigo_oferta);
+          const temPlano = pctd && pctd.link_arquivo;
+          const apelido = t.apelido ? ` · ${t.apelido}` : '';
+          return `<div class="flex items-center gap-4 p-4 bg-white border-2 ${temPlano ? 'border-green-200' : 'border-gray-200'} rounded-xl">
+            <div class="flex-1 min-w-0">
+              <p class="font-semibold text-gray-800 text-sm">${periodoLabel[t.periodo] || t.periodo || '-'}${apelido}</p>
+              <p class="text-xs text-gray-500 mt-0.5">${t.codigo_oferta || ''} · ${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)}</p>
+            </div>
+            ${temPlano
+              ? `<a href="${pctd.link_arquivo}" target="_blank" rel="noopener" class="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 bg-green-600 text-white rounded-xl text-xs font-semibold hover:bg-green-700 transition-all">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                  Visualizar PCTD</a>`
+              : `<span class="flex-shrink-0 text-xs text-amber-600 font-semibold bg-amber-50 border border-amber-200 px-3 py-2 rounded-xl">⚠️ Sem plano</span>`
+            }
+          </div>`;
+        }).join('');
+      } catch(e) {
+        container.innerHTML = `<p class="text-red-400 text-sm text-center py-4">⚠️ Erro ao carregar turmas: ${e.message||e}</p>`;
       }
-      container.innerHTML = filtradas.map(t => {
-        const pctd = allPCTD.find(p => p.codigo_oferta === t.codigo_oferta);
-        const temPlano = pctd && pctd.link_arquivo;
-        const apelido = t.apelido ? ` · ${t.apelido}` : '';
-        return `<div class="flex items-center gap-4 p-4 bg-white border-2 ${temPlano ? 'border-green-200' : 'border-gray-200'} rounded-xl">
-          <div class="flex-1 min-w-0">
-            <p class="font-semibold text-gray-800 text-sm">${periodoLabel[t.periodo] || t.periodo || '-'}${apelido}</p>
-            <p class="text-xs text-gray-500 mt-0.5">${t.codigo_oferta || ''} · ${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)}</p>
-          </div>
-          ${temPlano
-            ? `<a href="${pctd.link_arquivo}" target="_blank" rel="noopener" class="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 bg-green-600 text-white rounded-xl text-xs font-semibold hover:bg-green-700 transition-all">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                Visualizar PCTD</a>`
-            : `<span class="flex-shrink-0 text-xs text-amber-600 font-semibold bg-amber-50 border border-amber-200 px-3 py-2 rounded-xl">⚠️ Sem plano</span>`
-          }
-        </div>`;
-      }).join('');
     }
 
     // ── PITD: Navegação tipo → curso → turma → UC ─────────────────────
@@ -3912,26 +3926,34 @@
           container.innerHTML = `<p class="text-gray-400 text-center py-6 text-sm">Nenhum curso ${tipo === 'tecnico' ? 'técnico' : 'livre'} em andamento.</p>`;
           return;
         }
-        container.innerHTML = cursos.map(nome => {
+        container.innerHTML = cursos.map((nome, idx) => {
           const count = filtradas.filter(t => t.nome_curso === nome).length;
-          const nomeEsc = nome.replace(/'/g, "\\'");
-          return `<div onclick="pitdSelecionarCurso('${nomeEsc}')" class="cursor-pointer flex items-center justify-between bg-white border-2 border-gray-200 hover:border-[#004587] hover:bg-blue-50 rounded-xl px-4 py-3 transition-all">
+          return `<div data-pitd-curso-idx="${idx}" class="cursor-pointer flex items-center justify-between bg-white border-2 border-gray-200 hover:border-[#004587] hover:bg-blue-50 rounded-xl px-4 py-3 transition-all">
             <div>
-              <p class="font-semibold text-gray-800 text-sm">${nome}</p>
+              <p class="font-semibold text-gray-800 text-sm">${nome.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</p>
               <p class="text-xs text-gray-500 mt-0.5">${count} turma${count !== 1 ? 's' : ''}</p>
             </div>
             <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
           </div>`;
         }).join('');
+        // Adiciona listeners via JS (sem risco de encoding no onclick)
+        container.querySelectorAll('[data-pitd-curso-idx]').forEach(el => {
+          el.addEventListener('click', () => pitdSelecionarCurso(cursos[+el.dataset.pitdCursoIdx]));
+        });
       } catch(e) {
         container.innerHTML = `<p class="text-red-400 text-sm text-center py-4">⚠️ Erro: ${e.message||e}</p>`;
       }
     };
 
     window.pitdSelecionarCurso = function(nomeCurso) {
-      _pitdCurso = nomeCurso; _pitdTurma = null;
-      _pitdShow('pitd-step-turmas');
-      _pitdRenderTurmas();
+      try {
+        _pitdCurso = nomeCurso; _pitdTurma = null;
+        _pitdShow('pitd-step-turmas');
+        _pitdRenderTurmas();
+      } catch(e) {
+        const c = document.getElementById('pitd-turmas-container');
+        if (c) c.innerHTML = `<p class="text-red-400 text-sm text-center py-4">⚠️ Erro: ${e.message||e}</p>`;
+      }
     };
 
     window.pitdVoltarTipo = function() {
@@ -3952,43 +3974,56 @@
     function _pitdRenderTurmas() {
       const container = document.getElementById('pitd-turmas-container');
       if (!container) return;
-      const turmas = Array.isArray(_turmasConsultaCache) ? _turmasConsultaCache : [];
-      const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite', integral: 'Integral', sabado: 'Sábado' };
-      const periodoOrder = ['manha', 'tarde', 'noite', 'integral', 'sabado'];
-      const filtradas = turmas.filter(t =>
-        !isParceiro(t) && !isTurmaFinalizada(t) && t.nome_curso === _pitdCurso
-      );
-      if (!filtradas.length) {
-        container.innerHTML = '<p class="text-gray-400 text-center py-6 text-sm">Nenhuma turma ativa encontrada para este curso.</p>';
-        return;
-      }
-      const grupos = {};
-      filtradas.forEach(t => { const p = t.periodo || 'outro'; if (!grupos[p]) grupos[p] = []; grupos[p].push(t); });
-      const periodos = [...periodoOrder.filter(p => grupos[p]), ...Object.keys(grupos).filter(p => !periodoOrder.includes(p))];
-      let html = '';
-      periodos.forEach(per => {
-        html += `<div class="mb-4">
-          <div class="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-lg mb-2">
-            <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">${periodoLabel[per] || per}</span>
-            <span class="text-xs text-gray-400">${grupos[per].length} turma${grupos[per].length !== 1 ? 's' : ''}</span>
-          </div>`;
-        grupos[per].forEach(t => {
-          const apelido = t.apelido ? ` · ${t.apelido}` : '';
-          const stCss = _STATUS_BADGE_CSS[(t.status_turma||'').toLowerCase()] || 'bg-green-100 text-green-700';
-          const stLabel = _STATUS_LABEL[(t.status_turma||'').toLowerCase()] || '🟢 Em andamento';
-          const codEsc = (t.codigo_oferta || '').replace(/'/g, "\\'");
-          html += `<div onclick="pitdSelecionarTurma('${codEsc}')" class="cursor-pointer flex items-center justify-between bg-white border-2 border-gray-200 hover:border-[#004587] hover:bg-blue-50 rounded-xl px-4 py-3 mb-2 transition-all">
-            <div>
-              <p class="font-semibold text-gray-800 text-sm">${t.codigo_oferta || '—'}${apelido}</p>
-              <p class="text-xs text-gray-500 mt-0.5">${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)}</p>
-              <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${stCss}">${stLabel}</span>
-            </div>
-            <svg class="w-5 h-5 text-gray-400 flex-shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-          </div>`;
+      try {
+        const turmas = Array.isArray(_turmasConsultaCache) ? _turmasConsultaCache : [];
+        if (!turmas.length) {
+          container.innerHTML = '<p class="text-amber-500 text-center py-6 text-sm">⏳ Cache não carregado. Volte e selecione o tipo novamente.</p>';
+          return;
+        }
+        const periodoLabel = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite', integral: 'Integral', sabado: 'Sábado' };
+        const periodoOrder = ['manha', 'tarde', 'noite', 'integral', 'sabado'];
+        const filtradas = turmas.filter(t =>
+          !isParceiro(t) && !isTurmaFinalizada(t) && t.nome_curso === _pitdCurso
+        );
+        if (!filtradas.length) {
+          // Diagnóstico: verifica se existem turmas do curso mas finalizadas
+          const todasDoCurso = turmas.filter(t => t.nome_curso === _pitdCurso);
+          const msg = todasDoCurso.length
+            ? `Todas as ${todasDoCurso.length} turma(s) de "${_pitdCurso}" estão finalizadas ou canceladas.`
+            : `Nenhuma turma encontrada para o curso "${_pitdCurso}".`;
+          container.innerHTML = `<p class="text-gray-400 text-center py-6 text-sm">${msg}</p>`;
+          return;
+        }
+        const grupos = {};
+        filtradas.forEach(t => { const p = t.periodo || 'outro'; if (!grupos[p]) grupos[p] = []; grupos[p].push(t); });
+        const periodos = [...periodoOrder.filter(p => grupos[p]), ...Object.keys(grupos).filter(p => !periodoOrder.includes(p))];
+        let html = '';
+        periodos.forEach(per => {
+          html += `<div class="mb-4">
+            <div class="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-lg mb-2">
+              <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">${periodoLabel[per] || per}</span>
+              <span class="text-xs text-gray-400">${grupos[per].length} turma${grupos[per].length !== 1 ? 's' : ''}</span>
+            </div>`;
+          grupos[per].forEach(t => {
+            const apelido = t.apelido ? ` · ${t.apelido}` : '';
+            const stCss = _STATUS_BADGE_CSS[(t.status_turma||'').toLowerCase()] || 'bg-green-100 text-green-700';
+            const stLabel = _STATUS_LABEL[(t.status_turma||'').toLowerCase()] || '🟢 Em andamento';
+            const codEsc = (t.codigo_oferta || '').replace(/'/g, "\\'");
+            html += `<div onclick="pitdSelecionarTurma('${codEsc}')" class="cursor-pointer flex items-center justify-between bg-white border-2 border-gray-200 hover:border-[#004587] hover:bg-blue-50 rounded-xl px-4 py-3 mb-2 transition-all">
+              <div>
+                <p class="font-semibold text-gray-800 text-sm">${t.codigo_oferta || '—'}${apelido}</p>
+                <p class="text-xs text-gray-500 mt-0.5">${formatarData(t.data_de_inicio)} – ${formatarData(t.data_de_termino)}</p>
+                <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${stCss}">${stLabel}</span>
+              </div>
+              <svg class="w-5 h-5 text-gray-400 flex-shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </div>`;
+          });
+          html += '</div>';
         });
-        html += '</div>';
-      });
-      container.innerHTML = html;
+        container.innerHTML = html;
+      } catch(e) {
+        container.innerHTML = `<p class="text-red-400 text-sm text-center py-4">⚠️ Erro ao carregar turmas: ${e.message||e}</p>`;
+      }
     }
 
     window.pitdSelecionarTurma = async function(codigoOferta) {
