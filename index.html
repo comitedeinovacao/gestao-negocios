@@ -752,45 +752,88 @@
       </form>
      </div><!-- PITD -->
      <div id="tab-pitd" class="tab-content bg-gray-50 rounded-2xl p-8" style="display:none">
-      <h3 class="text-2xl font-bold text-[#004587] mb-8">Plano Individual de Trabalho Docente</h3>
-      <form id="pitd-form" class="space-y-6">
-       <div><label class="block text-[#004587] font-semibold mb-3">Docente</label> <input type="text" placeholder="Nome do docente..." name="docente" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+      <h3 class="text-2xl font-bold text-[#004587] mb-2">Plano Individual de Trabalho Docente</h3>
+      <p class="text-sm text-gray-500 mb-7">Selecione a turma e a UC para vincular o plano corretamente.</p>
+      <div class="space-y-5">
+       <div>
+        <label class="block text-[#004587] font-semibold mb-3">Tipo de Curso</label>
+        <div class="flex gap-3">
+         <button type="button" id="pitd-cad-btn-tecnico" onclick="pitdCadSelecionarTipo('tecnico')" class="flex-1 py-3 border-2 border-gray-200 rounded-xl font-semibold text-sm hover:border-[#004587] transition-all">&#128218; Técnico</button>
+         <button type="button" id="pitd-cad-btn-livre" onclick="pitdCadSelecionarTipo('livre')" class="flex-1 py-3 border-2 border-gray-200 rounded-xl font-semibold text-sm hover:border-[#F7941D] transition-all">&#128161; Livre</button>
+        </div>
        </div>
-       <div><label class="block text-[#004587] font-semibold mb-3">Unidade Curricular</label> <input type="text" placeholder="Digite a UC..." name="unidade_curricular" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+       <div id="pitd-cad-curso-row" style="display:none">
+        <label class="block text-[#004587] font-semibold mb-3">Curso</label>
+        <select id="pitd-cad-curso-select" onchange="pitdCadSelecionarCurso(this.value)" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
+         <option value="">Selecione o curso...</option>
+        </select>
        </div>
-       <div><label class="block text-[#004587] font-semibold mb-3">Link do Arquivo PITD</label> <input type="url" placeholder="https://drive.google.com/... ou https://1drv.ms/..." name="link_do_arquivo_pitd" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
-        <p class="text-gray-500 text-sm mt-2">📎 Compartilhe o link aberto do seu Google Drive ou OneDrive</p>
-       </div><button type="submit" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>Salvar PITD </button>
-      </form>
+       <div id="pitd-cad-turma-row" style="display:none">
+        <label class="block text-[#004587] font-semibold mb-3">Turma</label>
+        <select id="pitd-cad-turma-select" onchange="pitdCadSelecionarTurma(this.value)" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
+         <option value="">Selecione a turma...</option>
+        </select>
+       </div>
+       <div id="pitd-cad-uc-row" style="display:none">
+        <label class="block text-[#004587] font-semibold mb-3">Unidade Curricular</label>
+        <select id="pitd-cad-uc-select" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
+         <option value="">Selecione a UC...</option>
+        </select>
+       </div>
+       <div id="pitd-cad-dados-row" style="display:none" class="space-y-5">
+        <div>
+         <label class="block text-[#004587] font-semibold mb-3">Docente</label>
+         <input type="text" id="pitd-cad-docente" placeholder="Nome do docente..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
+        </div>
+        <div>
+         <label class="block text-[#004587] font-semibold mb-3">Link do Arquivo PITD</label>
+         <input type="url" id="pitd-cad-link" placeholder="https://drive.google.com/... ou https://1drv.ms/..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
+         <p class="text-gray-500 text-sm mt-2">&#128206; Compartilhe o link aberto do seu Google Drive ou OneDrive</p>
+        </div>
+        <button type="button" onclick="pitdCadSalvar()" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
+         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+         Salvar PITD
+        </button>
+       </div>
+      </div>
      </div><!-- PCTD -->
      <div id="tab-pctd" class="tab-content bg-gray-50 rounded-2xl p-8" style="display:none">
-      <h3 class="text-2xl font-bold text-[#004587] mb-8">Plano Coletivo de Trabalho Docente</h3>
-      <form id="pctd-form" class="space-y-6">
-       <div class="grid md:grid-cols-2 gap-6">
-        <div><label class="block text-[#004587] font-semibold mb-3">Nome do Curso</label> <input type="text" placeholder="Ex: Técnico em Administração" name="nome_do_curso" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
-        </div>
-        <div><label class="block text-[#004587] font-semibold mb-3">Código da Oferta</label> <input type="text" placeholder="Ex: 2024-001" name="codigo_da_oferta" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
-        </div>
-       </div>
-       <div class="grid md:grid-cols-3 gap-6">
-        <div><label class="block text-[#004587] font-semibold mb-3">Período</label> <select name="periodo" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required> <option value="">Selecione</option> <option value="manha">Manhã</option> <option value="tarde">Tarde</option> <option value="noite">Noite</option> </select>
-        </div>
-        <div><label class="block text-[#004587] font-semibold mb-3">Data de Início</label> <input type="date" name="data_de_inicio" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
-        </div>
-        <div><label class="block text-[#004587] font-semibold mb-3">Data de Conclusão</label> <input type="date" name="data_de_conclusao" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
+      <h3 class="text-2xl font-bold text-[#004587] mb-2">Plano Coletivo de Trabalho Docente</h3>
+      <p class="text-sm text-gray-500 mb-7">Selecione a turma para vincular o PCTD automaticamente.</p>
+      <div class="space-y-5">
+       <div>
+        <label class="block text-[#004587] font-semibold mb-3">Tipo de Curso</label>
+        <div class="flex gap-3">
+         <button type="button" id="pctd-cad-btn-tecnico" onclick="pctdCadSelecionarTipo('tecnico')" class="flex-1 py-3 border-2 border-gray-200 rounded-xl font-semibold text-sm hover:border-[#004587] transition-all">&#128218; Técnico</button>
+         <button type="button" id="pctd-cad-btn-livre" onclick="pctdCadSelecionarTipo('livre')" class="flex-1 py-3 border-2 border-gray-200 rounded-xl font-semibold text-sm hover:border-[#F7941D] transition-all">&#128161; Livre</button>
         </div>
        </div>
-       <div><label class="block text-[#004587] font-semibold mb-3">Link do Arquivo PCTD</label> <input type="url" placeholder="https://drive.google.com/... ou https://1drv.ms/..." name="link_do_arquivo_pctd" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none" required>
-        <p class="text-gray-500 text-sm mt-2">📎 Compartilhe o link aberto do seu Google Drive ou OneDrive</p>
-       </div><button type="submit" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>Salvar PCTD </button>
-      </form>
-     </div><!-- Representantes -->
+       <div id="pctd-cad-curso-row" style="display:none">
+        <label class="block text-[#004587] font-semibold mb-3">Curso</label>
+        <select id="pctd-cad-curso-select" onchange="pctdCadSelecionarCurso(this.value)" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
+         <option value="">Selecione o curso...</option>
+        </select>
+       </div>
+       <div id="pctd-cad-turma-row" style="display:none">
+        <label class="block text-[#004587] font-semibold mb-3">Turma</label>
+        <select id="pctd-cad-turma-select" onchange="pctdCadSelecionarTurma(this.value)" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
+         <option value="">Selecione a turma...</option>
+        </select>
+       </div>
+       <div id="pctd-cad-dados-row" style="display:none" class="space-y-5">
+        <div id="pctd-cad-turma-info" class="p-4 bg-blue-50 border border-blue-200 rounded-xl text-sm"></div>
+        <div>
+         <label class="block text-[#004587] font-semibold mb-3">Link do Arquivo PCTD</label>
+         <input type="url" id="pctd-cad-link" placeholder="https://drive.google.com/... ou https://1drv.ms/..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
+         <p class="text-gray-500 text-sm mt-2">&#128206; Compartilhe o link aberto do seu Google Drive ou OneDrive</p>
+        </div>
+        <button type="button" onclick="pctdCadSalvar()" class="btn-primary w-full py-4 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
+         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+         Salvar PCTD
+        </button>
+       </div>
+      </div>
+     </div></div><!-- Representantes -->
      <div id="tab-representantes" class="tab-content bg-gray-50 rounded-2xl p-8" style="display:none">
       <h3 class="text-2xl font-bold text-[#004587] mb-8">Cadastro de Representantes Estudantis</h3>
       <form id="representantes-form" class="space-y-6">
@@ -4395,87 +4438,201 @@
       }
     });
 
-    document.getElementById('pitd-form')?.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const form = e.target;
-      const nome_docente = form.docente.value.trim();
-      const codigo_oferta = form.unidade_curricular.value.trim();
-      const link_arquivo = form.link_do_arquivo_pitd.value.trim();
+    // ── PITD Cadastro — cascade: tipo → curso → turma → UC → dados ──
+    let _pitdCadTipo = null, _pitdCadCurso = null, _pitdCadTurma = null;
+    const _pitdCadPeriodoLabel = { manha:'Manhã', tarde:'Tarde', noite:'Noite', integral:'Integral', sabado:'Sábado' };
 
-      if (!nome_docente) {
-        showErrorMessage('❌ Digite o nome do docente');
-        return;
-      }
-      if (!codigo_oferta) {
-        showErrorMessage('❌ Digite a unidade curricular');
-        return;
-      }
-      if (!link_arquivo) {
-        showErrorMessage('❌ Cole o link do arquivo');
-        return;
-      }
+    window.pitdCadSelecionarTipo = async function(tipo) {
+      _pitdCadTipo = tipo; _pitdCadCurso = null; _pitdCadTurma = null;
+      // highlight selected button
+      ['tecnico','livre'].forEach(t => {
+        const b = document.getElementById('pitd-cad-btn-' + t);
+        if (b) b.classList.remove('border-[#004587]', 'border-[#F7941D]');
+      });
+      const activeBtn = document.getElementById('pitd-cad-btn-' + tipo);
+      if (activeBtn) activeBtn.classList.add(tipo === 'tecnico' ? 'border-[#004587]' : 'border-[#F7941D]');
+      // hide downstream rows
+      ['pitd-cad-curso-row','pitd-cad-turma-row','pitd-cad-uc-row','pitd-cad-dados-row'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.style.display = 'none';
+      });
+      // load turmas cache and populate course select
+      const turmas = await _carregarTurmasCache();
+      const filtradas = _turmasPorTipo(turmas, tipo);
+      const cursos = _cursosUnicos(filtradas);
+      const sel = document.getElementById('pitd-cad-curso-select');
+      if (!sel) return;
+      sel.innerHTML = '<option value="">Selecione o curso...</option>' +
+        cursos.map(c => `<option value="${c.replace(/"/g,'&quot;')}">${c.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</option>`).join('');
+      document.getElementById('pitd-cad-curso-row').style.display = 'block';
+    };
 
-      const btn = form.querySelector('button');
-      const originalBtnHtml = btn.innerHTML;
-      btn.disabled = true;
-      btn.innerHTML = '⏳ Salvando...';
+    window.pitdCadSelecionarCurso = function(nomeCurso) {
+      _pitdCadCurso = nomeCurso; _pitdCadTurma = null;
+      ['pitd-cad-turma-row','pitd-cad-uc-row','pitd-cad-dados-row'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.style.display = 'none';
+      });
+      if (!nomeCurso) return;
+      const turmas = Array.isArray(_turmasConsultaCache) ? _turmasConsultaCache : [];
+      const filtradas = _turmasPorTipo(turmas, _pitdCadTipo).filter(t => t.nome_curso === nomeCurso && !isTurmaFinalizada(t));
+      const sel = document.getElementById('pitd-cad-turma-select');
+      if (!sel) return;
+      const fmt = d => { const [y,m,dia] = (d||'').split('-'); return dia ? `${dia}/${m}/${y}` : d||'-'; };
+      sel.innerHTML = '<option value="">Selecione a turma...</option>' +
+        filtradas.map(t => {
+          const label = `${String(t.codigo_oferta||'')} — ${_pitdCadPeriodoLabel[t.periodo]||t.periodo||'-'} (${fmt(t.data_de_inicio)} a ${fmt(t.data_de_termino)})`;
+          return `<option value="${String(t.codigo_oferta||'').replace(/"/g,'&quot;')}">${label.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</option>`;
+        }).join('');
+      document.getElementById('pitd-cad-turma-row').style.display = 'block';
+    };
 
+    window.pitdCadSelecionarTurma = async function(codigoOferta) {
+      ['pitd-cad-uc-row','pitd-cad-dados-row'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.style.display = 'none';
+      });
+      if (!codigoOferta) { _pitdCadTurma = null; return; }
+      const turmas = Array.isArray(_turmasConsultaCache) ? _turmasConsultaCache : [];
+      _pitdCadTurma = turmas.find(t => String(t.codigo_oferta||'') === String(codigoOferta)) || null;
+      if (!_pitdCadTurma) return;
+      // load UCs if needed
+      if (!allUCs || !allUCs.length) await loadUCs();
+      const ucs = _getUCsParaTurma(_pitdCadTurma);
+      const sel = document.getElementById('pitd-cad-uc-select');
+      if (!sel) return;
+      if (ucs.length) {
+        sel.innerHTML = '<option value="">Selecione a UC...</option>' +
+          ucs.map(u => `<option value="${(u.nome||u).replace(/"/g,'&quot;')}">${(u.nome||u).replace(/&/g,'&amp;').replace(/</g,'&lt;')}</option>`).join('');
+        document.getElementById('pitd-cad-uc-row').style.display = 'block';
+      } else {
+        sel.innerHTML = '<option value="">— Nenhuma UC vinculada —</option>';
+        document.getElementById('pitd-cad-uc-row').style.display = 'block';
+      }
+      document.getElementById('pitd-cad-dados-row').style.display = 'block';
+    };
+
+    window.pitdCadSalvar = async function() {
+      const docente = (document.getElementById('pitd-cad-docente')?.value || '').trim();
+      const link = (document.getElementById('pitd-cad-link')?.value || '').trim();
+      const ucSel = document.getElementById('pitd-cad-uc-select');
+      const ucNome = ucSel ? ucSel.value.trim() : '';
+      if (!_pitdCadTurma) { showErrorMessage('❌ Selecione uma turma'); return; }
+      if (!ucNome) { showErrorMessage('❌ Selecione a unidade curricular'); return; }
+      if (!docente) { showErrorMessage('❌ Digite o nome do docente'); return; }
+      if (!link) { showErrorMessage('❌ Cole o link do arquivo PITD'); return; }
+      const btn = document.querySelector('#pitd-cad-dados-row button');
+      const originalBtnHtml = btn ? btn.innerHTML : '';
+      if (btn) { btn.disabled = true; btn.innerHTML = '⏳ Salvando...'; }
       try {
-        await postToSheet('PITD', [nome_docente, codigo_oferta, link_arquivo]);
-        form.reset();
-        showSuccessMessage('✅ Enviado com sucesso!');
+        const pitdId = 'PITD-' + String(_pitdCadTurma.codigo_oferta||'') + '-' + Date.now();
+        await postToSheet('PITD', [docente, ucNome, link, String(_pitdCadTurma.codigo_oferta||''), pitdId]);
+        // reset form
+        _pitdCadTipo = null; _pitdCadCurso = null; _pitdCadTurma = null;
+        ['pitd-cad-curso-row','pitd-cad-turma-row','pitd-cad-uc-row','pitd-cad-dados-row'].forEach(id => {
+          const el = document.getElementById(id); if (el) el.style.display = 'none';
+        });
+        ['pitd-cad-btn-tecnico','pitd-cad-btn-livre'].forEach(id => {
+          const b = document.getElementById(id);
+          if (b) { b.classList.remove('border-[#004587]','border-[#F7941D]'); }
+        });
+        if (document.getElementById('pitd-cad-docente')) document.getElementById('pitd-cad-docente').value = '';
+        if (document.getElementById('pitd-cad-link')) document.getElementById('pitd-cad-link').value = '';
+        showSuccessMessage('✅ PITD salvo com sucesso!');
+        await loadPITD();
       } catch (err) {
-        showErrorMessage('❌ Erro ao enviar: ' + err.message);
+        showErrorMessage('❌ Erro ao salvar PITD: ' + err.message);
       } finally {
-        btn.disabled = false;
-        btn.innerHTML = originalBtnHtml;
+        if (btn) { btn.disabled = false; btn.innerHTML = originalBtnHtml; }
       }
-    });
+    };
 
-    document.getElementById('pctd-form')?.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const form = e.target;
-      const nome_curso = form.nome_do_curso.value.trim();
-      const codigo_oferta = form.codigo_da_oferta.value.trim();
-      const periodo = form.periodo.value;
-      const data_inicio = form.data_de_inicio.value;
-      const data_conclusao = form.data_de_conclusao.value;
-      const link_arquivo = form.link_do_arquivo_pctd.value.trim();
+    // ── PCTD Cadastro — cascade: tipo → curso → turma → link ──
+    let _pctdCadTipo = null, _pctdCadCurso = null, _pctdCadTurma = null;
+    const _pctdCadPeriodoLabel = { manha:'Manhã', tarde:'Tarde', noite:'Noite', integral:'Integral', sabado:'Sábado' };
 
-      if (!nome_curso) {
-        showErrorMessage('❌ Digite o nome do curso');
-        return;
-      }
-      if (!codigo_oferta) {
-        showErrorMessage('❌ Digite o código da oferta');
-        return;
-      }
-      if (!data_conclusao) {
-        showErrorMessage('❌ Selecione a data de conclusão');
-        return;
-      }
-      if (!link_arquivo) {
-        showErrorMessage('❌ Cole o link do arquivo');
-        return;
-      }
+    window.pctdCadSelecionarTipo = async function(tipo) {
+      _pctdCadTipo = tipo; _pctdCadCurso = null; _pctdCadTurma = null;
+      ['tecnico','livre'].forEach(t => {
+        const b = document.getElementById('pctd-cad-btn-' + t);
+        if (b) b.classList.remove('border-[#004587]', 'border-[#F7941D]');
+      });
+      const activeBtn = document.getElementById('pctd-cad-btn-' + tipo);
+      if (activeBtn) activeBtn.classList.add(tipo === 'tecnico' ? 'border-[#004587]' : 'border-[#F7941D]');
+      ['pctd-cad-curso-row','pctd-cad-turma-row','pctd-cad-dados-row'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.style.display = 'none';
+      });
+      const turmas = await _carregarTurmasCache();
+      const filtradas = _turmasPorTipo(turmas, tipo);
+      const cursos = _cursosUnicos(filtradas);
+      const sel = document.getElementById('pctd-cad-curso-select');
+      if (!sel) return;
+      sel.innerHTML = '<option value="">Selecione o curso...</option>' +
+        cursos.map(c => `<option value="${c.replace(/"/g,'&quot;')}">${c.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</option>`).join('');
+      document.getElementById('pctd-cad-curso-row').style.display = 'block';
+    };
 
-      const btn = form.querySelector('button');
-      const originalBtnHtml = btn.innerHTML;
-      btn.disabled = true;
-      btn.innerHTML = '⏳ Salvando...';
+    window.pctdCadSelecionarCurso = function(nomeCurso) {
+      _pctdCadCurso = nomeCurso; _pctdCadTurma = null;
+      ['pctd-cad-turma-row','pctd-cad-dados-row'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.style.display = 'none';
+      });
+      if (!nomeCurso) return;
+      const turmas = Array.isArray(_turmasConsultaCache) ? _turmasConsultaCache : [];
+      const filtradas = _turmasPorTipo(turmas, _pctdCadTipo).filter(t => t.nome_curso === nomeCurso && !isTurmaFinalizada(t));
+      const sel = document.getElementById('pctd-cad-turma-select');
+      if (!sel) return;
+      const fmt = d => { const [y,m,dia] = (d||'').split('-'); return dia ? `${dia}/${m}/${y}` : d||'-'; };
+      sel.innerHTML = '<option value="">Selecione a turma...</option>' +
+        filtradas.map(t => {
+          const label = `${String(t.codigo_oferta||'')} — ${_pctdCadPeriodoLabel[t.periodo]||t.periodo||'-'} (${fmt(t.data_de_inicio)} a ${fmt(t.data_de_termino)})`;
+          return `<option value="${String(t.codigo_oferta||'').replace(/"/g,'&quot;')}">${label.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</option>`;
+        }).join('');
+      document.getElementById('pctd-cad-turma-row').style.display = 'block';
+    };
 
+    window.pctdCadSelecionarTurma = function(codigoOferta) {
+      const el = document.getElementById('pctd-cad-dados-row'); if (el) el.style.display = 'none';
+      if (!codigoOferta) { _pctdCadTurma = null; return; }
+      const turmas = Array.isArray(_turmasConsultaCache) ? _turmasConsultaCache : [];
+      _pctdCadTurma = turmas.find(t => String(t.codigo_oferta||'') === String(codigoOferta)) || null;
+      if (!_pctdCadTurma) return;
+      const fmt = d => { const [y,m,dia] = (d||'').split('-'); return dia ? `${dia}/${m}/${y}` : d||'-'; };
+      const info = document.getElementById('pctd-cad-turma-info');
+      if (info) {
+        info.innerHTML = `<strong>${_pctdCadTurma.nome_curso||'—'}</strong><br>
+          Código: ${String(_pctdCadTurma.codigo_oferta||'—')} &nbsp;|&nbsp;
+          Período: ${_pctdCadPeriodoLabel[_pctdCadTurma.periodo]||_pctdCadTurma.periodo||'—'}<br>
+          Início: ${fmt(_pctdCadTurma.data_de_inicio)} &nbsp;→&nbsp; Término: ${fmt(_pctdCadTurma.data_de_termino)}`;
+      }
+      if (document.getElementById('pctd-cad-link')) document.getElementById('pctd-cad-link').value = '';
+      el.style.display = 'block';
+    };
+
+    window.pctdCadSalvar = async function() {
+      const link = (document.getElementById('pctd-cad-link')?.value || '').trim();
+      if (!_pctdCadTurma) { showErrorMessage('❌ Selecione uma turma'); return; }
+      if (!link) { showErrorMessage('❌ Cole o link do arquivo PCTD'); return; }
+      const btn = document.querySelector('#pctd-cad-dados-row button');
+      const originalBtnHtml = btn ? btn.innerHTML : '';
+      if (btn) { btn.disabled = true; btn.innerHTML = '⏳ Salvando...'; }
       try {
-        await postToSheet('PCTD', [codigo_oferta, nome_curso, periodo, data_inicio, data_conclusao, link_arquivo]);
-        form.reset();
-        showSuccessMessage('✅ Enviado com sucesso!');
+        const t = _pctdCadTurma;
+        await postToSheet('PCTD', [String(t.codigo_oferta||''), t.nome_curso||'', t.periodo||'', t.data_de_inicio||'', t.data_de_termino||'', link]);
+        _pctdCadTipo = null; _pctdCadCurso = null; _pctdCadTurma = null;
+        ['pctd-cad-curso-row','pctd-cad-turma-row','pctd-cad-dados-row'].forEach(id => {
+          const el = document.getElementById(id); if (el) el.style.display = 'none';
+        });
+        ['pctd-cad-btn-tecnico','pctd-cad-btn-livre'].forEach(id => {
+          const b = document.getElementById(id);
+          if (b) { b.classList.remove('border-[#004587]','border-[#F7941D]'); }
+        });
+        if (document.getElementById('pctd-cad-link')) document.getElementById('pctd-cad-link').value = '';
+        showSuccessMessage('✅ PCTD salvo com sucesso!');
         await loadPCTD();
       } catch (err) {
-        showErrorMessage('❌ Erro ao enviar: ' + err.message);
+        showErrorMessage('❌ Erro ao salvar PCTD: ' + err.message);
       } finally {
-        btn.disabled = false;
-        btn.innerHTML = originalBtnHtml;
+        if (btn) { btn.disabled = false; btn.innerHTML = originalBtnHtml; }
       }
-    });
+    };
 
     window.switchEventosTab = async (btn) => {
       const tabName = btn.getAttribute('data-tab');
