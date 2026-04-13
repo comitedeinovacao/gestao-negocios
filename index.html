@@ -3028,6 +3028,8 @@
       document.querySelectorAll('.page-container').forEach(p => p.classList.remove('active'));
       document.getElementById(page + '-page').classList.add('active');
       window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
       if (page === 'consulta') {
         renderConsultaView(null);
       }
