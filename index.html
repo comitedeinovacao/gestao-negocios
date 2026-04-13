@@ -8,6 +8,7 @@
   <meta name="keywords" content="Gestão, Negócios, Senac, Araçatuba, Educação, Plataforma, Eventos, Docentes, Turmas">
   <meta name="author" content="Senac Araçatuba">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23004587'/%3E%3Crect x='4' y='8' width='12' height='12' fill='%23F7941D'/%3E%3Crect x='6' y='10' width='4' height='4' fill='white'/%3E%3Crect x='10' y='14' width='4' height='4' fill='white'/%3E%3C/svg%3E" type="image/svg+xml">
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -113,7 +114,7 @@
 
     /* ── Gradient text ── */
     .gradient-text {
-      background: linear-gradient(135deg, #ffffff 0%, #93c5fd 50%, #F7941D 100%);
+      background: linear-gradient(135deg, #ffffff 0%, #F7941D 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
     }
@@ -418,8 +419,8 @@
               <span class="block w-3 h-3 rounded-full mb-1.5" style="background:#5892C0"></span>
               <span class="text-xs font-semibold text-white leading-tight">Design, Artes e Arquitetura</span>
             </button>
-            <button class="area-card" data-nome="Beleza e Estética" data-cor="#4D2F40" onclick="setAreaAtiva(this)" style="background:rgba(77,47,64,0.2)">
-              <span class="block w-3 h-3 rounded-full mb-1.5" style="background:#4D2F40"></span>
+            <button class="area-card" data-nome="Beleza e Estética" data-cor="#C084A0" onclick="setAreaAtiva(this)" style="background:rgba(192,132,160,0.14)">
+              <span class="block w-3 h-3 rounded-full mb-1.5" style="background:#C084A0"></span>
               <span class="text-xs font-semibold text-white leading-tight">Beleza e Estética</span>
             </button>
             <button class="area-card" data-nome="Bem-estar" data-cor="#6BBFB5" onclick="setAreaAtiva(this)" style="background:rgba(107,191,181,0.12)">
@@ -584,18 +585,28 @@
      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <div class="grid md:grid-cols-4 gap-12">
        <div class="md:col-span-2">
-        <p class="text-gray-300 mb-6">Hub Senac Araçatuba: Central de recursos pedagógicos e diretrizes estratégicas para todas as áreas da unidade.</p>
+        <h4 class="font-bold text-lg mb-4">Hub Senac Araçatuba</h4>
+        <p class="text-gray-300 mb-4 leading-relaxed">Central de recursos pedagógicos e diretrizes estratégicas para todas as áreas da unidade. Conecta docentes, turmas e planos de trabalho em um único ambiente.</p>
+        <div class="flex flex-wrap gap-3">
+          <span class="px-3 py-1 rounded-full bg-white/10 text-gray-300 text-xs font-semibold">Gestão Pedagógica</span>
+          <span class="px-3 py-1 rounded-full bg-white/10 text-gray-300 text-xs font-semibold">PITD / PCTD</span>
+          <span class="px-3 py-1 rounded-full bg-white/10 text-gray-300 text-xs font-semibold">Mapa de Salas</span>
+          <span class="px-3 py-1 rounded-full bg-white/10 text-gray-300 text-xs font-semibold">Eventos</span>
+        </div>
        </div>
        <div>
         <h4 class="font-bold text-lg mb-6">Links Úteis</h4>
         <ul class="space-y-3">
          <li><a href="https://www.sp.senac.br" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-[#F7941D] transition-colors">Portal Senac SP</a></li>
+         <li><a href="https://www.senac.br" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-[#F7941D] transition-colors">Senac Brasil</a></li>
+         <li><a href="https://ead.sp.senac.br" target="_blank" rel="noopener noreferrer" class="text-gray-300 hover:text-[#F7941D] transition-colors">EAD Senac SP</a></li>
         </ul>
        </div>
        <div>
         <h4 class="font-bold text-lg mb-6">Coordenação</h4>
         <p class="text-gray-300 mb-2">Senac Araçatuba</p>
-        <p class="text-gray-300 mb-2">Hub Senac Araçatuba</p><a id="footer-email" href="mailto:grupoacagestaoenegocios@sp.senac.br" class="text-gray-300 hover:text-[#F7941D] transition-colors">grupoacagestaoenegocios@sp.senac.br</a>
+        <p class="text-gray-300 mb-3">Hub Senac Araçatuba</p>
+        <a id="footer-email" href="mailto:grupoacagestaoenegocios@sp.senac.br" class="text-[#F7941D] hover:text-white transition-colors text-sm break-all">grupoacagestaoenegocios@sp.senac.br</a>
        </div>
       </div>
      </div>
@@ -610,7 +621,7 @@
    <div id="cadastro-page" class="page-container bg-white min-h-full">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
      <div class="flex items-center justify-between mb-8 pb-6 border-b-2 border-gray-200">
-      <h2 class="text-3xl font-bold text-[#004587]">Cadastro</h2><button onclick="scrollToGestao()" class="px-6 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl font-semibold flex items-center gap-2 transition-all">
+      <h2 class="text-3xl font-bold text-[#004587]">Cadastro</h2><button onclick="navigateToPage('home')" class="px-6 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl font-semibold flex items-center gap-2 transition-all">
        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
        </svg> Voltar </button>
@@ -936,7 +947,7 @@
    <div id="consulta-page" data-view="cards" class="page-container bg-white min-h-full">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
      <div class="flex items-center justify-between mb-8 pb-6 border-b-2 border-gray-200">
-      <h2 class="text-3xl font-bold text-[#004587]">Consulta</h2><button onclick="scrollToGestao()" class="px-6 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl font-semibold flex items-center gap-2 transition-all">
+      <h2 class="text-3xl font-bold text-[#004587]">Consulta</h2><button onclick="navigateToPage('home')" class="px-6 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl font-semibold flex items-center gap-2 transition-all">
        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
        </svg> Voltar </button>
@@ -1456,7 +1467,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
      <div class="flex items-center justify-between mb-8 pb-6 border-b-2 border-gray-200">
       <h2 class="text-3xl font-bold text-[#004587]">Quadros</h2>
-      <button onclick="scrollToGestao()" class="px-6 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl font-semibold flex items-center gap-2 transition-all">
+      <button onclick="navigateToPage('home')" class="px-6 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl font-semibold flex items-center gap-2 transition-all">
        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg> Voltar
       </button>
      </div>
@@ -8051,6 +8062,11 @@
       if (tab === 'pendente') msRenderPendente();
     };
 
+    let _pinTentativas = 0;
+    const _PIN_MAX = 5;
+    const _PIN_COOLDOWN_MS = 30000;
+    let _pinBloqueadoAte = 0;
+
     window.msMostrarPinModal = function(targetTab) {
       msPinTargetTab = targetTab;
       const modal = document.getElementById('ms-pin-modal');
@@ -8058,7 +8074,7 @@
       const erro = document.getElementById('ms-pin-erro');
       if (!modal) return;
       if (input) input.value = '';
-      if (erro) erro.classList.add('hidden');
+      if (erro) { erro.classList.add('hidden'); erro.textContent = 'PIN incorreto. Tente novamente.'; }
       modal.classList.remove('hidden');
       setTimeout(() => { if (input) input.focus(); }, 100);
     };
@@ -8073,15 +8089,31 @@
       const input = document.getElementById('ms-pin-input');
       const erro = document.getElementById('ms-pin-erro');
       if (!input) return;
+      // Verifica cooldown
+      const agora = Date.now();
+      if (agora < _pinBloqueadoAte) {
+        const restante = Math.ceil((_pinBloqueadoAte - agora) / 1000);
+        if (erro) { erro.textContent = `Muitas tentativas. Aguarde ${restante}s.`; erro.classList.remove('hidden'); }
+        if (input) { input.value = ''; input.focus(); }
+        return;
+      }
       if (String(input.value).trim() === MS_PIN) {
+        _pinTentativas = 0;
         msAutenticado = true;
         sessionStorage.setItem('ms_auth', '1');
-        // Remove lock icons from restricted tab buttons
         document.querySelectorAll('.ms-tab-lock-icon').forEach(ic => ic.classList.add('hidden'));
         msFecharPinModal();
         if (msPinTargetTab) msAbrirTab(msPinTargetTab);
       } else {
-        if (erro) erro.classList.remove('hidden');
+        _pinTentativas++;
+        if (_pinTentativas >= _PIN_MAX) {
+          _pinBloqueadoAte = Date.now() + _PIN_COOLDOWN_MS;
+          _pinTentativas = 0;
+          if (erro) { erro.textContent = `Acesso bloqueado por 30s após ${_PIN_MAX} tentativas.`; erro.classList.remove('hidden'); }
+        } else {
+          const restam = _PIN_MAX - _pinTentativas;
+          if (erro) { erro.textContent = `PIN incorreto. ${restam} tentativa${restam > 1 ? 's' : ''} restante${restam > 1 ? 's' : ''}.`; erro.classList.remove('hidden'); }
+        }
         if (input) { input.value = ''; input.focus(); }
       }
     };
