@@ -4232,10 +4232,11 @@
     }
 
     function _getUCsParaTurma(turma) {
-      const nomeRef = (turma.nome_curso || '').trim().toLowerCase();
+      const _norm = s => (s || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const nomeRef = _norm(turma.nome_curso);
       const versaoRef = String(turma.versao_plano || '');
       return allUCs.filter(u => {
-        const nomeMatch = ((u.curso_nome || u.nome_curso || '').trim().toLowerCase() === nomeRef);
+        const nomeMatch = _norm(u.curso_nome || u.nome_curso || '') === nomeRef;
         const versaoMatch = !versaoRef || String(u.versao || '') === versaoRef;
         return nomeMatch && versaoMatch;
       }).sort((a, b) => {
@@ -4562,7 +4563,7 @@
       const filtradas = _turmasPorTipo(turmas, _pitdCadTipo).filter(t => t.nome_curso === nomeCurso && !isTurmaFinalizada(t));
       const sel = document.getElementById('pitd-cad-turma-select');
       if (!sel) return;
-      const fmt = d => { const [y,m,dia] = (d||'').split('-'); return dia ? `${dia}/${m}/${y}` : d||'-'; };
+      const fmt = d => { const s = normData(d); if (!s) return '—'; const [y,m,dia] = s.split('-'); return `${dia}/${m}/${y}`; };
       sel.innerHTML = '<option value="">Selecione a turma...</option>' +
         filtradas.map(t => {
           const label = `${String(t.codigo_oferta||'')} — ${_pitdCadPeriodoLabel[t.periodo]||t.periodo||'-'} (${fmt(t.data_de_inicio)} a ${fmt(t.data_de_termino)})`;
@@ -4579,17 +4580,21 @@
       const turmas = Array.isArray(_turmasConsultaCache) ? _turmasConsultaCache : [];
       _pitdCadTurma = turmas.find(t => String(t.codigo_oferta||'') === String(codigoOferta)) || null;
       if (!_pitdCadTurma) return;
-      // load UCs if needed
+      // load UCs se necessário
       if (!allUCs || !allUCs.length) await loadUCs();
       const ucs = _getUCsParaTurma(_pitdCadTurma);
       const sel = document.getElementById('pitd-cad-uc-select');
       if (!sel) return;
       if (ucs.length) {
         sel.innerHTML = '<option value="">Selecione a UC...</option>' +
-          ucs.map(u => `<option value="${(u.nome||u).replace(/"/g,'&quot;')}">${(u.nome||u).replace(/&/g,'&amp;').replace(/</g,'&lt;')}</option>`).join('');
+          ucs.map(u => {
+            const nome = u.uc_nome || u.nome || '';
+            return `<option value="${nome.replace(/"/g,'&quot;')}">${nome.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</option>`;
+          }).join('');
         document.getElementById('pitd-cad-uc-row').style.display = 'block';
       } else {
-        sel.innerHTML = '<option value="">— Nenhuma UC vinculada —</option>';
+        // UCs não encontradas — mostra aviso e ainda exibe a linha para o usuário saber
+        sel.innerHTML = '<option value="">— Nenhuma UC cadastrada para este curso —</option>';
         document.getElementById('pitd-cad-uc-row').style.display = 'block';
       }
       document.getElementById('pitd-cad-dados-row').style.display = 'block';
@@ -4665,7 +4670,7 @@
       const filtradas = _turmasPorTipo(turmas, _pctdCadTipo).filter(t => t.nome_curso === nomeCurso && !isTurmaFinalizada(t));
       const sel = document.getElementById('pctd-cad-turma-select');
       if (!sel) return;
-      const fmt = d => { const [y,m,dia] = (d||'').split('-'); return dia ? `${dia}/${m}/${y}` : d||'-'; };
+      const fmt = d => { const s = normData(d); if (!s) return '—'; const [y,m,dia] = s.split('-'); return `${dia}/${m}/${y}`; };
       sel.innerHTML = '<option value="">Selecione a turma...</option>' +
         filtradas.map(t => {
           const label = `${String(t.codigo_oferta||'')} — ${_pctdCadPeriodoLabel[t.periodo]||t.periodo||'-'} (${fmt(t.data_de_inicio)} a ${fmt(t.data_de_termino)})`;
@@ -4680,7 +4685,7 @@
       const turmas = Array.isArray(_turmasConsultaCache) ? _turmasConsultaCache : [];
       _pctdCadTurma = turmas.find(t => String(t.codigo_oferta||'') === String(codigoOferta)) || null;
       if (!_pctdCadTurma) return;
-      const fmt = d => { const [y,m,dia] = (d||'').split('-'); return dia ? `${dia}/${m}/${y}` : d||'-'; };
+      const fmt = d => { const s = normData(d); if (!s) return '—'; const [y,m,dia] = s.split('-'); return `${dia}/${m}/${y}`; };
       const info = document.getElementById('pctd-cad-turma-info');
       if (info) {
         info.innerHTML = `<strong>${_pctdCadTurma.nome_curso||'—'}</strong><br>
