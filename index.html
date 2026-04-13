@@ -1051,7 +1051,13 @@
        <div id="pitd-cad-dados-row" style="display:none" class="space-y-5">
         <div>
          <label class="block text-[#004587] font-semibold mb-3">Docente</label>
-         <input type="text" id="pitd-cad-docente" placeholder="Nome do docente..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
+         <div class="relative">
+          <input type="text" id="pitd-cad-docente-search" placeholder="Buscar docente pelo nome..." oninput="pitdCadFiltrarDocentes(this.value)" autocomplete="off" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none">
+          <select id="pitd-cad-docente" size="1" class="w-full mt-1 px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#004587] focus:outline-none bg-white text-gray-800">
+           <option value="">— selecione um docente —</option>
+          </select>
+         </div>
+         <p id="pitd-cad-docente-hint" class="text-xs text-gray-400 mt-1.5"></p>
         </div>
         <div>
          <label class="block text-[#004587] font-semibold mb-3">Link do Arquivo PITD</label>
@@ -3953,12 +3959,11 @@
         d.facebook  ? `<span class="text-blue-600">${d.facebook}</span>` : '',
         d.linkedin  ? `<a href="${d.linkedin}" target="_blank" class="text-blue-800 font-semibold underline">LinkedIn</a>` : ''
       ].filter(Boolean).join(' &nbsp;|&nbsp; ');
-      // Monta HTML da escala semanal
+      // Monta HTML da escala semanal com horários reais (h1–h4)
       let escalaHtml = '';
       try {
         const escala = d.escala_semanal ? JSON.parse(d.escala_semanal) : {};
         const diasLabel = { segunda: 'Segunda', terca: 'Terça', quarta: 'Quarta', quinta: 'Quinta', sexta: 'Sexta', sabado: 'Sábado', domingo: 'Domingo' };
-        const tipoLabel = { manha_tarde: 'Manhã + Tarde', tarde_noite: 'Tarde + Noite' };
         const marcacoesLabel = {
           manha_tarde: ['Entrada (manhã)', 'Saída p/ almoço', 'Retorno (tarde)', 'Saída (tarde)'],
           tarde_noite: ['Entrada (tarde)', 'Saída p/ janta', 'Retorno (noite)', 'Saída (noite)']
@@ -3967,16 +3972,18 @@
         if (diasAtivos.length > 0) {
           escalaHtml = `
           <div class="bg-gray-50 rounded-xl p-4 mt-4">
-            <p class="text-xs text-gray-500 uppercase font-semibold mb-3">Escala de Trabalho Semanal</p>
+            <p class="text-xs text-gray-500 uppercase font-semibold mb-3">Jornada de Trabalho</p>
             <div class="space-y-3">
               ${diasAtivos.map(([dia, v]) => {
                 const tipo = v.tipo || 'manha_tarde';
-                const labels = marcacoesLabel[tipo] || [];
-                const marcacoes = (v.marcacoes || []).map((h, i) => h ? `<span class="text-xs bg-white border border-gray-200 rounded px-2 py-1">${labels[i]}: <strong>${h}</strong></span>` : '').filter(Boolean).join(' ');
+                const labels = marcacoesLabel[tipo] || marcacoesLabel.manha_tarde;
+                const horarios = [v.h1, v.h2, v.h3, v.h4]
+                  .map((h, i) => h ? `<span class="text-xs bg-white border border-gray-200 rounded-lg px-2 py-1 font-medium text-gray-700">${labels[i]}: <strong class="text-[#004587]">${h}</strong></span>` : '')
+                  .filter(Boolean).join('');
+                const horariosHtml = horarios || `<span class="text-xs text-gray-400 italic">Horários não informados</span>`;
                 return `<div class="flex flex-wrap items-center gap-2">
-                  <span class="font-semibold text-[#004587] text-sm w-20">${diasLabel[dia]}</span>
-                  <span class="text-xs bg-[#004587]/10 text-[#004587] rounded-full px-2 py-0.5 font-semibold">${tipoLabel[tipo] || tipo}</span>
-                  ${marcacoes}
+                  <span class="font-semibold text-[#004587] text-sm w-20 flex-shrink-0">${diasLabel[dia] || dia}</span>
+                  ${horariosHtml}
                 </div>`;
               }).join('')}
             </div>
@@ -4780,7 +4787,25 @@
         document.getElementById('pitd-cad-uc-row').style.display = 'block';
       }
       document.getElementById('pitd-cad-dados-row').style.display = 'block';
+      // Popula select de docentes a partir dos docentes já carregados na área
+      pitdCadPopularDocentes();
     };
+
+    function pitdCadPopularDocentes(filtro) {
+      const sel = document.getElementById('pitd-cad-docente');
+      const hint = document.getElementById('pitd-cad-docente-hint');
+      if (!sel) return;
+      const lista = Array.isArray(allTeachers) ? allTeachers : [];
+      const q = (filtro || '').toLowerCase().trim();
+      const filtrados = q ? lista.filter(t => (t.nome_completo||'').toLowerCase().includes(q)) : lista;
+      sel.innerHTML = '<option value="">— selecione um docente —</option>' +
+        filtrados.map(t => `<option value="${(t.nome_completo||'').replace(/"/g,'&quot;')}">${t.nome_completo||''}</option>`).join('');
+      if (hint) hint.textContent = lista.length === 0
+        ? '⚠️ Nenhum docente cadastrado na área. Acesse Cadastro → Docentes para adicionar.'
+        : `${filtrados.length} docente${filtrados.length !== 1 ? 's' : ''} disponível${filtrados.length !== 1 ? 'is' : ''}.`;
+    }
+
+    window.pitdCadFiltrarDocentes = function(q) { pitdCadPopularDocentes(q); };
 
     window.pitdCadSalvar = async function() {
       const docente = (document.getElementById('pitd-cad-docente')?.value || '').trim();
@@ -4789,7 +4814,7 @@
       const ucNome = ucSel ? ucSel.value.trim() : '';
       if (!_pitdCadTurma) { showErrorMessage('❌ Selecione uma turma'); return; }
       if (!ucNome) { showErrorMessage('❌ Selecione a unidade curricular'); return; }
-      if (!docente) { showErrorMessage('❌ Digite o nome do docente'); return; }
+      if (!docente) { showErrorMessage('❌ Selecione o docente'); return; }
       if (!link) { showErrorMessage('❌ Cole o link do arquivo PITD'); return; }
       const btn = document.querySelector('#pitd-cad-dados-row button');
       const originalBtnHtml = btn ? btn.innerHTML : '';
@@ -4807,6 +4832,7 @@
           if (b) { b.classList.remove('border-[#004587]','border-[#F7941D]'); }
         });
         if (document.getElementById('pitd-cad-docente')) document.getElementById('pitd-cad-docente').value = '';
+        if (document.getElementById('pitd-cad-docente-search')) document.getElementById('pitd-cad-docente-search').value = '';
         if (document.getElementById('pitd-cad-link')) document.getElementById('pitd-cad-link').value = '';
         showSuccessMessage('✅ PITD salvo com sucesso!');
         await loadPITD();
