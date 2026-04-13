@@ -246,6 +246,189 @@
   .fade-up.delay-300 { transition-delay: 0.3s; }
   .fade-up.delay-400 { transition-delay: 0.4s; }
   .fade-up.delay-500 { transition-delay: 0.5s; }
+
+  /* ════════════════════════════════════════════════════
+     IDENTIDADE VISUAL PI — apenas #home-page
+  ════════════════════════════════════════════════════ */
+  :root {
+    --pi-navy: #004587; --pi-navy-dark: #1e3a5f; --pi-navy-mid: #2c5282;
+    --pi-orange: #F7941D; --pi-orange-light: #FFB84D;
+    --pi-text: #1e3a5f; --pi-muted: #7a92b0;
+    --pi-glass: #ffffff; --pi-border: #dce8f5;
+    --pi-focus-ring: rgba(247,148,29,0.55);
+    --pi-bg: #f0f5fb; --pi-surface: #ffffff; --pi-surface-2: #f7fafd;
+    --pi-shadow-sm: 0 1px 4px rgba(30,58,95,0.08);
+    --pi-shadow-md: 0 4px 16px rgba(30,58,95,0.10);
+    --pi-shadow-lg: 0 8px 32px rgba(30,58,95,0.13);
+  }
+
+  /* ── Header PI (estado padrão = azul marinho) ── */
+  #home-page header {
+    background: rgba(0,45,107,0.92) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-bottom: 1px solid rgba(247,148,29,0.2) !important;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.18) !important;
+    transition: background 0.35s, box-shadow 0.35s, border-color 0.35s;
+  }
+  #home-page header.nav-scrolled {
+    background: rgba(255,255,255,0.96) !important;
+    border-bottom: 1px solid #dce8f5 !important;
+    box-shadow: 0 1px 4px rgba(30,58,95,0.08) !important;
+  }
+  /* Links do nav — claros sobre azul, escuros quando scrollado */
+  #home-page header nav a,
+  #home-page header nav button { color: rgba(242,242,242,0.85) !important; }
+  #home-page header nav a:hover,
+  #home-page header nav button:hover { color: #F7941D !important; }
+  #home-page header.nav-scrolled nav a,
+  #home-page header.nav-scrolled nav button { color: #374151 !important; }
+  #home-page header.nav-scrolled nav a:hover,
+  #home-page header.nav-scrolled nav button:hover { color: #F7941D !important; }
+  /* Hamburger claro sobre azul */
+  #home-page header .hamburger-bar { background-color: rgba(242,242,242,0.9) !important; }
+  #home-page header.nav-scrolled .hamburger-bar { background-color: #374151 !important; }
+  /* Hint "Selecione uma área" */
+  #home-page #nav-lock-hint { color: rgba(242,242,242,0.55) !important; }
+  #home-page header.nav-scrolled #nav-lock-hint { color: #9ca3af !important; }
+  /* Botão "Trocar área" */
+  #home-page #area-ativa-pill > button { color: rgba(242,242,242,0.75) !important; }
+  #home-page header.nav-scrolled #area-ativa-pill > button { color: #6b7280 !important; }
+
+  /* ── Hero Section PI ── */
+  #home-page section:first-of-type {
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 40%, rgba(247,148,29,0.10) 0%, transparent 70%),
+      linear-gradient(160deg, #002d6b 0%, #004587 55%, #003e7a 100%) !important;
+    color: #F2F2F2;
+  }
+  #home-page section:first-of-type::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(242,242,242,0.06) 1px, transparent 1px);
+    background-size: 36px 36px;
+    pointer-events: none; z-index: 0;
+  }
+  #home-page section:first-of-type::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent 0%, #F7941D 30%, #F7941D 70%, transparent 100%);
+    pointer-events: none; z-index: 1;
+  }
+  /* Esconde nodes e blobs no hero escuro (canvas substitui) */
+  #home-page section:first-of-type .node { display: none; }
+  /* Texto do seletor de área no hero escuro */
+  #home-page section:first-of-type > div > div > div.space-y-8 > div:has(> p) > p,
+  #home-page #area-selector > p { color: rgba(242,242,242,0.55) !important; }
+  /* Labels dos area-cards legíveis no fundo escuro */
+  #home-page section:first-of-type .area-card span.text-xs { color: rgba(242,242,242,0.88) !important; }
+
+  /* ── Badge PI ── */
+  .hero-badge-pi {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(247,148,29,0.18);
+    border: 1px solid rgba(247,148,29,0.45);
+    color: #F7941D;
+    padding: 0.45rem 1.2rem; border-radius: 20px;
+    font-size: 12px; font-weight: 700; margin-bottom: 1.5rem;
+    letter-spacing: 0.5px; backdrop-filter: blur(8px);
+    position: relative; z-index: 2;
+  }
+  .hero-badge-pi::before {
+    content: ''; width: 7px; height: 7px;
+    background: #F7941D; border-radius: 50%;
+    animation: pi-pulse 2s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  @keyframes pi-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.5; transform: scale(1.5); }
+  }
+
+  /* ── Título e subtítulo do hero PI ── */
+  .pi-hero-title {
+    font-size: clamp(26px, 5.5vw, 54px);
+    font-weight: 900; line-height: 1.12; margin-bottom: 1rem;
+    color: #F2F2F2;
+    text-shadow: 0 2px 24px rgba(0,0,0,0.25);
+    animation: pi-heroFadeUp 0.8s cubic-bezier(0.16,1,0.3,1) both;
+    position: relative; z-index: 2;
+  }
+  .pi-hero-title .grad {
+    background: linear-gradient(135deg, #F7941D, #FFB84D);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .pi-hero-sub {
+    color: rgba(242,242,242,0.72);
+    font-size: clamp(13px, 2vw, 17px);
+    max-width: 560px; margin: 0 0 2.5rem;
+    line-height: 1.75;
+    animation: pi-heroFadeUp 0.8s 0.15s cubic-bezier(0.16,1,0.3,1) both;
+    position: relative; z-index: 2;
+  }
+  @keyframes pi-heroFadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Botões PI ── */
+  .pi-btn {
+    padding: 0.85rem 2rem; border-radius: 10px;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    text-decoration: none; transition: all 0.3s;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    border: none; position: relative; z-index: 2;
+  }
+  .pi-btn-primary {
+    background: linear-gradient(135deg, #F7941D, #FFB84D);
+    color: #fff; box-shadow: 0 4px 16px rgba(247,148,29,0.28);
+  }
+  .pi-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(247,148,29,0.40); }
+  .pi-btn-ghost {
+    background: rgba(255,255,255,0.06);
+    border: 2px solid rgba(242,242,242,0.28) !important;
+    color: #F2F2F2 !important; backdrop-filter: blur(8px);
+  }
+  .pi-btn-ghost:hover { border-color: #F7941D !important; color: #F7941D !important; background: rgba(247,148,29,0.12); }
+
+  /* ── Cards de acesso PI ── */
+  .pi-access-card {
+    background: var(--pi-surface);
+    border: 1px solid var(--pi-border) !important;
+    border-radius: 18px; padding: 2rem;
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s, border-color 0.3s;
+    position: relative; overflow: hidden;
+    box-shadow: var(--pi-shadow-sm); color: var(--pi-text);
+  }
+  .pi-access-card::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #F7941D, #FFB84D);
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .pi-access-card:hover {
+    border-color: rgba(247,148,29,0.45) !important;
+    transform: translateY(-5px);
+    box-shadow: 0 12px 32px rgba(0,69,135,0.12), 0 0 0 1px rgba(247,148,29,0.2);
+  }
+  .pi-access-card:hover::after { opacity: 1; }
+
+  /* ── Animação de entrada PI (IntersectionObserver) ── */
+  .pi-animate-in { animation: pi-slideUp 0.55s cubic-bezier(0.16,1,0.3,1) both; }
+  @keyframes pi-slideUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Divider PI ── */
+  .pi-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(247,148,29,0.35), transparent);
+    margin: 0;
+  }
   </style>
   <script>
   // dataSdk — persistência via localStorage (fallback offline)
@@ -373,8 +556,9 @@
     <!-- Mobile menu backdrop -->
     <div id="mobile-menu-backdrop" onclick="closeMobileMenu()" class="fixed inset-0 z-30 bg-black/50 md:hidden hidden"></div>
     <div class="h-24"></div><!-- Hero Section -->
-    <section class="relative bg-white py-24 lg:py-32 overflow-hidden">
-     <!-- Blobs decorativos — suaves no fundo claro -->
+    <section class="relative py-24 lg:py-32 overflow-hidden">
+     <canvas id="pi-hero-canvas" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;"></canvas>
+     <!-- Blobs decorativos -->
      <div class="absolute top-1/4 left-[-80px] w-80 h-80 bg-[#F7941D]/12 organic-blob float-anim pointer-events-none"></div>
      <div class="absolute bottom-10 right-[-60px] w-64 h-64 bg-[#004587]/8 organic-blob float-anim-d2 pointer-events-none"></div>
      <div class="absolute top-[-40px] right-1/3 w-48 h-48 bg-[#F7941D]/6 organic-blob float-anim-d1 pointer-events-none"></div>
@@ -387,12 +571,12 @@
      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
       <div class="grid lg:grid-cols-2 gap-12 items-center">
        <div class="space-y-8">
-        <div id="hero-badge-pill" class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#F7941D]/10 border border-[#F7941D]/25 w-fit fade-up"><span id="hero-badge-text" class="text-xs font-bold text-[#F7941D] tracking-widest uppercase">HUB SENAC ARAÇATUBA</span>
+        <div id="hero-badge-pill" class="hero-badge-pi fade-up"><span id="hero-badge-text" class="tracking-widest uppercase">HUB SENAC ARAÇATUBA</span>
         </div>
         <div class="fade-up delay-100">
-         <h1 id="hero-title" class="text-5xl sm:text-6xl lg:text-7xl font-black leading-tight mb-4 relative"><span id="hero-title-text" class="gradient-text">HUB SENAC ARAÇATUBA</span></h1>
+         <h1 id="hero-title" class="pi-hero-title"><span id="hero-title-text" class="grad">HUB SENAC ARAÇATUBA</span></h1>
         </div>
-        <p id="hero-subtitle" class="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-xl fade-up delay-200">Central de recursos pedagógicos e diretrizes estratégicas para todas as áreas do Senac Araçatuba.</p>
+        <p id="hero-subtitle" class="pi-hero-sub fade-up delay-200">Central de recursos pedagógicos e diretrizes estratégicas para todas as áreas do Senac Araçatuba.</p>
         <!-- Seletor de Área -->
         <div id="area-selector" class="fade-up delay-300 max-w-2xl">
           <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Selecione sua área</p>
@@ -451,21 +635,17 @@
             </button>
           </div>
         </div>
-        <div class="flex flex-wrap gap-4 pt-4 fade-up delay-300">
-          <button onclick="navigateToPage('cadastro')" class="btn-glow group relative px-8 py-4 rounded-xl font-semibold text-white overflow-hidden">
-          <div class="absolute inset-0 bg-gradient-to-r from-[#004587] to-[#F7941D] rounded-xl"></div>
-          <div class="relative flex items-center gap-2">
-           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-           </svg> Explorar Plataforma
-          </div></button>
-          <button onclick="navigateToPage('eventos')" class="btn-glow group relative px-8 py-4 rounded-xl font-semibold text-white overflow-hidden" style="background:#F7941D">
-          <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-xl"></div>
-          <div class="relative flex items-center gap-2">
-           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-           </svg> Agenda de Eventos
-          </div></button>
+        <div class="flex flex-wrap gap-4 pt-4 fade-up delay-300" style="position:relative;z-index:2">
+          <button onclick="navigateToPage('cadastro')" class="pi-btn pi-btn-primary">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg> Explorar Plataforma
+          </button>
+          <button onclick="navigateToPage('eventos')" class="pi-btn pi-btn-ghost">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg> Agenda de Eventos
+          </button>
         </div>
        </div>
        <!-- Visual card lado direito -->
@@ -540,7 +720,7 @@
         <button onclick="document.getElementById('area-selector').scrollIntoView({behavior:'smooth',block:'center'})" class="mt-1 px-5 py-2 bg-[#004587] text-white text-sm font-semibold rounded-xl hover:bg-[#003366] transition-colors">Selecionar Área</button>
        </div>
        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-       <div class="card-scan bg-gradient-to-br from-[#004587]/5 to-[#F7941D]/5 rounded-2xl p-8 shadow-lg border-2 border-[#004587]/20 cursor-pointer" onclick="navigateToPage('cadastro')">
+       <div class="pi-access-card cursor-pointer" onclick="navigateToPage('cadastro')">
         <div class="w-16 h-16 bg-gradient-to-br from-[#004587] to-[#003366] rounded-2xl flex items-center justify-center mb-6 mx-auto">
          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
@@ -553,7 +733,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
          </svg> Acessar Cadastro </button>
        </div>
-       <div class="card-scan bg-gradient-to-br from-[#F7941D]/5 to-[#004587]/5 rounded-2xl p-8 shadow-lg border-2 border-[#F7941D]/20 cursor-pointer" onclick="navigateToPage('consulta')">
+       <div class="pi-access-card cursor-pointer" onclick="navigateToPage('consulta')">
         <div class="w-16 h-16 bg-gradient-to-br from-[#F7941D] to-[#E8850D] rounded-2xl flex items-center justify-center mb-6 mx-auto">
          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -566,7 +746,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
          </svg> Acessar Consulta </button>
        </div>
-       <div class="card-scan bg-gradient-to-br from-[#003366]/5 to-[#004587]/10 rounded-2xl p-8 shadow-lg border-2 border-[#003366]/20 cursor-pointer" onclick="navigateToPage('mapa-salas')">
+       <div class="pi-access-card cursor-pointer" onclick="navigateToPage('mapa-salas')">
         <div class="w-16 h-16 bg-gradient-to-br from-[#003366] to-[#004587] rounded-2xl flex items-center justify-center mb-6 mx-auto">
          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <rect x="3" y="3" width="7" height="7" rx="1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -9408,7 +9588,11 @@
         el.style.backgroundImage = `linear-gradient(135deg, #004587 0%, ${cor} 100%)`;
       });
       const heroTitleText = document.getElementById('hero-title-text');
-      if (heroTitleText) heroTitleText.textContent = nome.toUpperCase();
+      if (heroTitleText) {
+        heroTitleText.textContent = nome.toUpperCase();
+        // Atualiza gradiente PI do título (classe .grad)
+        heroTitleText.style.backgroundImage = `linear-gradient(135deg, #F7941D 0%, ${cor} 100%)`;
+      }
       const heroBadgeText = document.getElementById('hero-badge-text');
       if (heroBadgeText) heroBadgeText.textContent = nome.toUpperCase();
       const heroBadgePill = document.getElementById('hero-badge-pill');
@@ -10064,6 +10248,89 @@
     })();
 
     // ==================== FIM NAVEGAÇÃO DE ABAS ====================
+
+    // ── PI: Scroll behavior da nav (azul marinho → branco ao sair do hero) ──
+    (function () {
+      var nav = document.querySelector('#home-page header');
+      var hero = document.querySelector('#home-page section');
+      if (!nav || !hero) return;
+      function updateNav() {
+        nav.classList.toggle('nav-scrolled', hero.getBoundingClientRect().bottom < 68);
+      }
+      window.addEventListener('scroll', updateNav, { passive: true });
+      updateNav();
+    })();
+
+    // ── PI: Canvas de partículas no hero ──
+    (function () {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var canvas = document.getElementById('pi-hero-canvas');
+      if (!canvas) return;
+      var ctx = canvas.getContext('2d');
+      var W, H, pts;
+      var N = 52, MAX_D = 130;
+      function resize() {
+        W = canvas.width  = canvas.offsetWidth;
+        H = canvas.height = canvas.offsetHeight;
+      }
+      function initPts() {
+        pts = Array.from({ length: N }, function () {
+          return {
+            x: Math.random() * W, y: Math.random() * H,
+            vx: (Math.random() - 0.5) * 0.45,
+            vy: (Math.random() - 0.5) * 0.45,
+            r: Math.random() * 1.4 + 0.7
+          };
+        });
+      }
+      function tick() {
+        ctx.clearRect(0, 0, W, H);
+        for (var i = 0; i < pts.length; i++) {
+          var a = pts[i];
+          a.x += a.vx; a.y += a.vy;
+          if (a.x < 0 || a.x > W) a.vx = -a.vx;
+          if (a.y < 0 || a.y > H) a.vy = -a.vy;
+          for (var j = i + 1; j < pts.length; j++) {
+            var b = pts[j];
+            var dx = a.x - b.x, dy = a.y - b.y;
+            var d = Math.sqrt(dx * dx + dy * dy);
+            if (d < MAX_D) {
+              ctx.globalAlpha = (1 - d / MAX_D) * 0.5;
+              ctx.strokeStyle = '#F7941D';
+              ctx.lineWidth = 0.7;
+              ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+            }
+          }
+          ctx.globalAlpha = 0.6;
+          ctx.fillStyle = '#F2F2F2';
+          ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, 6.2832); ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(tick);
+      }
+      window.addEventListener('resize', function () { resize(); initPts(); }, { passive: true });
+      resize(); initPts(); tick();
+    })();
+
+    // ── PI: IntersectionObserver para animação de entrada dos cards ──
+    (function () {
+      if (!('IntersectionObserver' in window)) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var delay = 0;
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.style.animationDelay = (delay * 0.09) + 's';
+            e.target.classList.add('pi-animate-in');
+            delay++;
+            obs.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.08 });
+      document.querySelectorAll('#home-page .pi-access-card, #home-page .card-scan, #home-page .eco-card').forEach(function (el) {
+        obs.observe(el);
+      });
+    })();
   </script>
  </body>
 </html>
