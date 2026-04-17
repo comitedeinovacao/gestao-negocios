@@ -2954,9 +2954,29 @@
      <button onclick="msTotemFecharConfig()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;padding:10px 20px;border-radius:10px;font-size:12px;cursor:pointer;font-weight:700;font-family:'Montserrat',sans-serif;">✕ Fechar</button>
     </div>
     <!-- Toggle Modo -->
-    <div style="display:flex;gap:10px;margin-bottom:20px;">
-     <button id="ms-t-btn-auto" onclick="msTotemSetModoConfig('auto')" style="flex:1;padding:14px;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;border:2px solid #004587;background:#004587;color:white;">▶ Automático (Mapa de Salas)</button>
-     <button id="ms-t-btn-manual" onclick="msTotemSetModoConfig('manual')" style="flex:1;padding:14px;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);">✏ Manual (20 campos livres)</button>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
+     <button id="ms-t-btn-auto" onclick="msTotemSetModoConfig('auto')" style="padding:12px 8px;border-radius:12px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;border:2px solid #004587;background:#004587;color:white;line-height:1.4;">▶ Automático<br><span style="font-size:10px;font-weight:600;opacity:0.85;">(Mapa de Salas)</span></button>
+     <button id="ms-t-btn-manual" onclick="msTotemSetModoConfig('manual')" style="padding:12px 8px;border-radius:12px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);line-height:1.4;">✏ Manual<br><span style="font-size:10px;font-weight:600;opacity:0.85;">(20 campos livres)</span></button>
+     <button id="ms-t-btn-planilha" onclick="msTotemSetModoConfig('planilha')" style="padding:12px 8px;border-radius:12px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);line-height:1.4;">📊 Planilha Externa<br><span style="font-size:10px;font-weight:600;opacity:0.85;">(Google Sheets)</span></button>
+    </div>
+    <!-- Painel configuração planilha externa — visível apenas no modo planilha -->
+    <div id="ms-t-planilha-cfg" style="display:none;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:16px 20px;margin-bottom:16px;">
+     <div style="font-size:13px;font-weight:800;color:white;font-family:'Montserrat',sans-serif;margin-bottom:8px;">📊 Planilha de Agenda</div>
+     <div style="font-size:11px;color:rgba(255,255,255,0.5);font-family:'Montserrat',sans-serif;margin-bottom:12px;line-height:1.55;">A planilha deve estar compartilhada como <strong style="color:rgba(255,255,255,0.75);">"Qualquer pessoa com o link pode ver"</strong>. O totem se atualiza automaticamente a cada 2 minutos conforme a planilha for editada.</div>
+     <div style="display:grid;grid-template-columns:1fr 160px;gap:8px;margin-bottom:10px;">
+      <div>
+       <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;font-family:'Montserrat',sans-serif;">ID da Planilha</div>
+       <input id="ms-t-plan-id" type="text" placeholder="1L7Rf7ksHbH_L2-..." value="1L7Rf7ksHbH_L2-yjQl6kqg464j1aqNRdFOAPuLJNXm8" style="width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:white;font-size:11px;font-family:'Montserrat',sans-serif;outline:none;box-sizing:border-box;">
+      </div>
+      <div>
+       <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;font-family:'Montserrat',sans-serif;">GID (aba)</div>
+       <input id="ms-t-plan-gid" type="text" placeholder="1930532108" value="1930532108" style="width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:white;font-size:11px;font-family:'Montserrat',sans-serif;outline:none;box-sizing:border-box;">
+      </div>
+     </div>
+     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <button onclick="msTotemTestarPlanilha()" style="padding:8px 18px;border-radius:8px;background:rgba(34,197,94,0.18);border:1.5px solid rgba(34,197,94,0.4);color:#4ade80;font-size:12px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;">🔗 Testar Conexão</button>
+      <span id="ms-t-plan-status" style="font-size:11px;font-family:'Montserrat',sans-serif;color:rgba(255,255,255,0.45);"></span>
+     </div>
     </div>
     <!-- Seletor de Data e Período -->
     <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:16px 20px;margin-bottom:20px;">
@@ -8882,6 +8902,9 @@
       // Se modo manual: sincroniza dados do Sheets antes de renderizar
       if (msTotemGetModo() === 'manual') {
         msTotemManualSyncFromSheet().then(() => msRenderTotemFS());
+      } else if (msTotemGetModo() === 'planilha') {
+        _msPlanilhaCacheKey = null; // força nova busca
+        msRenderTotemFS();
       } else {
         msRenderTotemFS();
       }
@@ -8903,6 +8926,7 @@
       msTotemRefreshInterval = setInterval(async () => {
         await msCarregar();
         if (msTotemGetModo() === 'manual') await msTotemManualSyncFromSheet();
+        else if (msTotemGetModo() === 'planilha') { _msPlanilhaCacheKey = null; }
         msRenderTotemFS();
       }, 2 * 60 * 1000);
       window.addEventListener('resize', msScaleTotem);
@@ -8970,6 +8994,71 @@
       msRenderTotemBtns();
       const grid = document.getElementById('ms-t-grid');
       if (!grid) return;
+      // Planilha Externa mode: lê da planilha Google Sheets externa
+      if (msTotemGetModo() === 'planilha') {
+        const key = msTotemData + '_' + msTotemPer;
+        if (!_msPlanilhaCacheKey || _msPlanilhaCacheKey !== key) {
+          if (!_msPlanilhaFetching) {
+            _msPlanilhaFetching = true;
+            msTotemFetchPlanilha(msTotemData, msTotemPer).then(() => {
+              _msPlanilhaFetching = false;
+              msRenderTotemFS();
+            }).catch(() => { _msPlanilhaFetching = false; });
+          }
+          if (!_msPlanilhaCache) {
+            grid.innerHTML = '<div style="grid-column:1/-1;display:flex;align-items:center;justify-content:center;height:100%;color:#94a3b8;font-size:18px;font-family:Montserrat,sans-serif;font-weight:700;flex-direction:column;gap:10px;"><span>⏳</span><span>Carregando dados da planilha...</span></div>';
+            const oEl = document.getElementById('ms-t-stat-ocup'); if (oEl) oEl.textContent = '—';
+            const dEl = document.getElementById('ms-t-stat-disp'); if (dEl) dEl.textContent = '—';
+            const fEl = document.getElementById('ms-t-stat-fix');  if (fEl) fEl.textContent = '—';
+            return;
+          }
+        }
+        const slots    = _msPlanilhaCache    || new Array(20).fill('');
+        const slotMeta = _msPlanilhaCacheMeta || new Array(20).fill(null);
+        const salasP = [
+          ...MS_SALAS.filter((s,i) => (slots[i]||'').trim()),
+          ...MS_SALAS.filter((s,i) => !(slots[i]||'').trim()),
+        ];
+        let tOcupP = 0, tDispP = 0;
+        grid.innerHTML = salasP.map(sala => {
+          const i = MS_SALAS.indexOf(sala);
+          const curso = (slots[i] || '').trim();
+          const meta  = slotMeta[i] || {};
+          const aloc  = !!curso;
+          if (aloc) tOcupP++; else tDispP++;
+          const acColor  = aloc ? '#F7941D' : 'rgba(0,69,135,0.13)';
+          const bgCard   = aloc ? 'white' : 'rgba(240,245,255,0.7)';
+          const animSt   = aloc ? 'animation:ms-glow-orange 3s ease-in-out infinite;' : '';
+          const numColor  = aloc ? '#004587' : 'rgba(0,69,135,0.18)';
+          const nameColor = aloc ? '#004587' : 'rgba(0,69,135,0.22)';
+          const subColor  = aloc ? '#64748b' : '#b8c8d8';
+          const num = sala.nome.replace('Sala ','');
+          const situacaoTag = meta.situacao ? `<span style="font-size:9px;font-weight:700;color:#F7941D;background:rgba(247,148,29,0.12);border-radius:4px;padding:1px 6px;">${meta.situacao}</span>` : '';
+          const tipoTag = meta.tipo ? `<span style="font-size:9px;color:#64748b;font-weight:600;">${meta.tipo}</span>` : '';
+          return `<div style="background:${bgCard};border-radius:12px;border-left:5px solid ${acColor};box-shadow:${aloc?'0 3px 16px rgba(0,0,0,0.08)':'none'};${animSt}display:flex;flex-direction:row;align-items:stretch;overflow:hidden;">
+            <div style="width:27%;padding:9px 11px;display:flex;flex-direction:column;justify-content:center;gap:2px;background:${aloc?`${acColor}18`:'transparent'};border-right:1px solid ${aloc?`${acColor}22`:'rgba(0,69,135,0.05)'};flex-shrink:0;">
+              <span style="font-size:24px;font-weight:900;color:${numColor};font-family:'Montserrat',sans-serif;line-height:1;letter-spacing:-0.5px;">${num}</span>
+              <div style="font-size:9px;font-weight:800;color:${nameColor};font-family:'Montserrat',sans-serif;line-height:1.25;">${sala.nome}</div>
+              <div style="font-size:8px;color:${subColor};font-weight:600;font-family:'Montserrat',sans-serif;line-height:1.3;">${sala.tipo}</div>
+              <div style="font-size:8px;color:${subColor};font-weight:500;font-family:'Montserrat',sans-serif;">${sala.capacidade} lug.</div>
+            </div>
+            <div style="width:73%;padding:9px 13px;display:flex;flex-direction:column;justify-content:center;gap:2px;">
+              ${aloc
+                ? `<div style="display:flex;align-items:center;gap:5px;margin-bottom:1px;">
+                     <span style="width:6px;height:6px;border-radius:50%;background:#F7941D;flex-shrink:0;animation:ms-blink 1.8s ease-in-out infinite;"></span>
+                     <span style="font-size:8px;font-weight:800;color:#F7941D;letter-spacing:1.5px;text-transform:uppercase;font-family:'Montserrat',sans-serif;">Em uso</span>
+                   </div>
+                   <div style="font-size:22px;font-weight:900;color:#0a1628;line-height:1.1;font-family:'Montserrat',sans-serif;">${curso}</div>
+                   <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:2px;">${tipoTag}${situacaoTag}</div>`
+                : `<div style="font-size:11px;font-weight:600;color:rgba(0,69,135,0.28);font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">Disponível</div>`}
+            </div>
+          </div>`;
+        }).join('');
+        const oPl = document.getElementById('ms-t-stat-ocup'); if (oPl) oPl.textContent = tOcupP;
+        const dPl = document.getElementById('ms-t-stat-disp'); if (dPl) dPl.textContent = tDispP;
+        const fPl = document.getElementById('ms-t-stat-fix');  if (fPl) fPl.textContent = 0;
+        return;
+      }
       // Manual mode: mesma aparência do automático, sala identificada por MS_SALAS[i]
       if (msTotemGetModo() === 'manual') {
         const list = msTotemGetPeriodList(msTotemData, msTotemPer); // lê por data+período
@@ -9079,9 +9168,102 @@
     window.msTotemSetPer = function(per) { msTotemPer = per; msRenderTotemFS(); msUpdateTotemClock(); };
 
     // ── Totem Manual Mode helpers ─────────────────────────────────────
-    // Modo (auto/manual) — armazenado localmente, pois é uma preferência por máquina
+    // Modo (auto/manual/planilha) — armazenado localmente, pois é uma preferência por máquina
     function msTotemGetModo() { return localStorage.getItem('ms_totem_modo') || 'auto'; }
     function msTotemSetModo(m) { localStorage.setItem('ms_totem_modo', m); }
+
+    // ── Totem Planilha Externa — cache e fetch ────────────────────────
+    let _msPlanilhaCache     = null;
+    let _msPlanilhaCacheMeta = null;
+    let _msPlanilhaCacheKey  = null;
+    let _msPlanilhaFetching  = false;
+
+    function _msParseCSV(text) {
+      const rows = []; let row = [], field = '', inQ = false;
+      const s = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+      for (let i = 0; i < s.length; i++) {
+        const c = s[i];
+        if (inQ) {
+          if (c==='"') { if (s[i+1]==='"') { field+='"'; i++; } else { inQ=false; } }
+          else { field+=c; }
+        } else {
+          if (c==='"') { inQ=true; }
+          else if (c===',') { row.push(field); field=''; }
+          else if (c==='\n') { row.push(field); if (row.some(f=>f.trim())) rows.push(row); row=[]; field=''; }
+          else { field+=c; }
+        }
+      }
+      if (field||row.length) { row.push(field); if (row.some(f=>f.trim())) rows.push(row); }
+      return rows;
+    }
+
+    async function msTotemFetchPlanilha(data, periodo) {
+      const sheetId = localStorage.getItem('ms_planilha_id') || '1L7Rf7ksHbH_L2-yjQl6kqg464j1aqNRdFOAPuLJNXm8';
+      const gid     = localStorage.getItem('ms_planilha_gid') || '1930532108';
+      const url = `https://docs.google.com/spreadsheets/d/${encodeURIComponent(sheetId)}/gviz/tq?tqx=out:csv&gid=${encodeURIComponent(gid)}`;
+      const resp = await fetch(url, { cache: 'no-store' });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const text = await resp.text();
+      const rows = _msParseCSV(text);
+      // Mapeamento de colunas (índice 0-based):
+      // Manhã (A–H): A=extra, B=DiaSemana, C=Curso, D=Sala, E=Tipo, F=Situacao, G=Reserva, H=Status
+      // Tarde (I–O): I=DiaSemana, J=Curso, K=Sala, L=Tipo, M=Situacao, N=Reserva, O=Status
+      // Noite (P–V): P=DiaSemana, Q=Curso, R=Sala, S=Tipo, T=Situacao, U=Reserva, V=Status
+      const COL = {
+        manha:  { dia:1, curso:2, sala:3, tipo:4, situacao:5, reserva:6, status:7 },
+        tarde:  { dia:8, curso:9, sala:10, tipo:11, situacao:12, reserva:13, status:14 },
+        noite:  { dia:15, curso:16, sala:17, tipo:18, situacao:19, reserva:20, status:21 },
+      };
+      const cols = COL[periodo] || COL.tarde;
+      const d = new Date(data + 'T12:00:00');
+      const DIAS_PT = ['domingo','segunda','terca','quarta','quinta','sexta','sabado'];
+      const diaAlvo = DIAS_PT[d.getDay()];
+      const _norm = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+      const slots = new Array(20).fill('');
+      const meta  = new Array(20).fill(null);
+      for (const row of rows) {
+        const diaCell = _norm(row[cols.dia] || '');
+        if (!diaCell) continue;
+        const stem = diaAlvo.slice(0,3);
+        if (!diaCell.startsWith(stem) && !diaCell.includes(diaAlvo.slice(0,5))) continue;
+        const salaNum = parseInt((row[cols.sala] || '').replace(/\D/g,''), 10);
+        const curso   = (row[cols.curso] || '').trim();
+        if (!salaNum || salaNum < 1 || salaNum > 20 || !curso) continue;
+        slots[salaNum - 1] = curso;
+        meta[salaNum - 1]  = {
+          tipo:     (row[cols.tipo]     || '').trim(),
+          situacao: (row[cols.situacao] || '').trim(),
+          reserva:  (row[cols.reserva]  || '').trim(),
+          status:   (row[cols.status]   || '').trim(),
+        };
+      }
+      _msPlanilhaCache     = slots;
+      _msPlanilhaCacheMeta = meta;
+      _msPlanilhaCacheKey  = data + '_' + periodo;
+    }
+
+    window.msTotemTestarPlanilha = async function() {
+      const statusEl = document.getElementById('ms-t-plan-status');
+      const idEl  = document.getElementById('ms-t-plan-id');
+      const gidEl = document.getElementById('ms-t-plan-gid');
+      const sheetId = (idEl?.value || '').trim();
+      const gid     = (gidEl?.value || '').trim();
+      if (!sheetId || !gid) { if (statusEl) statusEl.textContent = '⚠ Preencha o ID e GID.'; return; }
+      if (statusEl) statusEl.textContent = '⏳ Testando...';
+      try {
+        const url = `https://docs.google.com/spreadsheets/d/${encodeURIComponent(sheetId)}/gviz/tq?tqx=out:csv&gid=${encodeURIComponent(gid)}`;
+        const resp = await fetch(url, { cache: 'no-store' });
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const text = await resp.text();
+        const linhasValidas = _msParseCSV(text).filter(r => r.some(c => c.trim()));
+        localStorage.setItem('ms_planilha_id', sheetId);
+        localStorage.setItem('ms_planilha_gid', gid);
+        _msPlanilhaCacheKey = null;
+        if (statusEl) statusEl.innerHTML = `<span style="color:#4ade80;">✓ Conectado — ${linhasValidas.length} linha(s) encontradas</span>`;
+      } catch(e) {
+        if (statusEl) statusEl.innerHTML = `<span style="color:#f87171;">✗ Erro: ${e.message}. Verifique se a planilha está pública.</span>`;
+      }
+    };
 
     // Cache local dos dados manuais — sincronizado com a aba 'TotemManual' do Sheets
     // Estrutura: { "2026-04-07": { "manha": [...20], "tarde": [...20], "noite": [...20] } }
@@ -9147,15 +9329,19 @@
     }
 
     function _msTotemCfgAtualizaBotoesMode(modo) {
-      const btnAuto   = document.getElementById('ms-t-btn-auto');
-      const btnManual = document.getElementById('ms-t-btn-manual');
-      if (!btnAuto || !btnManual) return;
-      if (modo === 'auto') {
-        btnAuto.style.background   = '#004587'; btnAuto.style.color = 'white'; btnAuto.style.borderColor = '#004587';
-        btnManual.style.background = 'rgba(255,255,255,0.08)'; btnManual.style.color = 'rgba(255,255,255,0.6)'; btnManual.style.borderColor = 'rgba(255,255,255,0.2)';
-      } else {
-        btnManual.style.background = '#F7941D'; btnManual.style.color = 'white'; btnManual.style.borderColor = '#F7941D';
-        btnAuto.style.background   = 'rgba(255,255,255,0.08)'; btnAuto.style.color = 'rgba(255,255,255,0.6)'; btnAuto.style.borderColor = 'rgba(255,255,255,0.2)';
+      const btnAuto     = document.getElementById('ms-t-btn-auto');
+      const btnManual   = document.getElementById('ms-t-btn-manual');
+      const btnPlanilha = document.getElementById('ms-t-btn-planilha');
+      const cfgPlan     = document.getElementById('ms-t-planilha-cfg');
+      const inBg = 'rgba(255,255,255,0.08)', inC = 'rgba(255,255,255,0.6)', inB = 'rgba(255,255,255,0.2)';
+      const _set = (btn, ativo, bg, c, b) => { if (!btn) return; btn.style.background = ativo ? bg : inBg; btn.style.color = ativo ? c : inC; btn.style.borderColor = ativo ? b : inB; };
+      _set(btnAuto,     modo==='auto',     '#004587', 'white', '#004587');
+      _set(btnManual,   modo==='manual',   '#F7941D', 'white', '#F7941D');
+      _set(btnPlanilha, modo==='planilha', '#22c55e', 'white', '#22c55e');
+      if (cfgPlan) cfgPlan.style.display = modo === 'planilha' ? 'block' : 'none';
+      if (modo === 'planilha') {
+        const sid = localStorage.getItem('ms_planilha_id'); if (sid) { const el = document.getElementById('ms-t-plan-id'); if (el) el.value = sid; }
+        const sgid = localStorage.getItem('ms_planilha_gid'); if (sgid) { const el = document.getElementById('ms-t-plan-gid'); if (el) el.value = sgid; }
       }
     }
 
@@ -9234,6 +9420,12 @@
         (document.getElementById(`ms-t-campo-${i}`)?.value || '').trim()
       );
       msTotemSavePeriodList(data, _cfgPer, list);
+      // Persiste IDs da planilha externa se preenchidos
+      const planId = document.getElementById('ms-t-plan-id')?.value.trim();
+      const planGid = document.getElementById('ms-t-plan-gid')?.value.trim();
+      if (planId) localStorage.setItem('ms_planilha_id', planId);
+      if (planGid) localStorage.setItem('ms_planilha_gid', planGid);
+      if (msTotemGetModo() === 'planilha') _msPlanilhaCacheKey = null;
       msTotemFecharConfig();
       msRenderTotemFS();
     };
