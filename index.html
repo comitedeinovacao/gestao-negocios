@@ -9197,6 +9197,15 @@
       return rows;
     }
 
+    // Converte "DD/MM/YYYY" → "YYYY-MM-DD"; aceita ISO diretamente
+    function _msNormDate(cell) {
+      const s = (cell || '').trim();
+      const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+      if (m) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+      if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0,10);
+      return null;
+    }
+
     async function msTotemFetchPlanilha(data, periodo) {
       const sheetId = localStorage.getItem('ms_planilha_id') || '1L7Rf7ksHbH_L2-yjQl6kqg464j1aqNRdFOAPuLJNXm8';
       const gid     = localStorage.getItem('ms_planilha_gid') || '1930532108';
@@ -9206,26 +9215,36 @@
       const text = await resp.text();
       const rows = _msParseCSV(text);
       // Mapeamento de colunas (índice 0-based):
-      // Manhã (A–H): A=extra, B=DiaSemana, C=Curso, D=Sala, E=Tipo, F=Situacao, G=Reserva, H=Status
-      // Tarde (I–O): I=DiaSemana, J=Curso, K=Sala, L=Tipo, M=Situacao, N=Reserva, O=Status
-      // Noite (P–V): P=DiaSemana, Q=Curso, R=Sala, S=Tipo, T=Situacao, U=Reserva, V=Status
+      // Manhã (A–H, 8 cols): A=Data, B=Curso, C=Sala, D=Tipo, E=Situação, F=Reserva, G=Status, H=extra
+      // Tarde (I–O, 7 cols): I=Data, J=Curso, K=Sala, L=Tipo, M=Situação, N=Reserva, O=Status
+      // Noite (P–V, 7 cols): P=Data, Q=Curso, R=Sala, S=Tipo, T=Situação, U=Reserva, V=Status
       const COL = {
-        manha:  { dia:1, curso:2, sala:3, tipo:4, situacao:5, reserva:6, status:7 },
+        manha:  { dia:0, curso:1, sala:2, tipo:3, situacao:4, reserva:5, status:6 },
         tarde:  { dia:8, curso:9, sala:10, tipo:11, situacao:12, reserva:13, status:14 },
         noite:  { dia:15, curso:16, sala:17, tipo:18, situacao:19, reserva:20, status:21 },
       };
       const cols = COL[periodo] || COL.tarde;
       const d = new Date(data + 'T12:00:00');
       const DIAS_PT = ['domingo','segunda','terca','quarta','quinta','sexta','sabado'];
-      const diaAlvo = DIAS_PT[d.getDay()];
+      const diaAlvoNome = DIAS_PT[d.getDay()];
       const _norm = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
       const slots = new Array(20).fill('');
       const meta  = new Array(20).fill(null);
       for (const row of rows) {
-        const diaCell = _norm(row[cols.dia] || '');
+        // Tenta a coluna principal; para Manhã, também tenta col 1 (caso A seja extra)
+        let diaCell = (row[cols.dia] || '').trim();
+        if (!diaCell && periodo === 'manha') diaCell = (row[1] || '').trim();
         if (!diaCell) continue;
-        const stem = diaAlvo.slice(0,3);
-        if (!diaCell.startsWith(stem) && !diaCell.includes(diaAlvo.slice(0,5))) continue;
+        // Comparação por data (DD/MM/YYYY ou ISO) — principal
+        const celDate = _msNormDate(diaCell);
+        if (celDate) {
+          if (celDate !== data) continue;
+        } else {
+          // Fallback: compara por nome do dia da semana
+          const norm = _norm(diaCell);
+          const stem = diaAlvoNome.slice(0,3);
+          if (!norm.startsWith(stem) && !norm.includes(diaAlvoNome.slice(0,5))) continue;
+        }
         const salaNum = parseInt((row[cols.sala] || '').replace(/\D/g,''), 10);
         const curso   = (row[cols.curso] || '').trim();
         if (!salaNum || salaNum < 1 || salaNum > 20 || !curso) continue;
