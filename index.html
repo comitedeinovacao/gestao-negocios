@@ -9215,11 +9215,11 @@
       const text = await resp.text();
       const rows = _msParseCSV(text);
       // Mapeamento de colunas (índice 0-based):
-      // Manhã (A–H, 8 cols): A=Data, B=Curso, C=Sala, D=Tipo, E=Situação, F=Reserva, G=Status, H=extra
+      // Manhã (A–H, 8 cols): A=DiaSemana, B=Data, C=Curso, D=Sala, E=Tipo, F=Situação, G=Reserva, H=Status
       // Tarde (I–O, 7 cols): I=Data, J=Curso, K=Sala, L=Tipo, M=Situação, N=Reserva, O=Status
       // Noite (P–V, 7 cols): P=Data, Q=Curso, R=Sala, S=Tipo, T=Situação, U=Reserva, V=Status
       const COL = {
-        manha:  { dia:0, curso:1, sala:2, tipo:3, situacao:4, reserva:5, status:6 },
+        manha:  { dia:1, curso:2, sala:3, tipo:4, situacao:5, reserva:6, status:7 },
         tarde:  { dia:8, curso:9, sala:10, tipo:11, situacao:12, reserva:13, status:14 },
         noite:  { dia:15, curso:16, sala:17, tipo:18, situacao:19, reserva:20, status:21 },
       };
