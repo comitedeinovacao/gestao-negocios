@@ -2992,7 +2992,7 @@
      </div>
     </div>
     <!-- 20 campos manuais -->
-    <div id="ms-t-manual-campos" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:24px;"></div>
+    <div id="ms-t-manual-campos" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px;"></div>
     <button onclick="msTotemSalvarConfig()" style="width:100%;padding:14px;border-radius:12px;background:#F7941D;border:none;color:white;font-size:14px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;letter-spacing:0.5px;">✓ SALVAR PERÍODO E APLICAR</button>
    </div>
   </div>
@@ -8930,11 +8930,14 @@
         msRenderTotemFS();
       }, 2 * 60 * 1000);
       window.addEventListener('resize', msScaleTotem);
+      // Screen Wake Lock API — impede bloqueio de tela sem precisar de arquivo externo
+      msRequestWakeLock();
     };
 
     window.msFecharTotemFS = function() {
       const overlay = document.getElementById('ms-totem-overlay');
       if (overlay) overlay.classList.add('hidden');
+      msReleaseWakeLock();
       if (msTotemInterval) { clearInterval(msTotemInterval); msTotemInterval = null; }
       if (msTotemRefreshInterval) { clearInterval(msTotemRefreshInterval); msTotemRefreshInterval = null; }
       window.removeEventListener('resize', msScaleTotem);
@@ -8959,10 +8962,30 @@
       }
     });
 
+    let _msWakeLock = null;
+    async function msRequestWakeLock() {
+      if (!('wakeLock' in navigator)) return;
+      try {
+        _msWakeLock = await navigator.wakeLock.request('screen');
+        _msWakeLock.addEventListener('release', () => { _msWakeLock = null; });
+      } catch(e) {}
+    }
+    function msReleaseWakeLock() {
+      if (_msWakeLock) { _msWakeLock.release(); _msWakeLock = null; }
+    }
+    // Re-solicita lock se o usuário sair e voltar para a aba
+    document.addEventListener('visibilitychange', () => {
+      const overlay = document.getElementById('ms-totem-overlay');
+      if (document.visibilityState === 'visible' && overlay && !overlay.classList.contains('hidden') && !_msWakeLock) {
+        msRequestWakeLock();
+      }
+    });
+
     function msScaleTotem() {
       const scaler = document.getElementById('ms-totem-scaler');
       if (!scaler) return;
       const scale = Math.min(window.innerWidth / 1080, window.innerHeight / 1920);
+      scaler.style.transformOrigin = 'top left';
       scaler.style.transform = `scale(${scale})`;
       scaler.style.left = ((window.innerWidth  - 1080 * scale) / 2) + 'px';
       scaler.style.top  = ((window.innerHeight - 1920 * scale) / 2) + 'px';
@@ -9426,6 +9449,7 @@
       const overlay = document.getElementById('ms-totem-config');
       if (overlay) overlay.style.display = 'none';
     };
+
 
     window.msTotemSetModoConfig = function(modo) {
       msTotemSetModo(modo);
