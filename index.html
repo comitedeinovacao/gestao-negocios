@@ -2879,7 +2879,7 @@
    </div>
    </div><!-- FIM MAPA DE SALAS -->
    <!-- TOTEM FULLSCREEN -->
-   <div id="ms-totem-overlay" class="fixed inset-0 z-[9999] hidden overflow-visible" style="background:#e8eeff;">
+   <div id="ms-totem-overlay" class="fixed inset-0 z-[9999] hidden overflow-hidden" style="background:#e8eeff;">
     <div id="ms-totem-scaler" style="position:absolute;width:1080px;height:1920px;transform-origin:top left;font-family:'Montserrat',sans-serif;background:radial-gradient(circle,rgba(0,69,135,0.07) 1.5px,transparent 1.5px) 0 0/28px 28px,linear-gradient(175deg,#e8f0fe 0%,#eef4ff 40%,#dce8ff 100%);">
      <!-- Animated gradient top line -->
      <div style="height:4px;background:linear-gradient(90deg,#004587 0%,#F7941D 50%,#004587 100%);background-size:200% 100%;animation:ms-slide 4s linear infinite;"></div>
@@ -8984,12 +8984,11 @@
     function msScaleTotem() {
       const scaler = document.getElementById('ms-totem-scaler');
       if (!scaler) return;
-      // Layout retrato (1080×1920) rotacionado 90° para TV na horizontal
-      const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
-      scaler.style.transformOrigin = 'center center';
-      scaler.style.left = ((window.innerWidth  - 1080) / 2) + 'px';
-      scaler.style.top  = ((window.innerHeight - 1920) / 2) + 'px';
-      scaler.style.transform = `rotate(90deg) scale(${scale})`;
+      const scale = Math.min(window.innerWidth / 1080, window.innerHeight / 1920);
+      scaler.style.transformOrigin = 'top left';
+      scaler.style.transform = `scale(${scale})`;
+      scaler.style.left = ((window.innerWidth  - 1080 * scale) / 2) + 'px';
+      scaler.style.top  = ((window.innerHeight - 1920 * scale) / 2) + 'px';
     }
 
     function msUpdateTotemClock() {
