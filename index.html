@@ -9042,7 +9042,7 @@
             return;
           }
         }
-        const slots    = _msPlanilhaCache    || new Array(20).fill('');
+        const slots    = _msPlanilhaCache    || new Array(22).fill('');
         const slotMeta = _msPlanilhaCacheMeta || new Array(20).fill(null);
         const salasP = [
           ...MS_SALAS.filter((s,i) => (slots[i]||'').trim()),
@@ -9257,7 +9257,7 @@
       const DIAS_PT = ['domingo','segunda','terca','quarta','quinta','sexta','sabado'];
       const diaAlvoNome = DIAS_PT[d.getDay()];
       const _norm = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-      const slots = new Array(20).fill('');
+      const slots = new Array(22).fill('');
       const meta  = new Array(20).fill(null);
       for (const row of rows) {
         // Tenta a coluna principal; para Manhã, também tenta col 1 (caso A seja extra)
@@ -9353,7 +9353,7 @@
           if (!date || !per) return;
           if (!d[date]) d[date] = {};
           // Colunas s01..s20
-          d[date][per] = Array.from({length: 20}, (_, i) => r[`s${String(i+1).padStart(2,'0')}`] || '');
+          d[date][per] = Array.from({length: 22}, (_, i) => r[`s${String(i+1).padStart(2,'00')}`] || '');
         });
         if (Object.keys(d).length) msTotemSetManualData(d);
       } catch(e) {
@@ -9418,7 +9418,7 @@
       // salva campos atuais antes de trocar
       const dataEl = document.getElementById('ms-t-config-data');
       const data = dataEl ? dataEl.value : msHoje();
-      const cur = Array.from({length:20}, (_, i) => (document.getElementById(`ms-t-campo-${i}`)?.value || '').trim());
+      const cur = Array.from({length:22}, (_, i) => (document.getElementById(`ms-t-campo-${i}`)?.value || '').trim());
       msTotemSavePeriodList(data, _cfgPer, cur);
       _cfgPer = per;
       _msTotemCfgAtualizaBotoesPer(per);
@@ -9429,7 +9429,7 @@
       const dataEl = document.getElementById('ms-t-config-data');
       if (!dataEl) return;
       // salva campos atuais antes de mudar data
-      const cur = Array.from({length:20}, (_, i) => (document.getElementById(`ms-t-campo-${i}`)?.value || '').trim());
+      const cur = Array.from({length:22}, (_, i) => (document.getElementById(`ms-t-campo-${i}`)?.value || '').trim());
       msTotemSavePeriodList(dataEl.value, _cfgPer, cur);
       const d = new Date(dataEl.value + 'T12:00:00');
       d.setDate(d.getDate() + dir);
@@ -9465,7 +9465,7 @@
     window.msTotemSalvarConfig = function() {
       const dataEl = document.getElementById('ms-t-config-data');
       const data = dataEl ? dataEl.value : msHoje();
-      const list = Array.from({length: 20}, (_, i) =>
+      const list = Array.from({length: 22}, (_, i) =>
         (document.getElementById(`ms-t-campo-${i}`)?.value || '').trim()
       );
       msTotemSavePeriodList(data, _cfgPer, list);
