@@ -9275,13 +9275,16 @@
           if (!norm.startsWith(stem) && !norm.includes(diaAlvoNome.slice(0,5))) continue;
         }
         const salaCellRaw = (row[cols.sala] || '').trim();
+        const curso   = (row[cols.curso] || '').trim();
         let salaNum = parseInt(salaCellRaw.replace(/\D/g,''), 10);
         if (!salaNum) {
           const normSala = _norm(salaCellRaw);
           if (normSala.includes('biblioteca')) salaNum = 21;
           else if (normSala.includes('reuniao')) salaNum = 22;
+          // Coluna SALA vazia (fórmula quebrada/#REF! na planilha) mas com curso lançado
+          // logo após a data: linha extra é sempre a Biblioteca (Sala 21).
+          else if (!salaCellRaw && curso) salaNum = 21;
         }
-        const curso   = (row[cols.curso] || '').trim();
         if (!salaNum || salaNum < 1 || salaNum > 22 || !curso) continue;
         slots[salaNum - 1] = curso;
         meta[salaNum - 1]  = {
