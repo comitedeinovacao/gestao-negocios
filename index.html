@@ -2960,7 +2960,7 @@
     <!-- Toggle Modo -->
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
      <button id="ms-t-btn-auto" onclick="msTotemSetModoConfig('auto')" style="padding:12px 8px;border-radius:12px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;border:2px solid #004587;background:#004587;color:white;line-height:1.4;">▶ Automático<br><span style="font-size:10px;font-weight:600;opacity:0.85;">(Mapa de Salas)</span></button>
-     <button id="ms-t-btn-manual" onclick="msTotemSetModoConfig('manual')" style="padding:12px 8px;border-radius:12px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);line-height:1.4;">✏ Manual<br><span style="font-size:10px;font-weight:600;opacity:0.85;">(20 campos livres)</span></button>
+     <button id="ms-t-btn-manual" onclick="msTotemSetModoConfig('manual')" style="padding:12px 8px;border-radius:12px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);line-height:1.4;">✏ Manual<br><span style="font-size:10px;font-weight:600;opacity:0.85;">(22 campos livres)</span></button>
      <button id="ms-t-btn-planilha" onclick="msTotemSetModoConfig('planilha')" style="padding:12px 8px;border-radius:12px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Montserrat',sans-serif;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);line-height:1.4;">📊 Planilha Externa<br><span style="font-size:10px;font-weight:600;opacity:0.85;">(Google Sheets)</span></button>
     </div>
     <!-- Painel configuração planilha externa — visível apenas no modo planilha -->
@@ -9258,7 +9258,7 @@
       const diaAlvoNome = DIAS_PT[d.getDay()];
       const _norm = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
       const slots = new Array(22).fill('');
-      const meta  = new Array(20).fill(null);
+      const meta  = new Array(22).fill(null);
       for (const row of rows) {
         // Tenta a coluna principal; para Manhã, também tenta col 1 (caso A seja extra)
         let diaCell = (row[cols.dia] || '').trim();
@@ -9274,9 +9274,15 @@
           const stem = diaAlvoNome.slice(0,3);
           if (!norm.startsWith(stem) && !norm.includes(diaAlvoNome.slice(0,5))) continue;
         }
-        const salaNum = parseInt((row[cols.sala] || '').replace(/\D/g,''), 10);
+        const salaCellRaw = (row[cols.sala] || '').trim();
+        let salaNum = parseInt(salaCellRaw.replace(/\D/g,''), 10);
+        if (!salaNum) {
+          const normSala = _norm(salaCellRaw);
+          if (normSala.includes('biblioteca')) salaNum = 21;
+          else if (normSala.includes('reuniao')) salaNum = 22;
+        }
         const curso   = (row[cols.curso] || '').trim();
-        if (!salaNum || salaNum < 1 || salaNum > 20 || !curso) continue;
+        if (!salaNum || salaNum < 1 || salaNum > 22 || !curso) continue;
         slots[salaNum - 1] = curso;
         meta[salaNum - 1]  = {
           tipo:     (row[cols.tipo]     || '').trim(),
